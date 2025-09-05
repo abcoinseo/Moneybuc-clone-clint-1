@@ -984,7 +984,7 @@
                 <div class="form-group">
                     <label class="form-label">Your Referral Link</label>
                     <div class="refer-link" id="referralLink">
-                        https://t.me/EarnFluxBot/app?startapp=ref_<span id="userRefId">loading</span>
+                      http://t.me/adflareprobot/app?startapp=ref_<span id="userRefId">loading</span>
                     </div>
                     <button class="btn btn-secondary" onclick="copyReferralLink()">
                         <span class="material-icons">content_copy</span>
@@ -1167,7 +1167,7 @@
 
         tonConnectUI.uiOptions = {
             actionsConfiguration: {
-                twaReturnUrl: 'https://t.me/EarnFluxBot'
+                twaReturnUrl: 'http://t.me/adflareprobot/app'
             }
         };
 
@@ -1872,7 +1872,7 @@
 
         // Copy referral link
         function copyReferralLink() {
-            const link = `https://t.me/EarnFluxBot/app?startapp=ref_${currentUser.id}`;
+            const link = `http://t.me/adflareprobot/app=ref_${currentUser.id}`;
             navigator.clipboard.writeText(link).then(() => {
                 showAlert('Referral link copied to clipboard!', 'success');
             });
