@@ -3,9 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EarnFlux - Task Rewards Platform</title>
+    <title>EarnFlux - Task & Rewards Platform</title>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src="https://unpkg.com/@tonconnect/ui@latest/dist/tonconnect-ui.min.js"></script>
+    <script src='//libtl.com/sdk.js' data-zone='9809601' data-sdk='show_9809601'></script>
     <style>
         * {
             margin: 0;
@@ -14,17 +17,17 @@
         }
 
         body {
-            font-family: 'SF Pro Text', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            font-family: 'Inter', sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
-            padding-top: env(safe-area-inset-top);
-            padding-bottom: env(safe-area-inset-bottom);
+            padding-bottom: 80px;
+            color: #333;
         }
 
-        .app-container {
-            max-width: 480px;
+        .container {
+            max-width: 100%;
             margin: 0 auto;
-            background: #ffffff;
+            background: white;
             min-height: 100vh;
             position: relative;
         }
@@ -34,407 +37,199 @@
             color: white;
             padding: 20px;
             text-align: center;
-            position: relative;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
         }
 
-        .user-info {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 15px;
+        .header h1 {
+            font-size: 1.8em;
+            margin-bottom: 5px;
         }
 
-        .avatar {
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            margin-right: 15px;
-            border: 3px solid rgba(255,255,255,0.3);
-        }
-
-        .balance {
-            font-size: 2.5em;
-            font-weight: 700;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-
-        .balance-label {
-            font-size: 14px;
-            opacity: 0.9;
-        }
-
-        .navigation {
-            display: flex;
-            background: #f8f9fa;
-            border-top: 1px solid #e9ecef;
-        }
-
-        .nav-item {
-            flex: 1;
-            padding: 15px 5px;
+        .balance-display {
+            background: rgba(255,255,255,0.2);
+            border-radius: 15px;
+            padding: 15px;
+            margin: 15px 20px;
             text-align: center;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            border: none;
-            background: none;
-            font-size: 12px;
+            backdrop-filter: blur(10px);
         }
 
-        .nav-item.active {
-            background: white;
-            color: #4facfe;
-            font-weight: 600;
+        .balance-amount {
+            font-size: 2.2em;
+            font-weight: 700;
+            color: white;
         }
 
-        .nav-item:hover {
-            background: #e9ecef;
-        }
-
-        .page {
+        .content {
             padding: 20px;
-            min-height: calc(100vh - 200px);
+            padding-bottom: 100px;
         }
 
-        .hidden {
-            display: none;
-        }
-
-        .card {
+        .section {
             background: white;
             border-radius: 15px;
             padding: 20px;
-            margin-bottom: 15px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-            border: 1px solid #f0f0f0;
+            margin-bottom: 20px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
         }
 
-        .task-card {
-            position: relative;
-            transition: transform 0.3s ease;
-        }
-
-        .task-card:hover {
-            transform: translateY(-2px);
-        }
-
-        .task-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 10px;
-        }
-
-        .task-title {
-            font-size: 16px;
+        .section-title {
+            font-size: 1.3em;
             font-weight: 600;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
             color: #333;
         }
 
-        .reward-badge {
-            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-            color: white;
-            padding: 5px 12px;
-            border-radius: 20px;
-            font-size: 12px;
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 15px;
+        }
+
+        .task-card {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 15px;
+            border: 2px solid transparent;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .task-card:hover {
+            border-color: #4facfe;
+            transform: translateY(-2px);
+        }
+
+        .task-title {
             font-weight: 600;
+            margin-bottom: 8px;
+            color: #333;
         }
 
         .task-description {
             color: #666;
             font-size: 14px;
-            line-height: 1.5;
-            margin-bottom: 15px;
+            margin-bottom: 10px;
+            line-height: 1.4;
+        }
+
+        .task-reward {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            padding: 5px 12px;
+            border-radius: 15px;
+            font-size: 12px;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            margin-bottom: 10px;
         }
 
         .btn {
             width: 100%;
-            padding: 12px;
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
             border: none;
+            padding: 12px;
             border-radius: 25px;
-            font-size: 16px;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
         }
 
-        .btn-primary {
-            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-            color: white;
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(79, 172, 254, 0.4);
+        }
+
+        .btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
         }
 
         .btn-success {
-            background: linear-gradient(135deg, #4dd0e1 0%, #26c6da 100%);
-            color: white;
+            background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
         }
 
-        .btn-warning {
-            background: linear-gradient(135deg, #ffb74d 0%, #ff9800 100%);
-            color: white;
+        .btn-danger {
+            background: linear-gradient(135deg, #f56565 0%, #e53e3e 100%);
         }
 
-        .btn-disabled {
-            background: #e9ecef;
-            color: #6c757d;
-            cursor: not-allowed;
-        }
-
-        .btn:hover:not(.btn-disabled) {
-            transform: translateY(-2px);
-        }
-
-        .input-group {
+        .form-group {
             margin-bottom: 15px;
         }
 
-        .input-group label {
+        .form-group label {
             display: block;
             margin-bottom: 5px;
             font-weight: 600;
             color: #333;
         }
 
-        .input-group input, .input-group textarea, .input-group select {
+        .form-group input, .form-group textarea, .form-group select {
             width: 100%;
             padding: 12px;
             border: 2px solid #e9ecef;
             border-radius: 10px;
             font-size: 16px;
+            font-family: 'Inter', sans-serif;
         }
 
-        .input-group input:focus, .input-group textarea:focus, .input-group select:focus {
+        .form-group input:focus, .form-group textarea:focus, .form-group select:focus {
             outline: none;
             border-color: #4facfe;
         }
 
-        .spinner-container {
-            text-align: center;
-            padding: 40px;
-        }
-
-        .spinner {
-            width: 200px;
-            height: 200px;
-            border-radius: 50%;
-            background: conic-gradient(
-                #ff6b6b 0deg 72deg,
-                #4ecdc4 72deg 144deg,
-                #45b7d1 144deg 216deg,
-                #96ceb4 216deg 288deg,
-                #ffeaa7 288deg 360deg
-            );
-            margin: 0 auto 20px;
-            position: relative;
-            transition: transform 2s ease;
-        }
-
-        .spinner-inner {
-            position: absolute;
-            top: 20px;
-            left: 20px;
-            right: 20px;
-            bottom: 20px;
-            background: white;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 18px;
-            font-weight: 600;
-        }
-
-        .spinner-pointer {
-            position: absolute;
-            top: -10px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 0;
-            height: 0;
-            border-left: 10px solid transparent;
-            border-right: 10px solid transparent;
-            border-bottom: 20px solid #333;
-        }
-
-        .progress-bar {
-            width: 100%;
-            height: 8px;
-            background: #e9ecef;
-            border-radius: 4px;
-            overflow: hidden;
-            margin: 10px 0;
-        }
-
-        .progress-fill {
-            height: 100%;
-            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-            transition: width 0.3s ease;
-            border-radius: 4px;
-        }
-
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 15px;
-            margin-bottom: 20px;
-        }
-
-        .stat-card {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 20px;
-            border-radius: 15px;
-            text-align: center;
-        }
-
-        .stat-number {
-            font-size: 24px;
-            font-weight: 700;
-            margin-bottom: 5px;
-        }
-
-        .stat-label {
-            font-size: 12px;
-            opacity: 0.9;
-        }
-
-        .refer-code {
-            background: #f8f9fa;
-            padding: 15px;
-            border-radius: 10px;
-            text-align: center;
-            border: 2px dashed #4facfe;
-            margin-bottom: 15px;
-        }
-
-        .refer-link {
-            word-break: break-all;
-            color: #4facfe;
-            font-weight: 600;
-            font-size: 14px;
-        }
-
-        .daily-checkin {
-            background: linear-gradient(135deg, #4dd0e1 0%, #26c6da 100%);
-            color: white;
-            padding: 20px;
-            border-radius: 15px;
-            text-align: center;
-            margin-bottom: 20px;
-        }
-
-        .wallet-connect {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 20px;
-            border-radius: 15px;
-            text-align: center;
-            margin-bottom: 20px;
-        }
-
-        .countdown {
-            font-size: 18px;
-            font-weight: 600;
-            color: #ff6b6b;
-            margin: 10px 0;
-        }
-
-        .ad-container {
-            text-align: center;
-            padding: 20px;
-            background: #f8f9fa;
-            border-radius: 15px;
-            margin-bottom: 15px;
-        }
-
-        .verification-screen {
+        .bottom-nav {
             position: fixed;
-            top: 0;
+            bottom: 0;
             left: 0;
             right: 0;
-            bottom: 0;
-            background: rgba(0,0,0,0.9);
+            background: white;
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
             display: flex;
-            align-items: center;
-            justify-content: center;
+            justify-content: space-around;
+            padding: 10px 0;
             z-index: 1000;
         }
 
-        .verification-content {
-            background: white;
-            padding: 40px;
-            border-radius: 20px;
-            text-align: center;
-            max-width: 300px;
-        }
-
-        .verification-timer {
-            font-size: 48px;
-            font-weight: 700;
-            color: #4facfe;
-            margin: 20px 0;
-        }
-
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-            100% { transform: scale(1); }
-        }
-
-        .pulse {
-            animation: pulse 1s infinite;
-        }
-
-        @keyframes spin {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
-        }
-
-        .spinning {
-            animation: spin 2s ease-out;
-        }
-
-        .task-form {
-            background: white;
-            padding: 20px;
-            border-radius: 15px;
-            margin-bottom: 15px;
-        }
-
-        .cost-display {
-            background: #e8f5e8;
-            padding: 15px;
-            border-radius: 10px;
-            margin: 15px 0;
-            text-align: center;
-        }
-
-        .cost-amount {
-            font-size: 24px;
-            font-weight: 700;
-            color: #2e7d2e;
-        }
-
-        .user-tasks-grid {
-            display: grid;
-            gap: 15px;
-        }
-
-        .user-task-card {
-            background: white;
-            border-radius: 15px;
-            padding: 15px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-        }
-
-        .task-progress {
+        .nav-item {
             display: flex;
-            justify-content: space-between;
+            flex-direction: column;
             align-items: center;
-            margin-top: 10px;
+            gap: 4px;
+            cursor: pointer;
+            padding: 5px 10px;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            color: #666;
         }
 
-        .impressions-left {
+        .nav-item.active {
+            color: #4facfe;
+            background: rgba(79, 172, 254, 0.1);
+        }
+
+        .nav-item span {
             font-size: 12px;
-            color: #666;
+            font-weight: 500;
+        }
+
+        .hidden {
+            display: none;
         }
 
         .modal {
@@ -447,280 +242,547 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            z-index: 1000;
+            z-index: 2000;
+            padding: 20px;
         }
 
         .modal-content {
             background: white;
-            padding: 30px;
             border-radius: 20px;
-            max-width: 90%;
-            max-height: 80%;
+            padding: 25px;
+            max-width: 400px;
+            width: 100%;
+            max-height: 80vh;
             overflow-y: auto;
         }
 
-        .number-format {
-            font-family: 'Courier New', monospace;
+        .modal-title {
+            font-size: 1.3em;
+            font-weight: 600;
+            margin-bottom: 15px;
+            text-align: center;
+            color: #333;
+        }
+
+        .countdown {
+            font-size: 1.2em;
+            font-weight: 600;
+            color: #4facfe;
+            text-align: center;
+            margin: 10px 0;
+        }
+
+        .spin-wheel {
+            width: 200px;
+            height: 200px;
+            border: 8px solid #4facfe;
+            border-radius: 50%;
+            margin: 20px auto;
+            position: relative;
+            background: conic-gradient(#ff6b6b, #4facfe, #48bb78, #f6ad55, #9f7aea, #38b2ac);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2em;
+            font-weight: 700;
+            color: white;
+            cursor: pointer;
+            transition: transform 3s cubic-bezier(0.23, 1, 0.32, 1);
+        }
+
+        .spin-wheel:hover {
+            box-shadow: 0 0 20px rgba(79, 172, 254, 0.5);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 10px;
+            margin: 15px 0;
+        }
+
+        .stat-item {
+            text-align: center;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 10px;
+        }
+
+        .stat-number {
+            font-size: 1.5em;
+            font-weight: 700;
+            color: #4facfe;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: #666;
+            margin-top: 5px;
+        }
+
+        .alert {
+            padding: 12px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            font-weight: 500;
+        }
+
+        .alert-success {
+            background: #d4f6dd;
+            color: #155724;
+        }
+
+        .alert-error {
+            background: #fecaca;
+            color: #b91c1c;
+        }
+
+        .daily-check {
+            text-align: center;
+            padding: 20px;
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            border-radius: 15px;
+            margin-bottom: 20px;
+        }
+
+        .ads-counter {
+            background: #e9ecef;
+            padding: 8px 15px;
+            border-radius: 15px;
+            font-size: 12px;
+            font-weight: 600;
+            text-align: center;
+            margin-bottom: 10px;
+        }
+
+        .ton-amount {
+            font-weight: 700;
+            color: #4facfe;
+        }
+
+        .referral-link {
+            background: #f8f9fa;
+            padding: 10px;
+            border-radius: 8px;
+            font-family: monospace;
+            word-break: break-all;
+            font-size: 12px;
+            border: 2px dashed #4facfe;
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 15px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 12px;
+            margin-bottom: 15px;
+        }
+
+        .profile-pic {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            color: #4facfe;
+        }
+
+        @media (max-width: 480px) {
+            .content {
+                padding: 15px;
+            }
+            
+            .grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        .loading {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 40px;
+        }
+
+        .spinner {
+            width: 30px;
+            height: 30px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #4facfe;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .list-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .list-item:last-child {
+            border-bottom: none;
+        }
+
+        #ton-connect {
+            margin: 15px 0;
         }
     </style>
 </head>
 <body>
-    <div class="app-container">
-        <!-- Header -->
+    <div class="container">
         <div class="header">
-            <div class="user-info">
-                <img id="userAvatar" src="https://via.placeholder.com/50/4facfe/ffffff?text=U" alt="Avatar" class="avatar">
+            <div class="user-profile">
+                <div class="profile-pic" id="profilePic">U</div>
                 <div>
-                    <div id="userName">Welcome User</div>
-                    <div id="userId" style="font-size: 12px; opacity: 0.8;"></div>
+                    <div id="userName">Loading...</div>
+                    <div style="font-size: 14px; opacity: 0.9;" id="userInfo">Welcome back!</div>
                 </div>
             </div>
-            <div class="balance number-format" id="userBalance">0</div>
-            <div class="balance-label">Points Balance</div>
+            <h1>🚀 EarnFlux</h1>
+            <p>Complete tasks, earn rewards!</p>
         </div>
 
-        <!-- Navigation -->
-        <div class="navigation">
-            <button class="nav-item active" onclick="showPage('home')">
-                🏠<br>Home
-            </button>
-            <button class="nav-item" onclick="showPage('tasks')">
-                📝<br>Tasks
-            </button>
-            <button class="nav-item" onclick="showPage('lucky')">
-                🍀<br>Lucky
-            </button>
-            <button class="nav-item" onclick="showPage('spin')">
-                🎯<br>Spin
-            </button>
-            <button class="nav-item" onclick="showPage('refer')">
-                👥<br>Refer
-            </button>
-            <button class="nav-item" onclick="showPage('profile')">
-                👤<br>Profile
-            </button>
+        <div class="balance-display">
+            <div>Your Balance</div>
+            <div class="balance-amount" id="userBalance">0</div>
+            <div>Points</div>
         </div>
 
-        <!-- Home Page -->
-        <div id="home" class="page">
-            <!-- Daily Check-in -->
-            <div class="daily-checkin">
-                <h3>📅 Daily Check-in</h3>
-                <p>Join our community and claim your daily reward!</p>
-                <button id="dailyCheckinBtn" class="btn btn-primary" onclick="handleDailyCheckin()">
-                    Claim 50 Points
-                </button>
-            </div>
+        <div class="content">
+            <!-- Home Tab -->
+            <div id="home" class="tab-content">
+                <!-- Daily Check-in -->
+                <div class="daily-check">
+                    <h3>Daily Check-in</h3>
+                    <p>Join our community and claim your daily reward!</p>
+                    <button id="dailyCheckBtn" class="btn" style="background: white; color: #4facfe; margin-top: 10px;">
+                        <span class="material-icons">today</span>
+                        Check-in Today
+                    </button>
+                    <div id="dailyStatus" style="margin-top: 10px;"></div>
+                </div>
 
-            <!-- Wallet Connect -->
-            <div class="wallet-connect">
-                <h3>💎 TON Wallet</h3>
-                <p>Connect your wallet to withdraw rewards</p>
-                <div id="ton-connect"></div>
-            </div>
-
-            <!-- Stats -->
-            <div class="stats-grid">
-                <div class="stat-card">
-                    <div class="stat-number number-format" id="tasksCompleted">0</div>
-                    <div class="stat-label">Tasks Done</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-number number-format" id="totalEarned">0</div>
-                    <div class="stat-label">Total Earned</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-number number-format" id="referralsCount">0</div>
-                    <div class="stat-label">Referrals</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-number number-format" id="spinCount">0</div>
-                    <div class="stat-label">Spins Left</div>
-                </div>
-            </div>
-
-            <!-- Ads Section -->
-            <div class="card">
-                <h3>📺 Watch Ads</h3>
-                <p>Watch ads to earn 10 points each. Daily limit: 50 ads</p>
-                <div style="margin: 15px 0;">
-                    <div class="progress-bar">
-                        <div class="progress-fill" id="adsProgress" style="width: 0%"></div>
+                <!-- Lucky Code Section -->
+                <div class="section">
+                    <div class="section-title">
+                        <span class="material-icons">redeem</span>
+                        Lucky Code
                     </div>
-                    <div style="text-align: center; margin-top: 5px; font-size: 14px;">
-                        <span id="adsWatched">0</span>/50 ads today
+                    <div class="form-group">
+                        <input type="text" id="luckyCodeInput" placeholder="Enter lucky code" style="text-transform: uppercase;">
                     </div>
-                </div>
-                <div class="countdown" id="adsCountdown"></div>
-                <button id="watchAdBtn" class="btn btn-primary" onclick="watchAd()">
-                    Watch Ad (+10 Points)
-                </button>
-            </div>
-        </div>
-
-        <!-- Tasks Page -->
-        <div id="tasks" class="page hidden">
-            <h2>📝 Available Tasks</h2>
-            <div id="tasksList"></div>
-            
-            <div class="card" style="margin-top: 20px;">
-                <h3>➕ Add Your Task</h3>
-                <div class="task-form">
-                    <div class="input-group">
-                        <label>Task Title</label>
-                        <input type="text" id="newTaskTitle" placeholder="Enter task title">
-                    </div>
-                    <div class="input-group">
-                        <label>Description</label>
-                        <textarea id="newTaskDescription" placeholder="Describe your task" rows="3"></textarea>
-                    </div>
-                    <div class="input-group">
-                        <label>Task URL</label>
-                        <input type="url" id="newTaskUrl" placeholder="https://example.com">
-                    </div>
-                    <div class="input-group">
-                        <label>Total Impressions (100-5000)</label>
-                        <input type="number" id="newTaskImpressions" min="100" max="5000" placeholder="1000">
-                    </div>
-                    <div class="cost-display">
-                        <div class="cost-amount" id="taskCost">0.1 TON</div>
-                        <div style="font-size: 14px; color: #666;">Total Cost (0.1 TON per 100 impressions)</div>
-                    </div>
-                    <button class="btn btn-primary" onclick="createUserTask()">
-                        Create Task & Pay
+                    <button id="redeemCodeBtn" class="btn">
+                        <span class="material-icons">card_giftcard</span>
+                        Redeem Code
                     </button>
                 </div>
-            </div>
 
-            <h3 style="margin-top: 30px;">📊 My Tasks</h3>
-            <div id="userTasksList"></div>
-        </div>
-
-        <!-- Lucky Page -->
-        <div id="lucky" class="page hidden">
-            <h2>🍀 Lucky Codes</h2>
-            <div class="card">
-                <h3>Enter Lucky Code</h3>
-                <div class="input-group">
-                    <input type="text" id="luckyCodeInput" placeholder="Enter lucky code" style="text-transform: uppercase;">
-                </div>
-                <button class="btn btn-primary" onclick="redeemLuckyCode()">
-                    🎯 Redeem Code
-                </button>
-            </div>
-        </div>
-
-        <!-- Spin Page -->
-        <div id="spin" class="page hidden">
-            <h2>🎯 Spin Wheel</h2>
-            <div class="card">
-                <p style="text-align: center; margin-bottom: 20px;">
-                    Complete tasks to earn spins! Each spin can win 100-500 points!
-                </p>
-                <div class="spinner-container">
-                    <div class="spinner" id="spinWheel">
-                        <div class="spinner-pointer"></div>
-                        <div class="spinner-inner">
-                            <div id="spinResult">SPIN</div>
+                <!-- Quick Stats -->
+                <div class="section">
+                    <div class="section-title">
+                        <span class="material-icons">analytics</span>
+                        Your Stats
+                    </div>
+                    <div class="stats-grid">
+                        <div class="stat-item">
+                            <div class="stat-number" id="completedTasksCount">0</div>
+                            <div class="stat-label">Tasks Done</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number" id="totalEarnedPoints">0</div>
+                            <div class="stat-label">Total Earned</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number" id="referralCount">0</div>
+                            <div class="stat-label">Referrals</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number" id="dailyAdsCount">0/50</div>
+                            <div class="stat-label">Ads Today</div>
                         </div>
                     </div>
-                    <button class="btn btn-primary" id="spinBtn" onclick="spinWheel()">
-                        🎯 Spin (1 spin available)
+                </div>
+            </div>
+
+            <!-- Tasks Tab -->
+            <div id="tasks" class="tab-content hidden">
+                <div class="section">
+                    <div class="section-title">
+                        <span class="material-icons">assignment</span>
+                        Available Tasks
+                    </div>
+                    <div id="tasksList" class="grid"></div>
+                </div>
+
+                <div class="section">
+                    <div class="section-title">
+                        <span class="material-icons">history</span>
+                        Completed Tasks
+                    </div>
+                    <div id="completedTasksList"></div>
+                </div>
+            </div>
+
+            <!-- Add Task Tab -->
+            <div id="add-task" class="tab-content hidden">
+                <div class="section">
+                    <div class="section-title">
+                        <span class="material-icons">add_task</span>
+                        Create Your Task
+                    </div>
+                    <form id="userTaskForm">
+                        <div class="form-group">
+                            <label>Task Title</label>
+                            <input type="text" id="userTaskTitle" required placeholder="Enter task title">
+                        </div>
+                        <div class="form-group">
+                            <label>Task Description</label>
+                            <textarea id="userTaskDescription" rows="3" required placeholder="Describe your task"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label>Task URL</label>
+                            <input type="url" id="userTaskUrl" required placeholder="https://example.com">
+                        </div>
+                        <div class="form-group">
+                            <label>Impressions (100-5000)</label>
+                            <input type="number" id="taskImpressions" min="100" max="5000" required placeholder="1000">
+                            <small style="color: #666;">Per 100 impressions = 0.1 TON</small>
+                        </div>
+                        <div class="form-group">
+                            <label>Total Cost: <span id="totalCost" class="ton-amount">0.1 TON</span></label>
+                            <small>Reward will be fixed at 100 points</small>
+                        </div>
+                        
+                        <div id="ton-connect"></div>
+                        
+                        <button type="submit" class="btn">
+                            <span class="material-icons">publish</span>
+                            Create & Pay
+                        </button>
+                    </form>
+                </div>
+
+                <div class="section">
+                    <div class="section-title">
+                        <span class="material-icons">list</span>
+                        My Tasks
+                    </div>
+                    <div id="userTasksList"></div>
+                </div>
+            </div>
+
+            <!-- Spin Tab -->
+            <div id="spin" class="tab-content hidden">
+                <div class="section">
+                    <div class="section-title">
+                        <span class="material-icons">casino</span>
+                        Spin Wheel
+                    </div>
+                    <div style="text-align: center;">
+                        <p>Complete tasks to earn spins! Each task completion = 1 spin</p>
+                        <div style="margin: 20px 0;">
+                            <strong>Available Spins: <span id="availableSpins" style="color: #4facfe;">0</span></strong>
+                        </div>
+                        <div class="spin-wheel" id="spinWheel">
+                            <span>SPIN</span>
+                        </div>
+                        <div id="spinResult" style="margin-top: 20px; font-weight: 600; color: #4facfe;"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Referral Tab -->
+            <div id="referral" class="tab-content hidden">
+                <div class="section">
+                    <div class="section-title">
+                        <span class="material-icons">share</span>
+                        Referral Program
+                    </div>
+                    <p>Earn 20% of your referrals' earnings!</p>
+                    <div style="margin: 15px 0;">
+                        <label>Your Referral Link:</label>
+                        <div class="referral-link" id="referralLink">Loading...</div>
+                        <button onclick="copyReferralLink()" class="btn" style="margin-top: 10px;">
+                            <span class="material-icons">content_copy</span>
+                            Copy Link
+                        </button>
+                    </div>
+                    
+                    <div class="stats-grid">
+                        <div class="stat-item">
+                            <div class="stat-number" id="totalReferrals">0</div>
+                            <div class="stat-label">Total Referrals</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number" id="referralEarnings">0</div>
+                            <div class="stat-label">Referral Earnings</div>
+                        </div>
+                    </div>
+                    
+                    <div class="section-title" style="margin-top: 20px;">
+                        <span class="material-icons">people</span>
+                        Your Referrals
+                    </div>
+                    <div id="referralsList"></div>
+                </div>
+            </div>
+
+            <!-- Ads Tab -->
+            <div id="ads" class="tab-content hidden">
+                <div class="section">
+                    <div class="section-title">
+                        <span class="material-icons">play_circle_filled</span>
+                        Watch Ads
+                    </div>
+                    <div class="ads-counter">
+                        Today's Ads: <span id="todayAdsCount">0</span>/50
+                    </div>
+                    <p>Watch ads to earn 10 points each. Daily limit resets every 24 hours.</p>
+                    <button id="watchAdBtn" class="btn">
+                        <span class="material-icons">play_arrow</span>
+                        Watch Ad (+10 points)
                     </button>
+                    <div id="adCooldown" style="margin-top: 10px; text-align: center;"></div>
+                </div>
+            </div>
+
+            <!-- Profile Tab -->
+            <div id="profile" class="tab-content hidden">
+                <div class="section">
+                    <div class="section-title">
+                        <span class="material-icons">account_circle</span>
+                        Profile
+                    </div>
+                    <div class="stats-grid">
+                        <div class="stat-item">
+                            <div class="stat-number" id="profileBalance">0</div>
+                            <div class="stat-label">Balance</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number" id="profileTasks">0</div>
+                            <div class="stat-label">Tasks Done</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number" id="profileReferrals">0</div>
+                            <div class="stat-label">Referrals</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number" id="profileSpins">0</div>
+                            <div class="stat-label">Total Spins</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Withdrawal Section -->
+                <div class="section">
+                    <div class="section-title">
+                        <span class="material-icons">account_balance_wallet</span>
+                        Withdraw
+                    </div>
+                    <form id="withdrawForm">
+                        <div class="form-group">
+                            <label>TON Wallet Address</label>
+                            <input type="text" id="withdrawAddress" required placeholder="Enter TON address">
+                        </div>
+                        <div class="form-group">
+                            <label>Amount (Points)</label>
+                            <input type="number" id="withdrawAmount" min="100" required placeholder="100">
+                            <small>100 points = 0.000078 TON</small>
+                        </div>
+                        <div style="margin: 10px 0;">
+                            <strong>You will receive: <span id="tonReceive" class="ton-amount">0.000078 TON</span></strong>
+                        </div>
+                        <button type="submit" class="btn">
+                            <span class="material-icons">send</span>
+                            Request Withdrawal
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Withdrawal History -->
+                <div class="section">
+                    <div class="section-title">
+                        <span class="material-icons">history</span>
+                        Withdrawal History
+                    </div>
+                    <div id="withdrawalHistory"></div>
+                </div>
+
+                <!-- Support Links -->
+                <div class="section">
+                    <div class="section-title">
+                        <span class="material-icons">help</span>
+                        Support
+                    </div>
+                    <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                        <a href="https://t.me/pixelfrog_pxf" target="_blank" class="btn" style="flex: 1; text-decoration: none;">
+                            <span class="material-icons">support_agent</span>
+                            Support
+                        </a>
+                        <a href="https://t.me/Pixelfrogchat" target="_blank" class="btn" style="flex: 1; text-decoration: none;">
+                            <span class="material-icons">code</span>
+                            Developer
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <!-- Refer Page -->
-        <div id="refer" class="page hidden">
-            <h2>👥 Referral Program</h2>
-            <div class="card">
-                <h3>Your Referral Link</h3>
-                <div class="refer-code">
-                    <div class="refer-link" id="referralLink">Loading...</div>
-                </div>
-                <button class="btn btn-primary" onclick="copyReferralLink()">
-                    📋 Copy Link
-                </button>
-                <button class="btn btn-success" onclick="shareReferralLink()" style="margin-top: 10px;">
-                    📤 Share Link
-                </button>
+        <!-- Bottom Navigation -->
+        <div class="bottom-nav">
+            <div class="nav-item active" onclick="showTab('home')">
+                <span class="material-icons">home</span>
+                <span>Home</span>
             </div>
-
-            <div class="card">
-                <h3>Referral Stats</h3>
-                <div class="stats-grid">
-                    <div class="stat-card">
-                        <div class="stat-number number-format" id="totalReferrals">0</div>
-                        <div class="stat-label">Total Referrals</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-number number-format" id="referralEarnings">0</div>
-                        <div class="stat-label">Earnings (20%)</div>
-                    </div>
-                </div>
+            <div class="nav-item" onclick="showTab('tasks')">
+                <span class="material-icons">assignment</span>
+                <span>Tasks</span>
             </div>
-
-            <div class="card">
-                <h3>Referral List</h3>
-                <div id="referralsList">
-                    <p style="text-align: center; color: #666;">No referrals yet</p>
-                </div>
+            <div class="nav-item" onclick="showTab('add-task')">
+                <span class="material-icons">add_circle</span>
+                <span>Add Task</span>
             </div>
-        </div>
-
-        <!-- Profile Page -->
-        <div id="profile" class="page hidden">
-            <h2>👤 Profile</h2>
-            <div class="card">
-                <h3>💰 Withdrawal</h3>
-                <p>Convert your points to TON tokens</p>
-                <p style="font-size: 14px; color: #666; margin-bottom: 15px;">
-                    Rate: 100 points = 0.000078 TON
-                </p>
-                <div class="input-group">
-                    <label>TON Address</label>
-                    <input type="text" id="withdrawAddress" placeholder="Enter your TON address">
-                </div>
-                <div class="input-group">
-                    <label>Amount (Points)</label>
-                    <input type="number" id="withdrawAmount" placeholder="Minimum 1000 points" min="1000">
-                </div>
-                <div class="cost-display">
-                    <div class="cost-amount" id="withdrawTon">0.000078 TON</div>
-                    <div style="font-size: 14px; color: #666;">You will receive</div>
-                </div>
-                <button class="btn btn-primary" onclick="requestWithdrawal()">
-                    💸 Request Withdrawal
-                </button>
+            <div class="nav-item" onclick="showTab('spin')">
+                <span class="material-icons">casino</span>
+                <span>Spin</span>
             </div>
-
-            <div class="card">
-                <h3>📊 Transaction History</h3>
-                <div id="transactionHistory">
-                    <p style="text-align: center; color: #666;">No transactions yet</p>
-                </div>
+            <div class="nav-item" onclick="showTab('referral')">
+                <span class="material-icons">share</span>
+                <span>Referral</span>
             </div>
-
-            <div class="card">
-                <h3>🛠️ Support</h3>
-                <button class="btn btn-primary" onclick="openSupport()" style="margin-bottom: 10px;">
-                    💬 Support Chat
-                </button>
-                <button class="btn btn-success" onclick="openDeveloper()">
-                    👨‍💻 Contact Developer
-                </button>
+            <div class="nav-item" onclick="showTab('ads')">
+                <span class="material-icons">play_circle_filled</span>
+                <span>Ads</span>
+            </div>
+            <div class="nav-item" onclick="showTab('profile')">
+                <span class="material-icons">account_circle</span>
+                <span>Profile</span>
             </div>
         </div>
     </div>
 
-    <!-- Verification Modal -->
-    <div id="verificationModal" class="verification-screen hidden">
-        <div class="verification-content">
-            <h3>⏳ Task Verification</h3>
-            <p>Please wait while we verify your task completion...</p>
-            <div class="verification-timer" id="verificationTimer">5</div>
-            <p>seconds remaining</p>
+    <!-- Task Verification Modal -->
+    <div id="taskModal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-title">Task Verification</div>
+            <div id="taskModalContent"></div>
         </div>
     </div>
 
@@ -743,196 +805,272 @@
         firebase.initializeApp(firebaseConfig);
         const database = firebase.database();
 
-        // TON Connect Setup
-        const tonConnectUI = new TON_CONNECT_UI.TonConnectUI({
-            manifestUrl: 'https://raw.githubusercontent.com/ton-community/tutorials/main/03-client/test/public/tonconnect-manifest.json',
-            buttonRootId: 'ton-connect'
-        });
-
-        tonConnectUI.uiOptions = {
-            actionsConfiguration: {
-                twaReturnUrl: 'https://t.me/EarnFluxBot/app'
-            }
-        };
-
-        // Global Variables
+        // Global variables
         let currentUser = null;
         let userBalance = 0;
-        let userSpins = 0;
-        let adsWatched = 0;
-        let lastAdWatch = 0;
+        let availableSpins = 0;
+        let dailyAdsCount = 0;
+        let tonConnectUI = null;
+        let currentTab = 'home';
 
-        // Telegram WebApp Integration
-        if (window.Telegram && window.Telegram.WebApp) {
-            const tgApp = window.Telegram.WebApp;
-            tgApp.ready();
-            
-            const user = tgApp.initDataUnsafe?.user;
-            if (user) {
-                currentUser = {
-                    id: user.id,
-                    username: user.username || `user${user.id}`,
-                    first_name: user.first_name || 'User',
-                    photo_url: user.photo_url || `https://via.placeholder.com/50/4facfe/ffffff?text=${user.first_name?.charAt(0) || 'U'}`
-                };
-                
-                document.getElementById('userAvatar').src = currentUser.photo_url;
-                document.getElementById('userName').textContent = currentUser.first_name;
-                document.getElementById('userId').textContent = `@${currentUser.username}`;
-                
-                // Initialize user data
-                initializeUser();
-            } else {
-                // Demo user for testing
-                currentUser = {
-                    id: Math.floor(Math.random() * 1000000),
-                    username: 'demo_user',
-                    first_name: 'Demo User',
-                    photo_url: 'https://via.placeholder.com/50/4facfe/ffffff?text=D'
-                };
-                initializeUser();
-            }
-        } else {
-            // Fallback for testing outside Telegram
-            currentUser = {
-                id: Math.floor(Math.random() * 1000000),
-                username: 'test_user',
-                first_name: 'Test User',
-                photo_url: 'https://via.placeholder.com/50/4facfe/ffffff?text=T'
+        // Initialize TON Connect
+        function initTonConnect() {
+            tonConnectUI = new TON_CONNECT_UI.TonConnectUI({
+                manifestUrl: 'https://ton-connect.github.io/demo-dapp-with-react-ui/tonconnect-manifest.json',
+                buttonRootId: 'ton-connect'
+            });
+
+            tonConnectUI.uiOptions = {
+                actionsConfiguration: {
+                    twaReturnUrl: 'https://t.me/EarnFluxBot/app'
+                }
             };
-            initializeUser();
         }
 
-        // Initialize User
-        async function initializeUser() {
+        // Initialize Telegram WebApp
+        function initTelegramWebApp() {
+            if (window.Telegram?.WebApp) {
+                const tg = window.Telegram.WebApp;
+                tg.ready();
+                tg.expand();
+
+                const user = tg.initDataUnsafe?.user;
+                if (user) {
+                    currentUser = {
+                        chatId: user.id.toString(),
+                        firstName: user.first_name,
+                        lastName: user.last_name,
+                        username: user.username,
+                        photoUrl: user.photo_url
+                    };
+                    
+                    initUser();
+                } else {
+                    // Fallback for testing
+                    currentUser = {
+                        chatId: 'demo_' + Date.now(),
+                        firstName: 'Demo',
+                        lastName: 'User',
+                        username: 'demo_user'
+                    };
+                    initUser();
+                }
+
+                // Handle start parameter for referrals
+                const startParam = tg.initDataUnsafe?.start_param;
+                if (startParam && startParam.startsWith('ref_')) {
+                    const referrerId = startParam.substring(4);
+                    handleReferral(referrerId);
+                }
+            } else {
+                // Fallback for testing
+                currentUser = {
+                    chatId: 'demo_' + Date.now(),
+                    firstName: 'Demo',
+                    lastName: 'User',
+                    username: 'demo_user'
+                };
+                initUser();
+            }
+        }
+
+        // Initialize user
+        async function initUser() {
             if (!currentUser) return;
 
             try {
-                const userRef = database.ref(`users/${currentUser.id}`);
+                const userRef = database.ref(`users/${currentUser.chatId}`);
                 const snapshot = await userRef.once('value');
                 
                 if (!snapshot.exists()) {
-                    // New user
+                    // Create new user
                     const userData = {
                         ...currentUser,
                         balance: 0,
+                        createdAt: Date.now(),
+                        lastActive: Date.now(),
+                        completedTasks: 0,
+                        referralCount: 0,
                         spins: 0,
-                        tasksCompleted: 0,
-                        totalEarned: 0,
-                        referrals: 0,
-                        adsWatched: 0,
-                        lastAdWatch: 0,
-                        lastDailyCheckin: 0,
-                        referredBy: getReferralFromUrl(),
-                        createdAt: Date.now()
+                        totalSpins: 0,
+                        dailyCheckIns: 0,
+                        lastDailyCheck: 0,
+                        adsWatchedToday: 0,
+                        lastAdReset: Date.now()
                     };
-                    
                     await userRef.set(userData);
-                    
-                    // Handle referral bonus
-                    if (userData.referredBy) {
-                        await handleReferralBonus(userData.referredBy);
-                    }
+                } else {
+                    // Update last active
+                    await userRef.update({ lastActive: Date.now() });
                 }
-                
-                // Load user data
+
                 await loadUserData();
-                
-                // Setup referral link
-                setupReferralLink();
-                
-                // Load tasks
-                loadTasks();
-                
-                // Setup auto-refresh
-                setInterval(loadUserData, 5000);
-                
+                updateUI();
             } catch (error) {
                 console.error('Error initializing user:', error);
             }
         }
 
-        // Load User Data
+        // Handle referral
+        async function handleReferral(referrerId) {
+            if (!currentUser || currentUser.chatId === referrerId) return;
+
+            try {
+                const userRef = database.ref(`users/${currentUser.chatId}`);
+                const snapshot = await userRef.once('value');
+                
+                if (!snapshot.exists() || !snapshot.val().referredBy) {
+                    // Set referrer
+                    await userRef.update({ referredBy: referrerId });
+                    
+                    // Update referrer's count
+                    const referrerRef = database.ref(`users/${referrerId}`);
+                    const referrerSnapshot = await referrerRef.once('value');
+                    
+                    if (referrerSnapshot.exists()) {
+                        const referrerData = referrerSnapshot.val();
+                        await referrerRef.update({
+                            referralCount: (referrerData.referralCount || 0) + 1
+                        });
+                    }
+                }
+            } catch (error) {
+                console.error('Error handling referral:', error);
+            }
+        }
+
+        // Load user data
         async function loadUserData() {
             if (!currentUser) return;
 
             try {
-                const snapshot = await database.ref(`users/${currentUser.id}`).once('value');
-                const userData = snapshot.val();
-                
-                if (userData) {
-                    userBalance = userData.balance || 0;
-                    userSpins = userData.spins || 0;
-                    adsWatched = userData.adsWatched || 0;
-                    lastAdWatch = userData.lastAdWatch || 0;
-                    
-                    // Update UI
-                    document.getElementById('userBalance').textContent = formatNumber(userBalance);
-                    document.getElementById('tasksCompleted').textContent = formatNumber(userData.tasksCompleted || 0);
-                    document.getElementById('totalEarned').textContent = formatNumber(userData.totalEarned || 0);
-                    document.getElementById('referralsCount').textContent = formatNumber(userData.referrals || 0);
-                    document.getElementById('spinCount').textContent = formatNumber(userSpins);
-                    
-                    // Update ads progress
-                    const adsToday = getAdsWatchedToday();
-                    document.getElementById('adsWatched').textContent = adsToday;
-                    document.getElementById('adsProgress').style.width = `${(adsToday / 50) * 100}%`;
-                    
-                    // Update spin button
-                    const spinBtn = document.getElementById('spinBtn');
-                    if (userSpins > 0) {
-                        spinBtn.textContent = `🎯 Spin (${userSpins} spins available)`;
-                        spinBtn.disabled = false;
-                        spinBtn.className = 'btn btn-primary';
-                    } else {
-                        spinBtn.textContent = '🎯 No spins available';
-                        spinBtn.disabled = true;
-                        spinBtn.className = 'btn btn-disabled';
-                    }
-                    
-                    // Update daily checkin
-                    updateDailyCheckinButton();
-                    
-                    // Update ads button
-                    updateAdsButton();
+                const userSnapshot = await database.ref(`users/${currentUser.chatId}`).once('value');
+                const userData = userSnapshot.val() || {};
+
+                userBalance = userData.balance || 0;
+                availableSpins = userData.spins || 0;
+                dailyAdsCount = userData.adsWatchedToday || 0;
+
+                // Reset daily ads if needed
+                const lastAdReset = userData.lastAdReset || 0;
+                if (Date.now() - lastAdReset > 24 * 60 * 60 * 1000) {
+                    dailyAdsCount = 0;
+                    await database.ref(`users/${currentUser.chatId}`).update({
+                        adsWatchedToday: 0,
+                        lastAdReset: Date.now()
+                    });
                 }
+
+                updateUserInfo();
+                updateStats();
             } catch (error) {
                 console.error('Error loading user data:', error);
             }
         }
 
-        // Navigation
-        function showPage(pageName) {
-            document.querySelectorAll('.page').forEach(page => {
-                page.classList.add('hidden');
-            });
-            document.querySelectorAll('.nav-item').forEach(nav => {
-                nav.classList.remove('active');
-            });
+        // Update user info display
+        function updateUserInfo() {
+            document.getElementById('userName').textContent = currentUser?.firstName || 'User';
+            document.getElementById('userInfo').textContent = `@${currentUser?.username || 'username'}`;
+            document.getElementById('userBalance').textContent = formatNumber(userBalance);
             
-            document.getElementById(pageName).classList.remove('hidden');
-            event.target.classList.add('active');
-            
-            if (pageName === 'tasks') {
-                loadTasks();
-                loadUserTasks();
-            } else if (pageName === 'refer') {
-                loadReferralData();
-            } else if (pageName === 'profile') {
-                loadTransactionHistory();
+            const profilePic = document.getElementById('profilePic');
+            if (currentUser?.photoUrl) {
+                profilePic.innerHTML = `<img src="${currentUser.photoUrl}" alt="Profile" style="width: 100%; height: 100%; border-radius: 50%;">`;
+            } else {
+                profilePic.textContent = (currentUser?.firstName || 'U')[0].toUpperCase();
             }
         }
 
-        // Task Management
+        // Update stats
+        async function updateStats() {
+            try {
+                const [completionsSnapshot, userSnapshot] = await Promise.all([
+                    database.ref('taskCompletions').orderByChild('userId').equalTo(currentUser.chatId).once('value'),
+                    database.ref(`users/${currentUser.chatId}`).once('value')
+                ]);
+
+                const completions = completionsSnapshot.val() || {};
+                const userData = userSnapshot.val() || {};
+
+                const completedTasksCount = Object.keys(completions).length;
+                const totalEarnedPoints = Object.values(completions).reduce((sum, comp) => sum + (comp.reward || 0), 0);
+
+                document.getElementById('completedTasksCount').textContent = formatNumber(completedTasksCount);
+                document.getElementById('totalEarnedPoints').textContent = formatNumber(totalEarnedPoints);
+                document.getElementById('referralCount').textContent = formatNumber(userData.referralCount || 0);
+                document.getElementById('dailyAdsCount').textContent = `${dailyAdsCount}/50`;
+                document.getElementById('availableSpins').textContent = formatNumber(availableSpins);
+
+                // Profile tab stats
+                document.getElementById('profileBalance').textContent = formatNumber(userBalance);
+                document.getElementById('profileTasks').textContent = formatNumber(completedTasksCount);
+                document.getElementById('profileReferrals').textContent = formatNumber(userData.referralCount || 0);
+                document.getElementById('profileSpins').textContent = formatNumber(userData.totalSpins || 0);
+                document.getElementById('todayAdsCount').textContent = dailyAdsCount;
+            } catch (error) {
+                console.error('Error updating stats:', error);
+            }
+        }
+
+        // Tab management
+        function showTab(tabName) {
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.add('hidden');
+            });
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.classList.remove('active');
+            });
+
+            document.getElementById(tabName).classList.remove('hidden');
+            event.target.classList.add('active');
+            currentTab = tabName;
+
+            loadTabContent(tabName);
+        }
+
+        function loadTabContent(tabName) {
+            switch(tabName) {
+                case 'home':
+                    updateStats();
+                    break;
+                case 'tasks':
+                    loadTasks();
+                    loadCompletedTasks();
+                    break;
+                case 'add-task':
+                    loadUserTasks();
+                    break;
+                case 'referral':
+                    loadReferralData();
+                    break;
+                case 'profile':
+                    loadWithdrawalHistory();
+                    break;
+            }
+        }
+
+        // Load tasks
         async function loadTasks() {
             try {
-                const snapshot = await database.ref('tasks').orderByChild('status').equalTo('active').once('value');
-                const tasks = snapshot.val() || {};
-                
+                const tasksSnapshot = await database.ref('tasks').orderByChild('status').equalTo('active').once('value');
+                const tasks = tasksSnapshot.val() || {};
+
+                // Get user's completed tasks
+                const completionsSnapshot = await database.ref('taskCompletions').orderByChild('userId').equalTo(currentUser.chatId).once('value');
+                const completedTaskIds = Object.values(completionsSnapshot.val() || {}).map(comp => comp.taskId);
+
                 const tasksList = document.getElementById('tasksList');
                 tasksList.innerHTML = '';
-                
-                Object.entries(tasks).forEach(([id, task]) => {
+
+                const availableTasks = Object.entries(tasks).filter(([id, task]) => !completedTaskIds.includes(id));
+
+                if (availableTasks.length === 0) {
+                    tasksList.innerHTML = '<p style="text-align: center; color: #666; grid-column: 1/-1;">No tasks available</p>';
+                    return;
+                }
+
+                availableTasks.forEach(([id, task]) => {
                     const taskCard = createTaskCard(id, task);
                     tasksList.appendChild(taskCard);
                 });
@@ -941,690 +1079,670 @@
             }
         }
 
+        // Create task card
         function createTaskCard(id, task) {
             const card = document.createElement('div');
-            card.className = 'task-card card';
-            
-            const isCompleted = localStorage.getItem(`task_${id}`) === 'completed';
-            
+            card.className = 'task-card';
             card.innerHTML = `
-                <div class="task-header">
-                    <div class="task-title">${task.title}</div>
-                    <div class="reward-badge">🎁 +${task.reward}</div>
-                </div>
+                <div class="task-title">${task.title}</div>
                 <div class="task-description">${task.description}</div>
-                <button class="btn ${isCompleted ? 'btn-disabled' : 'btn-primary'}" 
-                        ${isCompleted ? 'disabled' : `onclick="startTask('${id}', '${task.url}', ${task.reward})"`}>
-                    ${isCompleted ? '✅ Completed' : '🚀 Start Task'}
+                <div class="task-reward">
+                    <span class="material-icons" style="font-size: 16px;">star</span>
+                    ${task.reward} points
+                </div>
+                <button onclick="startTask('${id}', '${task.url}', ${task.reward})" class="btn">
+                    <span class="material-icons">play_arrow</span>
+                    Start Task
                 </button>
             `;
-            
             return card;
         }
 
-        async function startTask(taskId, url, reward) {
+        // Start task
+        async function startTask(taskId, taskUrl, reward) {
             // Open task URL
-            window.open(url, '_blank');
-            
-            // Show verification modal
-            showVerificationModal(taskId, reward);
-        }
+            window.open(taskUrl, '_blank');
 
-        function showVerificationModal(taskId, reward) {
-            const modal = document.getElementById('verificationModal');
+            // Show verification modal
+            const modal = document.getElementById('taskModal');
+            const modalContent = document.getElementById('taskModalContent');
+            
+            modalContent.innerHTML = `
+                <p>Task started! Please complete the task and wait for verification.</p>
+                <div class="countdown" id="countdownTimer">5</div>
+                <p>Verification will complete automatically in <span id="countdownText">5</span> seconds.</p>
+                <button onclick="closeTaskModal()" class="btn btn-danger">
+                    <span class="material-icons">close</span>
+                    Cancel
+                </button>
+            `;
+            
             modal.classList.remove('hidden');
-            
+
+            // Start countdown
             let countdown = 5;
-            const timer = document.getElementById('verificationTimer');
-            
-            const interval = setInterval(() => {
+            const countdownInterval = setInterval(() => {
                 countdown--;
-                timer.textContent = countdown;
+                document.getElementById('countdownTimer').textContent = countdown;
+                document.getElementById('countdownText').textContent = countdown;
                 
                 if (countdown <= 0) {
-                    clearInterval(interval);
+                    clearInterval(countdownInterval);
                     completeTask(taskId, reward);
-                    modal.classList.add('hidden');
                 }
             }, 1000);
         }
 
+        // Complete task
         async function completeTask(taskId, reward) {
             try {
-                // Mark task as completed locally
-                localStorage.setItem(`task_${taskId}`, 'completed');
-                
-                // Update user balance and stats
-                const userRef = database.ref(`users/${currentUser.id}`);
-                await userRef.update({
-                    balance: userBalance + reward,
-                    spins: userSpins + 1,
-                    tasksCompleted: (await userRef.child('tasksCompleted').once('value')).val() + 1,
-                    totalEarned: (await userRef.child('totalEarned').once('value')).val() + reward
-                });
-                
-                // Record task completion
-                await database.ref('taskCompletions').push({
-                    userId: currentUser.id,
+                const completionData = {
+                    userId: currentUser.chatId,
                     taskId: taskId,
                     reward: reward,
                     timestamp: Date.now()
+                };
+
+                const newCompletionRef = database.ref('taskCompletions').push();
+                await newCompletionRef.set(completionData);
+
+                // Update user balance and spins
+                const userRef = database.ref(`users/${currentUser.chatId}`);
+                const userSnapshot = await userRef.once('value');
+                const userData = userSnapshot.val() || {};
+
+                const newBalance = (userData.balance || 0) + reward;
+                const newSpins = (userData.spins || 0) + 1;
+                const newCompletedTasks = (userData.completedTasks || 0) + 1;
+                const newTotalSpins = (userData.totalSpins || 0) + 1;
+
+                await userRef.update({
+                    balance: newBalance,
+                    spins: newSpins,
+                    completedTasks: newCompletedTasks,
+                    totalSpins: newTotalSpins
                 });
-                
+
                 // Update task completion count
-                const taskRef = database.ref(`tasks/${taskId}/completions`);
-                const completions = (await taskRef.once('value')).val() || 0;
-                await taskRef.set(completions + 1);
-                
-                alert(`🎉 Task completed! You earned ${reward} points and 1 spin!`);
-                
-                // Reload tasks and user data
+                const taskRef = database.ref(`tasks/${taskId}`);
+                const taskSnapshot = await taskRef.once('value');
+                const taskData = taskSnapshot.val() || {};
+                await taskRef.update({
+                    completions: (taskData.completions || 0) + 1
+                });
+
+                // Handle referral bonus
+                if (userData.referredBy) {
+                    const referralBonus = Math.floor(reward * 0.2);
+                    const referrerRef = database.ref(`users/${userData.referredBy}`);
+                    const referrerSnapshot = await referrerRef.once('value');
+                    
+                    if (referrerSnapshot.exists()) {
+                        const referrerData = referrerSnapshot.val();
+                        await referrerRef.update({
+                            balance: (referrerData.balance || 0) + referralBonus
+                        });
+
+                        // Log referral earning
+                        const referralEarningRef = database.ref('referralEarnings').push();
+                        await referralEarningRef.set({
+                            referrerId: userData.referredBy,
+                            referredUserId: currentUser.chatId,
+                            amount: referralBonus,
+                            timestamp: Date.now(),
+                            source: 'task_completion'
+                        });
+                    }
+                }
+
+                userBalance = newBalance;
+                availableSpins = newSpins;
+
+                showAlert(`Task completed! You earned ${reward} points and 1 spin!`, 'success');
+                closeTaskModal();
+                updateUserInfo();
+                updateStats();
                 loadTasks();
-                loadUserData();
-                
+                loadCompletedTasks();
             } catch (error) {
                 console.error('Error completing task:', error);
-                alert('❌ Error completing task. Please try again.');
+                showAlert('Error completing task. Please try again.', 'error');
             }
         }
 
-        // Lucky Code System
-        async function redeemLuckyCode() {
-            const code = document.getElementById('luckyCodeInput').value.toUpperCase().trim();
-            
+        // Close task modal
+        function closeTaskModal() {
+            document.getElementById('taskModal').classList.add('hidden');
+        }
+
+        // Load completed tasks
+        async function loadCompletedTasks() {
+            try {
+                const completionsSnapshot = await database.ref('taskCompletions').orderByChild('userId').equalTo(currentUser.chatId).once('value');
+                const completions = completionsSnapshot.val() || {};
+
+                const completedTasksList = document.getElementById('completedTasksList');
+                completedTasksList.innerHTML = '';
+
+                if (Object.keys(completions).length === 0) {
+                    completedTasksList.innerHTML = '<p style="text-align: center; color: #666;">No completed tasks yet</p>';
+                    return;
+                }
+
+                // Get task details
+                const taskIds = [...new Set(Object.values(completions).map(comp => comp.taskId))];
+                const tasksPromises = taskIds.map(id => database.ref(`tasks/${id}`).once('value'));
+                const tasksSnapshots = await Promise.all(tasksPromises);
+                
+                const tasksData = {};
+                tasksSnapshots.forEach((snapshot, index) => {
+                    if (snapshot.exists()) {
+                        tasksData[taskIds[index]] = snapshot.val();
+                    }
+                });
+
+                Object.entries(completions).reverse().forEach(([id, completion]) => {
+                    const task = tasksData[completion.taskId];
+                    if (!task) return;
+
+                    const listItem = document.createElement('div');
+                    listItem.className = 'list-item';
+                    listItem.innerHTML = `
+                        <div>
+                            <div style="font-weight: 600;">${task.title}</div>
+                            <div style="font-size: 12px; color: #666;">${new Date(completion.timestamp).toLocaleString()}</div>
+                        </div>
+                        <div class="task-reward">
+                            <span class="material-icons" style="font-size: 16px;">star</span>
+                            ${completion.reward}
+                        </div>
+                    `;
+                    completedTasksList.appendChild(listItem);
+                });
+            } catch (error) {
+                console.error('Error loading completed tasks:', error);
+            }
+        }
+
+        // Lucky code redemption
+        document.getElementById('redeemCodeBtn').addEventListener('click', async () => {
+            const code = document.getElementById('luckyCodeInput').value.trim().toUpperCase();
             if (!code) {
-                alert('❌ Please enter a lucky code');
+                showAlert('Please enter a lucky code', 'error');
                 return;
             }
-            
+
             try {
-                const snapshot = await database.ref('luckyCodes').orderByChild('code').equalTo(code).once('value');
-                const codes = snapshot.val();
+                const codesSnapshot = await database.ref('luckyCodes').orderByChild('code').equalTo(code).once('value');
                 
-                if (!codes) {
-                    alert('❌ Invalid lucky code');
+                if (!codesSnapshot.exists()) {
+                    showAlert('Invalid lucky code', 'error');
                     return;
                 }
-                
-                const codeId = Object.keys(codes)[0];
-                const codeData = codes[codeId];
-                
+
+                const codeData = Object.values(codesSnapshot.val())[0];
+                const codeId = Object.keys(codesSnapshot.val())[0];
+
                 if (codeData.status !== 'active') {
-                    alert('❌ This lucky code is no longer active');
+                    showAlert('Lucky code is no longer active', 'error');
                     return;
                 }
-                
+
                 if (codeData.currentUses >= codeData.maxUses) {
-                    alert('❌ This lucky code has reached its usage limit');
+                    showAlert('Lucky code has reached its usage limit', 'error');
                     return;
                 }
-                
+
                 // Check if user already used this code
-                const userCodeKey = `code_${codeId}`;
-                if (localStorage.getItem(userCodeKey)) {
-                    alert('❌ You have already used this lucky code');
+                const redemptionsSnapshot = await database.ref('codeRedemptions').orderByChild('userId').equalTo(currentUser.chatId).once('value');
+                const userRedemptions = Object.values(redemptionsSnapshot.val() || {});
+                
+                if (userRedemptions.some(redemption => redemption.codeId === codeId)) {
+                    showAlert('You have already used this lucky code', 'error');
                     return;
                 }
-                
+
                 // Redeem code
-                await database.ref(`luckyCodes/${codeId}/currentUses`).set(codeData.currentUses + 1);
-                await database.ref(`users/${currentUser.id}/balance`).set(userBalance + codeData.reward);
-                
-                // Record redemption
-                await database.ref('codeRedemptions').push({
-                    userId: currentUser.id,
+                const redemptionData = {
+                    userId: currentUser.chatId,
                     codeId: codeId,
                     code: code,
                     reward: codeData.reward,
                     timestamp: Date.now()
+                };
+
+                const newRedemptionRef = database.ref('codeRedemptions').push();
+                await newRedemptionRef.set(redemptionData);
+
+                // Update user balance
+                const userRef = database.ref(`users/${currentUser.chatId}`);
+                const userSnapshot = await userRef.once('value');
+                const userData = userSnapshot.val() || {};
+
+                const newBalance = (userData.balance || 0) + codeData.reward;
+                await userRef.update({ balance: newBalance });
+
+                // Update code usage
+                await database.ref(`luckyCodes/${codeId}`).update({
+                    currentUses: (codeData.currentUses || 0) + 1
                 });
-                
-                // Mark as used locally
-                localStorage.setItem(userCodeKey, 'used');
-                
-                alert(`🎉 Lucky code redeemed! You earned ${codeData.reward} points!`);
-                
+
+                userBalance = newBalance;
                 document.getElementById('luckyCodeInput').value = '';
-                loadUserData();
-                
+
+                showAlert(`Lucky code redeemed! You earned ${codeData.reward} points!`, 'success');
+                updateUserInfo();
+                updateStats();
             } catch (error) {
                 console.error('Error redeeming lucky code:', error);
-                alert('❌ Error redeeming code. Please try again.');
+                showAlert('Error redeeming lucky code. Please try again.', 'error');
             }
-        }
-
-        // Spin Wheel System
-        async function spinWheel() {
-            if (userSpins <= 0) {
-                alert('❌ No spins available! Complete tasks to earn spins.');
-                return;
-            }
-            
-            const wheel = document.getElementById('spinWheel');
-            const result = document.getElementById('spinResult');
-            const btn = document.getElementById('spinBtn');
-            
-            btn.disabled = true;
-            btn.textContent = 'Spinning...';
-            
-            // Generate random rotation
-            const spins = 3 + Math.random() * 5; // 3-8 full rotations
-            const finalDegree = Math.random() * 360;
-            const totalRotation = spins * 360 + finalDegree;
-            
-            wheel.style.transform = `rotate(${totalRotation}deg)`;
-            wheel.classList.add('spinning');
-            
-            setTimeout(async () => {
-                // Calculate reward based on final position
-                const rewards = [100, 150, 200, 250, 300, 350, 400, 450, 500];
-                const rewardIndex = Math.floor((finalDegree / 360) * rewards.length);
-                const reward = rewards[rewardIndex] || 300;
-                
-                result.textContent = `+${reward}`;
-                
-                try {
-                    // Update user data
-                    await database.ref(`users/${currentUser.id}`).update({
-                        balance: userBalance + reward,
-                        spins: userSpins - 1,
-                        totalEarned: (await database.ref(`users/${currentUser.id}/totalEarned`).once('value')).val() + reward
-                    });
-                    
-                    alert(`🎉 You won ${reward} points!`);
-                    loadUserData();
-                    
-                } catch (error) {
-                    console.error('Error updating spin reward:', error);
-                    alert('❌ Error processing spin. Please try again.');
-                }
-                
-                wheel.classList.remove('spinning');
-                btn.disabled = false;
-                
-            }, 2000);
-        }
-
-        // Referral System
-        function setupReferralLink() {
-            const referralLink = `https://t.me/EarnFluxBot/app?startapp=ref_${btoa(currentUser.id.toString())}`;
-            document.getElementById('referralLink').textContent = referralLink;
-        }
-
-        function getReferralFromUrl() {
-            const urlParams = new URLSearchParams(window.location.search);
-            const startParam = urlParams.get('tgWebAppStartParam');
-            if (startParam && startParam.startsWith('ref_')) {
-                try {
-                    return parseInt(atob(startParam.replace('ref_', '')));
-                } catch (e) {
-                    return null;
-                }
-            }
-            return null;
-        }
-
-        async function handleReferralBonus(referrerId) {
-            try {
-                const referrerRef = database.ref(`users/${referrerId}`);
-                const referrerSnapshot = await referrerRef.once('value');
-                
-                if (referrerSnapshot.exists()) {
-                    const referrerData = referrerSnapshot.val();
-                    const bonus = Math.floor(userBalance * 0.2); // 20% bonus
-                    
-                    await referrerRef.update({
-                        balance: referrerData.balance + bonus,
-                        referrals: (referrerData.referrals || 0) + 1
-                    });
-                    
-                    // Record referral
-                    await database.ref('referralRewards').push({
-                        referrerId: referrerId,
-                        referredId: currentUser.id,
-                        bonus: bonus,
-                        timestamp: Date.now()
-                    });
-                }
-            } catch (error) {
-                console.error('Error handling referral bonus:', error);
-            }
-        }
-
-        function copyReferralLink() {
-            const link = document.getElementById('referralLink').textContent;
-            navigator.clipboard.writeText(link).then(() => {
-                alert('📋 Referral link copied to clipboard!');
-            });
-        }
-
-        function shareReferralLink() {
-            const link = document.getElementById('referralLink').textContent;
-            const text = '🚀 Join EarnFlux and earn rewards by completing tasks! Use my referral link:';
-            
-            if (navigator.share) {
-                navigator.share({
-                    title: 'Join EarnFlux',
-                    text: text,
-                    url: link
-                });
-            } else {
-                // Fallback
-                const message = `${text} ${link}`;
-                const telegramUrl = `https://t.me/share/url?url=${encodeURIComponent(link)}&text=${encodeURIComponent(text)}`;
-                window.open(telegramUrl, '_blank');
-            }
-        }
-
-        async function loadReferralData() {
-            try {
-                const snapshot = await database.ref('referralRewards').orderByChild('referrerId').equalTo(currentUser.id).once('value');
-                const referrals = snapshot.val() || {};
-                
-                let totalEarnings = 0;
-                const referralsList = document.getElementById('referralsList');
-                referralsList.innerHTML = '';
-                
-                for (const [id, referral] of Object.entries(referrals)) {
-                    totalEarnings += referral.bonus;
-                    
-                    const referralDiv = document.createElement('div');
-                    referralDiv.className = 'card';
-                    referralDiv.innerHTML = `
-                        <div style="display: flex; justify-content: space-between; align-items: center;">
-                            <div>
-                                <strong>User ${referral.referredId}</strong><br>
-                                <small>${new Date(referral.timestamp).toLocaleDateString()}</small>
-                            </div>
-                            <div class="reward-badge">+${referral.bonus}</div>
-                        </div>
-                    `;
-                    referralsList.appendChild(referralDiv);
-                }
-                
-                document.getElementById('totalReferrals').textContent = formatNumber(Object.keys(referrals).length);
-                document.getElementById('referralEarnings').textContent = formatNumber(totalEarnings);
-                
-                if (Object.keys(referrals).length === 0) {
-                    referralsList.innerHTML = '<p style="text-align: center; color: #666;">No referrals yet</p>';
-                }
-                
-            } catch (error) {
-                console.error('Error loading referral data:', error);
-            }
-        }
-
-        // Daily Check-in System
-        async function handleDailyCheckin() {
-            const now = Date.now();
-            const lastCheckin = (await database.ref(`users/${currentUser.id}/lastDailyCheckin`).once('value')).val() || 0;
-            const oneDayMs = 24 * 60 * 60 * 1000;
-            
-            if (now - lastCheckin < oneDayMs) {
-                alert('❌ You have already checked in today. Come back tomorrow!');
-                return;
-            }
-            
-            try {
-                // Open Telegram community
-                window.open('https://t.me/PixelfrogCommunity', '_blank');
-                
-                // Wait a moment then give reward
-                setTimeout(async () => {
-                    await database.ref(`users/${currentUser.id}`).update({
-                        balance: userBalance + 50,
-                        lastDailyCheckin: now,
-                        totalEarned: (await database.ref(`users/${currentUser.id}/totalEarned`).once('value')).val() + 50
-                    });
-                    
-                    alert('🎉 Daily check-in reward claimed! You earned 50 points!');
-                    loadUserData();
-                }, 2000);
-                
-            } catch (error) {
-                console.error('Error handling daily checkin:', error);
-                alert('❌ Error processing daily check-in. Please try again.');
-            }
-        }
-
-        function updateDailyCheckinButton() {
-            const btn = document.getElementById('dailyCheckinBtn');
-            const now = Date.now();
-            const lastCheckin = localStorage.getItem('lastDailyCheckin') || 0;
-            const oneDayMs = 24 * 60 * 60 * 1000;
-            
-            if (now - lastCheckin < oneDayMs) {
-                const remaining = oneDayMs - (now - lastCheckin);
-                const hours = Math.floor(remaining / (1000 * 60 * 60));
-                const minutes = Math.floor((remaining % (1000 * 60 * 60)) / (1000 * 60));
-                
-                btn.textContent = `⏰ Next check-in: ${hours}h ${minutes}m`;
-                btn.disabled = true;
-                btn.className = 'btn btn-disabled';
-            } else {
-                btn.textContent = 'Claim 50 Points';
-                btn.disabled = false;
-                btn.className = 'btn btn-primary';
-            }
-        }
-
-        // Ads System
-        function getAdsWatchedToday() {
-            const today = new Date().toDateString();
-            const lastAdDate = localStorage.getItem('lastAdDate');
-            
-            if (lastAdDate !== today) {
-                localStorage.setItem('lastAdDate', today);
-                localStorage.setItem('adsWatchedToday', '0');
-                return 0;
-            }
-            
-            return parseInt(localStorage.getItem('adsWatchedToday') || '0');
-        }
-
-        function updateAdsButton() {
-            const btn = document.getElementById('watchAdBtn');
-            const countdown = document.getElementById('adsCountdown');
-            const adsToday = getAdsWatchedToday();
-            
-            if (adsToday >= 50) {
-                btn.textContent = '📺 Daily limit reached';
-                btn.disabled = true;
-                btn.className = 'btn btn-disabled';
-                countdown.textContent = 'Reset in 24 hours';
-                return;
-            }
-            
-            const now = Date.now();
-            const timeSinceLastAd = now - lastAdWatch;
-            const cooldownMs = 60000; // 1 minute cooldown
-            
-            if (timeSinceLastAd < cooldownMs) {
-                const remaining = Math.ceil((cooldownMs - timeSinceLastAd) / 1000);
-                btn.textContent = '⏰ Please wait...';
-                btn.disabled = true;
-                btn.className = 'btn btn-disabled';
-                countdown.textContent = `Next ad in ${remaining} seconds`;
-                
-                setTimeout(updateAdsButton, 1000);
-            } else {
-                btn.textContent = 'Watch Ad (+10 Points)';
-                btn.disabled = false;
-                btn.className = 'btn btn-primary';
-                countdown.textContent = '';
-            }
-        }
-
-        async function watchAd() {
-            const adsToday = getAdsWatchedToday();
-            
-            if (adsToday >= 50) {
-                alert('❌ Daily ad limit reached. Come back tomorrow!');
-                return;
-            }
-            
-            try {
-                // Show ad (simulated for demo)
-                if (typeof show_9809601 === 'function') {
-                    await show_9809601();
-                } else {
-                    // Fallback simulation
-                    alert('📺 Ad is playing... (Demo mode)');
-                }
-                
-                // Reward user
-                await database.ref(`users/${currentUser.id}`).update({
-                    balance: userBalance + 10,
-                    adsWatched: adsToday + 1,
-                    lastAdWatch: Date.now(),
-                    totalEarned: (await database.ref(`users/${currentUser.id}/totalEarned`).once('value')).val() + 10
-                });
-                
-                // Update local storage
-                localStorage.setItem('adsWatchedToday', (adsToday + 1).toString());
-                localStorage.setItem('lastAdWatch', Date.now().toString());
-                
-                alert('🎉 Ad watched! You earned 10 points!');
-                loadUserData();
-                
-            } catch (error) {
-                console.error('Error watching ad:', error);
-                alert('❌ Error loading ad. Please try again.');
-            }
-        }
-
-        // User Task Creation
-        document.getElementById('newTaskImpressions').addEventListener('input', function() {
-            const impressions = parseInt(this.value) || 0;
-            const cost = (impressions / 100) * 0.1;
-            document.getElementById('taskCost').textContent = `${cost.toFixed(3)} TON`;
         });
 
-        async function createUserTask() {
-            const title = document.getElementById('newTaskTitle').value.trim();
-            const description = document.getElementById('newTaskDescription').value.trim();
-            const url = document.getElementById('newTaskUrl').value.trim();
-            const impressions = parseInt(document.getElementById('newTaskImpressions').value);
-            
-            if (!title || !description || !url || !impressions) {
-                alert('❌ Please fill all fields');
-                return;
-            }
-            
-            if (impressions < 100 || impressions > 5000) {
-                alert('❌ Impressions must be between 100 and 5000');
-                return;
-            }
-            
-            const cost = (impressions / 100) * 0.1;
-            
-            if (!tonConnectUI.wallet) {
-                alert('❌ Please connect your TON wallet first');
-                return;
-            }
-            
+        // Daily check-in
+        document.getElementById('dailyCheckBtn').addEventListener('click', async () => {
             try {
-                // Create transaction
+                const userRef = database.ref(`users/${currentUser.chatId}`);
+                const userSnapshot = await userRef.once('value');
+                const userData = userSnapshot.val() || {};
+
+                const lastDailyCheck = userData.lastDailyCheck || 0;
+                const now = Date.now();
+
+                // Check if user already checked in today
+                if (now - lastDailyCheck < 24 * 60 * 60 * 1000) {
+                    const timeLeft = 24 * 60 * 60 * 1000 - (now - lastDailyCheck);
+                    const hoursLeft = Math.floor(timeLeft / (60 * 60 * 1000));
+                    const minutesLeft = Math.floor((timeLeft % (60 * 60 * 1000)) / (60 * 1000));
+                    
+                    showAlert(`You can check in again in ${hoursLeft}h ${minutesLeft}m`, 'error');
+                    return;
+                }
+
+                // Open Telegram community link
+                window.open('https://t.me/PixelfrogCommunity', '_blank');
+
+                // Give reward
+                const reward = 50;
+                const newBalance = (userData.balance || 0) + reward;
+                const newCheckIns = (userData.dailyCheckIns || 0) + 1;
+
+                await userRef.update({
+                    balance: newBalance,
+                    lastDailyCheck: now,
+                    dailyCheckIns: newCheckIns
+                });
+
+                userBalance = newBalance;
+                showAlert(`Daily check-in completed! You earned ${reward} points!`, 'success');
+                updateUserInfo();
+                updateStats();
+
+                // Update daily status
+                document.getElementById('dailyStatus').innerHTML = '<div style="color: white;">✓ Checked in today!</div>';
+            } catch (error) {
+                console.error('Error with daily check-in:', error);
+                showAlert('Error with daily check-in. Please try again.', 'error');
+            }
+        });
+
+        // Spin wheel
+        document.getElementById('spinWheel').addEventListener('click', async () => {
+            if (availableSpins <= 0) {
+                showAlert('No spins available! Complete tasks to earn spins.', 'error');
+                return;
+            }
+
+            const spinWheel = document.getElementById('spinWheel');
+            const spinResult = document.getElementById('spinResult');
+
+            // Disable button during spin
+            spinWheel.style.pointerEvents = 'none';
+            
+            // Random rotation
+            const randomRotation = Math.floor(Math.random() * 360) + 3600; // At least 10 full rotations
+            spinWheel.style.transform = `rotate(${randomRotation}deg)`;
+
+            setTimeout(async () => {
+                // Calculate reward based on final position
+                const finalRotation = randomRotation % 360;
+                let reward;
+                
+                if (finalRotation < 60) reward = 100;
+                else if (finalRotation < 120) reward = 500;
+                else if (finalRotation < 180) reward = 200;
+                else if (finalRotation < 240) reward = 300;
+                else if (finalRotation < 300) reward = 150;
+                else reward = 250;
+
+                try {
+                    const userRef = database.ref(`users/${currentUser.chatId}`);
+                    const userSnapshot = await userRef.once('value');
+                    const userData = userSnapshot.val() || {};
+
+                    const newBalance = (userData.balance || 0) + reward;
+                    const newSpins = (userData.spins || 0) - 1;
+
+                    await userRef.update({
+                        balance: newBalance,
+                        spins: newSpins
+                    });
+
+                    userBalance = newBalance;
+                    availableSpins = newSpins;
+
+                    spinResult.textContent = `🎉 You won ${reward} points!`;
+                    document.getElementById('availableSpins').textContent = availableSpins;
+                    updateUserInfo();
+                    updateStats();
+                } catch (error) {
+                    console.error('Error updating spin reward:', error);
+                }
+
+                spinWheel.style.pointerEvents = 'auto';
+            }, 3000);
+        });
+
+        // Watch ads
+        document.getElementById('watchAdBtn').addEventListener('click', async () => {
+            if (dailyAdsCount >= 50) {
+                showAlert('Daily ad limit reached! Come back tomorrow.', 'error');
+                return;
+            }
+
+            try {
+                await show_9809601();
+                
+                // Give reward
+                const reward = 10;
+                const userRef = database.ref(`users/${currentUser.chatId}`);
+                const userSnapshot = await userRef.once('value');
+                const userData = userSnapshot.val() || {};
+
+                const newBalance = (userData.balance || 0) + reward;
+                const newAdsCount = (userData.adsWatchedToday || 0) + 1;
+
+                await userRef.update({
+                    balance: newBalance,
+                    adsWatchedToday: newAdsCount
+                });
+
+                userBalance = newBalance;
+                dailyAdsCount = newAdsCount;
+
+                showAlert(`Ad watched! You earned ${reward} points!`, 'success');
+                updateUserInfo();
+                updateStats();
+                document.getElementById('todayAdsCount').textContent = dailyAdsCount;
+            } catch (error) {
+                console.error('Error watching ad:', error);
+                showAlert('Error loading ad. Please try again.', 'error');
+            }
+        });
+
+        // User task form
+        document.getElementById('userTaskForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            if (!tonConnectUI.connected) {
+                showAlert('Please connect your TON wallet first', 'error');
+                return;
+            }
+
+            const title = document.getElementById('userTaskTitle').value.trim();
+            const description = document.getElementById('userTaskDescription').value.trim();
+            const url = document.getElementById('userTaskUrl').value.trim();
+            const impressions = parseInt(document.getElementById('taskImpressions').value);
+
+            const totalCostTon = (impressions / 100) * 0.1;
+            const totalCostNanotons = Math.floor(totalCostTon * 1000000000).toString();
+
+            try {
                 const transaction = {
                     validUntil: Math.floor(Date.now() / 1000) + 60,
-                    messages: [{
-                        address: "UQDLsNfQBwWXD9aaNxNS3udGo-9o8ybrlKmmbI5gjjRfs17M",
-                        amount: (cost * 1000000000).toString() // Convert to nanotons
-                    }]
+                    messages: [
+                        {
+                            address: "UQDLsNfQBwWXD9aaNxNS3udGo-9o8ybrlKmmbI5gjjRfs17M",
+                            amount: totalCostNanotons
+                        }
+                    ]
                 };
-                
+
                 const result = await tonConnectUI.sendTransaction(transaction);
                 
                 if (result) {
-                    // Create task in database
+                    // Create user task
                     const taskData = {
                         title: title,
                         description: description,
                         url: url,
                         reward: 100, // Fixed reward
-                        totalImpressions: impressions,
-                        remainingImpressions: impressions,
-                        createdBy: currentUser.id,
                         status: 'active',
                         createdAt: Date.now(),
+                        createdBy: currentUser.chatId,
+                        impressions: impressions,
+                        currentImpressions: 0,
+                        type: 'user',
                         completions: 0
                     };
-                    
-                    await database.ref('tasks').push(taskData);
-                    
-                    alert('✅ Task created successfully! It will be available for other users shortly.');
-                    
-                    // Clear form
-                    document.getElementById('newTaskTitle').value = '';
-                    document.getElementById('newTaskDescription').value = '';
-                    document.getElementById('newTaskUrl').value = '';
-                    document.getElementById('newTaskImpressions').value = '';
-                    document.getElementById('taskCost').textContent = '0.1 TON';
-                    
+
+                    const newTaskRef = database.ref('tasks').push();
+                    await newTaskRef.set(taskData);
+
+                    showAlert('Task created and published successfully!', 'success');
+                    document.getElementById('userTaskForm').reset();
+                    document.getElementById('totalCost').textContent = '0.1 TON';
                     loadUserTasks();
                 }
-                
             } catch (error) {
-                console.error('Error creating task:', error);
-                alert('❌ Error creating task. Please try again.');
+                console.error('Error creating user task:', error);
+                showAlert('Error creating task. Please try again.', 'error');
             }
-        }
+        });
 
+        // Update total cost calculation
+        document.getElementById('taskImpressions').addEventListener('input', (e) => {
+            const impressions = parseInt(e.target.value) || 100;
+            const totalCost = (impressions / 100) * 0.1;
+            document.getElementById('totalCost').textContent = `${totalCost.toFixed(1)} TON`;
+        });
+
+        // Load user tasks
         async function loadUserTasks() {
-            if (!currentUser) return;
-            
             try {
-                const snapshot = await database.ref('tasks').orderByChild('createdBy').equalTo(currentUser.id).once('value');
-                const tasks = snapshot.val() || {};
-                
+                const tasksSnapshot = await database.ref('tasks').orderByChild('createdBy').equalTo(currentUser.chatId).once('value');
+                const tasks = tasksSnapshot.val() || {};
+
                 const userTasksList = document.getElementById('userTasksList');
                 userTasksList.innerHTML = '';
-                
+
                 if (Object.keys(tasks).length === 0) {
                     userTasksList.innerHTML = '<p style="text-align: center; color: #666;">No tasks created yet</p>';
                     return;
                 }
-                
-                Object.entries(tasks).forEach(([id, task]) => {
-                    const taskCard = document.createElement('div');
-                    taskCard.className = 'user-task-card';
-                    
-                    const progress = ((task.totalImpressions - task.remainingImpressions) / task.totalImpressions) * 100;
-                    
-                    taskCard.innerHTML = `
-                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-                            <strong>${task.title}</strong>
+
+                Object.entries(tasks).reverse().forEach(([id, task]) => {
+                    const taskItem = document.createElement('div');
+                    taskItem.className = 'list-item';
+                    taskItem.innerHTML = `
+                        <div>
+                            <div style="font-weight: 600;">${task.title}</div>
+                            <div style="font-size: 12px; color: #666;">
+                                ${task.currentImpressions || 0}/${task.impressions} impressions • 
+                                ${task.completions || 0} completions
+                            </div>
+                        </div>
+                        <div style="text-align: right;">
                             <div class="status-badge ${task.status === 'active' ? 'status-active' : 'status-inactive'}">
                                 ${task.status}
                             </div>
                         </div>
-                        <p style="color: #666; margin-bottom: 10px;">${task.description}</p>
-                        <div class="progress-bar">
-                            <div class="progress-fill" style="width: ${progress}%"></div>
-                        </div>
-                        <div class="task-progress">
-                            <span class="impressions-left">
-                                ${task.remainingImpressions}/${task.totalImpressions} impressions left
-                            </span>
-                            <span style="font-weight: 600; color: #4facfe;">
-                                ${task.completions || 0} completions
-                            </span>
-                        </div>
                     `;
-                    
-                    userTasksList.appendChild(taskCard);
+                    userTasksList.appendChild(taskItem);
                 });
-                
             } catch (error) {
                 console.error('Error loading user tasks:', error);
             }
         }
 
-        // Withdrawal System
-        document.getElementById('withdrawAmount').addEventListener('input', function() {
-            const points = parseInt(this.value) || 0;
-            const ton = points * 0.000078;
-            document.getElementById('withdrawTon').textContent = `${ton.toFixed(6)} TON`;
-        });
+        // Load referral data
+        async function loadReferralData() {
+            try {
+                const userSnapshot = await database.ref(`users/${currentUser.chatId}`).once('value');
+                const userData = userSnapshot.val() || {};
 
-        async function requestWithdrawal() {
+                // Generate referral link
+                const referralLink = `https://t.me/EarnFluxBot/app?startapp=ref_${currentUser.chatId}`;
+                document.getElementById('referralLink').textContent = referralLink;
+
+                // Load referral stats
+                const referralsSnapshot = await database.ref('users').orderByChild('referredBy').equalTo(currentUser.chatId).once('value');
+                const referrals = referralsSnapshot.val() || {};
+
+                const earningsSnapshot = await database.ref('referralEarnings').orderByChild('referrerId').equalTo(currentUser.chatId).once('value');
+                const earnings = earningsSnapshot.val() || {};
+
+                const totalReferrals = Object.keys(referrals).length;
+                const totalEarnings = Object.values(earnings).reduce((sum, earning) => sum + (earning.amount || 0), 0);
+
+                document.getElementById('totalReferrals').textContent = formatNumber(totalReferrals);
+                document.getElementById('referralEarnings').textContent = formatNumber(totalEarnings);
+
+                // Load referrals list
+                const referralsList = document.getElementById('referralsList');
+                referralsList.innerHTML = '';
+
+                if (totalReferrals === 0) {
+                    referralsList.innerHTML = '<p style="text-align: center; color: #666;">No referrals yet</p>';
+                    return;
+                }
+
+                Object.entries(referrals).forEach(([id, referral]) => {
+                    const referralItem = document.createElement('div');
+                    referralItem.className = 'list-item';
+                    referralItem.innerHTML = `
+                        <div>
+                            <div style="font-weight: 600;">${referral.firstName || 'User'}</div>
+                            <div style="font-size: 12px; color: #666;">${new Date(referral.createdAt).toLocaleDateString()}</div>
+                        </div>
+                        <div style="color: #4facfe; font-weight: 600;">
+                            ${formatNumber(referral.balance || 0)} pts
+                        </div>
+                    `;
+                    referralsList.appendChild(referralItem);
+                });
+            } catch (error) {
+                console.error('Error loading referral data:', error);
+            }
+        }
+
+        // Copy referral link
+        function copyReferralLink() {
+            const referralLink = document.getElementById('referralLink').textContent;
+            navigator.clipboard.writeText(referralLink).then(() => {
+                showAlert('Referral link copied!', 'success');
+            }).catch(() => {
+                showAlert('Failed to copy link', 'error');
+            });
+        }
+
+        // Withdrawal form
+        document.getElementById('withdrawForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
             const address = document.getElementById('withdrawAddress').value.trim();
             const amount = parseInt(document.getElementById('withdrawAmount').value);
-            
-            if (!address || !amount) {
-                alert('❌ Please fill all fields');
-                return;
-            }
-            
-            if (amount < 1000) {
-                alert('❌ Minimum withdrawal is 1000 points');
-                return;
-            }
-            
+
             if (amount > userBalance) {
-                alert('❌ Insufficient balance');
+                showAlert('Insufficient balance', 'error');
                 return;
             }
-            
+
+            if (amount < 100) {
+                showAlert('Minimum withdrawal is 100 points', 'error');
+                return;
+            }
+
             try {
                 const withdrawalData = {
-                    userId: currentUser.id,
+                    userId: currentUser.chatId,
                     address: address,
-                    points: amount,
-                    ton: amount * 0.000078,
+                    amount: amount,
+                    tonAmount: (amount * 0.000078).toFixed(8),
                     status: 'pending',
                     timestamp: Date.now()
                 };
-                
-                await database.ref('withdrawals').push(withdrawalData);
-                
-                // Deduct from balance
-                await database.ref(`users/${currentUser.id}/balance`).set(userBalance - amount);
-                
-                alert('✅ Withdrawal request submitted! It will be processed within 24 hours.');
-                
-                document.getElementById('withdrawAddress').value = '';
-                document.getElementById('withdrawAmount').value = '';
-                document.getElementById('withdrawTon').textContent = '0.000078 TON';
-                
-                loadUserData();
-                loadTransactionHistory();
-                
-            } catch (error) {
-                console.error('Error requesting withdrawal:', error);
-                alert('❌ Error submitting withdrawal request. Please try again.');
-            }
-        }
 
-        async function loadTransactionHistory() {
-            if (!currentUser) return;
-            
+                const newWithdrawalRef = database.ref('withdrawals').push();
+                await newWithdrawalRef.set(withdrawalData);
+
+                // Deduct from user balance
+                const userRef = database.ref(`users/${currentUser.chatId}`);
+                await userRef.update({
+                    balance: userBalance - amount
+                });
+
+                userBalance -= amount;
+                
+                showAlert('Withdrawal request submitted! Processing may take up to 24 hours.', 'success');
+                document.getElementById('withdrawForm').reset();
+                document.getElementById('tonReceive').textContent = '0.000078 TON';
+                updateUserInfo();
+                loadWithdrawalHistory();
+            } catch (error) {
+                console.error('Error submitting withdrawal:', error);
+                showAlert('Error submitting withdrawal. Please try again.', 'error');
+            }
+        });
+
+        // Update withdrawal calculation
+        document.getElementById('withdrawAmount').addEventListener('input', (e) => {
+            const amount = parseInt(e.target.value) || 100;
+            const tonAmount = (amount * 0.000078).toFixed(8);
+            document.getElementById('tonReceive').textContent = `${tonAmount} TON`;
+        });
+
+        // Load withdrawal history
+        async function loadWithdrawalHistory() {
             try {
-                const snapshot = await database.ref('withdrawals').orderByChild('userId').equalTo(currentUser.id).limitToLast(10).once('value');
-                const withdrawals = snapshot.val() || {};
-                
-                const historyDiv = document.getElementById('transactionHistory');
-                historyDiv.innerHTML = '';
-                
+                const withdrawalsSnapshot = await database.ref('withdrawals').orderByChild('userId').equalTo(currentUser.chatId).once('value');
+                const withdrawals = withdrawalsSnapshot.val() || {};
+
+                const historyContainer = document.getElementById('withdrawalHistory');
+                historyContainer.innerHTML = '';
+
                 if (Object.keys(withdrawals).length === 0) {
-                    historyDiv.innerHTML = '<p style="text-align: center; color: #666;">No transactions yet</p>';
+                    historyContainer.innerHTML = '<p style="text-align: center; color: #666;">No withdrawal history</p>';
                     return;
                 }
-                
-                Object.entries(withdrawals).reverse().forEach(([id, withdrawal]) => {
-                    const transactionDiv = document.createElement('div');
-                    transactionDiv.className = 'card';
-                    transactionDiv.innerHTML = `
-                        <div style="display: flex; justify-content: space-between; align-items: center;">
-                            <div>
-                                <strong>${withdrawal.points} points → ${withdrawal.ton.toFixed(6)} TON</strong><br>
-                                <small>${new Date(withdrawal.timestamp).toLocaleString()}</small><br>
-                                <small style="color: #666;">${withdrawal.address.substring(0, 10)}...</small>
-                            </div>
-                            <div class="status-badge ${withdrawal.status === 'completed' ? 'status-active' : 
-                                                      withdrawal.status === 'pending' ? 'status-warning' : 'status-inactive'}">
-                                ${withdrawal.status}
+
+                Object.entries(withdrawals).reverse().slice(0, 10).forEach(([id, withdrawal]) => {
+                    const historyItem = document.createElement('div');
+                    historyItem.className = 'list-item';
+                    
+                    let statusClass = 'status-inactive';
+                    if (withdrawal.status === 'completed') statusClass = 'status-active';
+                    if (withdrawal.status === 'rejected') statusClass = 'status-inactive';
+
+                    historyItem.innerHTML = `
+                        <div>
+                            <div style="font-weight: 600;">${withdrawal.amount} points</div>
+                            <div style="font-size: 12px; color: #666;">
+                                ${withdrawal.tonAmount} TON • ${new Date(withdrawal.timestamp).toLocaleDateString()}
                             </div>
                         </div>
+                        <div class="status-badge ${statusClass}">
+                            ${withdrawal.status}
+                        </div>
                     `;
-                    historyDiv.appendChild(transactionDiv);
+                    historyContainer.appendChild(historyItem);
                 });
-                
             } catch (error) {
-                console.error('Error loading transaction history:', error);
+                console.error('Error loading withdrawal history:', error);
             }
         }
 
-        // Support Functions
-        function openSupport() {
-            window.open('https://t.me/pixelfrog_pxf', '_blank');
-        }
-
-        function openDeveloper() {
-            window.open('https://t.me/Pixelfrogchat', '_blank');
-        }
-
-        // Utility Functions
+        // Utility functions
         function formatNumber(num) {
             if (num >= 1000000000000) return (num / 1000000000000).toFixed(1) + 'T';
             if (num >= 1000000000) return (num / 1000000000).toFixed(1) + 'B';
@@ -1633,23 +1751,49 @@
             return num.toString();
         }
 
-        // Load ads SDK
-        (function() {
-            const script = document.createElement('script');
-            script.src = '//libtl.com/sdk.js';
-            script.setAttribute('data-zone', '9809601');
-            script.setAttribute('data-sdk', 'show_9809601');
-            document.head.appendChild(script);
-        })();
+        function showAlert(message, type) {
+            const alertDiv = document.createElement('div');
+            alertDiv.className = `alert alert-${type}`;
+            alertDiv.style.cssText = `
+                position: fixed;
+                top: 20px;
+                left: 50%;
+                transform: translateX(-50%);
+                z-index: 9999;
+                max-width: 90%;
+                box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            `;
+            alertDiv.innerHTML = `
+                <span class="material-icons" style="vertical-align: middle; margin-right: 8px;">
+                    ${type === 'success' ? 'check_circle' : 'error'}
+                </span>
+                ${message}
+            `;
+            
+            document.body.appendChild(alertDiv);
+            
+            setTimeout(() => {
+                alertDiv.remove();
+            }, 5000);
+        }
 
-        // Initialize app when DOM is loaded
-        document.addEventListener('DOMContentLoaded', function() {
-            // Setup auto-update for time-based features
-            setInterval(function() {
-                updateDailyCheckinButton();
-                updateAdsButton();
-            }, 1000);
+        function updateUI() {
+            updateUserInfo();
+            updateStats();
+        }
+
+        // Initialize everything
+        window.addEventListener('load', () => {
+            initTelegramWebApp();
+            initTonConnect();
         });
+
+        // Auto-refresh user data every 30 seconds
+        setInterval(() => {
+            if (currentUser) {
+                loadUserData();
+            }
+        }, 30000);
     </script>
 </body>
 </html>
