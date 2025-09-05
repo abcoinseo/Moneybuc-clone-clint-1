@@ -844,23 +844,6 @@
                     Apply Code
                 </button>
             </div>
-
-            <!-- REMOVED: TON Wallet card from Home Section -->
-            <!--
-            <div class="card">
-                <h2 class="card-title">
-                    <span class="material-icons">account_balance_wallet</span>
-                    TON Wallet
-                </h2>
-                <div id="ton-connect"></div>
-                <div style="margin-top: 15px;">
-                    <button class="btn btn-primary" onclick="connectToWallet()">
-                        <span class="material-icons">account_balance_wallet</span>
-                        Connect Wallet
-                    </button>
-                </div>
-            </div>
-            -->
         </div>
 
         <!-- Tasks Section -->
@@ -1014,6 +997,7 @@
                     </div>
                 </div>
 
+                <!-- This button is now informational as rewards are automated -->
                 <button class="btn btn-success" onclick="claimReferralRewards()">
                     <span class="material-icons">redeem</span>
                     Claim Rewards
@@ -1038,8 +1022,10 @@
                 <div style="text-align: center; margin-bottom: 20px;">
                     <img src="https://via.placeholder.com/100" alt="Profile" class="user-avatar" style="width: 100px; height: 100px;" id="profileAvatar">
                     <h3 style="margin: 15px 0; color: var(--text);" id="profileName">Loading...</h3>
-                    <!-- MODIFIED: TON Connect button moved here -->
-                    <div id="ton-connect"></div> <!-- This is where TonConnectUI will render its button -->
+
+                    <!-- TON Connect button will be rendered here by TonConnectUI -->
+                    <div id="ton-connect"></div>
+
                     <div style="margin-top: 15px;">
                         <button class="btn btn-primary" onclick="connectToWallet()">
                             <span class="material-icons">account_balance_wallet</span>
@@ -1049,10 +1035,15 @@
                 </div>
 
                 <div style="display: flex; gap: 10px; flex-wrap: wrap; justify-content: center;">
-                    <!-- MODIFIED: Renamed "Withdraw" to "Profile" and changed its function -->
-                    <button class="btn btn-primary" onclick="showSection('profile')"> <!-- Changed to show profile section itself -->
-                        <span class="material-icons">person</span>
-                        Profile Settings <!-- Changed text to something relevant -->
+                    <!-- Moved Withdraw button to Profile section -->
+                    <button class="btn btn-primary" onclick="showWithdrawModal()">
+                        <span class="material-icons">payments</span>
+                        Withdraw
+                    </button>
+                    <!-- Profile Settings button (currently just navigates to profile) -->
+                    <button class="btn btn-secondary" onclick="showSection('profile')">
+                        <span class="material-icons">settings</span>
+                        Profile Settings
                     </button>
                     <button class="btn btn-secondary" onclick="window.open('https://t.me/PixelfrogCommunity', '_blank')">
                         <span class="material-icons">support</span>
@@ -1078,7 +1069,6 @@
     </div>
 
     <!-- Bottom Navigation -->
-
     <div class="bottom-nav">
         <div class="nav-container">
             <a href="#" class="nav-item active" onclick="showSection('home'); return false;">
@@ -1102,14 +1092,13 @@
             </a>
 
             <a href="#" class="nav-item" onclick="showSection('profile'); return false;">
-                <span class="material-icons">account_balance_wallet</span>
-                <span>Withdrow</span>
+                <span class="material-icons">account_circle</span> <!-- Changed icon for profile -->
+                <span>Profile</span>
             </a>
         </div>
     </div>
 
     <!-- Task Verification Modal -->
-
     <div id="taskModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
@@ -1129,7 +1118,6 @@
     </div>
 
     <!-- Withdraw Modal -->
-
     <div id="withdrawModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
@@ -1139,17 +1127,17 @@
             <form id="withdrawForm">
                 <div class="form-group">
                     <label class="form-label">TON Address</label>
-                    <input type="text" class="form-input" id="tonAddress" required>
+                    <input type="text" class="form-input" id="tonAddress" required placeholder="e.g., UQ...">
                 </div>
                 <div class="form-group">
                     <label class="form-label">Amount (Points)</label>
-                    <input type="number" class="form-input" id="withdrawAmount" min="2000" required>
+                    <input type="number" class="form-input" id="withdrawAmount" min="10000" required placeholder="Minimum 10000 points">
                     <div style="font-size: 12px; color: var(--text-light); margin-top: 5px;">
-                        Minimum: 2000 points | Rate: 100 points = 0.000078 TON
+                        Minimum: 10000 points | Rate: 10000 points = 0.78 TON (approx)
                     </div>
                 </div>
                 <div class="form-group">
-                    <label class="form-label">You will receive: <span id="tonReceive">0</span> TON</label>
+                    <label class="form-label">You will receive: <span id="tonReceive">0.00000000</span> TON</label>
                 </div>
                 <button type="submit" class="btn btn-primary">
                     <span class="material-icons">send</span>
@@ -1200,6 +1188,8 @@
         let dailyCheckinDone = false;
         let lastAdCompletionTime = 0; // To prevent rapid ad watching
         const REFERRAL_BONUS_POINTS = 500; // Configurable bonus for a new referral
+        const WITHDRAWAL_RATE_POINTS_PER_TON = 10000 / 0.78; // Points for 1 TON (approx 12820.51 points per TON)
+        const MINIMUM_WITHDRAWAL_POINTS = 10000; // Minimum points to withdraw
 
         // Initialize Telegram Web App
         function initTelegramWebApp() {
@@ -1336,16 +1326,18 @@
 
             // Update daily check-in button state
             const dailyCheckinButton = document.querySelector('.btn-success[onclick="dailyCheckin()"]');
-            if (dailyCheckinDone) {
-                dailyCheckinButton.textContent = 'Checked In!';
-                dailyCheckinButton.disabled = true;
-                dailyCheckinButton.classList.remove('btn-success');
-                dailyCheckinButton.classList.add('btn-secondary');
-            } else {
-                dailyCheckinButton.textContent = 'Daily Check-in';
-                dailyCheckinButton.disabled = false;
-                dailyCheckinButton.classList.remove('btn-secondary');
-                dailyCheckinButton.classList.add('btn-success');
+            if (dailyCheckinButton) {
+                if (dailyCheckinDone) {
+                    dailyCheckinButton.textContent = 'Checked In!';
+                    dailyCheckinButton.disabled = true;
+                    dailyCheckinButton.classList.remove('btn-success');
+                    dailyCheckinButton.classList.add('btn-secondary');
+                } else {
+                    dailyCheckinButton.textContent = 'Daily Check-in';
+                    dailyCheckinButton.disabled = false;
+                    dailyCheckinButton.classList.remove('btn-secondary');
+                    dailyCheckinButton.classList.add('btn-success');
+                }
             }
         }
 
@@ -1937,11 +1929,17 @@
 
         // Show withdraw modal
         function showWithdrawModal() {
-            if (userBalance < 2000) {
-                showAlert('Minimum withdrawal amount is 2000 points!', 'danger');
+            if (userBalance < MINIMUM_WITHDRAWAL_POINTS) {
+                showAlert(`Minimum withdrawal amount is ${MINIMUM_WITHDRAWAL_POINTS} points!`, 'danger');
                 return;
             }
             document.getElementById('withdrawModal').style.display = 'block';
+            // Set initial value for amount input to minimum if user has enough
+            const withdrawAmountInput = document.getElementById('withdrawAmount');
+            if (userBalance >= MINIMUM_WITHDRAWAL_POINTS) {
+                withdrawAmountInput.value = MINIMUM_WITHDRAWAL_POINTS;
+                updateTonReceiveAmount(); // Update the TON receive display immediately
+            }
         }
 
         // Submit withdrawal request form
@@ -1952,12 +1950,13 @@
             const amount = parseInt(document.getElementById('withdrawAmount').value);
 
             // Input validation
-            if (!tonAddress || !tonAddress.startsWith('UQ')) { // Basic TON address validation
-                showAlert('Please enter a valid TON address.', 'danger');
+            // Basic TON address validation (starts with UQ) - more robust validation might be needed
+            if (!tonAddress || !tonAddress.startsWith('UQ')) {
+                showAlert('Please enter a valid TON address (starting with UQ).', 'danger');
                 return;
             }
-            if (amount < 2000) {
-                showAlert('Minimum withdrawal amount is 2000 points!', 'danger');
+            if (amount < MINIMUM_WITHDRAWAL_POINTS) {
+                showAlert(`Minimum withdrawal amount is ${MINIMUM_WITHDRAWAL_POINTS} points!`, 'danger');
                 return;
             }
             if (amount > userBalance) {
@@ -1972,7 +1971,7 @@
                     username: currentUser.username,
                     tonAddress,
                     amount, // Amount in points
-                    tonAmount: (amount / 100) * 0.000078, // Calculate TON amount (example rate)
+                    tonAmount: (amount / WITHDRAWAL_RATE_POINTS_PER_TON), // Calculate TON amount
                     status: 'pending', // Initial status
                     createdAt: Date.now()
                 };
@@ -2000,11 +1999,15 @@
         });
 
         // Update TON receive amount dynamically in the withdraw form
-        document.getElementById('withdrawAmount').addEventListener('input', (e) => {
-            const amount = parseInt(e.target.value) || 0;
-            const tonAmount = (amount / 100) * 0.000078; // Same rate as used in submission
+        function updateTonReceiveAmount() {
+            const amountInput = document.getElementById('withdrawAmount');
+            const amount = parseInt(amountInput.value) || 0;
+            const tonAmount = (amount / WITHDRAWAL_RATE_POINTS_PER_TON);
             document.getElementById('tonReceive').textContent = tonAmount.toFixed(8); // Display TON with 8 decimal places
-        });
+        }
+
+        // Event listener for withdraw amount input
+        document.getElementById('withdrawAmount').addEventListener('input', updateTonReceiveAmount);
 
         // Load withdrawal history for the current user
         function loadWithdrawalHistory() {
