@@ -250,6 +250,11 @@
             overflow: hidden;
         }
 
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
         .btn::before {
             content: '';
             position: absolute;
@@ -261,7 +266,7 @@
             transition: left 0.5s;
         }
 
-        .btn:hover::before {
+        .btn:hover:not(:disabled)::before {
             left: 100%;
         }
 
@@ -270,7 +275,7 @@
             color: white;
         }
 
-        .btn-primary:hover {
+        .btn-primary:hover:not(:disabled) {
             transform: translateY(-2px);
             box-shadow: 0 8px 25px rgba(220, 38, 38, 0.4);
         }
@@ -291,10 +296,9 @@
             border: 1px solid var(--glass-border);
         }
 
-        .btn:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-            transform: none !important;
+        .btn-danger {
+            background: linear-gradient(135deg, var(--danger), #b91c1c);
+            color: white;
         }
 
         .form-group {
@@ -724,27 +728,6 @@
             display: none;
         }
 
-        .wallet-status {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            padding: 12px;
-            background: rgba(15, 15, 35, 0.8);
-            border: 1px solid var(--glass-border);
-            border-radius: 12px;
-            margin-bottom: 20px;
-        }
-
-        .wallet-connected {
-            border-color: var(--success);
-            background: rgba(5, 150, 105, 0.1);
-        }
-
-        .wallet-disconnected {
-            border-color: var(--warning);
-            background: rgba(217, 119, 6, 0.1);
-        }
-
         @media (max-width: 768px) {
             .container {
                 padding: 15px 10px 100px;
@@ -808,7 +791,7 @@
     <div class="container">
         <div class="header">
             <div class="user-info">
-                <img src="https://images.pexels.com/photos/1040881/pexels-photo-1040881.jpeg?w=100&h=100&fit=crop&crop=face" alt="User Avatar" class="user-avatar" id="userAvatar">
+                <img src="https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?auto=compress&cs=tinysrgb&w=100&h=100&dpr=1" alt="User Avatar" class="user-avatar" id="userAvatar">
                 <div class="user-details">
                     <h3 id="userName">Loading...</h3>
                     <div class="user-balance">
@@ -884,10 +867,6 @@
                     <span class="material-icons">link</span>
                     TON Wallet
                 </h2>
-                <div id="walletStatus" class="wallet-status wallet-disconnected">
-                    <span class="material-icons" id="walletIcon">account_balance_wallet</span>
-                    <span id="walletStatusText">Wallet not connected</span>
-                </div>
                 <div id="ton-connect"></div>
                 <button class="btn btn-primary" onclick="connectToWallet()" id="connectWalletButton">
                     <span class="material-icons">account_balance_wallet</span>
@@ -910,8 +889,8 @@
                     </button>
                 </div>
                 <div class="tabs">
-                    <div class="tab active" onclick="showTaskTab('available')">Available</div>
-                    <div class="tab" onclick="showTaskTab('completed')">Completed</div>
+                    <div class="tab active" onclick="showTaskTab(event, 'available')">Available</div>
+                    <div class="tab" onclick="showTaskTab(event, 'completed')">Completed</div>
                 </div>
 
                 <div id="availableTasks" class="tab-content active">
@@ -935,11 +914,6 @@
                     <span class="material-icons">add_task</span>
                     Create Task
                 </h2>
-
-                <div id="taskWalletStatus" class="wallet-status wallet-disconnected">
-                    <span class="material-icons" id="taskWalletIcon">account_balance_wallet</span>
-                    <span id="taskWalletStatusText">Connect wallet to create tasks</span>
-                </div>
 
                 <div class="add-task-connect-wallet-button">
                     <button class="btn btn-primary" onclick="connectToWallet()" id="connectWalletButtonAddTask">
@@ -1082,7 +1056,7 @@
                     Profile
                 </h2>
                 <div style="text-align: center; margin-bottom: 20px;">
-                    <img src="https://images.pexels.com/photos/1040881/pexels-photo-1040881.jpeg?w=100&h=100&fit=crop&crop=face" alt="Profile" class="user-avatar" style="width: 100px; height: 100px;" id="profileAvatar">
+                    <img src="https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?auto=compress&cs=tinysrgb&w=100&h=100&dpr=1" alt="Profile" class="user-avatar" style="width: 100px; height: 100px;" id="profileAvatar">
                     <h3 style="margin: 15px 0; color: var(--text);" id="profileName">Loading...</h3>
                 </div>
 
@@ -1209,20 +1183,10 @@
         firebase.initializeApp(firebaseConfig);
         const database = firebase.database();
 
-        // TON Connect setup - Enhanced with proper configuration
+        // TON Connect setup with proper configuration
         const tonConnectUI = new TON_CONNECT_UI.TonConnectUI({
             manifestUrl: 'https://moneybuc-clone-clint-1.vercel.app/tonconnect-manifest.json',
-            buttonRootId: 'ton-connect',
-            uiPreferences: {
-                theme: 'dark',
-                colorsSet: {
-                    [TON_CONNECT_UI.THEME.DARK]: {
-                        connectButton: {
-                            background: '#dc2626',
-                        }
-                    }
-                }
-            }
+            buttonRootId: null // We'll handle buttons manually
         });
 
         tonConnectUI.uiOptions = {
@@ -1239,7 +1203,6 @@
         let lastAdTime = 0;
         let dailyCheckinDone = false;
         let lastAdCompletionTime = 0;
-        let isWalletConnected = false;
         const REFERRAL_BONUS_POINTS = 500;
 
         // Initialize Telegram Web App
@@ -1254,32 +1217,27 @@
                         id: user.id,
                         username: user.username || 'User',
                         first_name: user.first_name || 'User',
-                        photo_url: user.photo_url || 'https://images.pexels.com/photos/1040881/pexels-photo-1040881.jpeg?w=100&h=100&fit=crop&crop=face'
+                        photo_url: user.photo_url || 'https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?auto=compress&cs=tinysrgb&w=100&h=100&dpr=1'
                     };
 
-                    // Check for referral parameters
                     const startParam = tg.initDataUnsafe?.start_param;
                     if (startParam) {
                         if (startParam.startsWith('ref_')) {
                             const referrerId = startParam.replace('ref_', '');
-                            handleReferral(referrerId);
-                        } else if (startParam.startsWith('r_')) {
-                            const referrerId = startParam.replace('r_', '');
                             handleReferral(referrerId);
                         }
                     }
 
                     initializeUser();
                 } else {
-                    // Fallback for testing
                     const randomId = Math.floor(Math.random() * 1000000000);
                     currentUser = {
                         id: randomId,
                         username: `testuser_${randomId}`,
                         first_name: 'Test User',
-                        photo_url: 'https://images.pexels.com/photos/1040881/pexels-photo-1040881.jpeg?w=100&h=100&fit=crop&crop=face'
+                        photo_url: 'https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?auto=compress&cs=tinysrgb&w=100&h=100&dpr=1'
                     };
-                    console.warn("Running without Telegram Web App user data. Using random ID:", currentUser.id);
+                    console.warn("Running without Telegram Web App user data. Using a random ID for testing:", currentUser.id);
                     initializeUser();
                 }
             } else {
@@ -1315,7 +1273,6 @@
                 await userRef.set(userData);
             }
 
-            // Set up real-time listener
             userRef.on('value', (snapshot) => {
                 const userData = snapshot.val();
                 if (userData) {
@@ -1325,7 +1282,6 @@
                     lastAdTime = userData.lastAdReset || 0;
                     dailyCheckinDone = userData.lastCheckin === new Date().toDateString();
 
-                    // Reset daily ads if 24 hours have passed
                     if (Date.now() - lastAdTime > 24 * 60 * 60 * 1000) {
                         adsWatchedToday = 0;
                         userRef.update({
@@ -1356,7 +1312,6 @@
             document.getElementById('adsWatched').textContent = adsWatchedToday;
             document.getElementById('userRefId').textContent = userData.id;
 
-            // Update avatars
             if (userData.photo_url) {
                 document.getElementById('userAvatar').src = userData.photo_url;
                 document.getElementById('profileAvatar').src = userData.photo_url;
@@ -1364,7 +1319,6 @@
 
             document.getElementById('profileName').textContent = userData.first_name || 'User';
 
-            // Update watch ad button
             const watchAdButton = document.getElementById('watchAdButton');
             if (adsWatchedToday >= 50) {
                 watchAdButton.disabled = true;
@@ -1374,11 +1328,10 @@
                 watchAdButton.innerHTML = '<span class="material-icons">play_arrow</span> Watch Ad (+10 Points)';
             }
 
-            // Update daily check-in button
             const dailyCheckinButton = document.querySelector('.btn-success[onclick="dailyCheckin()"]');
             if (dailyCheckinButton) {
                 if (dailyCheckinDone) {
-                    dailyCheckinButton.innerHTML = '<span class="material-icons">check</span> Checked In!';
+                    dailyCheckinButton.textContent = 'Checked In!';
                     dailyCheckinButton.disabled = true;
                     dailyCheckinButton.classList.remove('btn-success');
                     dailyCheckinButton.classList.add('btn-secondary');
@@ -1390,77 +1343,28 @@
                 }
             }
 
-            updateWalletStatus();
+            updateConnectWalletButtonState();
         }
 
-        // Update wallet connection status
-        function updateWalletStatus() {
-            const wallet = tonConnectUI.connectedWallet;
-            isWalletConnected = !!wallet;
-
-            // Update main wallet status
-            const walletStatus = document.getElementById('walletStatus');
-            const walletIcon = document.getElementById('walletIcon');
-            const walletStatusText = document.getElementById('walletStatusText');
+        // Update wallet button states
+        function updateConnectWalletButtonState() {
             const connectWalletButton = document.getElementById('connectWalletButton');
-
-            // Update task page wallet status
-            const taskWalletStatus = document.getElementById('taskWalletStatus');
-            const taskWalletIcon = document.getElementById('taskWalletIcon');
-            const taskWalletStatusText = document.getElementById('taskWalletStatusText');
             const connectWalletButtonAddTask = document.getElementById('connectWalletButtonAddTask');
-            const createTaskButton = document.getElementById('createTaskButton');
+            const connectedWallet = tonConnectUI.account;
 
-            if (isWalletConnected) {
-                // Main page
-                walletStatus.className = 'wallet-status wallet-connected';
-                walletStatusText.textContent = `Connected: ${wallet.account.address.slice(0, 6)}...${wallet.account.address.slice(-4)}`;
-                connectWalletButton.innerHTML = '<span class="material-icons">check_circle</span> Wallet Connected';
-                connectWalletButton.disabled = true;
-                connectWalletButton.classList.remove('btn-primary');
-                connectWalletButton.classList.add('btn-success');
+            [connectWalletButton, connectWalletButtonAddTask].forEach(button => {
+                if (!button) return;
 
-                // Task page
-                taskWalletStatus.className = 'wallet-status wallet-connected';
-                taskWalletStatusText.textContent = `Connected: ${wallet.account.address.slice(0, 6)}...${wallet.account.address.slice(-4)}`;
-                connectWalletButtonAddTask.innerHTML = '<span class="material-icons">check_circle</span> Wallet Connected';
-                connectWalletButtonAddTask.disabled = true;
-                connectWalletButtonAddTask.classList.remove('btn-primary');
-                connectWalletButtonAddTask.classList.add('btn-success');
-                createTaskButton.disabled = false;
-
-            } else {
-                // Main page
-                walletStatus.className = 'wallet-status wallet-disconnected';
-                walletStatusText.textContent = 'Wallet not connected';
-                connectWalletButton.innerHTML = '<span class="material-icons">account_balance_wallet</span> Connect Wallet';
-                connectWalletButton.disabled = false;
-                connectWalletButton.classList.remove('btn-success');
-                connectWalletButton.classList.add('btn-primary');
-
-                // Task page
-                taskWalletStatus.className = 'wallet-status wallet-disconnected';
-                taskWalletStatusText.textContent = 'Connect wallet to create tasks';
-                connectWalletButtonAddTask.innerHTML = '<span class="material-icons">account_balance_wallet</span> Connect Wallet';
-                connectWalletButtonAddTask.disabled = false;
-                connectWalletButtonAddTask.classList.remove('btn-success');
-                connectWalletButtonAddTask.classList.add('btn-primary');
-                createTaskButton.disabled = true;
-            }
-        }
-
-        // Connect to TON wallet
-        async function connectToWallet() {
-            try {
-                if (isWalletConnected) {
-                    await tonConnectUI.disconnect();
+                if (connectedWallet) {
+                    button.innerHTML = '<span class="material-icons">check_circle</span> Wallet Connected';
+                    button.disabled = true;
+                    button.style.background = 'linear-gradient(135deg, var(--success), #047857)';
                 } else {
-                    await tonConnectUI.openModal();
+                    button.innerHTML = '<span class="material-icons">account_balance_wallet</span> Connect Wallet';
+                    button.disabled = false;
+                    button.style.background = 'linear-gradient(135deg, var(--primary), var(--primary-dark))';
                 }
-            } catch (error) {
-                console.error("Error connecting to wallet:", error);
-                showAlert('Error connecting to wallet. Please try again.', 'danger');
-            }
+            });
         }
 
         // Load available tasks
@@ -1478,7 +1382,6 @@
                     return;
                 }
 
-                // Get user's completed tasks
                 database.ref('userTasks/' + currentUser.id).once('value', (userTasksSnapshot) => {
                     const userTasksData = userTasksSnapshot.val() || {};
 
@@ -1558,7 +1461,6 @@
                 const userRef = database.ref('users/' + currentUser.id);
                 const userTaskRef = database.ref('userTasks/' + currentUser.id + '/' + taskId);
 
-                // Check if task is already completed
                 const existingUserTaskSnapshot = await userTaskRef.once('value');
                 if (existingUserTaskSnapshot.exists() && existingUserTaskSnapshot.val().completed === true) {
                     closeModal('taskModal');
@@ -1566,7 +1468,6 @@
                     return;
                 }
 
-                // Update user balance and stats
                 await userRef.transaction((userData) => {
                     if (userData) {
                         userData.balance = (userData.balance || 0) + reward;
@@ -1577,7 +1478,6 @@
                     return userData;
                 });
 
-                // Mark task as completed
                 await userTaskRef.set({
                     completedAt: Date.now(),
                     reward: reward,
@@ -1627,7 +1527,6 @@
                     return;
                 }
 
-                // Update user balance
                 const userRef = database.ref('users/' + currentUser.id);
                 await userRef.transaction((userData) => {
                     if (userData) {
@@ -1637,7 +1536,6 @@
                     return userData;
                 });
 
-                // Mark code as used
                 await database.ref('luckyCodes/' + codeKey).update({ used: true });
 
                 document.getElementById('luckyCodeInput').value = '';
@@ -1675,7 +1573,6 @@
                 else if (finalPosition < 300) reward = 400;
                 else reward = 500;
 
-                // Update user balance and spins
                 const userRef = database.ref('users/' + currentUser.id);
                 await userRef.transaction((userData) => {
                     if (userData) {
@@ -1705,7 +1602,12 @@
             }
 
             try {
-                await show_9809601();
+                if (typeof show_9809601 === 'function') {
+                    await show_9809601();
+                } else {
+                    // Simulate ad watching for testing
+                    await new Promise(resolve => setTimeout(resolve, 2000));
+                }
 
                 const userRef = database.ref('users/' + currentUser.id);
                 await userRef.transaction((userData) => {
@@ -1749,14 +1651,21 @@
                 });
 
                 showAlert('Daily check-in completed! You earned 50 points!', 'success');
+                const dailyCheckinButton = document.querySelector('.btn-success[onclick="dailyCheckin()"]');
+                if (dailyCheckinButton) {
+                    dailyCheckinButton.textContent = 'Checked In!';
+                    dailyCheckinButton.disabled = true;
+                    dailyCheckinButton.classList.remove('btn-success');
+                    dailyCheckinButton.classList.add('btn-secondary');
+                }
             }, 3000);
         }
 
-        // Add task form submission with enhanced TON Connect integration
+        // Add task form submission with TON payment
         document.getElementById('addTaskForm').addEventListener('submit', async (e) => {
             e.preventDefault();
 
-            if (!isWalletConnected) {
+            if (!tonConnectUI.account) {
                 showAlert('Please connect your TON wallet first to create a task.', 'danger');
                 document.getElementById('connectWalletButtonAddTask').scrollIntoView({ behavior: 'smooth' });
                 return;
@@ -1768,7 +1677,6 @@
             const impressions = parseInt(document.getElementById('taskImpressions').value);
             const cost = (impressions / 100) * 0.1;
 
-            // Validation
             if (isNaN(impressions) || impressions < 100 || impressions > 5000) {
                 showAlert('Please enter a valid number of impressions between 100 and 5000.', 'danger');
                 return;
@@ -1779,25 +1687,21 @@
             }
 
             const createTaskButton = document.getElementById('createTaskButton');
-            const originalText = createTaskButton.innerHTML;
-            createTaskButton.innerHTML = '<div class="loading"></div> Processing...';
             createTaskButton.disabled = true;
+            createTaskButton.innerHTML = '<div class="loading"></div> Processing...';
 
             try {
-                // Create TON transaction
                 const transaction = {
                     validUntil: Math.floor(Date.now() / 1000) + 60,
                     messages: [{
                         address: "UQDLsNfQBwWXD9aaNxNS3udGo-9o8ybrlKmmbI5gjjRfs17M",
-                        amount: (cost * 1000000000).toString()
+                        amount: Math.floor(cost * 1000000000).toString()
                     }]
                 };
 
-                showAlert('Please confirm the transaction in your wallet...', 'warning');
                 const result = await tonConnectUI.sendTransaction(transaction);
 
-                if (result) {
-                    // Create task in database
+                if (result && result.boc) {
                     const taskData = {
                         title,
                         description,
@@ -1808,29 +1712,29 @@
                         createdBy: currentUser.id,
                         createdAt: Date.now(),
                         status: 'active',
-                        transactionHash: result.boc // Store transaction hash
+                        transactionHash: result.boc
                     };
 
                     await database.ref('tasks').push(taskData);
+
                     document.getElementById('addTaskForm').reset();
                     document.getElementById('totalCost').textContent = '0';
-                    showAlert('Task created successfully! Payment confirmed.', 'success');
+                    showAlert('Task created successfully! Transaction confirmed.', 'success');
                     loadUserTasks();
-
                 } else {
-                    showAlert('Transaction was cancelled or failed. Task not created.', 'danger');
+                    showAlert('Transaction failed or was cancelled. Task not created.', 'danger');
                 }
 
             } catch (error) {
                 console.error('Error creating task:', error);
-                if (error.message.includes('user declined')) {
+                if (error.message && error.message.includes('User rejects')) {
                     showAlert('Transaction was cancelled by user.', 'warning');
                 } else {
                     showAlert('Error creating task. Please check your wallet connection and try again.', 'danger');
                 }
             } finally {
-                createTaskButton.innerHTML = originalText;
                 createTaskButton.disabled = false;
+                createTaskButton.innerHTML = '<span class="material-icons">payment</span> Create & Pay';
             }
         });
 
@@ -1870,6 +1774,7 @@
             card.className = 'task-card';
 
             const isTaskCompleted = task.remainingImpressions <= 0;
+            const progressPercentage = ((task.impressions - task.remainingImpressions) / task.impressions) * 100;
 
             card.innerHTML = `
                 <div class="task-header">
@@ -1878,7 +1783,7 @@
                 </div>
                 <div class="task-description">${task.description}</div>
                 <div class="progress-bar">
-                    <div class="progress-fill" style="width: ${((task.impressions - task.remainingImpressions) / task.impressions) * 100}%"></div>
+                    <div class="progress-fill" style="width: ${progressPercentage}%"></div>
                 </div>
                 <div class="task-actions">
                     ${isTaskCompleted ?
@@ -2016,7 +1921,7 @@
             document.getElementById('withdrawModal').style.display = 'block';
         }
 
-        // Withdrawal form submission
+        // Submit withdrawal request
         document.getElementById('withdrawForm').addEventListener('submit', async (e) => {
             e.preventDefault();
 
@@ -2114,6 +2019,16 @@
                 });
         }
 
+        // Connect to wallet
+        async function connectToWallet() {
+            try {
+                await tonConnectUI.openModal();
+            } catch (error) {
+                console.error("Error connecting to wallet:", error);
+                showAlert('Error connecting to wallet. Please ensure you have a TON wallet installed and try again.', 'danger');
+            }
+        }
+
         // Navigation functions
         function showSection(sectionName) {
             document.querySelectorAll('.section').forEach(section => {
@@ -2131,10 +2046,14 @@
                     item.classList.add('active');
                 }
             });
+
+            if (sectionName === 'addTask') {
+                updateConnectWalletButtonState();
+            }
         }
 
-        // Task tab switching
-        function showTaskTab(tabName) {
+        // Switch task tabs
+        function showTaskTab(event, tabName) {
             document.querySelectorAll('.tab').forEach(tab => {
                 tab.classList.remove('active');
             });
@@ -2170,7 +2089,7 @@
             }, 5000);
         }
 
-        // Format numbers
+        // Format number
         function formatNumber(num) {
             if (num === null || num === undefined) return '0';
             num = Number(num);
@@ -2192,29 +2111,24 @@
             showAlert('Red Moon theme is the current and only theme!', 'success');
         }
 
-        // Initialize app
+        // Initialization
         document.addEventListener('DOMContentLoaded', () => {
             initTelegramWebApp();
             showSection('home');
+            updateConnectWalletButtonState();
         });
 
-        // Close modals when clicking outside
+        // Close modals on outside click
         window.addEventListener('click', (e) => {
             if (e.target.classList.contains('modal')) {
                 e.target.style.display = 'none';
             }
         });
 
-        // TON Connect status change handler
+        // Handle TON Connect status changes
         tonConnectUI.onStatusChange(wallet => {
-            updateWalletStatus();
-            if (wallet) {
-                showAlert(`Wallet connected: ${wallet.account.address.slice(0, 6)}...${wallet.account.address.slice(-4)}`, 'success');
-            } else {
-                showAlert('Wallet disconnected', 'warning');
-            }
+            updateConnectWalletButtonState();
         });
-
     </script>
 </body>
 </html>
