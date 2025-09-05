@@ -3,184 +3,1689 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EarnFlux - Admin Dashboard (INSECURE)</title>
-    <!-- Include your styles and Firebase SDK -->
+    <title>EarnFlux - Admin Panel</title>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/@tonconnect/ui@latest/dist/tonconnect-ui.min.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
     <style>
-        /* Add styles for tables, buttons, etc. */
-        body { font-family: 'Inter', sans-serif; background-color: var(--dark); color: var(--text); padding: 20px; }
-        .container { max-width: 1200px; margin: 0 auto; }
-        h1, h2 { color: var(--primary); margin-bottom: 20px; }
-        table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
-        th, td { border: 1px solid var(--border); padding: 10px; text-align: left; }
-        th { background-color: var(--dark-secondary); }
-        .btn { /* Your existing button styles */ }
-        .btn-danger { background: var(--danger); }
-        .btn-success { background: var(--success); }
+        /* Paste the ENTIRE CSS from your original index.html here */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #dc2626;
+            --primary-dark: #b91c1c;
+            --primary-light: #ef4444;
+            --secondary: #7c2d12;
+            --accent: #f59e0b;
+            --success: #059669;
+            --danger: #dc2626;
+            --warning: #d97706;
+            --dark: #0f0f23;
+            --dark-secondary: #1a1a2e;
+            --dark-tertiary: #16213e;
+            --light: #f8fafc;
+            --border: #374151;
+            --text: #f1f5f9;
+            --text-light: #cbd5e1;
+            --text-muted: #94a3b8;
+            --glass: rgba(220, 38, 38, 0.1);
+            --glass-border: rgba(220, 38, 38, 0.2);
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%);
+            min-height: 100vh;
+            color: var(--text);
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background:
+                radial-gradient(circle at 20% 80%, rgba(220, 38, 38, 0.3) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(239, 68, 68, 0.2) 0%, transparent 50%),
+                radial-gradient(circle at 40% 40%, rgba(185, 28, 28, 0.1) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .container {
+            max-width: 1200px; /* Increased for admin panel */
+            margin: 0 auto;
+            padding: 20px 15px 100px;
+            position: relative;
+        }
+
+        .header {
+            background: rgba(15, 15, 35, 0.8);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 8px 32px rgba(220, 38, 38, 0.2);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(220, 38, 38, 0.1), transparent);
+            animation: shimmer 3s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            z-index: 1;
+        }
+
+        .user-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            border: 2px solid var(--primary);
+            object-fit: cover;
+            box-shadow: 0 0 20px rgba(220, 38, 38, 0.3);
+        }
+
+        .user-details h3 {
+            color: var(--text);
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .user-balance {
+            color: var(--primary);
+            font-weight: 700;
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .theme-toggle {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            border: none;
+            border-radius: 50px;
+            padding: 10px 15px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+            z-index: 1;
+        }
+
+        .theme-toggle:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(220, 38, 38, 0.4);
+        }
+
+        .card {
+            background: rgba(15, 15, 35, 0.8);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 24px;
+            margin-bottom: 20px;
+            box-shadow: 0 8px 32px rgba(220, 38, 38, 0.15);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, var(--primary), var(--primary-light), var(--primary));
+            opacity: 0.7;
+        }
+
+        .card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 16px 48px rgba(220, 38, 38, 0.25);
+        }
+
+        .card-title {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--primary);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .stat-card {
+            background: rgba(15, 15, 35, 0.9);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 20px;
+            text-align: center;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(220, 38, 38, 0.1), transparent);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .stat-card:hover::before {
+            opacity: 1;
+        }
+
+        .stat-number {
+            font-size: 24px;
+            font-weight: 800;
+            color: var(--primary);
+            margin-bottom: 8px;
+        }
+
+        .stat-label {
+            color: var(--text-light);
+            font-weight: 500;
+            font-size: 12px;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            font-size: 14px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .btn:hover:not(:disabled)::before {
+            left: 100%;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(220, 38, 38, 0.4);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, var(--success), #047857);
+            color: white;
+        }
+
+        .btn-warning {
+            background: linear-gradient(135deg, var(--warning), #b45309);
+            color: white;
+        }
+
+        .btn-secondary {
+            background: rgba(15, 15, 35, 0.8);
+            color: var(--text);
+            border: 1px solid var(--glass-border);
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, var(--danger), #b91c1c);
+            color: white;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--text);
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            background: rgba(15, 15, 35, 0.8);
+            color: var(--text);
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(220, 38, 38, 0.1);
+        }
+
+        .task-grid {
+            display: grid;
+            gap: 15px;
+        }
+
+        .task-card {
+            background: rgba(15, 15, 35, 0.9);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 20px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .task-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: linear-gradient(180deg, var(--primary), var(--primary-light));
+        }
+
+        .task-card:hover {
+            transform: translateX(5px);
+            box-shadow: 0 8px 25px rgba(220, 38, 38, 0.2);
+        }
+
+        .task-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 12px;
+        }
+
+        .task-title {
+            font-weight: 700;
+            color: var(--text);
+            margin-bottom: 8px;
+        }
+
+        .task-reward {
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            color: white;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .task-description {
+            color: var(--text-light);
+            margin-bottom: 12px;
+            line-height: 1.5;
+        }
+
+        .task-actions {
+            display: flex;
+            gap: 8px;
+            justify-content: flex-end;
+        }
+
+        .tabs {
+            display: flex;
+            background: rgba(15, 15, 35, 0.8);
+            border-radius: 12px;
+            padding: 4px;
+            margin-bottom: 20px;
+            border: 1px solid var(--glass-border);
+        }
+
+        .tab {
+            flex: 1;
+            padding: 12px;
+            text-align: center;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            color: var(--text-light);
+        }
+
+        .tab.active {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            box-shadow: 0 4px 15px rgba(220, 38, 38, 0.3);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .section {
+            display: none;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(15, 15, 35, 0.95);
+            backdrop-filter: blur(20px);
+            border-top: 1px solid var(--glass-border);
+            padding: 12px 0;
+            z-index: 1000;
+        }
+
+        .nav-container {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            text-decoration: none;
+            color: var(--text-muted);
+            transition: all 0.3s ease;
+            padding: 8px 12px;
+            border-radius: 12px;
+            position: relative;
+        }
+
+        .nav-item.active,
+        .nav-item:hover {
+            color: var(--primary);
+            background: rgba(220, 38, 38, 0.1);
+        }
+
+        .nav-item span {
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .spin-wheel {
+            width: 250px;
+            height: 250px;
+            border-radius: 50%;
+            border: 8px solid var(--primary);
+            margin: 20px auto;
+            position: relative;
+            background: conic-gradient(
+                from 0deg,
+                var(--primary) 0deg 60deg,
+                var(--primary-light) 60deg 120deg,
+                var(--warning) 120deg 180deg,
+                var(--success) 180deg 240deg,
+                var(--primary-dark) 240deg 300deg,
+                var(--accent) 300deg 360deg
+            );
+            transition: transform 3s cubic-bezier(0.23, 1, 0.32, 1);
+        }
+
+        .spin-wheel::before {
+            content: '';
+            position: absolute;
+            top: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 0;
+            border-left: 15px solid transparent;
+            border-right: 15px solid transparent;
+            border-top: 30px solid var(--text);
+            z-index: 10;
+        }
+
+        .spin-center {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 60px;
+            height: 60px;
+            background: var(--primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+            z-index: 5;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 2000;
+            backdrop-filter: blur(10px);
+        }
+
+        .modal-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(15, 15, 35, 0.95);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 30px;
+            max-width: 400px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .modal-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: var(--text-light);
+        }
+
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, .3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .alert {
+            padding: 16px 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            border-left: 4px solid;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(-100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        .alert-success {
+            background: rgba(5, 150, 105, 0.1);
+            border-left-color: var(--success);
+            color: var(--success);
+        }
+
+        .alert-danger {
+            background: rgba(220, 38, 38, 0.1);
+            border-left-color: var(--danger);
+            color: var(--danger);
+        }
+
+        .alert-warning {
+            background: rgba(217, 119, 6, 0.1);
+            border-left-color: var(--warning);
+            color: var(--warning);
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: rgba(15, 15, 35, 0.8);
+            border-radius: 4px;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--primary-light));
+            border-radius: 4px;
+            transition: width 0.3s ease;
+        }
+
+        .countdown {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--primary);
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .refer-link {
+            background: rgba(15, 15, 35, 0.8);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 12px;
+            color: var(--text);
+            font-family: monospace;
+            word-break: break-all;
+            margin: 10px 0;
+        }
+
+        .withdrawal-history {
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .history-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 8px;
+        }
+
+        .history-status {
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .status-pending {
+            background: rgba(217, 119, 6, 0.2);
+            color: var(--warning);
+        }
+
+        .status-completed {
+            background: rgba(5, 150, 105, 0.2);
+            color: var(--success);
+        }
+
+        .status-rejected {
+            background: rgba(220, 38, 38, 0.2);
+            color: var(--danger);
+        }
+
+        .add-task-button {
+            margin-top: 15px;
+            text-align: center;
+        }
+
+        .add-task-button .btn {
+            background: linear-gradient(135deg, var(--accent), var(--warning));
+            color: white;
+        }
+
+        .add-task-button .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(245, 158, 11, 0.4);
+        }
+
+        .add-task-connect-wallet-button {
+            margin-top: 15px;
+            text-align: center;
+            display: block;
+            width: 100%;
+        }
+
+        #ton-connect {
+            display: none;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px 10px 100px;
+            }
+
+            .header {
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .modal-content {
+                width: 95%;
+                padding: 20px;
+            }
+
+            .spin-wheel {
+                width: 200px;
+                height: 200px;
+            }
+
+            .bottom-nav {
+                padding: 10px 0;
+            }
+
+            .nav-item span {
+                font-size: 10px;
+            }
+
+            .nav-item {
+                padding: 6px 8px;
+            }
+        }
+
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% {
+                box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.7);
+            }
+            70% {
+                box-shadow: 0 0 0 10px rgba(220, 38, 38, 0);
+            }
+            100% {
+                box-shadow: 0 0 0 0 rgba(220, 38, 38, 0);
+            }
+        }
+
+        .glow {
+            box-shadow: 0 0 20px rgba(220, 38, 38, 0.5);
+        }
+
+        /* Admin Panel Specific Styles */
+        .admin-nav {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 30px;
+            padding: 15px;
+            background: rgba(15, 15, 35, 0.8);
+            border-radius: 12px;
+            border: 1px solid var(--glass-border);
+            overflow-x: auto; /* For mobile */
+        }
+
+        .admin-nav-item {
+            padding: 10px 20px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            color: var(--text-light);
+            white-space: nowrap; /* Prevent wrapping on mobile */
+        }
+
+        .admin-nav-item.active {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            box-shadow: 0 4px 15px rgba(220, 38, 38, 0.3);
+        }
+
+        .admin-section {
+            display: none;
+        }
+
+        .admin-section.active {
+            display: block;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+        }
+
+        .task-actions-admin .btn-danger {
+            background: var(--danger);
+        }
+        .task-actions-admin .btn-success {
+            background: var(--success);
+        }
+        .task-actions-admin .btn-warning {
+            background: var(--warning);
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        .data-table th, .data-table td {
+            padding: 12px 16px;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .data-table th {
+            background: rgba(15, 15, 35, 0.9);
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .data-table tbody tr:hover {
+            background: rgba(15, 15, 35, 0.95);
+        }
+
+        .data-table .action-buttons {
+            justify-content: center;
+        }
+
+        .form-input[type="datetime-local"] {
+             background: rgba(15, 15, 35, 0.8);
+             color: var(--text);
+             border: 2px solid var(--border);
+             border-radius: 12px;
+             padding: 12px 16px;
+        }
+        .form-input[type="datetime-local"]:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(220, 38, 38, 0.1);
+        }
+
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>EarnFlux Admin Dashboard</h1>
+        <div class="header">
+            <div class="user-info">
+                <img src="https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?auto=compress&cs=tinysrgb&w=100&h=100&dpr=1" alt="User Avatar" class="user-avatar" id="userAvatar">
+                <div class="user-details">
+                    <h3 id="userName">Admin</h3>
+                    <div class="user-balance">
+                        <span class="material-icons">verified_user</span>
+                        Admin Panel
+                    </div>
+                </div>
+            </div>
+            <button class="theme-toggle" onclick="toggleTheme()">
+                <span class="material-icons">dark_mode</span>
+                Red Moon
+            </button>
+        </div>
 
-        <section id="usersSection">
-            <h2>Users</h2>
-            <table id="usersTable">
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Username</th>
-                        <th>Balance</th>
-                        <th>Earned</th>
-                        <th>Tasks Done</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody id="usersTableBody">
-                    <!-- User data will be loaded here -->
-                </tbody>
-            </table>
-        </section>
+        <div class="admin-nav">
+            <div class="admin-nav-item active" onclick="showAdminSection('dashboard')">Dashboard</div>
+            <div class="admin-nav-item" onclick="showAdminSection('tasks')">Manage Tasks</div>
+            <div class="admin-nav-item" onclick="showAdminSection('luckyCodes')">Lucky Codes</div>
+            <div class="admin-nav-item" onclick="showAdminSection('withdrawals')">Withdrawals</div>
+            <div class="admin-nav-item" onclick="showAdminSection('users')">Users</div>
+        </div>
 
-        <section id="withdrawalsSection">
-            <h2>Withdrawals</h2>
-            <table id="withdrawalsTable">
-                <thead>
-                    <tr>
-                        <th>User</th>
-                        <th>TON Address</th>
-                        <th>Points</th>
-                        <th>TON Amount</th>
-                        <th>Status</th>
-                        <th>Date</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody id="withdrawalsTableBody">
-                    <!-- Withdrawal data will be loaded here -->
-                </tbody>
-            </table>
-        </section>
+        <!-- Admin Dashboard Section -->
+        <div id="dashboardSection" class="admin-section active">
+            <div class="card">
+                <h2 class="card-title"><span class="material-icons">dashboard</span> Overview</h2>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-number" id="totalUsers">0</div>
+                        <div class="stat-label">Total Users</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="totalTasks">0</div>
+                        <div class="stat-label">Total Tasks Created</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="activeTasks">0</div>
+                        <div class="stat-label">Active Tasks</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="totalWithdrawalsRequested">0</div>
+                        <div class="stat-label">Withdrawals Requested</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="totalAmountWithdrawn">0</div>
+                        <div class="stat-label">Total Withdrawn (TON)</div>
+                    </div>
+                     <div class="stat-card">
+                        <div class="stat-number" id="pendingWithdrawals">0</div>
+                        <div class="stat-label">Pending Withdrawals</div>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-        <!-- Add sections for tasks, lucky codes, etc. -->
+        <!-- Manage Tasks Section -->
+        <div id="tasksSection" class="admin-section">
+            <div class="card">
+                <h2 class="card-title"><span class="material-icons">assignment</span> All Tasks</h2>
+                <div class="task-grid" id="adminTasksGrid">
+                    <!-- Tasks will be loaded here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Lucky Codes Section -->
+        <div id="luckyCodesSection" class="admin-section">
+            <div class="card">
+                <h2 class="card-title"><span class="material-icons">card_giftcard</span> Lucky Codes</h2>
+                <form id="addLuckyCodeForm">
+                    <div class="form-group">
+                        <label class="form-label">Code</label>
+                        <input type="text" class="form-input" id="luckyCodeInput" placeholder="Enter code (e.g., SUMMER2024)" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Reward (Points)</label>
+                        <input type="number" class="form-input" id="luckyCodeReward" placeholder="e.g., 500" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Expires At</label>
+                        <input type="datetime-local" class="form-input" id="luckyCodeExpiresAt" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">
+                        <span class="material-icons">add</span>
+                        Add Lucky Code
+                    </button>
+                </form>
+
+                <h3 class="card-title" style="margin-top: 30px;"><span class="material-icons">list</span> Active Lucky Codes</h3>
+                <div id="activeLuckyCodesList">
+                    <!-- Active lucky codes will be listed here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Withdrawals Section -->
+        <div id="withdrawalsSection" class="admin-section">
+            <div class="card">
+                <h2 class="card-title"><span class="material-icons">history</span> Withdrawal Requests</h2>
+                <div class="withdrawal-history" id="adminWithdrawalHistory">
+                    <!-- Withdrawal history will be loaded here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Users Section -->
+        <div id="usersSection" class="admin-section">
+            <div class="card">
+                <h2 class="card-title"><span class="material-icons">people</span> User List</h2>
+                <div class="data-table-container">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>User ID</th>
+                                <th>Username</th>
+                                <th>Balance (Points)</th>
+                                <th>Total Earned</th>
+                                <th>Referrals</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="usersTableBody">
+                            <!-- User data will be loaded here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
 
     </div>
 
+    <!-- Bottom Navigation (Optional for Admin, but kept for consistency) -->
+    <!-- You might want to remove this or replace it with admin-specific navigation -->
+    <div class="bottom-nav">
+        <div class="nav-container">
+            <a href="#" class="nav-item" onclick="showSection('home'); return false;">
+                <span class="material-icons">home</span>
+                <span>Home</span>
+            </a>
+            <a href="#" class="nav-item" onclick="showSection('ads'); return false;">
+                <span class="material-icons">play_circle</span>
+                <span>Ads</span>
+            </a>
+            <a href="#" class="nav-item" onclick="showSection('tasks'); return false;">
+                <span class="material-icons">assignment</span>
+                <span>Tasks</span>
+            </a>
+            <a href="#" class="nav-item" onclick="showSection('referral'); return false;">
+                <span class="material-icons">share</span>
+                <span>Refer</span>
+            </a>
+            <a href="#" class="nav-item" onclick="showSection('profile'); return false;">
+                <span class="material-icons">account_balance_wallet</span>
+                <span>Withdraw</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- Task Verification Modal (Keep from original) -->
+    <div id="taskModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Task Verification</h3>
+                <button class="close-btn" onclick="closeModal('taskModal')">&times;</button>
+            </div>
+            <div id="taskModalContent">
+                <div class="countdown" id="taskCountdown">5</div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="taskProgress"></div>
+                </div>
+                <p style="text-align: center; color: var(--text-light);">
+                    Please wait while we verify your task completion...
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Withdraw Modal (Keep from original) -->
+    <div id="withdrawModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Withdraw Points</h3>
+                <button class="close-btn" onclick="closeModal('withdrawModal')">&times;</button>
+            </div>
+            <form id="withdrawForm">
+                <div class="form-group">
+                    <label class="form-label">TON Address</label>
+                    <input type="text" class="form-input" id="tonAddress" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Amount (Points)</label>
+                    <input type="number" class="form-input" id="withdrawAmount" min="2000" required>
+                    <div style="font-size: 12px; color: var(--text-light); margin-top: 5px;">
+                        Minimum: 2000 points | Rate: 100 points = 0.000078 TON
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">You will receive: <span id="tonReceive">0</span> TON</label>
+                </div>
+                <button type="submit" class="btn btn-primary">
+                    <span class="material-icons">send</span>
+                    Request Withdrawal
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- TON Connect SDK (Keep from original) -->
+    <script src="https://cdn.jsdelivr.net/npm/@tonconnect/ui@latest/dist/index.min.js"></script>
+
+
     <script>
-        // Firebase configuration (USE YOUR ACTUAL CONFIG)
-        const firebaseConfig = {
-            apiKey: "AIzaSyA3SqCHzN3kLj7DC8Cyu9OzxPFtIlyyii4",
-            authDomain: "maneybux-clone.firebaseapp.com",
-            projectId: "maneybux-clone",
-            storageBucket: "maneybux-clone.firebasestorage.app",
-            messagingSenderId: "153207109623",
-            appId: "1:153207109623:web:4cd48633c49c2ba3c1a0f2"
-        };
+        // --- Firebase Configuration ---
+       const firebaseConfig = {
+  apiKey: "AIzaSyA3SqCHzN3kLj7DC8Cyu9OzxPFtIlyyii4",
+  authDomain: "maneybux-clone.firebaseapp.com",
+  databaseURL: "https://maneybux-clone-default-rtdb.firebaseio.com",
+  projectId: "maneybux-clone",
+  storageBucket: "maneybux-clone.firebasestorage.app",
+  messagingSenderId: "153207109623",
+  appId: "1:153207109623:web:4cd48633c49c2ba3c1a0f2"
+};
 
         // Initialize Firebase
         firebase.initializeApp(firebaseConfig);
         const database = firebase.database();
 
-        // --- INSECURE ADMIN FUNCTIONS ---
-        // IMPORTANT: This is for demonstration ONLY and MUST NOT be used in production.
-        // It lacks any authentication and security.
+        // --- TON Connect Setup ---
+        const tonConnectUI = new TON_CONNECT_UI.TonConnectUI({
+            manifestUrl: 'YOUR_APP_MANIFEST_URL', // <-- REPLACE WITH YOUR ACTUAL MANIFEST URL (e.g., https://your-domain.com/tonconnect-manifest.json)
+            buttonRootId: null
+        });
+
+        tonConnectUI.uiOptions = {
+            actionsConfiguration: {
+                twaReturnUrl: 'YOUR_TELEGRAM_BOT_URL' // <-- REPLACE WITH YOUR TELEGRAM BOT URL (e.g., https://t.me/YourBotName)
+            }
+        };
+
+        // --- Global Variables & Constants ---
+        let currentUser = null; // For admin panel, we won't rely on TWA user data for authentication
+        let adminUsernames = ['admin1', 'admin2']; // <-- REPLACE with actual admin usernames or use a more robust auth method
+        let allUsersData = {}; // To store all user data for admin view
+
+        const REFERRAL_BONUS_POINTS = 500;
+        const TASK_COST_PER_100_IMPRESSIONS = 0.1; // TON
+
+        // --- Helper Functions ---
+        function showAlert(message, type) {
+            const alert = document.createElement('div');
+            alert.className = `alert alert-${type}`;
+            alert.innerHTML = `
+                <span class="material-icons">${type === 'success' ? 'check_circle' : type === 'warning' ? 'warning' : 'error'}</span>
+                ${message}
+            `;
+            document.querySelector('.container').prepend(alert);
+            setTimeout(() => alert.remove(), 5000);
+        }
 
         function formatNumber(num) {
             if (num === null || num === undefined) return '0';
             num = Number(num);
+            if (num >= 1e12) return (num / 1e12).toFixed(1).replace(/\.0$/, '') + 'T';
+            if (num >= 1e9) return (num / 1e9).toFixed(1).replace(/\.0$/, '') + 'B';
+            if (num >= 1e6) return (num / 1e6).toFixed(1).replace(/\.0$/, '') + 'M';
             if (num >= 1e3) return (num / 1e3).toFixed(1).replace(/\.0$/, '') + 'K';
             return num.toString();
         }
 
-        function loadUsers() {
-            const tbody = document.getElementById('usersTableBody');
-            database.ref('users').on('value', snapshot => {
-                tbody.innerHTML = '';
-                snapshot.forEach(userSnapshot => {
-                    const user = userSnapshot.val();
-                    const row = tbody.insertRow();
-                    row.innerHTML = `
-                        <td>${user.id}</td>
-                        <td>${user.username || 'N/A'}</td>
-                        <td>${formatNumber(user.balance || 0)}</td>
-                        <td>${formatNumber(user.totalEarned || 0)}</td>
-                        <td>${formatNumber(user.tasksCompleted || 0)}</td>
-                        <td>
-                            <button class="btn btn-success" onclick="editUser('${userSnapshot.key}')">Edit</button>
-                            <button class="btn btn-danger" onclick="deleteUser('${userSnapshot.key}')">Delete</button>
-                        </td>
-                    `;
-                });
+        function closeModal(modalId) {
+            const modal = document.getElementById(modalId);
+            if (modal) modal.style.display = 'none';
+        }
+
+        function showAdminSection(sectionName) {
+            document.querySelectorAll('.admin-section').forEach(section => section.classList.remove('active'));
+            document.getElementById(sectionName + 'Section').classList.add('active');
+
+            document.querySelectorAll('.admin-nav-item').forEach(item => item.classList.remove('active'));
+            document.querySelector(`.admin-nav-item[onclick*="showAdminSection('${sectionName}')"]`).classList.add('active');
+        }
+
+        function showSection(sectionName) { /* Keep for original user-facing navigation if needed */ }
+        function toggleTheme() { showAlert('Red Moon theme is the current and only theme!', 'success'); }
+        function updateConnectWalletButtonState() { /* Not critical for admin panel primary functions */ }
+
+        // --- Admin Functions ---
+
+        // Admin Authentication (Basic - Needs significant improvement for production)
+        async function authenticateAdmin() {
+            // In a real app, you'd check a token, JWT, or perform a server-side check.
+            // For this single file demo, we'll simulate by checking a hardcoded admin username or assuming the user is authorized if they access this page.
+            // THIS IS NOT SECURE FOR PRODUCTION.
+            const simulatedAdminUsername = 'admin'; // Replace with a way to identify the admin
+            if (adminUsernames.includes(simulatedAdminUsername)) {
+                document.getElementById('userName').textContent = `${simulatedAdminUsername} (Admin)`;
+                console.log("Admin authenticated (simulated).");
+                return true;
+            } else {
+                console.error("Admin authentication failed.");
+                showAlert("Access Denied: You are not authorized to view the admin panel.", "danger");
+                // Redirect or show a login page in a real application
+                return false;
+            }
+        }
+
+        // Load all user data
+        async function loadAllUsers() {
+            const usersTableBody = document.getElementById('usersTableBody');
+            usersTableBody.innerHTML = '<tr><td colspan="6" style="text-align: center;">Loading users...</td></tr>';
+
+            const snapshot = await database.ref('users').once('value');
+            const users = snapshot.val();
+            usersTableBody.innerHTML = ''; // Clear loading message
+
+            if (!users) {
+                usersTableBody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: var(--text-light);">No users found.</td></tr>';
+                return;
+            }
+
+            allUsersData = users; // Store for dashboard stats
+
+            Object.keys(users).forEach(userId => {
+                const user = users[userId];
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${userId}</td>
+                    <td>${user.username || user.first_name || 'N/A'}</td>
+                    <td>${formatNumber(user.balance || 0)}</td>
+                    <td>${formatNumber(user.totalEarned || 0)}</td>
+                    <td>${formatNumber(user.referrals || 0)}</td>
+                    <td class="action-buttons">
+                        <button class="btn btn-warning" onclick="editUser('${userId}')">
+                            <span class="material-icons">edit</span>
+                        </button>
+                        <button class="btn btn-danger" onclick="deleteUser('${userId}')">
+                            <span class="material-icons">delete</span>
+                        </button>
+                    </td>
+                `;
+                usersTableBody.appendChild(row);
             });
         }
 
-        function loadWithdrawals() {
-            const tbody = document.getElementById('withdrawalsTableBody');
-            database.ref('withdrawals').on('value', snapshot => {
-                tbody.innerHTML = '';
-                snapshot.forEach(withdrawalSnapshot => {
-                    const withdrawal = withdrawalSnapshot.val();
-                    const row = tbody.insertRow();
-                    const statusClass = `status-${withdrawal.status}`; // Assuming you have these styles in your CSS
+        // Example: Edit user (e.g., adjust balance, add points)
+        async function editUser(userId) {
+            const user = allUsersData[userId];
+            if (!user) return;
+
+            const newBalance = prompt(`Enter new balance for ${user.username || userId}:`, user.balance || 0);
+            if (newBalance === null) return; // User cancelled
+
+            const newBalanceNum = parseInt(newBalance);
+            if (isNaN(newBalanceNum) || newBalanceNum < 0) {
+                showAlert('Invalid balance entered.', 'danger');
+                return;
+            }
+
+            try {
+                await database.ref('users/' + userId).update({
+                    balance: newBalanceNum,
+                    // You could also update totalEarned, etc.
+                });
+                showAlert(`Balance for ${user.username || userId} updated successfully.`, 'success');
+                loadAllUsers(); // Refresh user list
+            } catch (error) {
+                console.error('Error editing user:', error);
+                showAlert('Error updating user balance.', 'danger');
+            }
+        }
+
+        // Example: Delete user (use with extreme caution)
+        async function deleteUser(userId) {
+            if (!confirm(`Are you sure you want to delete user ${userId}? This action is irreversible and will also delete their associated data (tasks, withdrawals, etc.).`)) {
+                return;
+            }
+            try {
+                await database.ref('users/' + userId).remove();
+                // You'd also need to remove related data from 'tasks', 'userTasks', 'referrals', 'withdrawals' if they are specific to this user
+                // This requires more complex backend logic.
+                showAlert(`User ${userId} deleted successfully.`, 'success');
+                loadAllUsers(); // Refresh user list
+            } catch (error) {
+                console.error('Error deleting user:', error);
+                showAlert('Error deleting user.', 'danger');
+            }
+        }
+
+
+        // Load all tasks for admin
+        async function loadAdminTasks() {
+            const adminTasksGrid = document.getElementById('adminTasksGrid');
+            adminTasksGrid.innerHTML = '<p style="text-align: center; color: var(--text-light);">Loading tasks...</p>';
+
+            const snapshot = await database.ref('tasks').once('value');
+            const tasks = snapshot.val();
+            adminTasksGrid.innerHTML = '';
+
+            if (!tasks) {
+                adminTasksGrid.innerHTML = '<p style="text-align: center; color: var(--text-light);">No tasks found.</p>';
+                return;
+            }
+
+            Object.keys(tasks).forEach(taskId => {
+                const task = tasks[taskId];
+                const taskCard = createAdminTaskCard(taskId, task);
+                adminTasksGrid.appendChild(taskCard);
+            });
+        }
+
+        // Create task card for admin view
+        function createAdminTaskCard(taskId, task) {
+            const card = document.createElement('div');
+            card.className = 'task-card';
+            const isTaskCompleted = task.remainingImpressions <= 0;
+            const progressPercentage = ((task.impressions - task.remainingImpressions) / task.impressions) * 100;
+
+            card.innerHTML = `
+                <div class="task-header">
+                    <div class="task-title">${task.title}</div>
+                    <div class="task-reward">${task.reward || 0} points</div>
+                </div>
+                <div class="task-description">${task.description}</div>
+                <div class="task-description" style="font-size: 12px; color: var(--text-muted);">Created by: ${task.createdBy || 'N/A'}</div>
+                <div class="task-description" style="font-size: 12px; color: var(--text-muted);">Impressions: ${task.impressions}</div>
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: ${progressPercentage}%"></div>
+                </div>
+                <div class="task-actions task-actions-admin">
+                    ${isTaskCompleted ?
+                        `<span style="color: var(--success); font-weight: 600;">Completed</span>` :
+                        `<button class="btn btn-warning" onclick="editTask('${taskId}')">
+                            <span class="material-icons">edit</span> Edit
+                        </button>`
+                    }
+                    <button class="btn btn-danger" onclick="deleteAdminTask('${taskId}')">
+                        <span class="material-icons">delete</span> Delete
+                    </button>
+                </div>
+            `;
+            return card;
+        }
+
+        // Delete task from admin panel (uses Firebase .remove())
+        async function deleteAdminTask(taskId) {
+            if (!confirm('Are you sure you want to delete this task?')) return;
+            try {
+                await database.ref('tasks/' + taskId).remove();
+                showAlert('Task deleted successfully!', 'success');
+                loadAdminTasks(); // Refresh task list
+            } catch (error) {
+                console.error('Error deleting task:', error);
+                showAlert('Error deleting task. Please try again.', 'danger');
+            }
+        }
+
+        // Edit task (e.g., change reward, description, status) - Basic implementation
+        async function editTask(taskId) {
+            const task = (await database.ref('tasks/' + taskId).once('value')).val();
+            if (!task) return;
+
+            const newReward = prompt(`Enter new reward points for "${task.title}":`, task.reward || 0);
+            if (newReward === null) return;
+            const newRewardNum = parseInt(newReward);
+
+            const newDescription = prompt(`Enter new description for "${task.title}":`, task.description || '');
+            if (newDescription === null) return;
+
+            if (isNaN(newRewardNum) || newRewardNum < 0) {
+                showAlert('Invalid reward amount.', 'danger');
+                return;
+            }
+
+            try {
+                await database.ref('tasks/' + taskId).update({
+                    reward: newRewardNum,
+                    description: newDescription,
+                    // You can add more fields to edit here
+                });
+                showAlert(`Task "${task.title}" updated successfully.`, 'success');
+                loadAdminTasks();
+            } catch (error) {
+                console.error('Error editing task:', error);
+                showAlert('Error updating task.', 'danger');
+            }
+        }
+
+        // Add Lucky Code
+        document.getElementById('addLuckyCodeForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const code = document.getElementById('luckyCodeInput').value.trim().toUpperCase();
+            const reward = parseInt(document.getElementById('luckyCodeReward').value);
+            const expiresAtInput = document.getElementById('luckyCodeExpiresAt').value;
+            const expiresAt = new Date(expiresAtInput).getTime();
+
+            if (!code || isNaN(reward) || reward <= 0 || isNaN(expiresAt)) {
+                showAlert('Please fill in all fields correctly.', 'danger');
+                return;
+            }
+
+            const luckyCodeData = {
+                code: code,
+                reward: reward,
+                expiresAt: expiresAt,
+                used: false,
+                createdAt: Date.now()
+            };
+
+            try {
+                await database.ref('luckyCodes').push(luckyCodeData);
+                showAlert('Lucky code added successfully!', 'success');
+                document.getElementById('addLuckyCodeForm').reset();
+                loadLuckyCodes(); // Refresh list
+            } catch (error) {
+                console.error('Error adding lucky code:', error);
+                showAlert('Error adding lucky code. Please try again.', 'danger');
+            }
+        });
+
+        // Load active lucky codes
+        function loadLuckyCodes() {
+            const activeLuckyCodesList = document.getElementById('activeLuckyCodesList');
+            activeLuckyCodesList.innerHTML = 'Loading lucky codes...';
+
+            database.ref('luckyCodes').orderByChild('createdAt').on('value', (snapshot) => {
+                activeLuckyCodesList.innerHTML = '';
+                const codes = snapshot.val();
+                if (!codes) {
+                    activeLuckyCodesList.innerHTML = '<p style="text-align: center; color: var(--text-light);">No lucky codes found.</p>';
+                    return;
+                }
+
+                let foundActiveCodes = false;
+                Object.keys(codes).forEach(codeId => {
+                    const code = codes[codeId];
+                    if (code.expiresAt > Date.now() && !code.used) {
+                        foundActiveCodes = true;
+                        const codeItem = document.createElement('div');
+                        codeItem.className = 'history-item';
+                        codeItem.innerHTML = `
+                            <div>
+                                <strong>${code.code}</strong>
+                                <div style="font-size: 12px; color: var(--text-light);">
+                                    Reward: ${formatNumber(code.reward)} points • Expires: ${new Date(code.expiresAt).toLocaleString()}
+                                </div>
+                            </div>
+                            <div class="action-buttons">
+                                <button class="btn btn-warning" onclick="editLuckyCode('${codeId}')">
+                                    <span class="material-icons">edit</span>
+                                </button>
+                                <button class="btn btn-danger" onclick="deleteLuckyCode('${codeId}')">
+                                    <span class="material-icons">delete</span>
+                                </button>
+                            </div>
+                        `;
+                        activeLuckyCodesList.appendChild(codeItem);
+                    }
+                });
+
+                if (!foundActiveCodes) {
+                    activeLuckyCodesList.innerHTML = '<p style="text-align: center; color: var(--text-light);">No active lucky codes.</p>';
+                }
+            });
+        }
+
+        // Delete lucky code
+        async function deleteLuckyCode(codeId) {
+            if (!confirm('Are you sure you want to delete this lucky code?')) return;
+            try {
+                await database.ref('luckyCodes/' + codeId).remove();
+                showAlert('Lucky code deleted successfully!', 'success');
+            } catch (error) {
+                console.error('Error deleting lucky code:', error);
+                showAlert('Error deleting lucky code. Please try again.', 'danger');
+            }
+        }
+
+        // Edit lucky code
+        async function editLuckyCode(codeId) {
+            const codeData = (await database.ref('luckyCodes/' + codeId).once('value')).val();
+            if (!codeData) return;
+
+            const newReward = prompt(`Enter new reward points for code "${codeData.code}":`, codeData.reward);
+            if (newReward === null) return;
+            const newRewardNum = parseInt(newReward);
+
+            const newExpiresAtInput = prompt(`Enter new expiry date/time (e.g., YYYY-MM-DDTHH:MM):`, new Date(codeData.expiresAt).toISOString().slice(0, 16));
+            if (newExpiresAtInput === null) return;
+            const newExpiresAt = new Date(newExpiresAtInput).getTime();
+
+            if (isNaN(newRewardNum) || newRewardNum <= 0 || isNaN(newExpiresAt)) {
+                showAlert('Invalid input. Please check reward and expiry date/time.', 'danger');
+                return;
+            }
+
+            try {
+                await database.ref('luckyCodes/' + codeId).update({
+                    reward: newRewardNum,
+                    expiresAt: newExpiresAt,
+                });
+                showAlert(`Lucky code "${codeData.code}" updated successfully.`, 'success');
+            } catch (error) {
+                console.error('Error editing lucky code:', error);
+                showAlert('Error updating lucky code.', 'danger');
+            }
+        }
+
+        // Load withdrawal history for admin
+        function loadAdminWithdrawalHistory() {
+            const adminWithdrawalHistory = document.getElementById('adminWithdrawalHistory');
+            adminWithdrawalHistory.innerHTML = 'Loading withdrawals...';
+
+            database.ref('withdrawals').orderByChild('createdAt').limitToLast(50).on('value', (snapshot) => {
+                adminWithdrawalHistory.innerHTML = '';
+                const withdrawals = snapshot.val();
+
+                if (!withdrawals) {
+                    adminWithdrawalHistory.innerHTML = '<p style="text-align: center; color: var(--text-light);">No withdrawal requests yet.</p>';
+                    return;
+                }
+
+                let totalWithdrawn = 0;
+                let pendingCount = 0;
+
+                Object.keys(withdrawals).reverse().forEach(withdrawalId => {
+                    const withdrawal = withdrawals[withdrawalId];
+                    const historyItem = document.createElement('div');
+                    historyItem.className = 'history-item';
+
+                    const statusClass = `status-${withdrawal.status}`;
                     const statusText = withdrawal.status.charAt(0).toUpperCase() + withdrawal.status.slice(1);
 
-                    row.innerHTML = `
-                        <td>${withdrawal.username || withdrawal.userId}</td>
-                        <td>${withdrawal.tonAddress}</td>
-                        <td>${formatNumber(withdrawal.amount)}</td>
-                        <td>${withdrawal.tonAmount.toFixed(8)} TON</td>
-                        <td><span class="history-status ${statusClass}">${statusText}</span></td>
-                        <td>${new Date(withdrawal.createdAt).toLocaleString()}</td>
-                        <td>
-                            <button class="btn btn-success" onclick="approveWithdrawal('${withdrawalSnapshot.key}')">Approve</button>
-                            <button class="btn btn-danger" onclick="rejectWithdrawal('${withdrawalSnapshot.key}')">Reject</button>
-                        </td>
+                    const actionButtons = `
+                        <div class="action-buttons">
+                            <button class="btn btn-success" onclick="processWithdrawal('${withdrawalId}', 'completed')">
+                                <span class="material-icons">check</span> Approve
+                            </button>
+                            <button class="btn btn-danger" onclick="processWithdrawal('${withdrawalId}', 'rejected')">
+                                <span class="material-icons">close</span> Reject
+                            </button>
+                        </div>
                     `;
+
+                    historyItem.innerHTML = `
+                        <div>
+                            <strong>${formatNumber(withdrawal.amount)} points</strong>
+                            <div style="font-size: 12px; color: var(--text-light);">
+                                To: ${withdrawal.tonAddress.substring(0, 10)}... (${withdrawal.tonAmount.toFixed(8)} TON)
+                            </div>
+                            <div style="font-size: 12px; color: var(--text-light);">
+                                User ID: ${withdrawal.userId}
+                            </div>
+                        </div>
+                        <div class="history-status ${statusClass}">${statusText}</div>
+                        ${withdrawal.status === 'pending' ? actionButtons : ''}
+                    `;
+                    adminWithdrawalHistory.appendChild(historyItem);
+
+                    if (withdrawal.status === 'completed') {
+                        totalWithdrawn += withdrawal.tonAmount;
+                    } else if (withdrawal.status === 'pending') {
+                        pendingCount++;
+                    }
                 });
+
+                document.getElementById('totalWithdrawalsRequested').textContent = formatNumber(Object.keys(withdrawals).length);
+                document.getElementById('totalAmountWithdrawn').textContent = totalWithdrawn.toFixed(8);
+                document.getElementById('pendingWithdrawals').textContent = pendingCount;
             });
         }
 
-        function approveWithdrawal(withdrawalId) {
-            // !!! This is where you would integrate with TON to send funds.
-            // This is highly complex and requires a backend.
-            // For demonstration, we'll just mark it as approved.
-            alert("Approving withdrawal requires backend logic and TON integration. Marking as approved for now.");
-            database.ref(`withdrawals/${withdrawalId}`).update({ status: 'approved' })
-                .then(() => console.log('Withdrawal approved'))
-                .catch(error => console.error('Error approving withdrawal:', error));
-        }
+        // Process withdrawal (Approve/Reject)
+        async function processWithdrawal(withdrawalId, status) {
+            if (!confirm(`Are you sure you want to mark this withdrawal as "${status}"?`)) return;
 
-        function rejectWithdrawal(withdrawalId) {
-            if (confirm('Are you sure you want to reject this withdrawal?')) {
-                database.ref(`withdrawals/${withdrawalId}`).update({ status: 'rejected' })
-                    .then(() => console.log('Withdrawal rejected'))
-                    .catch(error => console.error('Error rejecting withdrawal:', error));
+            const withdrawalRef = database.ref('withdrawals/' + withdrawalId);
+            const withdrawalData = (await withdrawalRef.once('value')).val();
+
+            if (!withdrawalData) {
+                showAlert('Withdrawal request not found.', 'danger');
+                return;
+            }
+
+            try {
+                await withdrawalRef.update({
+                    status: status,
+                    processedAt: Date.now()
+                });
+
+                if (status === 'rejected') {
+                    // Refund points to user if rejected
+                    const userRef = database.ref('users/' + withdrawalData.userId);
+                    await userRef.transaction((userData) => {
+                        if (userData) {
+                            userData.balance = (userData.balance || 0) + withdrawalData.amount;
+                        }
+                        return userData;
+                    });
+                    showAlert(`Withdrawal for user ${withdrawalData.userId} rejected and points refunded.`, 'success');
+                } else { // status === 'completed'
+                    showAlert(`Withdrawal for user ${withdrawalData.userId} approved.`, 'success');
+                }
+
+                loadAdminWithdrawalHistory(); // Refresh list
+
+            } catch (error) {
+                console.error('Error processing withdrawal:', error);
+                showAlert('Error processing withdrawal. Please try again.', 'danger');
             }
         }
 
-        function deleteUser(userId) {
-            if (confirm('Are you sure you want to delete this user? All their data will be lost!')) {
-                database.ref(`users/${userId}`).remove()
-                    .then(() => console.log('User deleted'))
-                    .catch(error => console.error('Error deleting user:', error));
-                // Also delete related data like userTasks, referrals if necessary
-            }
+        // Update Dashboard Stats
+        function updateDashboardStats() {
+            const totalUsers = Object.keys(allUsersData).length;
+            document.getElementById('totalUsers').textContent = formatNumber(totalUsers);
+
+            let totalTasksCreated = 0;
+            let activeTasks = 0;
+            Object.values(allUsersData).forEach(user => {
+                 // This requires loading task data separately to count tasks per user or total tasks
+            });
+
+            // Load task count
+            database.ref('tasks').once('value', (snapshot) => {
+                const tasks = snapshot.val();
+                if (tasks) {
+                    const taskCount = Object.keys(tasks).length;
+                    document.getElementById('totalTasks').textContent = formatNumber(taskCount);
+
+                    let activeCount = 0;
+                    Object.values(tasks).forEach(task => {
+                        if (task.remainingImpressions > 0 && task.status !== 'completed') {
+                            activeCount++;
+                        }
+                    });
+                    document.getElementById('activeTasks').textContent = formatNumber(activeCount);
+                } else {
+                    document.getElementById('totalTasks').textContent = '0';
+                    document.getElementById('activeTasks').textContent = '0';
+                }
+            });
+            // Withdrawal stats are updated in loadAdminWithdrawalHistory
         }
 
-        function editUser(userId) {
-            // This would involve showing a modal or form to edit user details
-            alert("Editing user functionality not implemented in this demo.");
-        }
 
         // --- Initialization ---
-        document.addEventListener('DOMContentLoaded', () => {
-            // !! REMOVE THIS ALERT IN A REAL SCENARIO !!
-            alert("WARNING: This admin dashboard is NOT SECURE and is for demonstration purposes ONLY. Do not use it for sensitive operations.");
+        async function initAdminPanel() {
+            // 1. Authenticate Admin (Crucial!)
+            const isAuthenticated = await authenticateAdmin();
+            if (!isAuthenticated) {
+                // Redirect or show login in a real app
+                return;
+            }
 
-            loadUsers();
-            loadWithdrawals();
-            // Load other sections as needed
+            // 2. Load initial data
+            showAdminSection('dashboard'); // Set default active section
+            await loadAllUsers();
+            loadAdminTasks();
+            loadLuckyCodes();
+            loadAdminWithdrawalHistory();
+            updateDashboardStats(); // Call after data is loaded
+
+            // Fetch and update user info in header (optional for admin)
+            // For admin, we might not need real-time user balance, but we can show admin status.
+            document.getElementById('userAvatar').src = 'https://i.pravatar.cc/150?img=1'; // Placeholder admin avatar
+
+            // Listen for real-time updates on users (for dashboard stats)
+            database.ref('users').on('value', (snapshot) => {
+                allUsersData = snapshot.val() || {};
+                updateDashboardStats();
+            });
+
+             // Listen for real-time updates on tasks (for dashboard stats)
+             database.ref('tasks').on('value', (snapshot) => {
+                const tasks = snapshot.val();
+                let activeCount = 0;
+                if (tasks) {
+                    Object.values(tasks).forEach(task => {
+                        if (task.remainingImpressions > 0 && task.status !== 'completed') {
+                            activeCount++;
+                        }
+                    });
+                }
+                document.getElementById('activeTasks').textContent = formatNumber(activeCount);
+             });
+        }
+
+        // --- Event Listeners ---
+        document.addEventListener('DOMContentLoaded', initAdminPanel);
+
+        // Close modals on outside click (keep from original)
+        window.addEventListener('click', (e) => {
+            if (e.target.classList.contains('modal')) {
+                e.target.style.display = 'none';
+            }
+        });
+
+        // TON Connect status change listener (keep from original if needed for admin wallet interactions)
+        tonConnectUI.onStatusChange(wallet => {
+            updateConnectWalletButtonState();
         });
 
     </script>
