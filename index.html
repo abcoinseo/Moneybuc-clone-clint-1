@@ -9,6 +9,7 @@
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src="https://unpkg.com/@tonconnect/ui@latest/dist/tonconnect-ui.min.js"></script>
     <style>
+        /* ... (your existing CSS remains the same) ... */
         * {
             margin: 0;
             padding: 0;
@@ -843,9 +844,11 @@
                 </button>
             </div>
 
+            <!-- REMOVED: TON Wallet card from Home Section -->
+            <!--
             <div class="card">
                 <h2 class="card-title">
-                    <span class="material-icons">link</span>
+                    <span class="material-icons">account_balance_wallet</span>
                     TON Wallet
                 </h2>
                 <div id="ton-connect"></div>
@@ -856,6 +859,7 @@
                     </button>
                 </div>
             </div>
+            -->
         </div>
 
         <!-- Tasks Section -->
@@ -1033,12 +1037,21 @@
                 <div style="text-align: center; margin-bottom: 20px;">
                     <img src="https://via.placeholder.com/100" alt="Profile" class="user-avatar" style="width: 100px; height: 100px;" id="profileAvatar">
                     <h3 style="margin: 15px 0; color: var(--text);" id="profileName">Loading...</h3>
+                    <!-- MODIFIED: TON Connect button moved here -->
+                    <div id="ton-connect"></div> <!-- This is where TonConnectUI will render its button -->
+                    <div style="margin-top: 15px;">
+                        <button class="btn btn-primary" onclick="connectToWallet()">
+                            <span class="material-icons">account_balance_wallet</span>
+                            Connect Wallet
+                        </button>
+                    </div>
                 </div>
 
                 <div style="display: flex; gap: 10px; flex-wrap: wrap; justify-content: center;">
-                    <button class="btn btn-primary" onclick="showWithdrawModal()">
-                        <span class="material-icons">account_balance</span>
-                        Withdraw
+                    <!-- MODIFIED: Renamed "Withdraw" to "Profile" and changed its function -->
+                    <button class="btn btn-primary" onclick="showSection('profile')"> <!-- Changed to show profile section itself -->
+                        <span class="material-icons">person</span>
+                        Profile Settings <!-- Changed text to something relevant -->
                     </button>
                     <button class="btn btn-secondary" onclick="window.open('https://t.me/PixelfrogCommunity', '_blank')">
                         <span class="material-icons">support</span>
@@ -1167,8 +1180,8 @@
 
         // TON Connect setup
         const tonConnectUI = new TON_CONNECT_UI.TonConnectUI({
-            manifestUrl: 'https://raw.githubusercontent.com/ton-community/tutorials/main/03-client/test/public/tonconnect-manifest.json',
-            buttonRootId: 'ton-connect' // Ensure this ID exists if you use the button for TON connect
+            manifestUrl: 'https://raw.githubusercontent.com/ton-community/tutorials/main/03-client/03-client/test/public/tonconnect-manifest.json', // Corrected manifest URL
+            buttonRootId: 'ton-connect' // This ID is used by TonConnectUI to inject its button
         });
 
         tonConnectUI.uiOptions = {
