@@ -9,6 +9,8 @@
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src="https://unpkg.com/@tonconnect/ui@latest/dist/tonconnect-ui.min.js"></script>
     <style>
+        /* ... (Your existing CSS styles here) ... */
+        /* --- BEGIN CSS --- */
         * {
             margin: 0;
             padding: 0;
@@ -619,6 +621,12 @@
             color: var(--warning);
         }
 
+        .alert-info {
+            background: rgba(37, 99, 235, 0.1); /* Example for info */
+            border-left-color: #2563eb; /* Example for info */
+            color: #2563eb; /* Example for info */
+        }
+
         .progress-bar {
             width: 100%;
             height: 8px;
@@ -775,7 +783,7 @@
         #ton-connect {
             display: none; /* Hidden by default, but TON Connect UI might inject its button here */
         }
-
+        /* --- END CSS --- */
     </style>
 </head>
 <body>
@@ -930,7 +938,7 @@
                         <input type="number" class="form-input" id="taskImpressions" min="100" max="5000" required>
                     </div>
                     <div class="form-group">
-                        <label class="form-label">Total Cost: <span id="totalCost">0</span> TON</label>
+                        <label class="form-label">Total Cost: <span id="totalCost">0.000</span> TON</label>
                         <div class="form-label" style="font-size: 12px; color: var(--text-light);">
                             Rate: 0.1 TON per 100 impressions
                         </div>
@@ -1098,12 +1106,12 @@
 
             <a href="#" class="nav-item" onclick="showSection('referral'); return false;">
                 <span class="material-icons">share</span>
-                <span>refer</span>
+                <span>Refer</span>
             </a>
 
             <a href="#" class="nav-item" onclick="showSection('profile'); return false;">
                 <span class="material-icons">account_balance_wallet</span>
-                <span>Withdrow </span>
+                <span>Withdraw</span>
             </a>
         </div>
     </div>
@@ -1147,7 +1155,7 @@
                     </div>
                 </div>
                 <div class="form-group">
-                    <label class="form-label">You will receive: <span id="tonReceive">0</span> TON</label>
+                    <label class="form-label">You will receive: <span id="tonReceive">0.00000000</span> TON</label>
                 </div>
                 <button type="submit" class="btn btn-primary">
                     <span class="material-icons">send</span>
@@ -1160,10 +1168,11 @@
     <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
+    <!-- Ad SDK -->
     <script src='//libtl.com/sdk.js' data-zone='9809601' data-sdk='show_9809601'></script>
 
     <script>
-        // Firebase configuration
+        // --- Firebase Configuration ---
         const firebaseConfig = {
             apiKey: "AIzaSyA3SqCHzN3kLj7DC8Cyu9OzxPFtIlyyii4",
             authDomain: "maneybux-clone.firebaseapp.com",
@@ -1177,19 +1186,20 @@
         firebase.initializeApp(firebaseConfig);
         const database = firebase.database();
 
-        // TON Connect setup
+        // --- TON Connect Initialization ---
         const tonConnectUI = new TON_CONNECT_UI.TonConnectUI({
+            // IMPORTANT: Replace with your actual manifest URL
             manifestUrl: 'https://moneybuc-clone-clint-1.vercel.app/tonconnect-manifest.json',
             buttonRootId: 'ton-connect' // This is the ID where TON Connect UI might inject its button
         });
 
         tonConnectUI.uiOptions = {
             actionsConfiguration: {
-                twaReturnUrl: 'https://t.me/EarnFluxBot' // Default return URL
+                twaReturnUrl: 'https://t.me/EarnFluxBot' // Default return URL for Telegram Web App
             }
         };
 
-        // Global variables
+        // --- Global Variables ---
         let currentUser = null;
         let userBalance = 0;
         let userSpins = 0;
@@ -1199,11 +1209,106 @@
         let lastAdCompletionTime = 0; // To prevent rapid ad watching
         const REFERRAL_BONUS_POINTS = 500; // Configurable bonus for a new referral
 
-        // Initialize Telegram Web App
+        // --- Helper Functions ---
+
+        // Show alert message to the user
+        function showAlert(message, type) {
+            const alert = document.createElement('div');
+            alert.className = `alert alert-${type}`;
+            alert.innerHTML = `
+                <span class="material-icons">${type === 'success' ? 'check_circle' : type === 'warning' ? 'warning' : type === 'danger' ? 'error' : 'info'}</span>
+                ${message}
+            `;
+            // Prepend the alert to the main container to ensure it's visible
+            document.querySelector('.container').prepend(alert);
+            // Remove the alert after a few seconds
+            setTimeout(() => {
+                if (alert.parentNode) { // Check if alert still exists before removing
+                    alert.remove();
+                }
+            }, 5000); // Alert disappears after 5 seconds
+        }
+
+        // Formats large numbers into a more readable format (e.g., 1.5M, 20K)
+        function formatNumber(num) {
+            if (num === null || num === undefined) return '0';
+            num = Number(num); // Ensure num is a number
+
+            if (num >= 1e12) {
+                return (num / 1e12).toFixed(1).replace(/\.0$/, '') + 'T';
+            } else if (num >= 1e9) {
+                return (num / 1e9).toFixed(1).replace(/\.0$/, '') + 'B';
+            } else if (num >= 1e6) {
+                return (num / 1e6).toFixed(1).replace(/\.0$/, '') + 'M';
+            } else if (num >= 1e3) {
+                return (num / 1e3).toFixed(1).replace(/\.0$/, '') + 'K';
+            }
+            return num.toString();
+        }
+
+        // Close a modal by its ID
+        function closeModal(modalId) {
+            const modal = document.getElementById(modalId);
+            if (modal) {
+                modal.style.display = 'none';
+            }
+        }
+
+        // Navigation functions to switch between sections
+        function showSection(sectionName) {
+            // Hide all sections first
+            document.querySelectorAll('.section').forEach(section => {
+                section.style.display = 'none';
+            });
+
+            // Show the selected section
+            const targetSection = document.getElementById(sectionName + 'Section');
+            if (targetSection) {
+                targetSection.style.display = 'block';
+            } else {
+                console.error(`Section with ID ${sectionName}Section not found.`);
+                return; // Prevent further execution if section not found
+            }
+
+
+            // Update active state of bottom navigation items
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.classList.remove('active');
+            });
+
+            // Find the corresponding nav item and mark it as active
+            document.querySelectorAll('.nav-item').forEach(item => {
+                if (item.getAttribute('onclick')?.includes(`showSection('${sectionName}')`)) {
+                    item.classList.add('active');
+                }
+            });
+
+            // After switching sections, ensure the connect wallet button state is correct on the Add Task page if visible
+            if (sectionName === 'addTask') {
+                updateConnectWalletButtonState();
+            }
+        }
+
+        // Switch tabs within the Tasks section (Available/Completed)
+        function showTaskTab(tabName) {
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+
+            // Add active class to the clicked tab and its corresponding content
+            event.target.classList.add('active');
+            document.getElementById(tabName + 'Tasks').classList.add('active');
+        }
+
+        // --- Telegram Web App Initialization ---
         function initTelegramWebApp() {
             if (window.Telegram && window.Telegram.WebApp) {
                 const tg = window.Telegram.WebApp;
                 tg.ready();
+                tg.expand(); // Expand the Web App to full height
 
                 const user = tg.initDataUnsafe?.user;
                 if (user) {
@@ -1245,7 +1350,7 @@
             }
         }
 
-        // Initialize user data
+        // --- User Data Initialization and Real-time Listener ---
         async function initializeUser() {
             if (!currentUser) return;
 
@@ -1302,7 +1407,7 @@
             loadWithdrawalHistory();
         }
 
-        // Update UI with user data
+        // Update UI elements with user data
         function updateUI(userData) {
             document.getElementById('userName').textContent = userData.first_name || 'User';
             document.getElementById('userBalance').textContent = formatNumber(userData.balance || 0);
@@ -1322,7 +1427,7 @@
 
             document.getElementById('profileName').textContent = userData.first_name || 'User';
 
-            // Update watch ad button
+            // Update watch ad button state
             const watchAdButton = document.getElementById('watchAdButton');
             if (adsWatchedToday >= 50) {
                 watchAdButton.disabled = true;
@@ -1334,21 +1439,25 @@
 
             // Update daily check-in button state
             const dailyCheckinButton = document.querySelector('.btn-success[onclick="dailyCheckin()"]');
-            if (dailyCheckinDone) {
-                dailyCheckinButton.textContent = 'Checked In!';
-                dailyCheckinButton.disabled = true;
-                dailyCheckinButton.classList.remove('btn-success');
-                dailyCheckinButton.classList.add('btn-secondary');
-            } else {
-                dailyCheckinButton.textContent = 'Daily Check-in';
-                dailyCheckinButton.disabled = false;
-                dailyCheckinButton.classList.remove('btn-secondary');
-                dailyCheckinButton.classList.add('btn-success');
+            if (dailyCheckinButton) {
+                if (dailyCheckinDone) {
+                    dailyCheckinButton.textContent = 'Checked In!';
+                    dailyCheckinButton.disabled = true;
+                    dailyCheckinButton.classList.remove('btn-success');
+                    dailyCheckinButton.classList.add('btn-secondary');
+                } else {
+                    dailyCheckinButton.textContent = 'Daily Check-in';
+                    dailyCheckinButton.disabled = false;
+                    dailyCheckinButton.classList.remove('btn-secondary');
+                    dailyCheckinButton.classList.add('btn-success');
+                }
             }
 
             // Update the state of the "Connect Wallet" button on the Add Task page
             updateConnectWalletButtonState();
         }
+
+        // --- TON Wallet Integration ---
 
         // Function to update the state of the specific "Connect Wallet" button on the Add Task page
         function updateConnectWalletButtonState() {
@@ -1362,24 +1471,34 @@
                 connectWalletButtonAddTask.textContent = 'Wallet Connected';
                 connectWalletButtonAddTask.disabled = true;
                 connectWalletButtonAddTask.style.background = 'linear-gradient(135deg, var(--success), #047857)'; // Green gradient
-                connectWalletButtonAddTask.style.borderColor = 'var(--success)'; // Optional: add border color
             } else {
                 // Wallet is disconnected
                 connectWalletButtonAddTask.textContent = 'Connect Wallet';
                 connectWalletButtonAddTask.disabled = false;
                 connectWalletButtonAddTask.style.background = 'linear-gradient(135deg, var(--primary), var(--primary-dark))'; // Red gradient
-                connectWalletButtonAddTask.style.borderColor = 'var(--primary)'; // Optional: add border color
             }
         }
 
+        // Function to connect wallet using TON Connect UI
+        async function connectToWallet() {
+            try {
+                await tonConnectUI.openModal(); // This opens the modal for wallet selection
+            } catch (error) {
+                console.error("Error connecting to wallet:", error);
+                showAlert('Error connecting to wallet. Please ensure you have a TON wallet installed and try again.', 'danger');
+            }
+        }
 
-        // Load available tasks
+        // --- Task Management ---
+
+        // Load available tasks from Firebase
         function loadTasks() {
             const availableTasksGrid = document.getElementById('availableTasksGrid');
             const completedTasksGrid = document.getElementById('completedTasksGrid');
 
+            // Listen for real-time updates to tasks
             database.ref('tasks').on('value', (snapshot) => {
-                availableTasksGrid.innerHTML = '';
+                availableTasksGrid.innerHTML = ''; // Clear existing tasks
                 completedTasksGrid.innerHTML = '';
 
                 const tasks = snapshot.val();
@@ -1416,7 +1535,7 @@
             });
         }
 
-        // Create task card
+        // Create a task card for display
         function createTaskCard(taskId, task, isCompleted) {
             const card = document.createElement('div');
             card.className = 'task-card';
@@ -1442,10 +1561,9 @@
             return card;
         }
 
-        // Start task
+        // Start a task (open URL and show verification modal)
         function startTask(taskId, url, reward) {
-            // Open task URL
-            window.open(url, '_blank');
+            window.open(url, '_blank'); // Open task URL in new tab
 
             // Show verification modal
             document.getElementById('taskModal').style.display = 'block';
@@ -1453,20 +1571,21 @@
             let countdown = 5;
             const countdownElement = document.getElementById('taskCountdown');
             const progressElement = document.getElementById('taskProgress');
+            progressElement.style.width = '0%'; // Reset progress bar
 
             const timer = setInterval(() => {
                 countdown--;
                 countdownElement.textContent = countdown;
-                progressElement.style.width = ((5 - countdown) / 5) * 100 + '%';
+                progressElement.style.width = ((5 - countdown) / 5) * 100 + '%'; // Update progress
 
                 if (countdown <= 0) {
                     clearInterval(timer);
-                    completeTask(taskId, reward);
+                    completeTask(taskId, reward); // Call completeTask after countdown
                 }
             }, 1000);
         }
 
-        // Complete task
+        // Complete a task for the current user
         async function completeTask(taskId, reward) {
             try {
                 const userRef = database.ref('users/' + currentUser.id);
@@ -1491,7 +1610,7 @@
                     return userData;
                 });
 
-                // Mark task as completed for this user
+                // Mark task as completed for this user in Firebase
                 await userTaskRef.set({
                     completedAt: Date.now(),
                     reward: reward,
@@ -1508,187 +1627,14 @@
             }
         }
 
-        // Apply lucky code
-        async function applyLuckyCode() {
-            const code = document.getElementById('luckyCodeInput').value.trim().toUpperCase();
-            if (!code) {
-                showAlert('Please enter a lucky code', 'danger');
-                return;
-            }
-
-            try {
-                const codesRef = database.ref('luckyCodes');
-                const snapshot = await codesRef.once('value');
-                const codes = snapshot.val();
-
-                if (!codes) {
-                    showAlert('No lucky codes available.', 'danger');
-                    return;
-                }
-
-                let foundCode = null;
-                let codeKey = null;
-
-                Object.keys(codes).forEach(key => {
-                    if (codes[key].code === code && !codes[key].used && codes[key].expiresAt > Date.now()) {
-                        foundCode = codes[key];
-                        codeKey = key;
-                    }
-                });
-
-                if (!foundCode) {
-                    showAlert('Invalid, expired, or already used lucky code', 'danger');
-                    return;
-                }
-
-                // Update user balance
-                const userRef = database.ref('users/' + currentUser.id);
-                await userRef.transaction((userData) => {
-                    if (userData) {
-                        userData.balance = (userData.balance || 0) + foundCode.reward;
-                        userData.totalEarned = (userData.totalEarned || 0) + foundCode.reward;
-                    }
-                    return userData;
-                });
-
-                // Mark code as used
-                await database.ref('luckyCodes/' + codeKey).update({ used: true });
-
-                document.getElementById('luckyCodeInput').value = '';
-                showAlert(`Lucky code applied! You earned ${foundCode.reward} points!`, 'success');
-
-            } catch (error) {
-                console.error('Error applying lucky code:', error);
-                showAlert('Error applying lucky code. Please try again.', 'danger');
-            }
-        }
-
-        // Spin wheel
-        function spinWheel() {
-            if (userSpins <= 0) {
-                showAlert('No spins available! Complete tasks to earn spins.', 'danger');
-                return;
-            }
-
-            const spinButton = document.getElementById('spinButton');
-            const wheel = document.getElementById('spinWheel');
-
-            spinButton.disabled = true;
-
-            // Random rotation (multiple full rotations + random position)
-            const randomRotation = Math.floor(Math.random() * 360) + 1800; // 5 full rotations + random
-            wheel.style.transform = `rotate(${randomRotation}deg)`;
-
-            setTimeout(async () => {
-                // Calculate reward based on final position
-                const finalPosition = randomRotation % 360;
-                let reward;
-
-                if (finalPosition < 60) reward = 100;
-                else if (finalPosition < 120) reward = 150;
-                else if (finalPosition < 180) reward = 200;
-                else if (finalPosition < 240) reward = 300; // Most common
-                else if (finalPosition < 300) reward = 400;
-                else reward = 500;
-
-                // Update user balance and spins
-                const userRef = database.ref('users/' + currentUser.id);
-                await userRef.transaction((userData) => {
-                    if (userData) {
-                        userData.balance = (userData.balance || 0) + reward;
-                        userData.totalEarned = (userData.totalEarned || 0) + reward;
-                        userData.spins = Math.max(0, (userData.spins || 0) - 1);
-                    }
-                    return userData;
-                });
-
-                spinButton.disabled = false;
-                showAlert(`Congratulations! You won ${reward} points!`, 'success');
-
-            }, 3000); // Animation duration + buffer
-        }
-
-        // Watch ad
-        async function watchAd() {
-            if (adsWatchedToday >= 50) {
-                showAlert('Daily ad limit reached. Come back tomorrow!', 'danger');
-                return;
-            }
-
-            // Prevent rapid ad watching (e.g., within 30 seconds)
-            if (Date.now() - lastAdCompletionTime < 30000) {
-                showAlert('Please wait a moment before watching another ad.', 'warning');
-                return;
-            }
-
-            try {
-                // Show ad using the provided SDK
-                await show_9809601(); // This function needs to be defined by the external SDK
-
-                // Reward user
-                const userRef = database.ref('users/' + currentUser.id);
-                await userRef.transaction((userData) => {
-                    if (userData) {
-                        userData.balance = (userData.balance || 0) + 10;
-                        userData.totalEarned = (userData.totalEarned || 0) + 10;
-                        userData.adsWatched = (userData.adsWatched || 0) + 1;
-                    }
-                    return userData;
-                });
-
-                adsWatchedToday++;
-                lastAdCompletionTime = Date.now(); // Record ad completion time
-                showAlert('Ad watched! You earned 10 points!', 'success');
-
-            } catch (error) {
-                console.error('Error watching ad:', error);
-                showAlert('Error loading ad. Please try again.', 'danger');
-            }
-        }
-
-        // Daily check-in
-        async function dailyCheckin() {
-            const today = new Date().toDateString();
-            const userRef = database.ref('users/' + currentUser.id);
-            const snapshot = await userRef.once('value');
-            const userData = snapshot.val();
-
-            if (userData.lastCheckin === today) {
-                showAlert('You have already checked in today!', 'danger');
-                return;
-            }
-
-            // Open Telegram channel (this is a crucial step for daily check-in to be validated)
-            window.open('https://t.me/PixelfrogCommunity', '_blank');
-
-            // Give reward after a short delay (to allow user to potentially interact with the channel)
-            setTimeout(async () => {
-                await userRef.update({
-                    balance: (userData.balance || 0) + 50, // Example: 50 points for daily check-in
-                    totalEarned: (userData.totalEarned || 0) + 50,
-                    lastCheckin: today
-                });
-
-                showAlert('Daily check-in completed! You earned 50 points!', 'success');
-                // Update UI immediately to reflect check-in status
-                const dailyCheckinButton = document.querySelector('.btn-success[onclick="dailyCheckin()"]');
-                if (dailyCheckinButton) {
-                    dailyCheckinButton.textContent = 'Checked In!';
-                    dailyCheckinButton.disabled = true;
-                    dailyCheckinButton.classList.remove('btn-success');
-                    dailyCheckinButton.classList.add('btn-secondary');
-                }
-            }, 3000); // 3-second delay
-        }
-
-        // Add task form submission
+        // --- Task Creation Form Submission ---
         document.getElementById('addTaskForm').addEventListener('submit', async (e) => {
             e.preventDefault();
 
-            // Check wallet connection BEFORE attempting to create task
+            // 1. Check Wallet Connection FIRST
             if (!tonConnectUI.connectedWallet()) {
                 showAlert('Please connect your TON wallet first to create a task.', 'danger');
-                // Optional: Scroll to the connect wallet button if it's not visible
+                // Scroll to the connect wallet button to make it visible if it's not
                 document.getElementById('connectWalletButtonAddTask').scrollIntoView({ behavior: 'smooth' });
                 return;
             }
@@ -1697,9 +1643,12 @@
             const description = document.getElementById('newTaskDescription').value;
             const url = document.getElementById('newTaskUrl').value;
             const impressions = parseInt(document.getElementById('taskImpressions').value);
-            const cost = (impressions / 100) * 0.1; // Assuming 0.1 TON per 100 impressions
 
-            // Basic validation
+            // Define the cost rate
+            const TON_PER_100_IMPRESSIONS = 0.1; // 0.1 TON for every 100 impressions
+            const cost = (impressions / 100) * TON_PER_100_IMPRESSIONS;
+
+            // Basic validation for impressions
             if (isNaN(impressions) || impressions < 100 || impressions > 5000) {
                 showAlert('Please enter a valid number of impressions between 100 and 5000.', 'danger');
                 return;
@@ -1709,56 +1658,80 @@
                 return;
             }
 
-            try {
-                // Simulate TON transaction for task creation cost
-                const transaction = {
-                    validUntil: Math.floor(Date.now() / 1000) + 60, // Transaction valid for 60 seconds
-                    messages: [{
-                        address: "UQDLsNfQBwWXD9aaNxNS3udGo-9o8ybrlKmmbI5gjjRfs17M", // <<< IMPORTANT: Replace with your actual TON payment address
-                        amount: (cost * 1000000000).toString() // Convert TON to nanoTON
-                    }]
-                };
+            // Convert cost to nanoTON (1 TON = 1,000,000,000 nanoTON)
+            const costInNanoTon = (cost * 1000000000).toString();
 
+            // Construct the transaction object for payment
+            const transaction = {
+                validUntil: Math.floor(Date.now() / 1000) + 60, // Transaction valid for 60 seconds
+                messages: [{
+                    // <<< IMPORTANT: Replace with your actual TON payment wallet address >>>
+                    address: "UQDLsNfQBwWXD9aaNxNS3udGo-9o8ybrlKmmbI5gjjRfs17M",
+                    amount: costInNanoTon
+                }]
+            };
+
+            try {
+                // 2. Send the TON Transaction
+                showAlert('Sending task creation payment. Please confirm in your wallet.', 'info');
                 const result = await tonConnectUI.sendTransaction(transaction);
 
-                if (result) { // Transaction was successful
-                    // Create task in the database
+                // 3. If Transaction is Successful
+                if (result) {
+                    // Payment confirmed. Now create the task in Firebase.
                     const taskData = {
                         title,
                         description,
                         url,
-                        reward: 100, // Fixed reward for now, can be made dynamic
-                        impressions,
+                        reward: 100, // Example: Fixed reward per completion
+                        impressions: impressions,
                         remainingImpressions: impressions, // Initially, all impressions are remaining
                         createdBy: currentUser.id,
                         createdAt: Date.now(),
-                        status: 'active' // Task status
+                        status: 'active' // Task status: active, paused, completed
                     };
 
                     // Use push() to automatically generate a unique ID for the task
-                    await database.ref('tasks').push(taskData);
+                    const newTaskRef = database.ref('tasks').push(taskData);
+                    const taskId = newTaskRef.key; // Get the generated task ID
 
+                    // Optionally, store task ID in a user-specific list for easier management of created tasks
+                    await database.ref('userTasksCreated/' + currentUser.id).update({ [taskId]: true });
+
+                    // Reset form and show success message
                     document.getElementById('addTaskForm').reset();
-                    showAlert('Task created successfully!', 'success');
+                    showAlert('Task created successfully and is now available!', 'success');
+
+                    // Refresh UI elements that show tasks
                     loadUserTasks(); // Refresh the list of user's created tasks
+                    loadTasks();    // Refresh the list of available tasks for all users
+
+                    // Update the connect wallet button to "Connected" and disabled
+                    updateConnectWalletButtonState();
+
                 } else {
-                    showAlert('TON transaction failed. Task not created.', 'danger');
+                    // Transaction failed or was rejected by the user
+                    showAlert('TON transaction failed or was rejected. Task not created.', 'danger');
+                    // Revert UI if necessary (e.g., if it was briefly showing a connecting state)
+                    updateConnectWalletButtonState();
                 }
 
             } catch (error) {
                 console.error('Error creating task:', error);
-                showAlert('Error creating task. Please check your wallet connection and try again.', 'danger');
+                showAlert('An error occurred while creating the task. Please check your wallet connection and balance.', 'danger');
+                // Revert UI if necessary
+                updateConnectWalletButtonState();
             }
         });
 
-        // Update total cost display in the add task form
+        // Update total cost display in the add task form dynamically
         document.getElementById('taskImpressions').addEventListener('input', (e) => {
             const impressions = parseInt(e.target.value) || 0;
-            const cost = (impressions / 100) * 0.1; // Cost calculation
+            const cost = (impressions / 100) * 0.1; // Cost calculation (same as used in submission)
             document.getElementById('totalCost').textContent = cost.toFixed(3); // Display cost with 3 decimal places
         });
 
-        // Load user's created tasks
+        // Load user's created tasks into the "My Created Tasks" section
         function loadUserTasks() {
             if (!currentUser) return;
 
@@ -1782,7 +1755,7 @@
             });
         }
 
-        // Create card for user's own tasks
+        // Create a card for user's own tasks
         function createUserTaskCard(taskId, task) {
             const card = document.createElement('div');
             card.className = 'task-card';
@@ -1812,7 +1785,7 @@
             return card;
         }
 
-        // Delete user task
+        // Delete a user's created task
         async function deleteUserTask(taskId) {
             if (confirm('Are you sure you want to delete this task? This action cannot be undone.')) {
                 try {
@@ -1825,10 +1798,12 @@
             }
         }
 
-        // Handle referral logic
+        // --- Referral System ---
+
+        // Handle referral logic when a user joins via a referral link
         async function handleReferral(referrerId) {
             if (!currentUser || currentUser.id.toString() === referrerId) {
-                // Ignore if it's the same user or no current user
+                // Ignore if it's the same user or no current user data
                 return;
             }
 
@@ -1949,15 +1924,15 @@
             });
         }
 
-        // Claim referral rewards - now automated, this button is more informational
+        // Claim referral rewards (now automated)
         async function claimReferralRewards() {
             showAlert('Referral rewards are automatically credited when a new user joins via your link!', 'success');
         }
 
         // Copy referral link to clipboard
         function copyReferralLink() {
-            // Construct the correct referral link based on your Telegram bot's username
-            const botUsername = 'adflareprobot'; // <<< IMPORTANT: Change this to your bot's actual username
+            // IMPORTANT: Replace 'adflareprobot' with your actual Telegram bot's username
+            const botUsername = 'adflareprobot';
             const link = `https://t.me/${botUsername}/app?startapp=ref_${currentUser.id}`;
             navigator.clipboard.writeText(link).then(() => {
                 showAlert('Referral link copied to clipboard!', 'success');
@@ -1966,6 +1941,8 @@
                 showAlert('Failed to copy link. Please copy it manually.', 'danger');
             });
         }
+
+        // --- Other Features ---
 
         // Show withdraw modal
         function showWithdrawModal() {
@@ -2079,113 +2056,197 @@
                 });
         }
 
-        // Open TON Connect modal to connect wallet
-        async function connectToWallet() {
+        // --- Spin Wheel Functionality ---
+        function spinWheel() {
+            if (userSpins <= 0) {
+                showAlert('No spins available! Complete tasks to earn spins.', 'danger');
+                return;
+            }
+
+            const spinButton = document.getElementById('spinButton');
+            const wheel = document.getElementById('spinWheel');
+
+            spinButton.disabled = true;
+
+            // Random rotation (multiple full rotations + random position)
+            const randomRotation = Math.floor(Math.random() * 360) + 1800; // 5 full rotations + random
+            wheel.style.transform = `rotate(${randomRotation}deg)`;
+
+            setTimeout(async () => {
+                // Calculate reward based on final position
+                const finalPosition = randomRotation % 360;
+                let reward;
+
+                if (finalPosition < 60) reward = 100;
+                else if (finalPosition < 120) reward = 150;
+                else if (finalPosition < 180) reward = 200;
+                else if (finalPosition < 240) reward = 300; // Most common
+                else if (finalPosition < 300) reward = 400;
+                else reward = 500;
+
+                // Update user balance and spins
+                const userRef = database.ref('users/' + currentUser.id);
+                await userRef.transaction((userData) => {
+                    if (userData) {
+                        userData.balance = (userData.balance || 0) + reward;
+                        userData.totalEarned = (userData.totalEarned || 0) + reward;
+                        userData.spins = Math.max(0, (userData.spins || 0) - 1);
+                    }
+                    return userData;
+                });
+
+                spinButton.disabled = false;
+                showAlert(`Congratulations! You won ${reward} points!`, 'success');
+
+            }, 3000); // Animation duration + buffer
+        }
+
+        // --- Ads Functionality ---
+        async function watchAd() {
+            if (adsWatchedToday >= 50) {
+                showAlert('Daily ad limit reached. Come back tomorrow!', 'danger');
+                return;
+            }
+
+            // Prevent rapid ad watching (e.g., within 30 seconds)
+            if (Date.now() - lastAdCompletionTime < 30000) {
+                showAlert('Please wait a moment before watching another ad.', 'warning');
+                return;
+            }
+
             try {
-                await tonConnectUI.openModal();
-            } catch (error) {
-                console.error("Error connecting to wallet:", error);
-                showAlert('Error connecting to wallet. Please ensure you have a TON wallet installed and try again.', 'danger');
-            }
-        }
+                // Show ad using the provided SDK
+                // IMPORTANT: Ensure this SDK function is correctly implemented and available.
+                if (typeof show_9809601 === 'function') {
+                    await show_9809601(); // This function needs to be defined by the external SDK
 
-        // Navigation functions to switch between sections
-        function showSection(sectionName) {
-            // Hide all sections first
-            document.querySelectorAll('.section').forEach(section => {
-                section.style.display = 'none';
-            });
+                    // Reward user
+                    const userRef = database.ref('users/' + currentUser.id);
+                    await userRef.transaction((userData) => {
+                        if (userData) {
+                            userData.balance = (userData.balance || 0) + 10;
+                            userData.totalEarned = (userData.totalEarned || 0) + 10;
+                            userData.adsWatched = (userData.adsWatched || 0) + 1;
+                        }
+                        return userData;
+                    });
 
-            // Show the selected section
-            document.getElementById(sectionName + 'Section').style.display = 'block';
-
-            // Update active state of bottom navigation items
-            document.querySelectorAll('.nav-item').forEach(item => {
-                item.classList.remove('active');
-            });
-
-            // Find the corresponding nav item and mark it as active
-            document.querySelectorAll('.nav-item').forEach(item => {
-                if (item.getAttribute('onclick').includes(`showSection('${sectionName}')`)) {
-                    item.classList.add('active');
+                    adsWatchedToday++;
+                    lastAdCompletionTime = Date.now(); // Record ad completion time
+                    showAlert('Ad watched! You earned 10 points!', 'success');
+                } else {
+                    console.error("Ad SDK function 'show_9809601' is not defined.");
+                    showAlert('Error loading ad. Please try again later.', 'danger');
                 }
-            });
 
-            // After switching sections, ensure the connect wallet button state is correct on the Add Task page if visible
-            if (sectionName === 'addTask') {
-                updateConnectWalletButtonState();
+            } catch (error) {
+                console.error('Error watching ad:', error);
+                showAlert('Error processing ad. Please try again.', 'danger');
             }
         }
 
-        // Switch tabs within the Tasks section (Available/Completed)
-        function showTaskTab(tabName) {
-            document.querySelectorAll('.tab').forEach(tab => {
-                tab.classList.remove('active');
-            });
-            document.querySelectorAll('.tab-content').forEach(content => {
-                content.classList.remove('active');
-            });
+        // --- Daily Check-in ---
+        async function dailyCheckin() {
+            const today = new Date().toDateString();
+            const userRef = database.ref('users/' + currentUser.id);
+            const snapshot = await userRef.once('value');
+            const userData = snapshot.val();
 
-            // Add active class to the clicked tab and its corresponding content
-            event.target.classList.add('active');
-            document.getElementById(tabName + 'Tasks').classList.add('active');
+            if (userData.lastCheckin === today) {
+                showAlert('You have already checked in today!', 'danger');
+                return;
+            }
+
+            // Open Telegram channel (this is a crucial step for daily check-in to be validated)
+            window.open('https://t.me/PixelfrogCommunity', '_blank');
+
+            // Give reward after a short delay (to allow user to potentially interact with the channel)
+            setTimeout(async () => {
+                await userRef.update({
+                    balance: (userData.balance || 0) + 50, // Example: 50 points for daily check-in
+                    totalEarned: (userData.totalEarned || 0) + 50,
+                    lastCheckin: today
+                });
+
+                showAlert('Daily check-in completed! You earned 50 points!', 'success');
+                // Update UI immediately to reflect check-in status
+                const dailyCheckinButton = document.querySelector('.btn-success[onclick="dailyCheckin()"]');
+                if (dailyCheckinButton) {
+                    dailyCheckinButton.textContent = 'Checked In!';
+                    dailyCheckinButton.disabled = true;
+                    dailyCheckinButton.classList.remove('btn-success');
+                    dailyCheckinButton.classList.add('btn-secondary');
+                }
+            }, 3000); // 3-second delay
         }
 
-        // Close a modal by its ID
-        function closeModal(modalId) {
-            const modal = document.getElementById(modalId);
-            if (modal) {
-                modal.style.display = 'none';
+
+        // --- Lucky Code Functionality ---
+        async function applyLuckyCode() {
+            const code = document.getElementById('luckyCodeInput').value.trim().toUpperCase();
+            if (!code) {
+                showAlert('Please enter a lucky code', 'danger');
+                return;
+            }
+
+            try {
+                const codesRef = database.ref('luckyCodes');
+                const snapshot = await codesRef.once('value');
+                const codes = snapshot.val();
+
+                if (!codes) {
+                    showAlert('No lucky codes available.', 'danger');
+                    return;
+                }
+
+                let foundCode = null;
+                let codeKey = null;
+
+                // Iterate through codes to find a match that is not used and not expired
+                Object.keys(codes).forEach(key => {
+                    if (codes[key].code === code && !codes[key].used && codes[key].expiresAt > Date.now()) {
+                        foundCode = codes[key];
+                        codeKey = key;
+                    }
+                });
+
+                if (!foundCode) {
+                    showAlert('Invalid, expired, or already used lucky code', 'danger');
+                    return;
+                }
+
+                // Update user balance
+                const userRef = database.ref('users/' + currentUser.id);
+                await userRef.transaction((userData) => {
+                    if (userData) {
+                        userData.balance = (userData.balance || 0) + foundCode.reward;
+                        userData.totalEarned = (userData.totalEarned || 0) + foundCode.reward;
+                    }
+                    return userData;
+                });
+
+                // Mark code as used in Firebase
+                await database.ref('luckyCodes/' + codeKey).update({ used: true });
+
+                document.getElementById('luckyCodeInput').value = ''; // Clear input
+                showAlert(`Lucky code applied! You earned ${foundCode.reward} points!`, 'success');
+
+            } catch (error) {
+                console.error('Error applying lucky code:', error);
+                showAlert('Error applying lucky code. Please try again.', 'danger');
             }
         }
 
-        // Display a temporary alert message to the user
-        function showAlert(message, type) {
-            const alert = document.createElement('div');
-            alert.className = `alert alert-${type}`;
-            alert.innerHTML = `
-                <span class="material-icons">${type === 'success' ? 'check_circle' : type === 'warning' ? 'warning' : 'error'}</span>
-                ${message}
-            `;
-
-            // Prepend the alert to the main container to ensure it's visible
-            document.querySelector('.container').prepend(alert);
-
-            // Remove the alert after a few seconds
-            setTimeout(() => {
-                alert.remove();
-            }, 5000); // Alert disappears after 5 seconds
-        }
-
-        // Formats large numbers into a more readable format (e.g., 1.5M, 20K)
-        function formatNumber(num) {
-            if (num === null || num === undefined) return '0';
-            num = Number(num); // Ensure num is a number
-
-            if (num >= 1e12) {
-                return (num / 1e12).toFixed(1).replace(/\.0$/, '') + 'T';
-            } else if (num >= 1e9) {
-                return (num / 1e9).toFixed(1).replace(/\.0$/, '') + 'B';
-            } else if (num >= 1e6) {
-                return (num / 1e6).toFixed(1).replace(/\.0$/, '') + 'M';
-            } else if (num >= 1e3) {
-                return (num / 1e3).toFixed(1).replace(/\.0$/, '') + 'K';
-            }
-            return num.toString();
-        }
-
-        // Theme toggle function (currently static)
+        // --- Theme Toggle (Placeholder) ---
         function toggleTheme() {
             showAlert('Red Moon theme is the current and only theme!', 'success');
         }
 
         // --- Initialization ---
         document.addEventListener('DOMContentLoaded', () => {
-            initTelegramWebApp();
-            // Set initial section to home on load
-            showSection('home');
-            // Update the connect wallet button state initially, in case a wallet is already connected
-            updateConnectWalletButtonState();
+            initTelegramWebApp(); // Initialize Telegram Web App and user data
+            showSection('home');   // Show the home section by default
+            updateConnectWalletButtonState(); // Ensure connect wallet button state is correct on load
         });
 
         // Close modals when clicking outside of the modal content
@@ -2195,10 +2256,14 @@
             }
         });
 
-        // Handle TON Connect UI status changes
-        tonConnectUI.onStatusChange(wallet => {
-            // This listener updates the generic connect button if it exists.
-            // The specific button on the Add Task page is handled by updateConnectWalletButtonState().
+        // Handle TON Connect UI status changes (updates generic connect button if it exists)
+        tonConnectUI.onStatusChange(async (wallet) => {
+            // Update the specific "Connect Wallet" button on the Add Task page
+            updateConnectWalletButtonState();
+
+            // Update the generic connect wallet button if it's visible on other pages (like Home)
+            // This part assumes you might have a generic button elsewhere.
+            // If not, you can remove this.
             const genericConnectButton = document.querySelector('.btn-primary[onclick="connectToWallet()"]');
             if (genericConnectButton) {
                 if (wallet) {
@@ -2211,8 +2276,6 @@
                     genericConnectButton.style.background = 'linear-gradient(135deg, var(--primary), var(--primary-dark))';
                 }
             }
-            // Crucially, update the specific button on the Add Task page too
-            updateConnectWalletButtonState();
         });
     </script>
 </body>
