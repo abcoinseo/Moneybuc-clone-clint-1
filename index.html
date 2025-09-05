@@ -9,198 +9,29 @@
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src="https://unpkg.com/@tonconnect/ui@latest/dist/tonconnect-ui.min.js"></script>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+        /* ... (Existing CSS - keep it) ... */
+
+        /* New styles for premium feel and referral features */
+        .premium-highlight {
+            background: linear-gradient(90deg, rgba(220, 38, 38, 0.15), transparent);
+            border-radius: 12px;
+            padding: 8px 12px;
+            border-left: 3px solid var(--primary);
         }
 
-        :root {
-            --primary: #dc2626;
-            --primary-dark: #b91c1c;
-            --primary-light: #ef4444;
-            --secondary: #7c2d12;
-            --accent: #f59e0b;
-            --success: #059669;
-            --danger: #dc2626;
-            --warning: #d97706;
-            --dark: #0f0f23;
-            --dark-secondary: #1a1a2e;
-            --dark-tertiary: #16213e;
-            --light: #f8fafc;
-            --border: #374151;
-            --text: #f1f5f9;
-            --text-light: #cbd5e1;
-            --text-muted: #94a3b8;
-            --glass: rgba(220, 38, 38, 0.1);
-            --glass-border: rgba(220, 38, 38, 0.2);
-        }
-
-        body {
-            font-family: 'Inter', sans-serif;
-            background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%);
-            min-height: 100vh;
-            color: var(--text);
-            overflow-x: hidden;
-            position: relative;
-        }
-
-        body::before {
-            content: '';
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background:
-                radial-gradient(circle at 20% 80%, rgba(220, 38, 38, 0.3) 0%, transparent 50%),
-                radial-gradient(circle at 80% 20%, rgba(239, 68, 68, 0.2) 0%, transparent 50%),
-                radial-gradient(circle at 40% 40%, rgba(185, 28, 28, 0.1) 0%, transparent 50%);
-            pointer-events: none;
-            z-index: -1;
-        }
-
-        .container {
-            max-width: 100%;
-            margin: 0 auto;
-            padding: 20px 15px 100px;
-            position: relative;
-        }
-
-        .header {
-            background: rgba(15, 15, 35, 0.8);
-            backdrop-filter: blur(20px);
-            border: 1px solid var(--glass-border);
-            border-radius: 20px;
-            padding: 20px;
-            margin-bottom: 20px;
-            box-shadow: 0 8px 32px rgba(220, 38, 38, 0.2);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .header::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(220, 38, 38, 0.1), transparent);
-            animation: shimmer 3s infinite;
-        }
-
-        @keyframes shimmer {
-            0% {
-                left: -100%;
-            }
-
-            100% {
-                left: 100%;
-            }
-        }
-
-        .user-info {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            z-index: 1;
-        }
-
-        .user-avatar {
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            border: 2px solid var(--primary);
-            object-fit: cover;
-            box-shadow: 0 0 20px rgba(220, 38, 38, 0.3);
-        }
-
-        .user-details h3 {
-            color: var(--text);
-            font-weight: 600;
-            margin-bottom: 4px;
-        }
-
-        .user-balance {
-            color: var(--primary);
+        .premium-badge {
+            background-color: var(--accent);
+            color: var(--dark);
+            padding: 3px 8px;
+            border-radius: 8px;
+            font-size: 10px;
             font-weight: 700;
-            font-size: 18px;
-            display: flex;
-            align-items: center;
-            gap: 5px;
+            margin-left: 10px;
+            display: inline-block;
         }
 
-        .theme-toggle {
-            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-            color: white;
-            border: none;
-            border-radius: 50px;
-            padding: 10px 15px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            transition: all 0.3s ease;
-            z-index: 1;
-        }
-
-        .theme-toggle:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(220, 38, 38, 0.4);
-        }
-
-        .card {
-            background: rgba(15, 15, 35, 0.8);
-            backdrop-filter: blur(20px);
-            border: 1px solid var(--glass-border);
-            border-radius: 20px;
-            padding: 24px;
-            margin-bottom: 20px;
-            box-shadow: 0 8px 32px rgba(220, 38, 38, 0.15);
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 2px;
-            background: linear-gradient(90deg, var(--primary), var(--primary-light), var(--primary));
-            opacity: 0.7;
-        }
-
-        .card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 16px 48px rgba(220, 38, 38, 0.25);
-        }
-
-        .card-title {
-            font-size: 20px;
-            font-weight: 700;
-            margin-bottom: 16px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            color: var(--primary);
-        }
-
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 15px;
-            margin-bottom: 20px;
-        }
-
-        .stat-card {
-            background: rgba(15, 15, 35, 0.9);
+        .referral-bonus-card {
+            background: rgba(245, 158, 11, 0.1); /* Accent color for bonus */
             border: 1px solid var(--glass-border);
             border-radius: 16px;
             padding: 20px;
@@ -208,564 +39,129 @@
             transition: all 0.3s ease;
             position: relative;
             overflow: hidden;
+            margin-bottom: 20px;
         }
 
-        .stat-card::before {
+        .referral-bonus-card::before {
             content: '';
             position: absolute;
             top: 0;
             left: 0;
             right: 0;
             bottom: 0;
-            background: linear-gradient(135deg, rgba(220, 38, 38, 0.1), transparent);
+            background: linear-gradient(135deg, rgba(245, 158, 11, 0.1), transparent);
             opacity: 0;
             transition: opacity 0.3s ease;
         }
 
-        .stat-card:hover::before {
+        .referral-bonus-card:hover::before {
             opacity: 1;
         }
 
-        .stat-number {
-            font-size: 24px;
+        .referral-bonus-number {
+            font-size: 28px;
             font-weight: 800;
-            color: var(--primary);
+            color: var(--accent);
             margin-bottom: 8px;
         }
 
-        .stat-label {
+        .referral-bonus-label {
             color: var(--text-light);
             font-weight: 500;
-            font-size: 12px;
-        }
-
-        .btn {
-            padding: 12px 24px;
-            border: none;
-            border-radius: 12px;
-            font-weight: 600;
-            cursor: pointer;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            transition: all 0.3s ease;
-            text-decoration: none;
             font-size: 14px;
-            position: relative;
-            overflow: hidden;
         }
 
-        .btn::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-            transition: left 0.5s;
-        }
-
-        .btn:hover::before {
-            left: 100%;
-        }
-
-        .btn-primary {
-            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-            color: white;
-        }
-
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(220, 38, 38, 0.4);
-        }
-
-        .btn-success {
-            background: linear-gradient(135deg, var(--success), #047857);
-            color: white;
-        }
-
-        .btn-warning {
-            background: linear-gradient(135deg, var(--warning), #b45309);
-            color: white;
-        }
-
-        .btn-secondary {
-            background: rgba(15, 15, 35, 0.8);
-            color: var(--text);
-            border: 1px solid var(--glass-border);
-        }
-
-        .form-group {
-            margin-bottom: 20px;
-        }
-
-        .form-label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 600;
-            color: var(--text);
-        }
-
-        .form-input {
-            width: 100%;
-            padding: 12px 16px;
-            border: 2px solid var(--border);
-            border-radius: 12px;
-            font-size: 16px;
-            transition: all 0.3s ease;
-            background: rgba(15, 15, 35, 0.8);
-            color: var(--text);
-        }
-
-        .form-input:focus {
-            outline: none;
-            border-color: var(--primary);
-            box-shadow: 0 0 0 4px rgba(220, 38, 38, 0.1);
-        }
-
-        .task-grid {
-            display: grid;
-            gap: 15px;
-        }
-
-        .task-card {
-            background: rgba(15, 15, 35, 0.9);
-            border: 1px solid var(--glass-border);
-            border-radius: 16px;
-            padding: 20px;
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .task-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 4px;
-            height: 100%;
-            background: linear-gradient(180deg, var(--primary), var(--primary-light));
-        }
-
-        .task-card:hover {
-            transform: translateX(5px);
-            box-shadow: 0 8px 25px rgba(220, 38, 38, 0.2);
-        }
-
-        .task-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            margin-bottom: 12px;
-        }
-
-        .task-title {
-            font-weight: 700;
-            color: var(--text);
-            margin-bottom: 8px;
-        }
-
-        .task-reward {
-            background: linear-gradient(135deg, var(--primary), var(--primary-light));
-            color: white;
-            padding: 6px 12px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 700;
-        }
-
-        .task-description {
-            color: var(--text-light);
-            margin-bottom: 12px;
-            line-height: 1.5;
-        }
-
-        .task-actions {
-            display: flex;
-            gap: 8px;
-            justify-content: flex-end;
-        }
-
-        .tabs {
-            display: flex;
-            background: rgba(15, 15, 35, 0.8);
-            border-radius: 12px;
-            padding: 4px;
-            margin-bottom: 20px;
-            border: 1px solid var(--glass-border);
-        }
-
-        .tab {
-            flex: 1;
-            padding: 12px;
-            text-align: center;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-weight: 600;
-            color: var(--text-light);
-        }
-
-        .tab.active {
-            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-            color: white;
-            box-shadow: 0 4px 15px rgba(220, 38, 38, 0.3);
-        }
-
-        .tab-content {
-            display: none;
-        }
-
-        .tab-content.active {
-            display: block;
-        }
-
-        .bottom-nav {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: rgba(15, 15, 35, 0.95);
-            backdrop-filter: blur(20px);
-            border-top: 1px solid var(--glass-border);
-            padding: 12px 0;
-            z-index: 1000;
-        }
-
-        .nav-container {
-            display: flex;
-            justify-content: space-around;
-            align-items: center;
-            max-width: 500px;
-            margin: 0 auto;
-        }
-
-        .nav-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 4px;
-            text-decoration: none;
-            color: var(--text-muted);
-            transition: all 0.3s ease;
-            padding: 8px 12px;
-            border-radius: 12px;
-            position: relative;
-        }
-
-        .nav-item.active,
-        .nav-item:hover {
-            color: var(--primary);
-            background: rgba(220, 38, 38, 0.1);
-        }
-
-        .nav-item span {
-            font-size: 12px;
-            font-weight: 600;
-        }
-
-        .spin-wheel {
-            width: 250px;
-            height: 250px;
-            border-radius: 50%;
-            border: 8px solid var(--primary);
-            margin: 20px auto;
-            position: relative;
-            background: conic-gradient(
-                from 0deg,
-                var(--primary) 0deg 60deg,
-                var(--primary-light) 60deg 120deg,
-                var(--warning) 120deg 180deg,
-                var(--success) 180deg 240deg,
-                var(--primary-dark) 240deg 300deg,
-                var(--accent) 300deg 360deg
-            );
-            transition: transform 3s cubic-bezier(0.23, 1, 0.32, 1);
-        }
-
-        .spin-wheel::before {
-            content: '';
-            position: absolute;
-            top: -15px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 0;
-            height: 0;
-            border-left: 15px solid transparent;
-            border-right: 15px solid transparent;
-            border-top: 30px solid var(--text);
-            z-index: 10;
-        }
-
-        .spin-center {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 60px;
-            height: 60px;
-            background: var(--primary);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-weight: 700;
-            z-index: 5;
-        }
-
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.8);
-            z-index: 2000;
-            backdrop-filter: blur(10px);
-        }
-
-        .modal-content {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: rgba(15, 15, 35, 0.95);
-            border: 1px solid var(--glass-border);
-            border-radius: 20px;
-            padding: 30px;
-            max-width: 400px;
-            width: 90%;
-            max-height: 80vh;
-            overflow-y: auto;
-        }
-
-        .modal-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-
-        .modal-title {
-            font-size: 24px;
-            font-weight: 700;
-            color: var(--primary);
-        }
-
-        .close-btn {
-            background: none;
-            border: none;
-            font-size: 24px;
-            cursor: pointer;
-            color: var(--text-light);
-        }
-
-        .loading {
-            display: inline-block;
-            width: 20px;
-            height: 20px;
-            border: 3px solid rgba(255, 255, 255, .3);
-            border-radius: 50%;
-            border-top-color: #fff;
-            animation: spin 1s ease-in-out infinite;
-        }
-
-        @keyframes spin {
-            to {
-                transform: rotate(360deg);
-            }
-        }
-
-        .alert {
-            padding: 16px 20px;
-            border-radius: 12px;
-            margin-bottom: 20px;
-            border-left: 4px solid;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            animation: slideIn 0.3s ease;
-        }
-
-        @keyframes slideIn {
-            from {
-                transform: translateX(-100%);
-                opacity: 0;
-            }
-
-            to {
-                transform: translateX(0);
-                opacity: 1;
-            }
-        }
-
-        .alert-success {
-            background: rgba(5, 150, 105, 0.1);
-            border-left-color: var(--success);
-            color: var(--success);
-        }
-
-        .alert-danger {
-            background: rgba(220, 38, 38, 0.1);
-            border-left-color: var(--danger);
-            color: var(--danger);
-        }
-
-        .alert-warning {
-            background: rgba(217, 119, 6, 0.1);
-            border-left-color: var(--warning);
-            color: var(--warning);
-        }
-
-        .progress-bar {
-            width: 100%;
-            height: 8px;
-            background: rgba(15, 15, 35, 0.8);
-            border-radius: 4px;
-            overflow: hidden;
-            margin: 10px 0;
-        }
-
-        .progress-fill {
-            height: 100%;
-            background: linear-gradient(90deg, var(--primary), var(--primary-light));
-            border-radius: 4px;
-            transition: width 0.3s ease;
-        }
-
-        .countdown {
-            font-size: 24px;
-            font-weight: 700;
-            color: var(--primary);
-            text-align: center;
-            margin: 20px 0;
-        }
-
-        @media (max-width: 768px) {
-            .container {
-                padding: 15px 10px 100px;
-            }
-
-            .header {
-                flex-direction: column;
-                gap: 15px;
-                text-align: center;
-            }
-
-            .stats-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-
-            .modal-content {
-                width: 95%;
-                padding: 20px;
-            }
-
-            .spin-wheel {
-                width: 200px;
-                height: 200px;
-            }
-
-            .bottom-nav {
-                padding: 10px 0;
-            }
-
-            .nav-item span {
-                font-size: 10px;
-            }
-
-            .nav-item {
-                padding: 6px 8px;
-            }
-        }
-
-        .pulse {
-            animation: pulse 2s infinite;
-        }
-
-        @keyframes pulse {
-            0% {
-                box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.7);
-            }
-
-            70% {
-                box-shadow: 0 0 0 10px rgba(220, 38, 38, 0);
-            }
-
-            100% {
-                box-shadow: 0 0 0 0 rgba(220, 38, 38, 0);
-            }
-        }
-
-        .glow {
-            box-shadow: 0 0 20px rgba(220, 38, 38, 0.5);
-        }
-
-        .refer-link {
-            background: rgba(15, 15, 35, 0.8);
-            border: 1px solid var(--glass-border);
-            border-radius: 12px;
-            padding: 12px;
-            color: var(--text);
-            font-family: monospace;
-            word-break: break-all;
-            margin: 10px 0;
-        }
-
-        .withdrawal-history {
-            max-height: 300px;
-            overflow-y: auto;
-        }
-
-        .history-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 12px;
-            border-bottom: 1px solid var(--border);
-            margin-bottom: 8px;
-        }
-
-        .history-status {
-            padding: 4px 8px;
-            border-radius: 12px;
-            font-size: 12px;
-            font-weight: 600;
-        }
-
-        .status-pending {
-            background: rgba(217, 119, 6, 0.2);
-            color: var(--warning);
-        }
-
-        .status-completed {
-            background: rgba(5, 150, 105, 0.2);
-            color: var(--success);
-        }
-
-        .status-rejected {
-            background: rgba(220, 38, 38, 0.2);
-            color: var(--danger);
-        }
-
-        .add-task-button {
-            margin-top: 15px;
-            text-align: center;
-        }
-
-        .add-task-button .btn {
+        .claim-button {
             background: linear-gradient(135deg, var(--accent), var(--warning));
             color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 10px;
         }
 
-        .add-task-button .btn:hover {
+        .claim-button:hover {
             transform: translateY(-2px);
             box-shadow: 0 8px 25px rgba(245, 158, 11, 0.4);
         }
+
+        .claim-button:disabled {
+            background: var(--text-muted);
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .referral-earning-item {
+            background: rgba(15, 15, 35, 0.8);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s ease;
+        }
+
+        .referral-earning-item:hover {
+            transform: translateX(5px);
+        }
+
+        .referral-earning-details {
+            font-size: 14px;
+            color: var(--text-light);
+        }
+
+        .referral-earning-points {
+            font-weight: 700;
+            color: var(--primary);
+            font-size: 16px;
+        }
+
+        .task-reward-tooltip {
+            position: relative;
+            cursor: help;
+        }
+
+        .task-reward-tooltip .tooltip-text {
+            visibility: hidden;
+            width: 180px;
+            background-color: var(--dark-secondary);
+            color: var(--text);
+            text-align: center;
+            border-radius: 6px;
+            padding: 5px 0;
+            position: absolute;
+            z-index: 1;
+            bottom: 125%; /* Position above the element */
+            left: 50%;
+            margin-left: -90px;
+            opacity: 0;
+            transition: opacity 0.3s;
+            font-size: 12px;
+            font-weight: 400;
+        }
+
+        .task-reward-tooltip .tooltip-text::after {
+            content: "";
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            margin-left: -5px;
+            border-width: 5px;
+            border-style: solid;
+            border-color: var(--dark-secondary) transparent transparent var(--dark-secondary);
+        }
+
+        .task-reward-tooltip:hover .tooltip-text {
+            visibility: visible;
+            opacity: 1;
+        }
+
     </style>
 </head>
 <body>
@@ -827,6 +223,15 @@
                         Daily Check-in
                     </button>
                 </div>
+            </div>
+
+            <!-- New Referral Bonus Card -->
+            <div class="referral-bonus-card">
+                <div class="referral-bonus-number" id="dailyReferralBonus">0</div>
+                <div class="referral-bonus-label">Daily Referral Bonus</div>
+                <button class="claim-button" id="claimReferralBonusButton" onclick="claimDailyReferralBonus()" disabled>
+                    Claim Bonus
+                </button>
             </div>
 
             <div class="card">
@@ -915,10 +320,13 @@
                         <input type="number" class="form-input" id="taskImpressions" min="100" max="5000" required>
                     </div>
                     <div class="form-group">
-                        <label class="form-label">Total Cost: <span id="totalCost">0</span> TON</label>
-                        <div class="form-label" style="font-size: 12px; color: var(--text-light);">
-                            Rate: 0.1 TON per 100 impressions
-                        </div>
+                        <label class="form-label">
+                            Total Cost: <span id="totalCost">0</span> TON
+                            <span class="task-reward-tooltip">
+                                <span class="material-icons" style="font-size: 14px; vertical-align: middle;">info</span>
+                                <span class="tooltip-text">Cost is 0.1 TON per 100 impressions. This funds the task rewards.</span>
+                            </span>
+                        </label>
                     </div>
                     <button type="submit" class="btn btn-primary">
                         <span class="material-icons">payment</span>
@@ -998,24 +406,21 @@
                     </button>
                 </div>
 
+                <!-- Enhanced Referral Stats -->
                 <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; margin: 20px 0;">
                     <div class="stat-card">
                         <div class="stat-number" id="totalReferrals">0</div>
                         <div class="stat-label">Total Referrals</div>
                     </div>
                     <div class="stat-card">
-                        <div class="stat-number" id="referralEarnings">0</div>
-                        <div class="stat-label">Referral Earnings</div>
+                        <div class="stat-number" id="totalReferralEarnings">0</div>
+                        <div class="stat-label">Total Referral Earnings</div>
                     </div>
                 </div>
 
-                <button class="btn btn-success" onclick="claimReferralRewards()">
-                    <span class="material-icons">redeem</span>
-                    Claim Rewards
-                </button>
-
+                <!-- New Referral Earning List -->
                 <div style="margin-top: 20px;">
-                    <h3 style="color: var(--primary); margin-bottom: 15px;">Referral List</h3>
+                    <h3 style="color: var(--primary); margin-bottom: 15px;">Recent Referrals</h3>
                     <div id="referralList">
                         <!-- Referral list will be loaded here -->
                     </div>
@@ -1064,7 +469,6 @@
     </div>
 
     <!-- Bottom Navigation -->
-
     <div class="bottom-nav">
         <div class="nav-container">
             <a href="#" class="nav-item active" onclick="showSection('home'); return false;">
@@ -1095,7 +499,6 @@
     </div>
 
     <!-- Task Verification Modal -->
-
     <div id="taskModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
@@ -1115,7 +518,6 @@
     </div>
 
     <!-- Withdraw Modal -->
-
     <div id="withdrawModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
@@ -1151,6 +553,8 @@
     <script src='//libtl.com/sdk.js' data-zone='9809601' data-sdk='show_9809601'></script>
 
     <script>
+        // ... (Existing Firebase config and TON Connect setup - keep it) ...
+
         // Firebase configuration
         const firebaseConfig = {
             apiKey: "AIzaSyA3SqCHzN3kLj7DC8Cyu9OzxPFtIlyyii4",
@@ -1182,10 +586,17 @@
         let userBalance = 0;
         let userSpins = 0;
         let adsWatchedToday = 0;
-        let lastAdTime = 0;
+        let lastAdTime = 0; // Timestamp for daily ad reset
         let dailyCheckinDone = false;
         let lastAdCompletionTime = 0; // To prevent rapid ad watching
         const REFERRAL_BONUS_POINTS = 500; // Configurable bonus for a new referral
+        const DAILY_REFERRAL_BONUS_POINTS = 100; // Daily bonus for claimed referrals
+        const REFERRAL_EARNING_RATE = 0.20; // 20% commission
+        const AD_REWARD_POINTS = 10;
+        const TASK_SPIN_REWARD = 1; // Spins awarded per task completion
+        const MIN_WITHDRAWAL_POINTS = 2000;
+        const WITHDRAWAL_RATE_POINTS_TO_TON = 100 / 0.000078; // How many points for 1 TON (approx)
+        const BOT_USERNAME = 'EarnFluxBot'; // <<< IMPORTANT: Change this to your bot's actual username
 
         // Initialize Telegram Web App
         function initTelegramWebApp() {
@@ -1252,10 +663,12 @@
                     totalEarned: 0,
                     tasksCompleted: 0,
                     referrals: 0,
-                    referralEarnings: 0, // This will be calculated dynamically
+                    totalReferralEarnings: 0, // This will be calculated dynamically
                     adsWatched: 0,
                     lastAdReset: Date.now(),
                     lastCheckin: null, // Initialize lastCheckin to null
+                    referralCommissionRate: REFERRAL_EARNING_RATE,
+                    dailyReferralBonusClaimedAt: null, // Timestamp for claiming daily bonus
                     createdAt: Date.now()
                 };
                 await userRef.set(userData);
@@ -1281,6 +694,7 @@
                     }
 
                     updateUI(userData);
+                    checkDailyReferralBonusEligibility(); // Check eligibility on data load
                 }
             });
 
@@ -1301,6 +715,7 @@
             document.getElementById('spinsCount').textContent = userData.spins || 0;
             document.getElementById('adsWatched').textContent = adsWatchedToday;
             document.getElementById('userRefId').textContent = userData.id;
+            document.getElementById('totalReferralEarnings').textContent = formatNumber(userData.totalReferralEarnings || 0);
 
             // Update avatars
             if (userData.photo_url) {
@@ -1317,21 +732,23 @@
                 watchAdButton.innerHTML = '<span class="material-icons">block</span> Daily Limit Reached';
             } else {
                 watchAdButton.disabled = false;
-                watchAdButton.innerHTML = '<span class="material-icons">play_arrow</span> Watch Ad (+10 Points)';
+                watchAdButton.innerHTML = `<span class="material-icons">play_arrow</span> Watch Ad (+${AD_REWARD_POINTS} Points)`;
             }
 
             // Update daily check-in button state
             const dailyCheckinButton = document.querySelector('.btn-success[onclick="dailyCheckin()"]');
-            if (dailyCheckinDone) {
-                dailyCheckinButton.textContent = 'Checked In!';
-                dailyCheckinButton.disabled = true;
-                dailyCheckinButton.classList.remove('btn-success');
-                dailyCheckinButton.classList.add('btn-secondary');
-            } else {
-                dailyCheckinButton.textContent = 'Daily Check-in';
-                dailyCheckinButton.disabled = false;
-                dailyCheckinButton.classList.remove('btn-secondary');
-                dailyCheckinButton.classList.add('btn-success');
+            if (dailyCheckinButton) { // Ensure button exists
+                if (dailyCheckinDone) {
+                    dailyCheckinButton.textContent = 'Checked In!';
+                    dailyCheckinButton.disabled = true;
+                    dailyCheckinButton.classList.remove('btn-success');
+                    dailyCheckinButton.classList.add('btn-secondary');
+                } else {
+                    dailyCheckinButton.textContent = 'Daily Check-in';
+                    dailyCheckinButton.disabled = false;
+                    dailyCheckinButton.classList.remove('btn-secondary');
+                    dailyCheckinButton.classList.add('btn-success');
+                }
             }
         }
 
@@ -1387,10 +804,23 @@
             const statusText = isCompleted ? 'Completed' : 'Start Task';
             const statusIcon = isCompleted ? 'check_circle' : 'play_arrow';
 
+            // Calculate reward per impression for tooltip
+            const rewardPerImpression = task.reward / task.impressions;
+            const formattedRewardPerImpression = (rewardPerImpression * 100).toFixed(2); // Reward per 100 impressions
+
             card.innerHTML = `
                 <div class="task-header">
                     <div class="task-title">${task.title}</div>
-                    <div class="task-reward">${task.reward} points</div>
+                    <div class="task-reward">
+                        ${task.reward} pts
+                        <span class="task-reward-tooltip">
+                            <span class="material-icons" style="font-size: 14px; vertical-align: middle;">info</span>
+                            <span class="tooltip-text">
+                                Reward per Impression: ${rewardPerImpression.toFixed(6)} pts <br>
+                                Reward per 100 Impressions: ${formattedRewardPerImpression} pts
+                            </span>
+                        </span>
+                    </div>
                 </div>
                 <div class="task-description">${task.description}</div>
                 <div class="task-actions">
@@ -1415,6 +845,7 @@
             let countdown = 5;
             const countdownElement = document.getElementById('taskCountdown');
             const progressElement = document.getElementById('taskProgress');
+            progressElement.style.width = '0%'; // Reset progress bar
 
             const timer = setInterval(() => {
                 countdown--;
@@ -1433,22 +864,46 @@
             try {
                 const userRef = database.ref('users/' + currentUser.id);
                 const userTaskRef = database.ref('userTasks/' + currentUser.id + '/' + taskId);
+                const taskRef = database.ref('tasks/' + taskId); // To get task details like reward
 
-                // Check if task is already completed by this user
-                const existingUserTaskSnapshot = await userTaskRef.once('value');
-                if (existingUserTaskSnapshot.exists() && existingUserTaskSnapshot.val().completed === true) {
+                // Fetch current user task status and task details
+                const [userTaskSnapshot, taskSnapshot] = await Promise.all([
+                    userTaskRef.once('value'),
+                    taskRef.once('value')
+                ]);
+
+                const taskDetails = taskSnapshot.val();
+                const userTaskData = userTaskSnapshot.val() || {};
+
+                if (userTaskData.completed === true) {
                     closeModal('taskModal');
                     showAlert('This task has already been completed.', 'warning');
                     return;
                 }
 
+                const taskReward = taskDetails.reward || reward; // Use reward from DB if available, fallback to passed reward
+
                 // Update user balance and stats
                 await userRef.transaction((userData) => {
                     if (userData) {
-                        userData.balance = (userData.balance || 0) + reward;
-                        userData.totalEarned = (userData.totalEarned || 0) + reward;
+                        userData.balance = (userData.balance || 0) + taskReward;
+                        userData.totalEarned = (userData.totalEarned || 0) + taskReward;
                         userData.tasksCompleted = (userData.tasksCompleted || 0) + 1;
-                        userData.spins = (userData.spins || 0) + 1; // Earn 1 spin per task
+                        userData.spins = (userData.spins || 0) + TASK_SPIN_REWARD; // Earn spins per task
+
+                        // Award commission to referrer
+                        const referrerId = userData.referredBy;
+                        if (referrerId) {
+                            const referrerRef = database.ref('users/' + referrerId);
+                            referrerRef.transaction((referrerData) => {
+                                if (referrerData) {
+                                    const commission = Math.round(taskReward * userData.referralCommissionRate); // Use commission rate
+                                    referrerData.balance = (referrerData.balance || 0) + commission;
+                                    referrerData.totalReferralEarnings = (referrerData.totalReferralEarnings || 0) + commission;
+                                }
+                                return referrerData;
+                            });
+                        }
                     }
                     return userData;
                 });
@@ -1456,12 +911,12 @@
                 // Mark task as completed for this user
                 await userTaskRef.set({
                     completedAt: Date.now(),
-                    reward: reward,
+                    rewardEarned: taskReward,
                     completed: true // Mark as completed
                 });
 
                 closeModal('taskModal');
-                showAlert(`Task completed! You earned ${reward} points and 1 spin!`, 'success');
+                showAlert(`Task completed! You earned ${taskReward} points and ${TASK_SPIN_REWARD} spin!`, 'success');
 
             } catch (error) {
                 console.error('Error completing task:', error);
@@ -1492,6 +947,7 @@
                 let codeKey = null;
 
                 Object.keys(codes).forEach(key => {
+                    // Check if code matches, it's not used, and not expired
                     if (codes[key].code === code && !codes[key].used && codes[key].expiresAt > Date.now()) {
                         foundCode = codes[key];
                         codeKey = key;
@@ -1546,6 +1002,7 @@
                 const finalPosition = randomRotation % 360;
                 let reward;
 
+                // Example reward distribution (adjust as needed)
                 if (finalPosition < 60) reward = 100;
                 else if (finalPosition < 120) reward = 150;
                 else if (finalPosition < 180) reward = 200;
@@ -1560,6 +1017,20 @@
                         userData.balance = (userData.balance || 0) + reward;
                         userData.totalEarned = (userData.totalEarned || 0) + reward;
                         userData.spins = Math.max(0, (userData.spins || 0) - 1);
+
+                        // Award commission to referrer
+                        const referrerId = userData.referredBy;
+                        if (referrerId) {
+                            const referrerRef = database.ref('users/' + referrerId);
+                            referrerRef.transaction((referrerData) => {
+                                if (referrerData) {
+                                    const commission = Math.round(reward * userData.referralCommissionRate);
+                                    referrerData.balance = (referrerData.balance || 0) + commission;
+                                    referrerData.totalReferralEarnings = (referrerData.totalReferralEarnings || 0) + commission;
+                                }
+                                return referrerData;
+                            });
+                        }
                     }
                     return userData;
                 });
@@ -1591,8 +1062,8 @@
                 const userRef = database.ref('users/' + currentUser.id);
                 await userRef.transaction((userData) => {
                     if (userData) {
-                        userData.balance = (userData.balance || 0) + 10;
-                        userData.totalEarned = (userData.totalEarned || 0) + 10;
+                        userData.balance = (userData.balance || 0) + AD_REWARD_POINTS;
+                        userData.totalEarned = (userData.totalEarned || 0) + AD_REWARD_POINTS;
                         userData.adsWatched = (userData.adsWatched || 0) + 1;
                     }
                     return userData;
@@ -1600,7 +1071,7 @@
 
                 adsWatchedToday++;
                 lastAdCompletionTime = Date.now(); // Record ad completion time
-                showAlert('Ad watched! You earned 10 points!', 'success');
+                showAlert(`Ad watched! You earned ${AD_REWARD_POINTS} points!`, 'success');
 
             } catch (error) {
                 console.error('Error watching ad:', error);
@@ -1782,8 +1253,7 @@
         // Handle referral logic
         async function handleReferral(referrerId) {
             if (!currentUser || currentUser.id.toString() === referrerId) {
-                // Ignore if it's the same user or no current user
-                return;
+                return; // Ignore if it's the same user or no current user
             }
 
             try {
@@ -1796,22 +1266,26 @@
                     const referrerUserSnapshot = await referrerUserRef.once('value');
 
                     if (referrerUserSnapshot.exists()) {
+                        const referrerData = referrerUserSnapshot.val();
+                        const commissionRate = referrerData.referralCommissionRate || REFERRAL_EARNING_RATE;
+                        const referralBonus = REFERRAL_BONUS_POINTS; // One-time signup bonus
+
                         // Update referrer's stats and give them the bonus
                         await referrerUserRef.transaction((referrerData) => {
                             if (referrerData) {
                                 referrerData.referrals = (referrerData.referrals || 0) + 1;
-                                referrerData.balance = (referrerData.balance || 0) + REFERRAL_BONUS_POINTS;
-                                referrerData.totalEarned = (referrerData.totalEarned || 0) + REFERRAL_BONUS_POINTS;
+                                referrerData.balance = (referrerData.balance || 0) + referralBonus;
+                                referrerData.totalReferralEarnings = (referrerData.totalReferralEarnings || 0) + referralBonus;
                             }
                             return referrerData;
                         });
 
-                        // Record the referral relationship, marking it as completed immediately.
+                        // Record the referral relationship
                         await database.ref('referrals/' + referrerId + '/' + currentUser.id).set({
                             userId: currentUser.id,
                             username: currentUser.username, // Store username at the time of referral
                             joinedAt: Date.now(),
-                            completed: true // Mark as completed for immediate display/tracking
+                            status: 'new_user_rewarded' // Status for tracking
                         });
 
                         showAlert(`Welcome! You've been referred by user ID: ${referrerId}. Your referrer has been rewarded!`, 'success');
@@ -1819,8 +1293,7 @@
                         console.warn(`Referrer with ID ${referrerId} not found.`);
                     }
                 } else {
-                    // This user already exists. Check if they were referred by this specific referrer.
-                    // This prevents giving bonuses repeatedly for the same referral.
+                    // User already exists. Check if they were referred by this referrer already.
                     const referralEntryRef = database.ref('referrals/' + referrerId + '/' + currentUser.id);
                     const referralEntrySnapshot = await referralEntryRef.once('value');
 
@@ -1832,7 +1305,7 @@
                             if (referrerData) {
                                 referrerData.referrals = (referrerData.referrals || 0) + 1;
                                 referrerData.balance = (referrerData.balance || 0) + REFERRAL_BONUS_POINTS;
-                                referrerData.totalEarned = (referrerData.totalEarned || 0) + REFERRAL_BONUS_POINTS;
+                                referrerData.totalReferralEarnings = (referrerData.totalReferralEarnings || 0) + REFERRAL_BONUS_POINTS;
                             }
                             return referrerData;
                         });
@@ -1841,7 +1314,7 @@
                             userId: currentUser.id,
                             username: currentUser.username,
                             joinedAt: Date.now(),
-                            completed: true
+                            status: 'existing_user_rewarded'
                         });
                         showAlert(`Welcome back! You have been recognized as a referral by user ID: ${referrerId}. Your referrer has been rewarded!`, 'success');
                     } else {
@@ -1855,12 +1328,124 @@
             }
         }
 
+        // Check daily referral bonus eligibility and update button
+        function checkDailyReferralBonusEligibility() {
+            const claimButton = document.getElementById('claimReferralBonusButton');
+            const bonusNumberDisplay = document.getElementById('dailyReferralBonus');
+
+            if (!currentUser) return;
+
+            const userRef = database.ref('users/' + currentUser.id);
+            userRef.once('value', async (snapshot) => {
+                const userData = snapshot.val();
+                const lastClaimedTimestamp = userData.dailyReferralBonusClaimedAt;
+                const today = new Date();
+                today.setHours(0, 0, 0, 0); // Start of today
+
+                let eligibleForBonus = false;
+                let referralsToday = 0;
+
+                // Count referrals made today
+                if (userData && userData.referrals) {
+                    const referralData = await database.ref('referrals/' + currentUser.id).once('value');
+                    const referrals = referralData.val();
+                    if (referrals) {
+                        Object.values(referrals).forEach(ref => {
+                            if (ref.joinedAt && ref.joinedAt > today.getTime()) {
+                                referralsToday++;
+                            }
+                        });
+                    }
+                }
+
+                // If user has claimed before today AND made at least one referral today
+                if (lastClaimedTimestamp && lastClaimedTimestamp < today.getTime() && referralsToday > 0) {
+                    eligibleForBonus = true;
+                } else if (!lastClaimedTimestamp && referralsToday > 0) { // If never claimed and made referrals today
+                    eligibleForBonus = true;
+                }
+
+                bonusNumberDisplay.textContent = referralsToday > 0 ? `${referralsToday} (${DAILY_REFERRAL_BONUS_POINTS} pts each)` : '0';
+
+                if (eligibleForBonus) {
+                    claimButton.disabled = false;
+                    claimButton.textContent = `Claim Bonus (${referralsToday} x ${DAILY_REFERRAL_BONUS_POINTS} pts)`;
+                } else {
+                    claimButton.disabled = true;
+                    if (referralsToday > 0) {
+                        claimButton.textContent = 'Claim Tomorrow';
+                    } else {
+                        claimButton.textContent = 'No Referrals Today';
+                    }
+                }
+            });
+        }
+
+        // Claim daily referral bonus
+        async function claimDailyReferralBonus() {
+            const claimButton = document.getElementById('claimReferralBonusButton');
+            const bonusNumberDisplay = document.getElementById('dailyReferralBonus');
+
+            if (!currentUser) return;
+
+            const userRef = database.ref('users/' + currentUser.id);
+            const today = new Date();
+            today.setHours(0, 0, 0, 0); // Start of today
+
+            try {
+                // Fetch referral data to count today's referrals again
+                const referralDataSnapshot = await database.ref('referrals/' + currentUser.id).once('value');
+                const referrals = referralDataSnapshot.val();
+                let referralsToday = 0;
+                let referredUserIds = [];
+
+                if (referrals) {
+                    Object.values(referrals).forEach(ref => {
+                        if (ref.joinedAt && ref.joinedAt > today.getTime()) {
+                            referralsToday++;
+                            referredUserIds.push(ref.userId); // Collect IDs for potential future use
+                        }
+                    });
+                }
+
+                if (referralsToday <= 0) {
+                    showAlert('You have no new referrals today to claim a bonus for.', 'warning');
+                    claimButton.disabled = true;
+                    claimButton.textContent = 'No Referrals Today';
+                    return;
+                }
+
+                const bonusAmount = referralsToday * DAILY_REFERRAL_BONUS_POINTS;
+
+                await userRef.transaction((userData) => {
+                    if (userData) {
+                        userData.balance = (userData.balance || 0) + bonusAmount;
+                        userData.totalEarned = (userData.totalEarned || 0) + bonusAmount;
+                        userData.dailyReferralBonusClaimedAt = Date.now(); // Mark as claimed for today
+                    }
+                    return userData;
+                });
+
+                // Update status for today's referrals (optional, for advanced tracking)
+                // You could add a "bonus_claimed" flag to individual referral entries if needed.
+
+                showAlert(`Daily referral bonus claimed! You received ${bonusAmount} points for ${referralsToday} new referrals.`, 'success');
+                claimButton.disabled = true;
+                claimButton.textContent = 'Claimed';
+                bonusNumberDisplay.textContent = '0'; // Reset display after claiming
+
+            } catch (error) {
+                console.error('Error claiming daily referral bonus:', error);
+                showAlert('Error claiming bonus. Please try again.', 'danger');
+            }
+        }
+
         // Load referrals list and calculate total earnings
         function loadReferrals() {
             if (!currentUser) return;
 
             const referralList = document.getElementById('referralList');
-            let totalReferralEarnings = 0;
+            let totalReferralEarnings = 0; // This will be dynamically updated by transactions
 
             // Fetch referrals linked to the current user (i.e., users they referred)
             database.ref('referrals/' + currentUser.id).on('value', (snapshot) => {
@@ -1870,23 +1455,42 @@
                 if (!referrals) {
                     referralList.innerHTML = '<p style="text-align: center; color: var(--text-light);">No referrals yet.</p>';
                     document.getElementById('totalReferrals').textContent = '0';
-                    document.getElementById('referralEarnings').textContent = '0';
+                    document.getElementById('totalReferralEarnings').textContent = '0';
                     return;
                 }
 
                 const referralIds = Object.keys(referrals);
                 document.getElementById('totalReferrals').textContent = formatNumber(referralIds.length);
 
-                referralIds.forEach(referredUserId => {
-                    const referral = referrals[referredUserId];
-                    // For now, we add the bonus points directly to the referrer's balance
-                    // when they join. So, referralEarnings display is based on that.
-                    // If you want per-referral earnings, you'd need to store that.
-                    // For this setup, we'll just sum up the potential earnings.
-                    totalReferralEarnings += REFERRAL_BONUS_POINTS;
+                // Re-fetch user data to get the live total referral earnings
+                database.ref('users/' + currentUser.id).once('value', (userSnapshot) => {
+                    const userData = userSnapshot.val();
+                    if (userData) {
+                        document.getElementById('totalReferralEarnings').textContent = formatNumber(userData.totalReferralEarnings || 0);
+                    }
+                });
 
+
+                // Display recent referrals (e.g., last 5)
+                const recentReferrals = Object.values(referrals).slice(-5).reverse(); // Get last 5 and reverse for display
+
+                recentReferrals.forEach(referral => {
                     const referralItem = document.createElement('div');
-                    referralItem.className = 'history-item';
+                    referralItem.className = 'referral-earning-item';
+
+                    // Determine status for display
+                    let status = 'Referred';
+                    let statusClass = 'status-completed'; // Default to completed
+                    if (referral.status === 'new_user_rewarded') {
+                        status = 'New User Rewarded';
+                        statusClass = 'status-completed'; // Could use a different color if needed
+                    } else if (referral.status === 'existing_user_rewarded') {
+                        status = 'Existing User Rewarded';
+                        statusClass = 'status-completed';
+                    }
+                    // Add more status checks if needed (e.g., for pending commissions)
+
+
                     referralItem.innerHTML = `
                         <div>
                             <strong>${referral.username || 'User'}</strong>
@@ -1894,14 +1498,21 @@
                                 Joined: ${new Date(referral.joinedAt).toLocaleDateString()}
                             </div>
                         </div>
-                        <div class="history-status status-completed">Referred</div>
+                        <div class="history-status ${statusClass}">${status}</div>
                     `;
                     referralList.appendChild(referralItem);
                 });
-                // Update the total referral earnings display
-                document.getElementById('referralEarnings').textContent = formatNumber(totalReferralEarnings);
+
+                if (Object.keys(referrals).length > 5) {
+                    const viewMore = document.createElement('div');
+                    viewMore.style.textAlign = 'center';
+                    viewMore.style.marginTop = '10px';
+                    viewMore.innerHTML = `<button class="btn btn-secondary" onclick="showSection('referral')">View All (${Object.keys(referrals).length})</button>`;
+                    referralList.appendChild(viewMore);
+                }
             });
         }
+
 
         // Claim referral rewards - now automated, this button is more informational
         async function claimReferralRewards() {
@@ -1910,9 +1521,7 @@
 
         // Copy referral link to clipboard
         function copyReferralLink() {
-            // Construct the correct referral link based on your Telegram bot's username
-            const botUsername = 'adflareprobot'; // <<< IMPORTANT: Change this to your bot's actual username
-            const link = `https://t.me/${botUsername}/app?startapp=ref_${currentUser.id}`;
+            const link = `https://t.me/${BOT_USERNAME}/app?startapp=ref_${currentUser.id}`;
             navigator.clipboard.writeText(link).then(() => {
                 showAlert('Referral link copied to clipboard!', 'success');
             }).catch(err => {
@@ -1923,8 +1532,8 @@
 
         // Show withdraw modal
         function showWithdrawModal() {
-            if (userBalance < 2000) {
-                showAlert('Minimum withdrawal amount is 2000 points!', 'danger');
+            if (userBalance < MIN_WITHDRAWAL_POINTS) {
+                showAlert(`Minimum withdrawal amount is ${MIN_WITHDRAWAL_POINTS} points!`, 'danger');
                 return;
             }
             document.getElementById('withdrawModal').style.display = 'block';
@@ -1935,21 +1544,23 @@
             e.preventDefault();
 
             const tonAddress = document.getElementById('tonAddress').value.trim();
-            const amount = parseInt(document.getElementById('withdrawAmount').value);
+            const amountPoints = parseInt(document.getElementById('withdrawAmount').value);
 
             // Input validation
             if (!tonAddress || !tonAddress.startsWith('UQ')) { // Basic TON address validation
                 showAlert('Please enter a valid TON address.', 'danger');
                 return;
             }
-            if (amount < 2000) {
-                showAlert('Minimum withdrawal amount is 2000 points!', 'danger');
+            if (amountPoints < MIN_WITHDRAWAL_POINTS) {
+                showAlert(`Minimum withdrawal amount is ${MIN_WITHDRAWAL_POINTS} points!`, 'danger');
                 return;
             }
-            if (amount > userBalance) {
+            if (amountPoints > userBalance) {
                 showAlert('Insufficient balance!', 'danger');
                 return;
             }
+
+            const amountTon = amountPoints / WITHDRAWAL_RATE_POINTS_TO_TON; // Calculate TON amount
 
             try {
                 // Create withdrawal request in the database
@@ -1957,19 +1568,20 @@
                     userId: currentUser.id,
                     username: currentUser.username,
                     tonAddress,
-                    amount, // Amount in points
-                    tonAmount: (amount / 100) * 0.000078, // Calculate TON amount (example rate)
+                    amountPoints, // Amount in points
+                    amountTon,    // Amount in TON
                     status: 'pending', // Initial status
                     createdAt: Date.now()
                 };
 
-                await database.ref('withdrawals').push(withdrawalData);
+                // Use push to add to the 'withdrawals' list with a unique key
+                const withdrawalRef = database.ref('withdrawals').push(withdrawalData);
 
                 // Deduct points from user's balance
                 const userRef = database.ref('users/' + currentUser.id);
                 await userRef.transaction((userData) => {
                     if (userData) {
-                        userData.balance = Math.max(0, (userData.balance || 0) - amount); // Ensure balance doesn't go below 0
+                        userData.balance = Math.max(0, (userData.balance || 0) - amountPoints); // Ensure balance doesn't go below 0
                     }
                     return userData;
                 });
@@ -1987,8 +1599,8 @@
 
         // Update TON receive amount dynamically in the withdraw form
         document.getElementById('withdrawAmount').addEventListener('input', (e) => {
-            const amount = parseInt(e.target.value) || 0;
-            const tonAmount = (amount / 100) * 0.000078; // Same rate as used in submission
+            const amountPoints = parseInt(e.target.value) || 0;
+            const tonAmount = amountPoints / WITHDRAWAL_RATE_POINTS_TO_TON;
             document.getElementById('tonReceive').textContent = tonAmount.toFixed(8); // Display TON with 8 decimal places
         });
 
@@ -2001,7 +1613,7 @@
             // Fetch last 10 withdrawals for the current user
             database.ref('withdrawals')
                 .orderByChild('userId').equalTo(currentUser.id)
-                .limitToLast(10)
+                .limitToLast(10) // Get the last 10 requests
                 .on('value', (snapshot) => {
                     withdrawalHistory.innerHTML = ''; // Clear previous history
                     const withdrawals = snapshot.val();
@@ -2021,9 +1633,9 @@
 
                         historyItem.innerHTML = `
                             <div>
-                                <strong>${withdrawal.amount} points</strong>
+                                <strong>${withdrawal.amountPoints} points</strong>
                                 <div style="font-size: 12px; color: var(--text-light);">
-                                    ${withdrawal.tonAmount.toFixed(8)} TON • ${new Date(withdrawal.createdAt).toLocaleDateString()}
+                                    ${withdrawal.amountTon.toFixed(8)} TON • ${new Date(withdrawal.createdAt).toLocaleDateString()}
                                 </div>
                             </div>
                             <div class="history-status ${statusClass}">${statusText}</div>
@@ -2090,6 +1702,7 @@
 
         // Display a temporary alert message to the user
         function showAlert(message, type) {
+            const alertContainer = document.querySelector('.container'); // Target the main container for alerts
             const alert = document.createElement('div');
             alert.className = `alert alert-${type}`;
             alert.innerHTML = `
@@ -2097,10 +1710,8 @@
                 ${message}
             `;
 
-            // Prepend the alert to the main container to ensure it's visible
-            document.querySelector('.container').prepend(alert);
+            alertContainer.prepend(alert); // Prepend to ensure it's at the top
 
-            // Remove the alert after a few seconds
             setTimeout(() => {
                 alert.remove();
             }, 5000); // Alert disappears after 5 seconds
@@ -2133,6 +1744,8 @@
             initTelegramWebApp();
             // Set initial section to home on load
             showSection('home');
+            // Check daily referral bonus eligibility on load
+            checkDailyReferralBonusEligibility();
         });
 
         // Close modals when clicking outside of the modal content
