@@ -15,777 +15,780 @@
             box-sizing: border-box;
         }
 
-        :root {
-            --primary: #dc2626;
-            --primary-dark: #b91c1c;
-            --primary-light: #ef4444;
-            --secondary: #7c2d12;
-            --accent: #f59e0b;
-            --success: #059669;
-            --danger: #dc2626;
-            --warning: #d97706;
-            --dark: #0f0f23;
-            --dark-secondary: #1a1a2e;
-            --dark-tertiary: #16213e;
-            --light: #f8fafc;
-            --border: #374151;
-            --text: #f1f5f9;
-            --text-light: #cbd5e1;
-            --text-muted: #94a3b8;
-            --glass: rgba(220, 38, 38, 0.1);
-            --glass-border: rgba(220, 38, 38, 0.2);
-        }
-
-        body {
-            font-family: 'Inter', sans-serif;
-            background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%);
-            min-height: 100vh;
-            color: var(--text);
-            overflow-x: hidden;
-            position: relative;
-        }
-
-        body::before {
-            content: '';
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background:
-                radial-gradient(circle at 20% 80%, rgba(220, 38, 38, 0.3) 0%, transparent 50%),
-                radial-gradient(circle at 80% 20%, rgba(239, 68, 68, 0.2) 0%, transparent 50%),
-                radial-gradient(circle at 40% 40%, rgba(185, 28, 28, 0.1) 0%, transparent 50%);
-            pointer-events: none;
-            z-index: -1;
-        }
-
-        .container {
-            max-width: 100%;
-            margin: 0 auto;
-            padding: 20px 15px 100px;
-            position: relative;
-        }
-
-        .header {
-            background: rgba(15, 15, 35, 0.8);
-            backdrop-filter: blur(20px);
-            border: 1px solid var(--glass-border);
-            border-radius: 20px;
-            padding: 20px;
-            margin-bottom: 20px;
-            box-shadow: 0 8px 32px rgba(220, 38, 38, 0.2);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .header::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(220, 38, 38, 0.1), transparent);
-            animation: shimmer 3s infinite;
-        }
-
-        @keyframes shimmer {
-            0% { left: -100%; }
-            100% { left: 100%; }
-        }
-
-        .user-info {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            z-index: 1;
-        }
-
-        .user-avatar {
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            border: 2px solid var(--primary);
-            object-fit: cover;
-            box-shadow: 0 0 20px rgba(220, 38, 38, 0.3);
-        }
-
-        .user-details h3 {
-            color: var(--text);
-            font-weight: 600;
-            margin-bottom: 4px;
-        }
-
-        .user-balance {
-            color: var(--primary);
-            font-weight: 700;
-            font-size: 18px;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-        }
-
-        .theme-toggle {
-            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-            color: white;
-            border: none;
-            border-radius: 50px;
-            padding: 10px 15px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            transition: all 0.3s ease;
-            z-index: 1;
-        }
-
-        .theme-toggle:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(220, 38, 38, 0.4);
-        }
-
-        .card {
-            background: rgba(15, 15, 35, 0.8);
-            backdrop-filter: blur(20px);
-            border: 1px solid var(--glass-border);
-            border-radius: 20px;
-            padding: 24px;
-            margin-bottom: 20px;
-            box-shadow: 0 8px 32px rgba(220, 38, 38, 0.15);
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 2px;
-            background: linear-gradient(90deg, var(--primary), var(--primary-light), var(--primary));
-            opacity: 0.7;
-        }
-
-        .card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 16px 48px rgba(220, 38, 38, 0.25);
-        }
-
-        .card-title {
-            font-size: 20px;
-            font-weight: 700;
-            margin-bottom: 16px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            color: var(--primary);
-        }
-
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 15px;
-            margin-bottom: 20px;
-        }
-
-        .stat-card {
-            background: rgba(15, 15, 35, 0.9);
-            border: 1px solid var(--glass-border);
-            border-radius: 16px;
-            padding: 20px;
-            text-align: center;
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .stat-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: linear-gradient(135deg, rgba(220, 38, 38, 0.1), transparent);
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
-
-        .stat-card:hover::before {
-            opacity: 1;
-        }
-
-        .stat-number {
-            font-size: 24px;
-            font-weight: 800;
-            color: var(--primary);
-            margin-bottom: 8px;
-        }
-
-        .stat-label {
-            color: var(--text-light);
-            font-weight: 500;
-            font-size: 12px;
-        }
-
-        .btn {
-            padding: 12px 24px;
-            border: none;
-            border-radius: 12px;
-            font-weight: 600;
-            cursor: pointer;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            transition: all 0.3s ease;
-            text-decoration: none;
-            font-size: 14px;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .btn:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-        }
-
-        .btn::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-            transition: left 0.5s;
-        }
-
-        .btn:hover:not(:disabled)::before {
-            left: 100%;
-        }
-
-        .btn-primary {
-            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-            color: white;
-        }
-
-        .btn-primary:hover:not(:disabled) {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(220, 38, 38, 0.4);
-        }
-
-        .btn-success {
-            background: linear-gradient(135deg, var(--success), #047857);
-            color: white;
-        }
-
-        .btn-warning {
-            background: linear-gradient(135deg, var(--warning), #b45309);
-            color: white;
-        }
-
-        .btn-secondary {
-            background: rgba(15, 15, 35, 0.8);
-            color: var(--text);
-            border: 1px solid var(--glass-border);
-        }
-
-        .btn-danger {
-            background: linear-gradient(135deg, var(--danger), #b91c1c);
-            color: white;
-        }
-
-        .form-group {
-            margin-bottom: 20px;
-        }
-
-        .form-label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 600;
-            color: var(--text);
-        }
-
-        .form-input {
-            width: 100%;
-            padding: 12px 16px;
-            border: 2px solid var(--border);
-            border-radius: 12px;
-            font-size: 16px;
-            transition: all 0.3s ease;
-            background: rgba(15, 15, 35, 0.8);
-            color: var(--text);
-        }
-
-        .form-input:focus {
-            outline: none;
-            border-color: var(--primary);
-            box-shadow: 0 0 0 4px rgba(220, 38, 38, 0.1);
-        }
-
-        .task-grid {
-            display: grid;
-            gap: 15px;
-        }
-
-        .task-card {
-            background: rgba(15, 15, 35, 0.9);
-            border: 1px solid var(--glass-border);
-            border-radius: 16px;
-            padding: 20px;
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .task-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 4px;
-            height: 100%;
-            background: linear-gradient(180deg, var(--primary), var(--primary-light));
-        }
-
-        .task-card:hover {
-            transform: translateX(5px);
-            box-shadow: 0 8px 25px rgba(220, 38, 38, 0.2);
-        }
-
-        .task-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            margin-bottom: 12px;
-        }
-
-        .task-title {
-            font-weight: 700;
-            color: var(--text);
-            margin-bottom: 8px;
-        }
-
-        .task-reward {
-            background: linear-gradient(135deg, var(--primary), var(--primary-light));
-            color: white;
-            padding: 6px 12px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 700;
-        }
-
-        .task-description {
-            color: var(--text-light);
-            margin-bottom: 12px;
-            line-height: 1.5;
-        }
-
-        .task-actions {
-            display: flex;
-            gap: 8px;
-            justify-content: flex-end;
-        }
-
-        .tabs {
-            display: flex;
-            background: rgba(15, 15, 35, 0.8);
-            border-radius: 12px;
-            padding: 4px;
-            margin-bottom: 20px;
-            border: 1px solid var(--glass-border);
-        }
-
-        .tab {
-            flex: 1;
-            padding: 12px;
-            text-align: center;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-weight: 600;
-            color: var(--text-light);
-        }
-
-        .tab.active {
-            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-            color: white;
-            box-shadow: 0 4px 15px rgba(220, 38, 38, 0.3);
-        }
-
-        .tab-content {
-            display: none;
-        }
-
-        .tab-content.active {
-            display: block;
-        }
-
-        .section {
-            display: none;
-        }
-
-        .section.active {
-            display: block;
-        }
-
-        .bottom-nav {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: rgba(15, 15, 35, 0.95);
-            backdrop-filter: blur(20px);
-            border-top: 1px solid var(--glass-border);
-            padding: 12px 0;
-            z-index: 1000;
-        }
-
-        .nav-container {
-            display: flex;
-            justify-content: space-around;
-            align-items: center;
-            max-width: 500px;
-            margin: 0 auto;
-        }
-
-        .nav-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 4px;
-            text-decoration: none;
-            color: var(--text-muted);
-            transition: all 0.3s ease;
-            padding: 8px 12px;
-            border-radius: 12px;
-            position: relative;
-        }
-
-        .nav-item.active,
-        .nav-item:hover {
-            color: var(--primary);
-            background: rgba(220, 38, 38, 0.1);
-        }
-
-        .nav-item span {
-            font-size: 12px;
-            font-weight: 600;
-        }
-
-        .spin-wheel {
-            width: 250px;
-            height: 250px;
-            border-radius: 50%;
-            border: 8px solid var(--primary);
-            margin: 20px auto;
-            position: relative;
-            background: conic-gradient(
-                from 0deg,
-                var(--primary) 0deg 60deg,
-                var(--primary-light) 60deg 120deg,
-                var(--warning) 120deg 180deg,
-                var(--success) 180deg 240deg,
-                var(--primary-dark) 240deg 300deg,
-                var(--accent) 300deg 360deg
-            );
-            transition: transform 3s cubic-bezier(0.23, 1, 0.32, 1);
-        }
-
-        .spin-wheel::before {
-            content: '';
-            position: absolute;
-            top: -15px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 0;
-            height: 0;
-            border-left: 15px solid transparent;
-            border-right: 15px solid transparent;
-            border-top: 30px solid var(--text);
-            z-index: 10;
-        }
-
-        .spin-center {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 60px;
-            height: 60px;
-            background: var(--primary);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-weight: 700;
-            z-index: 5;
-        }
-
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.8);
-            z-index: 2000;
-            backdrop-filter: blur(10px);
-        }
-
-        .modal-content {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: rgba(15, 15, 35, 0.95);
-            border: 1px solid var(--glass-border);
-            border-radius: 20px;
-            padding: 30px;
-            max-width: 400px;
-            width: 90%;
-            max-height: 80vh;
-            overflow-y: auto;
-        }
-
-        .modal-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-
-        .modal-title {
-            font-size: 24px;
-            font-weight: 700;
-            color: var(--primary);
-        }
-
-        .close-btn {
-            background: none;
-            border: none;
-            font-size: 24px;
-            cursor: pointer;
-            color: var(--text-light);
-        }
-
-        .loading {
-            display: inline-block;
-            width: 20px;
-            height: 20px;
-            border: 3px solid rgba(255, 255, 255, .3);
-            border-radius: 50%;
-            border-top-color: #fff;
-            animation: spin 1s ease-in-out infinite;
-        }
-
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-
-        .alert {
-            padding: 16px 20px;
-            border-radius: 12px;
-            margin-bottom: 20px;
-            border-left: 4px solid;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            animation: slideIn 0.3s ease;
-        }
-
-        @keyframes slideIn {
-            from {
-                transform: translateX(-100%);
-                opacity: 0;
-            }
-            to {
-                transform: translateX(0);
-                opacity: 1;
-            }
-        }
-
-        .alert-success {
-            background: rgba(5, 150, 105, 0.1);
-            border-left-color: var(--success);
-            color: var(--success);
-        }
-
-        .alert-danger {
-            background: rgba(220, 38, 38, 0.1);
-            border-left-color: var(--danger);
-            color: var(--danger);
-        }
-
-        .alert-warning {
-            background: rgba(217, 119, 6, 0.1);
-            border-left-color: var(--warning);
-            color: var(--warning);
-        }
-
-        .progress-bar {
-            width: 100%;
-            height: 8px;
-            background: rgba(15, 15, 35, 0.8);
-            border-radius: 4px;
-            overflow: hidden;
-            margin: 10px 0;
-        }
-
-        .progress-fill {
-            height: 100%;
-            background: linear-gradient(90deg, var(--primary), var(--primary-light));
-            border-radius: 4px;
-            transition: width 0.3s ease;
-        }
-
-        .countdown {
-            font-size: 24px;
-            font-weight: 700;
-            color: var(--primary);
-            text-align: center;
-            margin: 20px 0;
-        }
-
-        .refer-link {
-            background: rgba(15, 15, 35, 0.8);
-            border: 1px solid var(--glass-border);
-            border-radius: 12px;
-            padding: 12px;
-            color: var(--text);
-            font-family: monospace;
-            word-break: break-all;
-            margin: 10px 0;
-        }
-
-        .withdrawal-history {
-            max-height: 300px;
-            overflow-y: auto;
-        }
-
-        .history-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 12px;
-            border-bottom: 1px solid var(--border);
-            margin-bottom: 8px;
-        }
-
-        .history-status {
-            padding: 4px 8px;
-            border-radius: 12px;
-            font-size: 12px;
-            font-weight: 600;
-        }
-
-        .status-pending {
-            background: rgba(217, 119, 6, 0.2);
-            color: var(--warning);
-        }
-
-        .status-completed {
-            background: rgba(5, 150, 105, 0.2);
-            color: var(--success);
-        }
-
-        .status-rejected {
-            background: rgba(220, 38, 38, 0.2);
-            color: var(--danger);
-        }
-
-        .add-task-button {
-            margin-top: 15px;
-            text-align: center;
-        }
-
-        .add-task-button .btn {
-            background: linear-gradient(135deg, var(--accent), var(--warning));
-            color: white;
-        }
-
-        .add-task-button .btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(245, 158, 11, 0.4);
-        }
-
-        .add-task-connect-wallet-button {
-            margin-top: 15px;
-            text-align: center;
-            display: block;
-            width: 100%;
-        }
-
-        #ton-connect {
-            display: none;
-        }
-
-        @media (max-width: 768px) {
-            .container {
-                padding: 15px 10px 100px;
-            }
-
-            .header {
-                flex-direction: column;
-                gap: 15px;
-                text-align: center;
-            }
-
-            .stats-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-
-            .modal-content {
-                width: 95%;
-                padding: 20px;
-            }
-
-            .spin-wheel {
-                width: 200px;
-                height: 200px;
-            }
-
-            .bottom-nav {
-                padding: 10px 0;
-            }
-
-            .nav-item span {
-                font-size: 10px;
-            }
-
-            .nav-item {
-                padding: 6px 8px;
-            }
-        }
-
-        .pulse {
-            animation: pulse 2s infinite;
-        }
-
-        @keyframes pulse {
-            0% {
-                box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.7);
-            }
-            70% {
-                box-shadow: 0 0 0 10px rgba(220, 38, 38, 0);
-            }
-            100% {
-                box-shadow: 0 0 0 0 rgba(220, 38, 38, 0);
-            }
-        }
-
-        .glow {
-            box-shadow: 0 0 20px rgba(220, 38, 38, 0.5);
-        }
-    </style>
+
+:root {
+--primary: #dc2626;
+--primary-dark: #b91c1c;
+--primary-light: #ef4444;
+--secondary: #7c2d12;
+--accent: #f59e0b;
+--success: #059669;
+--danger: #dc2626;
+--warning: #d97706;
+--dark: #0f0f23;
+--dark-secondary: #1a1a2e;
+--dark-tertiary: #16213e;
+--light: #f8fafc;
+--border: #374151;
+--text: #f1f5f9;
+--text-light: #cbd5e1;
+--text-muted: #94a3b8;
+--glass: rgba(220, 38, 38, 0.1);
+--glass-border: rgba(220, 38, 38, 0.2);
+}
+
+body {
+font-family: 'Inter', sans-serif;
+background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%);
+min-height: 100vh;
+color: var(--text);
+overflow-x: hidden;
+position: relative;
+}
+
+body::before {
+content: '';
+position: fixed;
+top: 0;
+left: 0;
+right: 0;
+bottom: 0;
+background:
+radial-gradient(circle at 20% 80%, rgba(220, 38, 38, 0.3) 0%, transparent 50%),
+radial-gradient(circle at 80% 20%, rgba(239, 68, 68, 0.2) 0%, transparent 50%),
+radial-gradient(circle at 40% 40%, rgba(185, 28, 28, 0.1) 0%, transparent 50%);
+pointer-events: none;
+z-index: -1;
+}
+
+.container {
+max-width: 100%;
+margin: 0 auto;
+padding: 20px 15px 100px;
+position: relative;
+}
+
+.header {
+background: rgba(15, 15, 35, 0.8);
+backdrop-filter: blur(20px);
+border: 1px solid var(--glass-border);
+border-radius: 20px;
+padding: 20px;
+margin-bottom: 20px;
+box-shadow: 0 8px 32px rgba(220, 38, 38, 0.2);
+display: flex;
+justify-content: space-between;
+align-items: center;
+position: relative;
+overflow: hidden;
+}
+
+.header::before {
+content: '';
+position: absolute;
+top: 0;
+left: -100%;
+width: 100%;
+height: 100%;
+background: linear-gradient(90deg, transparent, rgba(220, 38, 38, 0.1), transparent);
+animation: shimmer 3s infinite;
+}
+
+@keyframes shimmer {
+0% { left: -100%; }
+100% { left: 100%; }
+}
+
+.user-info {
+display: flex;
+align-items: center;
+gap: 12px;
+z-index: 1;
+}
+
+.user-avatar {
+width: 50px;
+height: 50px;
+border-radius: 50%;
+border: 2px solid var(--primary);
+object-fit: cover;
+box-shadow: 0 0 20px rgba(220, 38, 38, 0.3);
+}
+
+.user-details h3 {
+color: var(--text);
+font-weight: 600;
+margin-bottom: 4px;
+}
+
+.user-balance {
+color: var(--primary);
+font-weight: 700;
+font-size: 18px;
+display: flex;
+align-items: center;
+gap: 5px;
+}
+
+.theme-toggle {
+background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+color: white;
+border: none;
+border-radius: 50px;
+padding: 10px 15px;
+cursor: pointer;
+display: flex;
+align-items: center;
+gap: 8px;
+transition: all 0.3s ease;
+z-index: 1;
+}
+
+.theme-toggle:hover {
+transform: translateY(-2px);
+box-shadow: 0 8px 25px rgba(220, 38, 38, 0.4);
+}
+
+.card {
+background: rgba(15, 15, 35, 0.8);
+backdrop-filter: blur(20px);
+border: 1px solid var(--glass-border);
+border-radius: 20px;
+padding: 24px;
+margin-bottom: 20px;
+box-shadow: 0 8px 32px rgba(220, 38, 38, 0.15);
+transition: all 0.3s ease;
+position: relative;
+overflow: hidden;
+}
+
+.card::before {
+content: '';
+position: absolute;
+top: 0;
+left: 0;
+right: 0;
+height: 2px;
+background: linear-gradient(90deg, var(--primary), var(--primary-light), var(--primary));
+opacity: 0.7;
+}
+
+.card:hover {
+transform: translateY(-4px);
+box-shadow: 0 16px 48px rgba(220, 38, 38, 0.25);
+}
+
+.card-title {
+font-size: 20px;
+font-weight: 700;
+margin-bottom: 16px;
+display: flex;
+align-items: center;
+gap: 10px;
+color: var(--primary);
+}
+
+.stats-grid {
+display: grid;
+grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+gap: 15px;
+margin-bottom: 20px;
+}
+
+.stat-card {
+background: rgba(15, 15, 35, 0.9);
+border: 1px solid var(--glass-border);
+border-radius: 16px;
+padding: 20px;
+text-align: center;
+transition: all 0.3s ease;
+position: relative;
+overflow: hidden;
+}
+
+.stat-card::before {
+content: '';
+position: absolute;
+top: 0;
+left: 0;
+right: 0;
+bottom: 0;
+background: linear-gradient(135deg, rgba(220, 38, 38, 0.1), transparent);
+opacity: 0;
+transition: opacity 0.3s ease;
+}
+
+.stat-card:hover::before {
+opacity: 1;
+}
+
+.stat-number {
+font-size: 24px;
+font-weight: 800;
+color: var(--primary);
+margin-bottom: 8px;
+}
+
+.stat-label {
+color: var(--text-light);
+font-weight: 500;
+font-size: 12px;
+}
+
+.btn {
+padding: 12px 24px;
+border: none;
+border-radius: 12px;
+font-weight: 600;
+cursor: pointer;
+display: inline-flex;
+align-items: center;
+gap: 8px;
+transition: all 0.3s ease;
+text-decoration: none;
+font-size: 14px;
+position: relative;
+overflow: hidden;
+}
+
+.btn:disabled {
+opacity: 0.6;
+cursor: not-allowed;
+}
+
+.btn::before {
+content: '';
+position: absolute;
+top: 0;
+left: -100%;
+width: 100%;
+height: 100%;
+background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+transition: left 0.5s;
+}
+
+.btn:hover:not(:disabled)::before {
+left: 100%;
+}
+
+.btn-primary {
+background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+color: white;
+}
+
+.btn-primary:hover:not(:disabled) {
+transform: translateY(-2px);
+box-shadow: 0 8px 25px rgba(220, 38, 38, 0.4);
+}
+
+.btn-success {
+background: linear-gradient(135deg, var(--success), #047857);
+color: white;
+}
+
+.btn-warning {
+background: linear-gradient(135deg, var(--warning), #b45309);
+color: white;
+}
+
+.btn-secondary {
+background: rgba(15, 15, 35, 0.8);
+color: var(--text);
+border: 1px solid var(--glass-border);
+}
+
+.btn-danger {
+background: linear-gradient(135deg, var(--danger), #b91c1c);
+color: white;
+}
+
+.form-group {
+margin-bottom: 20px;
+}
+
+.form-label {
+display: block;
+margin-bottom: 8px;
+font-weight: 600;
+color: var(--text);
+}
+
+.form-input {
+width: 100%;
+padding: 12px 16px;
+border: 2px solid var(--border);
+border-radius: 12px;
+font-size: 16px;
+transition: all 0.3s ease;
+background: rgba(15, 15, 35, 0.8);
+color: var(--text);
+}
+
+.form-input:focus {
+outline: none;
+border-color: var(--primary);
+box-shadow: 0 0 0 4px rgba(220, 38, 38, 0.1);
+}
+
+.task-grid {
+display: grid;
+gap: 15px;
+}
+
+.task-card {
+background: rgba(15, 15, 35, 0.9);
+border: 1px solid var(--glass-border);
+border-radius: 16px;
+padding: 20px;
+transition: all 0.3s ease;
+position: relative;
+overflow: hidden;
+}
+
+.task-card::before {
+content: '';
+position: absolute;
+top: 0;
+left: 0;
+width: 4px;
+height: 100%;
+background: linear-gradient(180deg, var(--primary), var(--primary-light));
+}
+
+.task-card:hover {
+transform: translateX(5px);
+box-shadow: 0 8px 25px rgba(220, 38, 38, 0.2);
+}
+
+.task-header {
+display: flex;
+justify-content: space-between;
+align-items: flex-start;
+margin-bottom: 12px;
+}
+
+.task-title {
+font-weight: 700;
+color: var(--text);
+margin-bottom: 8px;
+}
+
+.task-reward {
+background: linear-gradient(135deg, var(--primary), var(--primary-light));
+color: white;
+padding: 6px 12px;
+border-radius: 20px;
+font-size: 12px;
+font-weight: 700;
+}
+
+.task-description {
+color: var(--text-light);
+margin-bottom: 12px;
+line-height: 1.5;
+}
+
+.task-actions {
+display: flex;
+gap: 8px;
+justify-content: flex-end;
+}
+
+.tabs {
+display: flex;
+background: rgba(15, 15, 35, 0.8);
+border-radius: 12px;
+padding: 4px;
+margin-bottom: 20px;
+border: 1px solid var(--glass-border);
+}
+
+.tab {
+flex: 1;
+padding: 12px;
+text-align: center;
+border-radius: 8px;
+cursor: pointer;
+transition: all 0.3s ease;
+font-weight: 600;
+color: var(--text-light);
+}
+
+.tab.active {
+background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+color: white;
+box-shadow: 0 4px 15px rgba(220, 38, 38, 0.3);
+}
+
+.tab-content {
+display: none;
+}
+
+.tab-content.active {
+display: block;
+}
+
+.section {
+display: none;
+}
+
+.section.active {
+display: block;
+}
+
+.bottom-nav {
+position: fixed;
+bottom: 0;
+left: 0;
+right: 0;
+background: rgba(15, 15, 35, 0.95);
+backdrop-filter: blur(20px);
+border-top: 1px solid var(--glass-border);
+padding: 12px 0;
+z-index: 1000;
+}
+
+.nav-container {
+display: flex;
+justify-content: space-around;
+align-items: center;
+max-width: 500px;
+margin: 0 auto;
+}
+
+.nav-item {
+display: flex;
+flex-direction: column;
+align-items: center;
+gap: 4px;
+text-decoration: none;
+color: var(--text-muted);
+transition: all 0.3s ease;
+padding: 8px 12px;
+border-radius: 12px;
+position: relative;
+}
+
+.nav-item.active,
+.nav-item:hover {
+color: var(--primary);
+background: rgba(220, 38, 38, 0.1);
+}
+
+.nav-item span {
+font-size: 12px;
+font-weight: 600;
+}
+
+.spin-wheel {
+width: 250px;
+height: 250px;
+border-radius: 50%;
+border: 8px solid var(--primary);
+margin: 20px auto;
+position: relative;
+background: conic-gradient(
+from 0deg,
+var(--primary) 0deg 60deg,
+var(--primary-light) 60deg 120deg,
+var(--warning) 120deg 180deg,
+var(--success) 180deg 240deg,
+var(--primary-dark) 240deg 300deg,
+var(--accent) 300deg 360deg
+);
+transition: transform 3s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.spin-wheel::before {
+content: '';
+position: absolute;
+top: -15px;
+left: 50%;
+transform: translateX(-50%);
+width: 0;
+height: 0;
+border-left: 15px solid transparent;
+border-right: 15px solid transparent;
+border-top: 30px solid var(--text);
+z-index: 10;
+}
+
+.spin-center {
+position: absolute;
+top: 50%;
+left: 50%;
+transform: translate(-50%, -50%);
+width: 60px;
+height: 60px;
+background: var(--primary);
+border-radius: 50%;
+display: flex;
+align-items: center;
+justify-content: center;
+color: white;
+font-weight: 700;
+z-index: 5;
+}
+
+.modal {
+display: none;
+position: fixed;
+top: 0;
+left: 0;
+right: 0;
+bottom: 0;
+background: rgba(0, 0, 0, 0.8);
+z-index: 2000;
+backdrop-filter: blur(10px);
+}
+
+.modal-content {
+position: absolute;
+top: 50%;
+left: 50%;
+transform: translate(-50%, -50%);
+background: rgba(15, 15, 35, 0.95);
+border: 1px solid var(--glass-border);
+border-radius: 20px;
+padding: 30px;
+max-width: 400px;
+width: 90%;
+max-height: 80vh;
+overflow-y: auto;
+}
+
+.modal-header {
+display: flex;
+justify-content: space-between;
+align-items: center;
+margin-bottom: 20px;
+}
+
+.modal-title {
+font-size: 24px;
+font-weight: 700;
+color: var(--primary);
+}
+
+.close-btn {
+background: none;
+border: none;
+font-size: 24px;
+cursor: pointer;
+color: var(--text-light);
+}
+
+.loading {
+display: inline-block;
+width: 20px;
+height: 20px;
+border: 3px solid rgba(255, 255, 255, .3);
+border-radius: 50%;
+border-top-color: #fff;
+animation: spin 1s ease-in-out infinite;
+}
+
+@keyframes spin {
+to { transform: rotate(360deg); }
+}
+
+.alert {
+padding: 16px 20px;
+border-radius: 12px;
+margin-bottom: 20px;
+border-left: 4px solid;
+display: flex;
+align-items: center;
+gap: 12px;
+animation: slideIn 0.3s ease;
+}
+
+@keyframes slideIn {
+from {
+transform: translateX(-100%);
+opacity: 0;
+}
+to {
+transform: translateX(0);
+opacity: 1;
+}
+}
+
+.alert-success {
+background: rgba(5, 150, 105, 0.1);
+border-left-color: var(--success);
+color: var(--success);
+}
+
+.alert-danger {
+background: rgba(220, 38, 38, 0.1);
+border-left-color: var(--danger);
+color: var(--danger);
+}
+
+.alert-warning {
+background: rgba(217, 119, 6, 0.1);
+border-left-color: var(--warning);
+color: var(--warning);
+}
+
+.progress-bar {
+width: 100%;
+height: 8px;
+background: rgba(15, 15, 35, 0.8);
+border-radius: 4px;
+overflow: hidden;
+margin: 10px 0;
+}
+
+.progress-fill {
+height: 100%;
+background: linear-gradient(90deg, var(--primary), var(--primary-light));
+border-radius: 4px;
+transition: width 0.3s ease;
+}
+
+.countdown {
+font-size: 24px;
+font-weight: 700;
+color: var(--primary);
+text-align: center;
+margin: 20px 0;
+}
+
+.refer-link {
+background: rgba(15, 15, 35, 0.8);
+border: 1px solid var(--glass-border);
+border-radius: 12px;
+padding: 12px;
+color: var(--text);
+font-family: monospace;
+word-break: break-all;
+margin: 10px 0;
+}
+
+.withdrawal-history {
+max-height: 300px;
+overflow-y: auto;
+}
+
+.history-item {
+display: flex;
+justify-content: space-between;
+align-items: center;
+padding: 12px;
+border-bottom: 1px solid var(--border);
+margin-bottom: 8px;
+}
+
+.history-status {
+padding: 4px 8px;
+border-radius: 12px;
+font-size: 12px;
+font-weight: 600;
+}
+
+.status-pending {
+background: rgba(217, 119, 6, 0.2);
+color: var(--warning);
+}
+
+.status-completed {
+background: rgba(5, 150, 105, 0.2);
+color: var(--success);
+}
+
+.status-rejected {
+background: rgba(220, 38, 38, 0.2);
+color: var(--danger);
+}
+
+.add-task-button {
+margin-top: 15px;
+text-align: center;
+}
+
+.add-task-button .btn {
+background: linear-gradient(135deg, var(--accent), var(--warning));
+color: white;
+}
+
+.add-task-button .btn:hover {
+transform: translateY(-2px);
+box-shadow: 0 8px 25px rgba(245, 158, 11, 0.4);
+}
+
+.add-task-connect-wallet-button {
+margin-top: 15px;
+text-align: center;
+display: block;
+width: 100%;
+}
+
+#ton-connect {
+display: none;
+}
+
+@media (max-width: 768px) {
+.container {
+padding: 15px 10px 100px;
+}
+
+.header {
+flex-direction: column;
+gap: 15px;
+text-align: center;
+}
+
+.stats-grid {
+grid-template-columns: repeat(2, 1fr);
+}
+
+.modal-content {
+width: 95%;
+padding: 20px;
+}
+
+.spin-wheel {
+width: 200px;
+height: 200px;
+}
+
+.bottom-nav {
+padding: 10px 0;
+}
+
+.nav-item span {
+font-size: 10px;
+}
+
+.nav-item {
+padding: 6px 8px;
+}
+
+}
+
+.pulse {
+animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+0% {
+box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.7);
+}
+70% {
+box-shadow: 0 0 0 10px rgba(220, 38, 38, 0);
+}
+100% {
+box-shadow: 0 0 0 0 rgba(220, 38, 38, 0);
+}
+}
+
+.glow {
+box-shadow: 0 0 20px rgba(220, 38, 38, 0.5);
+}
+</style>
+
 </head>
 <body>
     <div class="container">
@@ -806,1434 +809,1453 @@
             </button>
         </div>
 
-        <div class="stats-grid">
-            <div class="stat-card">
-                <div class="stat-number" id="totalEarned">0</div>
-                <div class="stat-label">Total Earned</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-number" id="tasksCompleted">0</div>
-                <div class="stat-label">Tasks Done</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-number" id="referrals">0</div>
-                <div class="stat-label">Referrals</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-number" id="spinsAvailable">0</div>
-                <div class="stat-label">Spins Left</div>
-            </div>
+
+<div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-number" id="totalEarned">0</div>
+            <div class="stat-label">Total Earned</div>
         </div>
-
-        <!-- Home Section -->
-        <div id="homeSection" class="section active">
-            <div class="card">
-                <h2 class="card-title">
-                    <span class="material-icons">home</span>
-                    Welcome Back!
-                </h2>
-                <div style="display: flex; gap: 10px; flex-wrap: wrap;">
-                    <button class="btn btn-primary" onclick="showSection('tasks')">
-                        <span class="material-icons">assignment</span>
-                        Start Tasks
-                    </button>
-                    <button class="btn btn-warning" onclick="showSection('spin')">
-                        <span class="material-icons">casino</span>
-                        Spin Wheel
-                    </button>
-                    <button class="btn btn-success" onclick="dailyCheckin()">
-                        <span class="material-icons">event_available</span>
-                        Daily Check-in
-                    </button>
-                </div>
-            </div>
-
-            <div class="card">
-                <h2 class="card-title">
-                    <span class="material-icons">redeem</span>
-                    Lucky Code
-                </h2>
-                <div class="form-group">
-                    <input type="text" class="form-input" id="luckyCodeInput" placeholder="Enter lucky code">
-                </div>
-                <button class="btn btn-primary" onclick="applyLuckyCode()">
-                    <span class="material-icons">card_giftcard</span>
-                    Apply Code
-                </button>
-            </div>
-
-            <div class="card">
-                <h2 class="card-title">
-                    <span class="material-icons">link</span>
-                    TON Wallet
-                </h2>
-                <div id="ton-connect"></div>
-                <button class="btn btn-primary" onclick="connectToWallet()" id="connectWalletButton">
-                    <span class="material-icons">account_balance_wallet</span>
-                    Connect Wallet
-                </button>
-            </div>
+        <div class="stat-card">
+            <div class="stat-number" id="tasksCompleted">0</div>
+            <div class="stat-label">Tasks Done</div>
         </div>
-
-        <!-- Tasks Section -->
-        <div id="tasksSection" class="section">
-            <div class="card">
-                <h2 class="card-title">
-                    <span class="material-icons">assignment</span>
-                    Tasks
-                </h2>
-                <div class="add-task-button">
-                    <button class="btn btn-primary" onclick="showSection('addTask')">
-                        <span class="material-icons">add</span>
-                        Create New Task
-                    </button>
-                </div>
-                <div class="tabs">
-                    <div class="tab active" onclick="showTaskTab(event, 'available')">Available</div>
-                    <div class="tab" onclick="showTaskTab(event, 'completed')">Completed</div>
-                </div>
-
-                <div id="availableTasks" class="tab-content active">
-                    <div class="task-grid" id="availableTasksGrid">
-                        <!-- Available tasks will be loaded here -->
-                    </div>
-                </div>
-
-                <div id="completedTasks" class="tab-content">
-                    <div class="task-grid" id="completedTasksGrid">
-                        <!-- Completed tasks will be loaded here -->
-                    </div>
-                </div>
-            </div>
+        <div class="stat-card">
+            <div class="stat-number" id="referrals">0</div>
+            <div class="stat-label">Referrals</div>
         </div>
-
-        <!-- Add Task Section -->
-        <div id="addTaskSection" class="section">
-            <div class="card">
-                <h2 class="card-title">
-                    <span class="material-icons">add_task</span>
-                    Create Task
-                </h2>
-
-                <div class="add-task-connect-wallet-button">
-                    <button class="btn btn-primary" onclick="connectToWallet()" id="connectWalletButtonAddTask">
-                        <span class="material-icons">account_balance_wallet</span>
-                        Connect Wallet
-                    </button>
-                </div>
-
-                <form id="addTaskForm">
-                    <div class="form-group">
-                        <label class="form-label">Task Title</label>
-                        <input type="text" class="form-input" id="newTaskTitle" required>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Task Description</label>
-                        <textarea class="form-input" id="newTaskDescription" rows="3" required></textarea>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Task URL</label>
-                        <input type="url" class="form-input" id="newTaskUrl" required>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Impressions (100-5000)</label>
-                        <input type="number" class="form-input" id="taskImpressions" min="100" max="5000" required>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Total Cost: <span id="totalCost">0</span> TON</label>
-                        <div class="form-label" style="font-size: 12px; color: var(--text-light);">
-                            Rate: 0.1 TON per 100 impressions
-                        </div>
-                    </div>
-                    <button type="submit" class="btn btn-primary" id="createTaskButton">
-                        <span class="material-icons">payment</span>
-                        Create & Pay
-                    </button>
-                </form>
-            </div>
-
-            <div class="card">
-                <h2 class="card-title">
-                    <span class="material-icons">list</span>
-                    My Created Tasks
-                </h2>
-                <div id="myTasksGrid" class="task-grid">
-                    <!-- User's created tasks will be loaded here -->
-                </div>
-            </div>
-        </div>
-
-        <!-- Spin Section -->
-        <div id="spinSection" class="section">
-            <div class="card">
-                <h2 class="card-title">
-                    <span class="material-icons">casino</span>
-                    Spin Wheel
-                </h2>
-                <div style="text-align: center;">
-                    <div class="spin-wheel" id="spinWheel">
-                        <div class="spin-center">SPIN</div>
-                    </div>
-                    <button class="btn btn-primary" id="spinButton" onclick="spinWheel()">
-                        <span class="material-icons">casino</span>
-                        Spin Now
-                    </button>
-                    <p style="margin-top: 15px; color: var(--text-light);">
-                        Spins Available: <span id="spinsCount">0</span>
-                    </p>
-                </div>
-            </div>
-        </div>
-
-        <!-- Ads Section -->
-        <div id="adsSection" class="section">
-            <div class="card">
-                <h2 class="card-title">
-                    <span class="material-icons">play_circle</span>
-                    Watch Ads
-                </h2>
-                <div style="text-align: center;">
-                    <p style="margin-bottom: 20px; color: var(--text-light);">
-                        Daily Limit: <span id="adsWatched">0</span>/50
-                    </p>
-                    <button class="btn btn-primary" id="watchAdButton" onclick="watchAd()">
-                        <span class="material-icons">play_arrow</span>
-                        Watch Ad (+10 Points)
-                    </button>
-                    <div id="adCountdown" class="countdown" style="display: none;"></div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Referral Section -->
-        <div id="referralSection" class="section">
-            <div class="card">
-                <h2 class="card-title">
-                    <span class="material-icons">people</span>
-                    Referral System
-                </h2>
-                <div class="form-group">
-                    <label class="form-label">Your Referral Link</label>
-                    <div class="refer-link" id="referralLink">
-                        https://t.me/adflareprobot/app?startapp=ref_<span id="userRefId">loading</span>
-                    </div>
-                    <button class="btn btn-secondary" onclick="copyReferralLink()">
-                        <span class="material-icons">content_copy</span>
-                        Copy Link
-                    </button>
-                </div>
-
-                <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; margin: 20px 0;">
-                    <div class="stat-card">
-                        <div class="stat-number" id="totalReferrals">0</div>
-                        <div class="stat-label">Total Referrals</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-number" id="referralEarnings">0</div>
-                        <div class="stat-label">Referral Earnings</div>
-                    </div>
-                </div>
-
-                <button class="btn btn-success" onclick="claimReferralRewards()">
-                    <span class="material-icons">redeem</span>
-                    Claim Rewards
-                </button>
-
-                <div style="margin-top: 20px;">
-                    <h3 style="color: var(--primary); margin-bottom: 15px;">Referral List</h3>
-                    <div id="referralList">
-                        <!-- Referral list will be loaded here -->
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Profile Section -->
-        <div id="profileSection" class="section">
-            <div class="card">
-                <h2 class="card-title">
-                    <span class="material-icons">person</span>
-                    Profile
-                </h2>
-                <div style="text-align: center; margin-bottom: 20px;">
-                    <img src="https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?auto=compress&cs=tinysrgb&w=100&h=100&dpr=1" alt="Profile" class="user-avatar" style="width: 100px; height: 100px;" id="profileAvatar">
-                    <h3 style="margin: 15px 0; color: var(--text);" id="profileName">Loading...</h3>
-                </div>
-
-                <div style="display: flex; gap: 10px; flex-wrap: wrap; justify-content: center;">
-                    <button class="btn btn-primary" onclick="showWithdrawModal()" id="profileWithdrawBtn">
-                        <span class="material-icons">account_balance</span>
-                        Withdraw
-                    </button>
-                    <button class="btn btn-secondary" onclick="window.open('https://t.me/PixelfrogCommunity', '_blank')">
-                        <span class="material-icons">support</span>
-                        Support
-                    </button>
-                    <button class="btn btn-secondary" onclick="window.open('https://t.me/Pixelfrogchat', '_blank')">
-                        <span class="material-icons">code</span>
-                        Developer
-                    </button>
-                </div>
-            </div>
-
-            <div class="card">
-                <h2 class="card-title">
-                    <span class="material-icons">history</span>
-                    Withdrawal History
-                </h2>
-                <div class="withdrawal-history" id="withdrawalHistory">
-                    <!-- Withdrawal history will be loaded here -->
-                </div>
-            </div>
+        <div class="stat-card">
+            <div class="stat-number" id="spinsAvailable">0</div>
+            <div class="stat-label">Spins Left</div>
         </div>
     </div>
 
-    <!-- Bottom Navigation -->
-    <div class="bottom-nav">
-        <div class="nav-container">
-            <a href="#" class="nav-item active" onclick="showSection('home'); return false;">
-                <span class="material-icons">home</span>
-                <span>Home</span>
-            </a>
-            <a href="#" class="nav-item" onclick="showSection('ads'); return false;">
-                <span class="material-icons">play_circle</span>
-                <span>Ads</span>
-            </a>
-            <a href="#" class="nav-item" onclick="showSection('tasks'); return false;">
+
+<!-- Home Section -->
+
+<div id="homeSection" class="section active">
+    <div class="card">
+        <h2 class="card-title">
+            <span class="material-icons">home</span>
+            Welcome Back!
+        </h2>
+        <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+            <button class="btn btn-primary" onclick="showSection('tasks')">
                 <span class="material-icons">assignment</span>
-                <span>Tasks</span>
-            </a>
-            <a href="#" class="nav-item" onclick="showSection('referral'); return false;">
-                <span class="material-icons">share</span>
-                <span>Refer</span>
-            </a>
-            <a href="#" class="nav-item" onclick="showSection('profile'); return false;">
-                <span class="material-icons">account_balance_wallet</span>
-                <span>Profile</span>
-            </a>
+                Start Tasks
+            </button>
+            <button class="btn btn-warning" onclick="showSection('spin')">
+                <span class="material-icons">casino</span>
+                Spin Wheel
+            </button>
+            <button class="btn btn-success" onclick="dailyCheckin()">
+                <span class="material-icons">event_available</span>
+                Daily Check-in
+            </button>
         </div>
     </div>
 
-    <!-- Task Verification Modal -->
-    <div id="taskModal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3 class="modal-title">Task Verification</h3>
-                <button class="close-btn" onclick="closeModal('taskModal')">&times;</button>
-            </div>
-            <div id="taskModalContent">
-                <div class="countdown" id="taskCountdown">5</div>
-                <div class="progress-bar">
-                    <div class="progress-fill" id="taskProgress"></div>
-                </div>
-                <p style="text-align: center; color: var(--text-light);">
-                    Please wait while we verify your task completion...
-                </p>
-            </div>
+
+<div class="card">
+    <h2 class="card-title">
+        <span class="material-icons">redeem</span>
+        Lucky Code
+    </h2>
+    <div class="form-group">
+        <input type="text" class="form-input" id="luckyCodeInput" placeholder="Enter lucky code">
+    </div>
+    <button class="btn btn-primary" onclick="applyLuckyCode()">
+        <span class="material-icons">card_giftcard</span>
+        Apply Code
+    </button>
+</div>
+
+<div class="card">
+    <h2 class="card-title">
+        <span class="material-icons">link</span>
+        TON Wallet
+    </h2>
+    <div id="ton-connect"></div>
+    <button class="btn btn-primary" onclick="connectToWallet()" id="connectWalletButton">
+        <span class="material-icons">account_balance_wallet</span>
+        Connect Wallet
+    </button>
+</div>
+</div>
+
+<!-- Tasks Section -->
+
+<div id="tasksSection" class="section">
+    <div class="card">
+        <h2 class="card-title">
+            <span class="material-icons">assignment</span>
+            Tasks
+        </h2>
+        <div class="add-task-button">
+            <button class="btn btn-primary" onclick="showSection('addTask')">
+                <span class="material-icons">add</span>
+                Create New Task
+            </button>
+        </div>
+        <div class="tabs">
+            <div class="tab active" onclick="showTaskTab(event, 'available')">Available</div>
+            <div class="tab" onclick="showTaskTab(event, 'completed')">Completed</div>
+        </div>
+
+
+<div id="availableTasks" class="tab-content active">
+        <div class="task-grid" id="availableTasksGrid">
+            <!-- Available tasks will be loaded here -->
         </div>
     </div>
 
-    <!-- Withdraw Modal -->
-    <div id="withdrawModal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3 class="modal-title">Withdraw Points</h3>
-                <button class="close-btn" onclick="closeModal('withdrawModal')">&times;</button>
+
+<div id="completedTasks" class="tab-content">
+    <div class="task-grid" id="completedTasksGrid">
+        <!-- Completed tasks will be loaded here -->
+    </div>
+</div>
+</div>
+</div>
+
+<!-- Add Task Section -->
+
+<div id="addTaskSection" class="section">
+    <div class="card">
+        <h2 class="card-title">
+            <span class="material-icons">add_task</span>
+            Create Task
+        </h2>
+
+
+<div class="add-task-connect-wallet-button">
+        <button class="btn btn-primary" onclick="connectToWallet()" id="connectWalletButtonAddTask">
+            <span class="material-icons">account_balance_wallet</span>
+            Connect Wallet
+        </button>
+    </div>
+
+
+<form id="addTaskForm">
+    <div class="form-group">
+        <label class="form-label">Task Title</label>
+        <input type="text" class="form-input" id="newTaskTitle" required>
+    </div>
+    <div class="form-group">
+        <label class="form-label">Task Description</label>
+        <textarea class="form-input" id="newTaskDescription" rows="3" required></textarea>
+    </div>
+    <div class="form-group">
+        <label class="form-label">Task URL</label>
+        <input type="url" class="form-input" id="newTaskUrl" required>
+    </div>
+    <div class="form-group">
+        <label class="form-label">Impressions (100-5000)</label>
+        <input type="number" class="form-input" id="taskImpressions" min="100" max="5000" required>
+    </div>
+    <div class="form-group">
+        <label class="form-label">Total Cost: <span id="totalCost">0</span> TON</label>
+        <div class="form-label" style="font-size: 12px; color: var(--text-light);">
+            Rate: 0.1 TON per 100 impressions
+        </div>
+    </div>
+    <button type="submit" class="btn btn-primary" id="createTaskButton">
+        <span class="material-icons">payment</span>
+        Create & Pay
+    </button>
+</form>
+</div>
+
+<div class="card">
+    <h2 class="card-title">
+        <span class="material-icons">list</span>
+        My Created Tasks
+    </h2>
+    <div id="myTasksGrid" class="task-grid">
+        <!-- User's created tasks will be loaded here -->
+    </div>
+</div>
+</div>
+
+<!-- Spin Section -->
+
+<div id="spinSection" class="section">
+    <div class="card">
+        <h2 class="card-title">
+            <span class="material-icons">casino</span>
+            Spin Wheel
+        </h2>
+        <div style="text-align: center;">
+            <div class="spin-wheel" id="spinWheel">
+                <div class="spin-center">SPIN</div>
             </div>
-            <form id="withdrawForm">
-                <div class="form-group">
-                    <label class="form-label">TON Address</label>
-                    <input type="text" class="form-input" id="tonAddress" required>
-                    <button type="button" class="btn btn-secondary" id="connectWalletForWithdrawal" onclick="connectToWallet()" style="margin-top: 10px; width: 100%;">Connect Wallet</button>
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Amount (Points)</label>
-                    <input type="number" class="form-input" id="withdrawAmount" min="2000" required>
-                    <div style="font-size: 12px; color: var(--text-light); margin-top: 5px;">
-                        Minimum: 2000 points | Rate: 100 points = 0.000078 TON
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label class="form-label">You will receive: <span id="tonReceive">0</span> TON</label>
-                </div>
-                <button type="submit" class="btn btn-primary" id="requestWithdrawalBtn">
-                    <span class="material-icons">send</span>
-                    Request Withdrawal
-                </button>
-            </form>
+            <button class="btn btn-primary" id="spinButton" onclick="spinWheel()">
+                <span class="material-icons">casino</span>
+                Spin Now
+            </button>
+            <p style="margin-top: 15px; color: var(--text-light);">
+                Spins Available: <span id="spinsCount">0</span>
+            </p>
+        </div>
+    </div>
+</div>
+
+<!-- Ads Section -->
+
+<div id="adsSection" class="section">
+    <div class="card">
+        <h2 class="card-title">
+            <span class="material-icons">play_circle</span>
+            Watch Ads
+        </h2>
+        <div style="text-align: center;">
+            <p style="margin-bottom: 20px; color: var(--text-light);">
+                Daily Limit: <span id="adsWatched">0</span>/50
+            </p>
+            <button class="btn btn-primary" id="watchAdButton" onclick="watchAd()">
+                <span class="material-icons">play_arrow</span>
+                Watch Ad (+10 Points)
+            </button>
+            <div id="adCountdown" class="countdown" style="display: none;"></div>
+        </div>
+    </div>
+</div>
+
+<!-- Referral Section -->
+
+<div id="referralSection" class="section">
+    <div class="card">
+        <h2 class="card-title">
+            <span class="material-icons">people</span>
+            Referral System
+        </h2>
+        <div class="form-group">
+            <label class="form-label">Your Referral Link</label>
+            <div class="refer-link" id="referralLink">
+                https://t.me/adflareprobot/app?startapp=ref_<span id="userRefId">loading</span>
+            </div>
+            <button class="btn btn-secondary" onclick="copyReferralLink()">
+                <span class="material-icons">content_copy</span>
+                Copy Link
+            </button>
+        </div>
+
+
+<div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; margin: 20px 0;">
+        <div class="stat-card">
+            <div class="stat-number" id="totalReferrals">0</div>
+            <div class="stat-label">Total Referrals</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number" id="referralEarnings">0</div>
+            <div class="stat-label">Referral Earnings</div>
         </div>
     </div>
 
-    <!-- Firebase SDK -->
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
 
-    <!-- Ad SDK (Ensure this is correctly integrated) -->
-    <script src='//libtl.com/sdk.js' data-zone='9809601' data-sdk='show_9809601'></script>
+<button class="btn btn-success" onclick="claimReferralRewards()">
+<span class="material-icons">redeem</span>
+Claim Rewards
+</button>
 
-    <script>
-        // Firebase configuration
-        const firebaseConfig = {
-            apiKey: "AIzaSyA3SqCHzN3kLj7DC8Cyu9OzxPFtIlyyii4",
-            authDomain: "maneybux-clone.firebaseapp.com",
-            projectId: "maneybux-clone",
-            storageBucket: "maneybux-clone.firebasestorage.app",
-            messagingSenderId: "153207109623",
-            appId: "1:153207109623:web:4cd48633c49c2ba3c1a0f2"
-        };
+<div style="margin-top: 20px;">
+    <h3 style="color: var(--primary); margin-bottom: 15px;">Referral List</h3>
+    <div id="referralList">
+        <!-- Referral list will be loaded here -->
+    </div>
+</div>
+</div>
+</div>
 
-        // Initialize Firebase
-        firebase.initializeApp(firebaseConfig);
-        const database = firebase.database();
+<!-- Profile Section -->
 
-        // TON Connect setup with proper configuration
-        const tonConnectUI = new TON_CONNECT_UI.TonConnectUI({
-            manifestUrl: 'https://moneybuc-clone-clint-1.vercel.app/tonconnect-manifest.json',
-            buttonRootId: null // We'll handle buttons manually
+<div id="profileSection" class="section">
+    <div class="card">
+        <h2 class="card-title">
+            <span class="material-icons">person</span>
+            Profile
+        </h2>
+        <div style="text-align: center; margin-bottom: 20px;">
+            <img src="https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?auto=compress&cs=tinysrgb&w=100&h=100&dpr=1" alt="Profile" class="user-avatar" style="width: 100px; height: 100px;" id="profileAvatar">
+            <h3 style="margin: 15px 0; color: var(--text);" id="profileName">Loading...</h3>
+        </div>
+
+
+<div style="display: flex; gap: 10px; flex-wrap: wrap; justify-content: center;">
+        <button class="btn btn-primary" onclick="showWithdrawModal()">
+            <span class="material-icons">account_balance</span>
+            Withdraw
+        </button>
+        <button class="btn btn-secondary" onclick="window.open('https://t.me/PixelfrogCommunity', '_blank')">
+            <span class="material-icons">support</span>
+            Support
+        </button>
+        <button class="btn btn-secondary" onclick="window.open('https://t.me/Pixelfrogchat', '_blank')">
+            <span class="material-icons">code</span>
+            Developer
+        </button>
+    </div>
+</div>
+
+<div class="card">
+    <h2 class="card-title">
+        <span class="material-icons">history</span>
+        Withdrawal History
+    </h2>
+    <div class="withdrawal-history" id="withdrawalHistory">
+        <!-- Withdrawal history will be loaded here -->
+    </div>
+</div>
+</div>
+</div>
+
+<!-- Bottom Navigation -->
+
+<div class="bottom-nav">
+    <div class="nav-container">
+        <a href="#" class="nav-item active" onclick="showSection('home'); return false;">
+            <span class="material-icons">home</span>
+            <span>Home</span>
+        </a>
+        <a href="#" class="nav-item" onclick="showSection('ads'); return false;">
+            <span class="material-icons">play_circle</span>
+            <span>Ads</span>
+        </a>
+        <a href="#" class="nav-item" onclick="showSection('tasks'); return false;">
+            <span class="material-icons">assignment</span>
+            <span>Tasks</span>
+        </a>
+        <a href="#" class="nav-item" onclick="showSection('referral'); return false;">
+            <span class="material-icons">share</span>
+            <span>Refer</span>
+        </a>
+        <a href="#" class="nav-item" onclick="showSection('profile'); return false;">
+            <span class="material-icons">account_balance_wallet</span>
+            <span>Withdraw</span>
+        </a>
+    </div>
+</div>
+
+<!-- Task Verification Modal -->
+
+<div id="taskModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3 class="modal-title">Task Verification</h3>
+            <button class="close-btn" onclick="closeModal('taskModal')">&times;</button>
+        </div>
+        <div id="taskModalContent">
+            <div class="countdown" id="taskCountdown">5</div>
+            <div class="progress-bar">
+                <div class="progress-fill" id="taskProgress"></div>
+            </div>
+            <p style="text-align: center; color: var(--text-light);">
+                Please wait while we verify your task completion...
+            </p>
+        </div>
+    </div>
+</div>
+
+<!-- Withdraw Modal -->
+
+<div id="withdrawModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3 class="modal-title">Withdraw Points</h3>
+            <button class="close-btn" onclick="closeModal('withdrawModal')">&times;</button>
+        </div>
+        <form id="withdrawForm">
+            <div class="form-group">
+                <label class="form-label">TON Address</label>
+                <input type="text" class="form-input" id="tonAddress" required>
+                <p class="form-label" style="font-size: 12px; color: var(--text-light);">Enter a valid TON wallet address (starts with UQ, EQ, or 0:).</p>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Amount (Points)</label>
+                <input type="number" class="form-input" id="withdrawAmount" min="2000" required>
+                <div style="font-size: 12px; color: var(--text-light); margin-top: 5px;">
+                    Minimum: 2000 points | Rate: 100 points = 0.000078 TON
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="form-label">You will receive: <span id="tonReceive">0</span> TON</label>
+            </div>
+            <button type="submit" class="btn btn-primary" id="requestWithdrawButton">
+                <span class="material-icons">send</span>
+                Request Withdrawal
+            </button>
+        </form>
+    </div>
+</div>
+
+<!-- Firebase SDK -->
+
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
+
+<script src='//libtl.com/sdk.js' data-zone='9809601' data-sdk='show_9809601'></script>
+
+<script>
+    // Firebase configuration
+    const firebaseConfig = {
+        apiKey: "AIzaSyA3SqCHzN3kLj7DC8Cyu9OzxPFtIlyyii4",
+        authDomain: "maneybux-clone.firebaseapp.com",
+        projectId: "maneybux-clone",
+        storageBucket: "maneybux-clone.firebasestorage.app",
+        messagingSenderId: "153207109623",
+        appId: "1:153207109623:web:4cd48633c49c2ba3c1a0f2"
+    };
+
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+    const database = firebase.database();
+
+    // TON Connect setup
+    const tonConnectUI = new TON_CONNECT_UI.TonConnectUI({
+        manifestUrl: 'https://moneybuc-clone-clint-1.vercel.app/tonconnect-manifest.json',
+        buttonRootId: null // We'll handle buttons manually
+    });
+
+    tonConnectUI.uiOptions = {
+        actionsConfiguration: {
+            twaReturnUrl: 'https://t.me/EarnFluxBot'
+        }
+    };
+
+    // Global variables
+    let currentUser = null;
+    let userBalance = 0;
+    let userSpins = 0;
+    let adsWatchedToday = 0;
+    let lastAdResetTime = 0;
+    let dailyCheckinDone = false;
+    let lastAdCompletionTime = 0;
+    const REFERRAL_BONUS_POINTS = 500;
+    const MIN_WITHDRAWAL_POINTS = 2000;
+    const WITHDRAWAL_RATE = 0.000078 / 100; // TON per point
+    const TASK_COST_RATE = 0.1 / 100; // TON per impression
+
+    // Initialize Telegram Web App
+    function initTelegramWebApp() {
+        if (window.Telegram && window.Telegram.WebApp) {
+            const tg = window.Telegram.WebApp;
+            tg.ready();
+
+            const user = tg.initDataUnsafe?.user;
+            if (user) {
+                currentUser = {
+                    id: user.id,
+                    username: user.username || 'User',
+                    first_name: user.first_name || 'User',
+                    photo_url: user.photo_url || 'https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?auto=compress&cs=tinysrgb&w=100&h=100&dpr=1'
+                };
+
+                const startParam = tg.initDataUnsafe?.start_param;
+                if (startParam) {
+                    if (startParam.startsWith('ref_')) {
+                        const referrerId = startParam.replace('ref_', '');
+                        handleReferral(referrerId);
+                    }
+                }
+
+                initializeUser();
+            } else {
+                // Fallback for testing or if running outside Telegram
+                const randomId = Math.floor(Math.random() * 1000000000);
+                currentUser = {
+                    id: randomId,
+                    username: `testuser_${randomId}`,
+                    first_name: 'Test User',
+                    photo_url: 'https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?auto=compress&cs=tinysrgb&w=100&h=100&dpr=1'
+                };
+                console.warn("Running without Telegram Web App user data. Using a random ID for testing:", currentUser.id);
+                initializeUser();
+            }
+        } else {
+            console.error("Telegram Web App is not available.");
+            showAlert("Error: Telegram Web App not detected. Please open this in Telegram.", "danger");
+        }
+    }
+
+    // Initialize user data
+    async function initializeUser() {
+        if (!currentUser) return;
+
+        const userRef = database.ref('users/' + currentUser.id);
+        const snapshot = await userRef.once('value');
+
+        if (!snapshot.exists()) {
+            const userData = {
+                id: currentUser.id,
+                username: currentUser.username,
+                first_name: currentUser.first_name,
+                photo_url: currentUser.photo_url,
+                balance: 0,
+                spins: 0,
+                totalEarned: 0,
+                tasksCompleted: 0,
+                referrals: 0,
+                referralEarnings: 0,
+                adsWatched: 0,
+                lastAdReset: Date.now(),
+                lastCheckin: null,
+                createdAt: Date.now(),
+                connectedWalletAddress: null // Store connected wallet address
+            };
+            await userRef.set(userData);
+        }
+
+        userRef.on('value', (snapshot) => {
+            const userData = snapshot.val();
+            if (userData) {
+                userBalance = userData.balance || 0;
+                userSpins = userData.spins || 0;
+                adsWatchedToday = userData.adsWatched || 0;
+                lastAdResetTime = userData.lastAdReset || 0;
+                dailyCheckinDone = userData.lastCheckin === new Date().toDateString();
+
+                // Reset daily ads watched if it's a new day
+                if (new Date().toDateString() !== new Date(lastAdResetTime).toDateString()) {
+                    adsWatchedToday = 0;
+                    userRef.update({
+                        adsWatched: 0,
+                        lastAdReset: Date.now()
+                    });
+                }
+
+                updateUI(userData);
+            }
         });
 
-        tonConnectUI.uiOptions = {
-            actionsConfiguration: {
-                twaReturnUrl: 'https://t.me/EarnFluxBot'
-            }
-        };
+        loadTasks();
+        loadUserTasks();
+        loadReferrals();
+        loadWithdrawalHistory();
+        updateConnectWalletButtonState(); // Initialize button state
+    }
 
-        // Global variables
-        let currentUser = null;
-        let userBalance = 0;
-        let userSpins = 0;
-        let adsWatchedToday = 0;
-        let lastAdTime = 0;
-        let dailyCheckinDone = false;
-        let lastAdCompletionTime = 0;
-        const REFERRAL_BONUS_POINTS = 500;
-        const WITHDRAWAL_RATE_POINTS_TO_TON = 0.000078 / 100; // 100 points = 0.000078 TON
-        const MIN_WITHDRAWAL_POINTS = 2000;
+    // Update UI with user data
+    function updateUI(userData) {
+        document.getElementById('userName').textContent = userData.first_name || 'User';
+        document.getElementById('userBalance').textContent = formatNumber(userData.balance || 0);
+        document.getElementById('totalEarned').textContent = formatNumber(userData.totalEarned || 0);
+        document.getElementById('tasksCompleted').textContent = formatNumber(userData.tasksCompleted || 0);
+        document.getElementById('referrals').textContent = formatNumber(userData.referrals || 0);
+        document.getElementById('spinsAvailable').textContent = userData.spins || 0;
+        document.getElementById('spinsCount').textContent = userData.spins || 0;
+        document.getElementById('adsWatched').textContent = adsWatchedToday;
+        document.getElementById('userRefId').textContent = userData.id;
 
-        // Initialize Telegram Web App
-        function initTelegramWebApp() {
-            if (window.Telegram && window.Telegram.WebApp) {
-                const tg = window.Telegram.WebApp;
-                tg.ready();
+        if (userData.photo_url) {
+            document.getElementById('userAvatar').src = userData.photo_url;
+            document.getElementById('profileAvatar').src = userData.photo_url;
+        }
 
-                const user = tg.initDataUnsafe?.user;
-                if (user) {
-                    currentUser = {
-                        id: user.id,
-                        username: user.username || 'User',
-                        first_name: user.first_name || 'User',
-                        photo_url: user.photo_url || 'https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?auto=compress&cs=tinysrgb&w=100&h=100&dpr=1'
-                    };
+        document.getElementById('profileName').textContent = userData.first_name || 'User';
 
-                    const startParam = tg.initDataUnsafe?.start_param;
-                    if (startParam) {
-                        if (startParam.startsWith('ref_')) {
-                            const referrerId = startParam.replace('ref_', '');
-                            handleReferral(referrerId);
-                        }
-                    }
+        const watchAdButton = document.getElementById('watchAdButton');
+        if (adsWatchedToday >= 50) {
+            watchAdButton.disabled = true;
+            watchAdButton.innerHTML = '<span class="material-icons">block</span> Daily Limit Reached';
+        } else {
+            watchAdButton.disabled = false;
+            watchAdButton.innerHTML = '<span class="material-icons">play_arrow</span> Watch Ad (+10 Points)';
+        }
 
-                    initializeUser();
-                } else {
-                    // Fallback for testing without Telegram Web App
-                    const randomId = Math.floor(Math.random() * 1000000000);
-                    currentUser = {
-                        id: randomId,
-                        username: `testuser_${randomId}`,
-                        first_name: 'Test User',
-                        photo_url: 'https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?auto=compress&cs=tinysrgb&w=100&h=100&dpr=1'
-                    };
-                    console.warn("Running without Telegram Web App user data. Using a random ID for testing:", currentUser.id);
-                    initializeUser();
-                }
+        const dailyCheckinButton = document.querySelector('.btn-success[onclick="dailyCheckin()"]');
+        if (dailyCheckinButton) {
+            if (dailyCheckinDone) {
+                dailyCheckinButton.textContent = 'Checked In!';
+                dailyCheckinButton.disabled = true;
+                dailyCheckinButton.classList.remove('btn-success');
+                dailyCheckinButton.classList.add('btn-secondary');
             } else {
-                console.error("Telegram Web App is not available.");
-                showAlert("Error: Telegram Web App not detected. Please open this in Telegram.", "danger");
+                dailyCheckinButton.innerHTML = '<span class="material-icons">event_available</span> Daily Check-in';
+                dailyCheckinButton.disabled = false;
+                dailyCheckinButton.classList.remove('btn-secondary');
+                dailyCheckinButton.classList.add('btn-success');
             }
         }
 
-        // Initialize user data from Firebase
-        async function initializeUser() {
-            if (!currentUser) return;
-
-            const userRef = database.ref('users/' + currentUser.id);
-            const snapshot = await userRef.once('value');
-
-            if (!snapshot.exists()) {
-                const userData = {
-                    id: currentUser.id,
-                    username: currentUser.username,
-                    first_name: currentUser.first_name,
-                    photo_url: currentUser.photo_url,
-                    balance: 0,
-                    spins: 0,
-                    totalEarned: 0,
-                    tasksCompleted: 0,
-                    referrals: 0,
-                    referralEarnings: 0,
-                    adsWatched: 0,
-                    lastAdReset: Date.now(),
-                    lastCheckin: null,
-                    createdAt: Date.now()
-                };
-                await userRef.set(userData);
-            }
-
-            userRef.on('value', (snapshot) => {
-                const userData = snapshot.val();
-                if (userData) {
-                    userBalance = userData.balance || 0;
-                    userSpins = userData.spins || 0;
-                    adsWatchedToday = userData.adsWatched || 0;
-                    lastAdTime = userData.lastAdReset || 0;
-                    dailyCheckinDone = userData.lastCheckin === new Date().toDateString();
-
-                    // Reset daily ad count if more than 24 hours have passed
-                    if (Date.now() - lastAdTime > 24 * 60 * 60 * 1000) {
-                        adsWatchedToday = 0;
-                        userRef.update({
-                            adsWatched: 0,
-                            lastAdReset: Date.now()
-                        });
-                    }
-
-                    updateUI(userData);
-                }
-            });
-
-            loadTasks();
-            loadUserTasks();
-            loadReferrals();
-            loadWithdrawalHistory();
+        // Set withdrawn address if available
+        if (userData.connectedWalletAddress && document.getElementById('tonAddress')) {
+            document.getElementById('tonAddress').value = userData.connectedWalletAddress;
         }
 
-        // Update UI with user data
-        function updateUI(userData) {
-            document.getElementById('userName').textContent = userData.first_name || 'User';
-            document.getElementById('userBalance').textContent = formatNumber(userData.balance || 0);
-            document.getElementById('totalEarned').textContent = formatNumber(userData.totalEarned || 0);
-            document.getElementById('tasksCompleted').textContent = formatNumber(userData.tasksCompleted || 0);
-            document.getElementById('referrals').textContent = formatNumber(userData.referrals || 0);
-            document.getElementById('spinsAvailable').textContent = userData.spins || 0;
-            document.getElementById('spinsCount').textContent = userData.spins || 0;
-            document.getElementById('adsWatched').textContent = adsWatchedToday;
-            document.getElementById('userRefId').textContent = userData.id;
+        updateConnectWalletButtonState();
+    }
 
-            if (userData.photo_url) {
-                document.getElementById('userAvatar').src = userData.photo_url;
-                document.getElementById('profileAvatar').src = userData.photo_url;
-            }
+    // Update wallet button states
+    function updateConnectWalletButtonState() {
+        const connectWalletButton = document.getElementById('connectWalletButton');
+        const connectWalletButtonAddTask = document.getElementById('connectWalletButtonAddTask');
+        const connectedWallet = tonConnectUI.account;
 
-            document.getElementById('profileName').textContent = userData.first_name || 'User';
-
-            const watchAdButton = document.getElementById('watchAdButton');
-            if (adsWatchedToday >= 50) {
-                watchAdButton.disabled = true;
-                watchAdButton.innerHTML = '<span class="material-icons">block</span> Daily Limit Reached';
-            } else {
-                watchAdButton.disabled = false;
-                watchAdButton.innerHTML = '<span class="material-icons">play_arrow</span> Watch Ad (+10 Points)';
-            }
-
-            const dailyCheckinButton = document.querySelector('.btn-success[onclick="dailyCheckin()"]');
-            if (dailyCheckinButton) {
-                if (dailyCheckinDone) {
-                    dailyCheckinButton.textContent = 'Checked In!';
-                    dailyCheckinButton.disabled = true;
-                    dailyCheckinButton.classList.remove('btn-success');
-                    dailyCheckinButton.classList.add('btn-secondary');
-                } else {
-                    dailyCheckinButton.innerHTML = '<span class="material-icons">event_available</span> Daily Check-in';
-                    dailyCheckinButton.disabled = false;
-                    dailyCheckinButton.classList.remove('btn-secondary');
-                    dailyCheckinButton.classList.add('btn-success');
-                }
-            }
-
-            updateConnectWalletButtonState();
-            updateWithdrawalFormState(); // Update withdrawal form state based on wallet connection
-        }
-
-        // Update wallet connection button states across the app
-        function updateConnectWalletButtonState() {
-            const connectWalletButton = document.getElementById('connectWalletButton');
-            const connectWalletButtonAddTask = document.getElementById('connectWalletButtonAddTask');
-            const profileWithdrawBtn = document.getElementById('profileWithdrawBtn');
-            const connectWalletForWithdrawalBtn = document.getElementById('connectWalletForWithdrawal');
-
-            const connectedWallet = tonConnectUI.account;
-
-            [connectWalletButton, connectWalletButtonAddTask].forEach(button => {
-                if (!button) return;
-                if (connectedWallet) {
-                    button.innerHTML = '<span class="material-icons">check_circle</span> Wallet Connected';
-                    button.disabled = true;
-                    button.style.background = 'linear-gradient(135deg, var(--success), #047857)';
-                } else {
-                    button.innerHTML = '<span class="material-icons">account_balance_wallet</span> Connect Wallet';
-                    button.disabled = false;
-                    button.style.background = 'linear-gradient(135deg, var(--primary), var(--primary-dark))';
-                }
-            });
-
-            // Update profile withdraw button
-            if (profileWithdrawBtn) {
-                if (connectedWallet) {
-                    profileWithdrawBtn.innerHTML = '<span class="material-icons">check_circle</span> Wallet Connected';
-                    profileWithdrawBtn.disabled = false; // Still allow opening modal
-                    profileWithdrawBtn.style.background = 'linear-gradient(135deg, var(--success), #047857)';
-                } else {
-                    profileWithdrawBtn.innerHTML = '<span class="material-icons">account_balance</span> Withdraw';
-                    profileWithdrawBtn.disabled = false;
-                    profileWithdrawBtn.style.background = 'linear-gradient(135deg, var(--primary), var(--primary-dark))';
-                }
-            }
-
-            // Update withdrawal modal connect button
-            if (connectWalletForWithdrawalBtn) {
-                if (connectedWallet) {
-                    connectWalletForWithdrawalBtn.innerHTML = '<span class="material-icons">check_circle</span> Wallet Connected';
-                    connectWalletForWithdrawalBtn.disabled = true;
-                    connectWalletForWithdrawalBtn.style.background = 'linear-gradient(135deg, var(--success), #047857)';
-                } else {
-                    connectWalletForWithdrawalBtn.innerHTML = '<span class="material-icons">account_balance_wallet</span> Connect Wallet';
-                    connectWalletForWithdrawalBtn.disabled = false;
-                    connectWalletForWithdrawalBtn.style.background = 'linear-gradient(135deg, var(--primary), var(--primary-dark))';
-                }
-            }
-        }
-
-        // Update withdrawal form state based on wallet connection and user balance
-        function updateWithdrawalFormState() {
-            const tonAddressInput = document.getElementById('tonAddress');
-            const withdrawAmountInput = document.getElementById('withdrawAmount');
-            const requestWithdrawalBtn = document.getElementById('requestWithdrawalBtn');
-            const connectWalletForWithdrawalBtn = document.getElementById('connectWalletForWithdrawal');
-            const connectedWallet = tonConnectUI.account;
+        [connectWalletButton, connectWalletButtonAddTask].forEach(button => {
+            if (!button) return;
 
             if (connectedWallet) {
-                tonAddressInput.value = connectedWallet.address; // Auto-fill the address
-                tonAddressInput.readOnly = true; // Make it read-only
-                connectWalletForWithdrawalBtn.style.display = 'none'; // Hide the connect button
-                requestWithdrawalBtn.disabled = false; // Enable withdrawal request button
+                button.innerHTML = '<span class="material-icons">check_circle</span> Wallet Connected';
+                button.disabled = true;
+                button.style.background = 'linear-gradient(135deg, var(--success), #047857)';
             } else {
-                tonAddressInput.value = ''; // Clear the address
-                tonAddressInput.readOnly = false; // Make it editable
-                connectWalletForWithdrawalBtn.style.display = 'block'; // Show the connect button
-                requestWithdrawalBtn.disabled = true; // Disable withdrawal request button
-            }
-
-            // Validate amount based on user balance and minimum withdrawal
-            const amount = parseInt(withdrawAmountInput.value) || 0;
-            if (amount < MIN_WITHDRAWAL_POINTS || amount > userBalance) {
-                requestWithdrawalBtn.disabled = true;
-            } else {
-                requestWithdrawalBtn.disabled = !connectedWallet; // Only enable if wallet is connected
-            }
-        }
-
-
-        // Load available tasks
-        function loadTasks() {
-            const availableTasksGrid = document.getElementById('availableTasksGrid');
-            const completedTasksGrid = document.getElementById('completedTasksGrid');
-
-            database.ref('tasks').on('value', (snapshot) => {
-                availableTasksGrid.innerHTML = '';
-                completedTasksGrid.innerHTML = '';
-
-                const tasks = snapshot.val();
-                if (!tasks) {
-                    availableTasksGrid.innerHTML = '<p style="text-align: center; color: var(--text-light);">No tasks available</p>';
-                    return;
-                }
-
-                database.ref('userTasks/' + currentUser.id).once('value', (userTasksSnapshot) => {
-                    const userTasksData = userTasksSnapshot.val() || {};
-
-                    Object.keys(tasks).forEach(taskId => {
-                        const task = tasks[taskId];
-                        const isCompleted = userTasksData[taskId] && userTasksData[taskId].completed === true;
-                        const taskCard = createTaskCard(taskId, task, isCompleted);
-
-                        if (isCompleted) {
-                            completedTasksGrid.appendChild(taskCard);
-                        } else {
-                            availableTasksGrid.appendChild(taskCard);
-                        }
-                    });
-
-                    if (availableTasksGrid.children.length === 0) {
-                        availableTasksGrid.innerHTML = '<p style="text-align: center; color: var(--text-light);">No available tasks</p>';
-                    }
-
-                    if (completedTasksGrid.children.length === 0) {
-                        completedTasksGrid.innerHTML = '<p style="text-align: center; color: var(--text-light);">No completed tasks</p>';
-                    }
-                });
-            });
-        }
-
-        // Create task card for display
-        function createTaskCard(taskId, task, isCompleted) {
-            const card = document.createElement('div');
-            card.className = 'task-card';
-
-            const statusClass = isCompleted ? 'btn-success' : 'btn-primary';
-            const statusText = isCompleted ? 'Completed' : 'Start Task';
-            const statusIcon = isCompleted ? 'check_circle' : 'play_arrow';
-
-            card.innerHTML = `
-                <div class="task-header">
-                    <div class="task-title">${task.title}</div>
-                    <div class="task-reward">${task.reward} points</div>
-                </div>
-                <div class="task-description">${task.description}</div>
-                <div class="task-actions">
-                    <button class="btn ${statusClass}" ${isCompleted ? 'disabled' : `onclick="startTask('${taskId}', '${task.url}', ${task.reward})"`}>
-                        <span class="material-icons">${statusIcon}</span>
-                        ${statusText}
-                    </button>
-                </div>
-            `;
-
-            return card;
-        }
-
-        // Start task: Open URL and initiate verification countdown
-        function startTask(taskId, url, reward) {
-            window.open(url, '_blank');
-            document.getElementById('taskModal').style.display = 'block';
-
-            let countdown = 5;
-            const countdownElement = document.getElementById('taskCountdown');
-            const progressElement = document.getElementById('taskProgress');
-
-            const timer = setInterval(() => {
-                countdown--;
-                countdownElement.textContent = countdown;
-                progressElement.style.width = ((5 - countdown) / 5) * 100 + '%';
-
-                if (countdown <= 0) {
-                    clearInterval(timer);
-                    completeTask(taskId, reward);
-                }
-            }, 1000);
-        }
-
-        // Complete task: Update user balance and stats in Firebase
-        async function completeTask(taskId, reward) {
-            try {
-                const userRef = database.ref('users/' + currentUser.id);
-                const userTaskRef = database.ref('userTasks/' + currentUser.id + '/' + taskId);
-
-                // Prevent re-completion of tasks
-                const existingUserTaskSnapshot = await userTaskRef.once('value');
-                if (existingUserTaskSnapshot.exists() && existingUserTaskSnapshot.val().completed === true) {
-                    closeModal('taskModal');
-                    showAlert('This task has already been completed.', 'warning');
-                    return;
-                }
-
-                await userRef.transaction((userData) => {
-                    if (userData) {
-                        userData.balance = (userData.balance || 0) + reward;
-                        userData.totalEarned = (userData.totalEarned || 0) + reward;
-                        userData.tasksCompleted = (userData.tasksCompleted || 0) + 1;
-                        userData.spins = (userData.spins || 0) + 1; // Award a spin for completing a task
-                    }
-                    return userData;
-                });
-
-                await userTaskRef.set({
-                    completedAt: Date.now(),
-                    reward: reward,
-                    completed: true
-                });
-
-                closeModal('taskModal');
-                showAlert(`Task completed! You earned ${reward} points and 1 spin!`, 'success');
-
-            } catch (error) {
-                console.error('Error completing task:', error);
-                showAlert('Error completing task. Please try again.', 'danger');
-                closeModal('taskModal'); // Ensure modal is closed even on error
-            }
-        }
-
-        // Apply lucky code
-        async function applyLuckyCode() {
-            const code = document.getElementById('luckyCodeInput').value.trim().toUpperCase();
-            if (!code) {
-                showAlert('Please enter a lucky code', 'danger');
-                return;
-            }
-
-            try {
-                const codesRef = database.ref('luckyCodes');
-                const snapshot = await codesRef.once('value');
-                const codes = snapshot.val();
-
-                if (!codes) {
-                    showAlert('No lucky codes available.', 'danger');
-                    return;
-                }
-
-                let foundCode = null;
-                let codeKey = null;
-
-                // Iterate through available codes to find a match
-                Object.keys(codes).forEach(key => {
-                    if (codes[key].code === code && !codes[key].used && codes[key].expiresAt > Date.now()) {
-                        foundCode = codes[key];
-                        codeKey = key;
-                    }
-                });
-
-                if (!foundCode) {
-                    showAlert('Invalid, expired, or already used lucky code', 'danger');
-                    return;
-                }
-
-                const userRef = database.ref('users/' + currentUser.id);
-                await userRef.transaction((userData) => {
-                    if (userData) {
-                        userData.balance = (userData.balance || 0) + foundCode.reward;
-                        userData.totalEarned = (userData.totalEarned || 0) + foundCode.reward;
-                    }
-                    return userData;
-                });
-
-                // Mark code as used
-                await database.ref('luckyCodes/' + codeKey).update({ used: true });
-
-                document.getElementById('luckyCodeInput').value = ''; // Clear input
-                showAlert(`Lucky code applied! You earned ${foundCode.reward} points!`, 'success');
-
-            } catch (error) {
-                console.error('Error applying lucky code:', error);
-                showAlert('Error applying lucky code. Please try again.', 'danger');
-            }
-        }
-
-        // Spin the wheel and award points
-        function spinWheel() {
-            if (userSpins <= 0) {
-                showAlert('No spins available! Complete tasks to earn spins.', 'danger');
-                return;
-            }
-
-            const spinButton = document.getElementById('spinButton');
-            const wheel = document.getElementById('spinWheel');
-
-            spinButton.disabled = true;
-
-            // Generate a random rotation for a satisfying spin effect
-            const randomRotation = Math.floor(Math.random() * 360) + 1800; // 1800 degrees = 5 full rotations
-            wheel.style.transition = 'transform 3s cubic-bezier(0.23, 1, 0.32, 1)'; // Smooth transition
-            wheel.style.transform = `rotate(${randomRotation}deg)`;
-
-            setTimeout(async () => {
-                const finalPosition = randomRotation % 360;
-                let reward;
-
-                // Determine reward based on the final position
-                if (finalPosition < 60) reward = 100;
-                else if (finalPosition < 120) reward = 150;
-                else if (finalPosition < 180) reward = 200;
-                else if (finalPosition < 240) reward = 300;
-                else if (finalPosition < 300) reward = 400;
-                else reward = 500;
-
-                const userRef = database.ref('users/' + currentUser.id);
-                await userRef.transaction((userData) => {
-                    if (userData) {
-                        userData.balance = (userData.balance || 0) + reward;
-                        userData.totalEarned = (userData.totalEarned || 0) + reward;
-                        userData.spins = Math.max(0, (userData.spins || 0) - 1); // Decrement spins, ensure it doesn't go below 0
-                    }
-                    return userData;
-                });
-
-                spinButton.disabled = false;
-                wheel.style.transition = ''; // Reset transition for next spin
-                showAlert(`Congratulations! You won ${reward} points!`, 'success');
-
-            }, 3000); // Match the transition duration
-        }
-
-        // Watch ad: Integrate with ad SDK and update user data
-        async function watchAd() {
-            if (adsWatchedToday >= 50) {
-                showAlert('Daily ad limit reached. Come back tomorrow!', 'danger');
-                return;
-            }
-
-            // Cooldown to prevent rapid ad watching
-            if (Date.now() - lastAdCompletionTime < 30000) { // 30 seconds cooldown
-                showAlert('Please wait a moment before watching another ad.', 'warning');
-                return;
-            }
-
-            try {
-                // Attempt to load and show ad using the provided SDK
-                if (typeof show_9809601 === 'function') {
-                    await show_9809601();
-                } else {
-                    // Fallback for testing without the ad SDK
-                    console.warn("Ad SDK (show_9809601) not found. Simulating ad watching.");
-                    await new Promise(resolve => setTimeout(resolve, 3000)); // Simulate ad duration
-                }
-
-                // Update user data on successful ad watch
-                const userRef = database.ref('users/' + currentUser.id);
-                await userRef.transaction((userData) => {
-                    if (userData) {
-                        userData.balance = (userData.balance || 0) + 10;
-                        userData.totalEarned = (userData.totalEarned || 0) + 10;
-                        userData.adsWatched = (userData.adsWatched || 0) + 1;
-                    }
-                    return userData;
-                });
-
-                adsWatchedToday++;
-                lastAdCompletionTime = Date.now(); // Record time of completion
-                showAlert('Ad watched! You earned 10 points!', 'success');
-
-            } catch (error) {
-                console.error('Error watching ad:', error);
-                showAlert('Error loading ad. Please try again.', 'danger');
-            }
-        }
-
-        // Daily check-in: Award points and set lastCheckin date
-        async function dailyCheckin() {
-            const today = new Date().toDateString();
-            const userRef = database.ref('users/' + currentUser.id);
-            const snapshot = await userRef.once('value');
-            const userData = snapshot.val();
-
-            if (userData.lastCheckin === today) {
-                showAlert('You have already checked in today!', 'danger');
-                return;
-            }
-
-            // Optional: Redirect to a community page or task for verification
-            window.open('https://t.me/PixelfrogCommunity', '_blank');
-
-            // Simulate a delay for verification or user interaction
-            setTimeout(async () => {
-                await userRef.update({
-                    balance: (userData.balance || 0) + 50,
-                    totalEarned: (userData.totalEarned || 0) + 50,
-                    lastCheckin: today
-                });
-
-                showAlert('Daily check-in completed! You earned 50 points!', 'success');
-                // Update button state immediately
-                const dailyCheckinButton = document.querySelector('.btn-success[onclick="dailyCheckin()"]');
-                if (dailyCheckinButton) {
-                    dailyCheckinButton.textContent = 'Checked In!';
-                    dailyCheckinButton.disabled = true;
-                    dailyCheckinButton.classList.remove('btn-success');
-                    dailyCheckinButton.classList.add('btn-secondary');
-                }
-            }, 3000); // Delay for 3 seconds
-        }
-
-        // Add task form submission with TON payment
-        document.getElementById('addTaskForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-
-            // Ensure wallet is connected before proceeding
-            if (!tonConnectUI.account) {
-                showAlert('Please connect your TON wallet first to create a task.', 'danger');
-                document.getElementById('connectWalletButtonAddTask').scrollIntoView({ behavior: 'smooth' });
-                return;
-            }
-
-            const title = document.getElementById('newTaskTitle').value;
-            const description = document.getElementById('newTaskDescription').value;
-            const url = document.getElementById('newTaskUrl').value;
-            const impressions = parseInt(document.getElementById('taskImpressions').value);
-            const cost = (impressions / 100) * 0.1; // Cost is 0.1 TON per 100 impressions
-
-            // Basic validation
-            if (isNaN(impressions) || impressions < 100 || impressions > 5000) {
-                showAlert('Please enter a valid number of impressions between 100 and 5000.', 'danger');
-                return;
-            }
-            if (!title || !description || !url) {
-                showAlert('Please fill in all task details.', 'danger');
-                return;
-            }
-
-            const createTaskButton = document.getElementById('createTaskButton');
-            createTaskButton.disabled = true;
-            createTaskButton.innerHTML = '<div class="loading"></div> Processing...';
-
-            try {
-                // Construct the transaction payload for TON Connect
-                const transaction = {
-                    validUntil: Math.floor(Date.now() / 1000) + 60, // Transaction expires in 60 seconds
-                    messages: [{
-                        address: "UQDLsNfQBwWXD9aaNxNS3udGo-9o8ybrlKmmbI5gjjRfs17M", // Replace with your actual recipient TON address
-                        amount: Math.floor(cost * 1000000000).toString() // Amount in nanoTON
-                    }]
-                };
-
-                // Send the transaction to the connected wallet
-                const result = await tonConnectUI.sendTransaction(transaction);
-
-                if (result && result.boc) { // Check if transaction was successful
-                    const taskData = {
-                        title,
-                        description,
-                        url,
-                        reward: 100, // Reward per impression, adjust as needed
-                        impressions,
-                        remainingImpressions: impressions,
-                        createdBy: currentUser.id,
-                        createdAt: Date.now(),
-                        status: 'active', // Task status
-                        transactionHash: result.boc // Store transaction hash
-                    };
-
-                    // Add the task to Firebase database
-                    await database.ref('tasks').push(taskData);
-
-                    document.getElementById('addTaskForm').reset(); // Clear form
-                    document.getElementById('totalCost').textContent = '0'; // Reset cost display
-                    showAlert('Task created successfully! Transaction confirmed.', 'success');
-                    loadUserTasks(); // Refresh user's created tasks
-                } else {
-                    showAlert('Transaction failed or was cancelled. Task not created.', 'danger');
-                }
-
-            } catch (error) {
-                console.error('Error creating task:', error);
-                if (error.message && error.message.includes('User rejects')) {
-                    showAlert('Transaction was cancelled by user.', 'warning');
-                } else {
-                    showAlert('Error creating task. Please check your wallet connection and try again.', 'danger');
-                }
-            } finally {
-                createTaskButton.disabled = false; // Re-enable button
-                createTaskButton.innerHTML = '<span class="material-icons">payment</span> Create & Pay';
+                button.innerHTML = '<span class="material-icons">account_balance_wallet</span> Connect Wallet';
+                button.disabled = false;
+                button.style.background = 'linear-gradient(135deg, var(--primary), var(--primary-dark))';
             }
         });
 
-        // Update total cost display as impressions change
-        document.getElementById('taskImpressions').addEventListener('input', (e) => {
-            const impressions = parseInt(e.target.value) || 0;
-            const cost = (impressions / 100) * 0.1; // Cost calculation
-            document.getElementById('totalCost').textContent = cost.toFixed(3); // Display cost with 3 decimal places
-        });
+        // Update wallet disconnection button if needed
+        const walletInfoDiv = document.getElementById('walletInfo'); // Assuming you have a div to show wallet info
+        const disconnectButton = document.getElementById('disconnectWalletButton');
 
-        // Load user's created tasks from Firebase
-        function loadUserTasks() {
-            if (!currentUser) return;
+        if (connectedWallet) {
+            if (!walletInfoDiv) {
+                const newWalletInfoDiv = document.createElement('div');
+                newWalletInfoDiv.id = 'walletInfo';
+                newWalletInfoDiv.style.cssText = 'margin-top: 10px; color: var(--text-light); font-size: 12px;';
+                document.getElementById('connectWalletButton').parentNode.insertBefore(newWalletInfoDiv, document.getElementById('connectWalletButton'));
+            }
+            document.getElementById('walletInfo').textContent = `Connected: ${connectedWallet.address.slice(0, 6)}...${connectedWallet.address.slice(-4)}`;
 
-            const myTasksGrid = document.getElementById('myTasksGrid');
+            if (!disconnectButton) {
+                const newDisconnectButton = document.createElement('button');
+                newDisconnectButton.id = 'disconnectWalletButton';
+                newDisconnectButton.className = 'btn btn-danger';
+                newDisconnectButton.style.cssText = 'margin-left: 10px;';
+                newDisconnectButton.innerHTML = '<span class="material-icons">power_settings_new</span> Disconnect';
+                newDisconnectButton.onclick = disconnectWallet;
+                document.getElementById('connectWalletButton').parentNode.insertBefore(newDisconnectButton, document.getElementById('connectWalletButton'));
+            }
+            document.getElementById('disconnectWalletButton').style.display = 'inline-flex';
+        } else {
+            if (walletInfoDiv) walletInfoDiv.remove();
+            if (disconnectButton) disconnectButton.style.display = 'none';
+        }
+    }
 
-            database.ref('tasks').orderByChild('createdBy').equalTo(currentUser.id).on('value', (snapshot) => {
-                myTasksGrid.innerHTML = '';
-                const tasks = snapshot.val();
+    // Load available tasks
+    function loadTasks() {
+        const availableTasksGrid = document.getElementById('availableTasksGrid');
+        const completedTasksGrid = document.getElementById('completedTasksGrid');
 
-                if (!tasks) {
-                    myTasksGrid.innerHTML = '<p style="text-align: center; color: var(--text-light);">No tasks created by you yet.</p>';
-                    return;
-                }
+        database.ref('tasks').on('value', (snapshot) => {
+            availableTasksGrid.innerHTML = '';
+            completedTasksGrid.innerHTML = '';
+
+            const tasks = snapshot.val();
+            if (!tasks) {
+                availableTasksGrid.innerHTML = '<p style="text-align: center; color: var(--text-light);">No tasks available</p>';
+                return;
+            }
+
+            database.ref('userTasks/' + currentUser.id).once('value', (userTasksSnapshot) => {
+                const userTasksData = userTasksSnapshot.val() || {};
 
                 Object.keys(tasks).forEach(taskId => {
                     const task = tasks[taskId];
-                    const taskCard = createUserTaskCard(taskId, task);
-                    myTasksGrid.appendChild(taskCard);
-                });
-            });
-        }
+                    // Check if the task exists and has a reward defined
+                    if (!task || task.reward === undefined) return;
 
-        // Create card for user's own tasks display
-        function createUserTaskCard(taskId, task) {
-            const card = document.createElement('div');
-            card.className = 'task-card';
+                    const isCompleted = userTasksData[taskId] && userTasksData[taskId].completed === true;
+                    const taskCard = createTaskCard(taskId, task, isCompleted);
 
-            const isTaskCompleted = task.remainingImpressions <= 0;
-            const progressPercentage = ((task.impressions - task.remainingImpressions) / task.impressions) * 100;
-
-            card.innerHTML = `
-                <div class="task-header">
-                    <div class="task-title">${task.title}</div>
-                    <div class="task-reward">${task.remainingImpressions}/${task.impressions}</div>
-                </div>
-                <div class="task-description">${task.description}</div>
-                <div class="progress-bar">
-                    <div class="progress-fill" style="width: ${progressPercentage}%"></div>
-                </div>
-                <div class="task-actions">
-                    ${isTaskCompleted ?
-                        `<button class="btn btn-danger" onclick="deleteUserTask('${taskId}')">
-                            <span class="material-icons">delete</span>
-                            Delete
-                        </button>` :
-                        `<span style="color: var(--text-light); font-size: 12px;">Active</span>`
+                    if (isCompleted) {
+                        completedTasksGrid.appendChild(taskCard);
+                    } else {
+                        availableTasksGrid.appendChild(taskCard);
                     }
-                </div>
-            `;
+                });
 
-            return card;
-        }
-
-        // Delete a user-created task
-        async function deleteUserTask(taskId) {
-            if (confirm('Are you sure you want to delete this task? This action cannot be undone.')) {
-                try {
-                    await database.ref('tasks/' + taskId).remove();
-                    showAlert('Task deleted successfully!', 'success');
-                } catch (error) {
-                    console.error('Error deleting task:', error);
-                    showAlert('Error deleting task. Please try again.', 'danger');
+                if (availableTasksGrid.children.length === 0) {
+                    availableTasksGrid.innerHTML = '<p style="text-align: center; color: var(--text-light);">No available tasks</p>';
                 }
-            }
-        }
 
-        // Handle referral logic: Award bonus and record referral
-        async function handleReferral(referrerId) {
-            // Prevent self-referral and if current user is already known
-            if (!currentUser || currentUser.id.toString() === referrerId) {
+                if (completedTasksGrid.children.length === 0) {
+                    completedTasksGrid.innerHTML = '<p style="text-align: center; color: var(--text-light);">No completed tasks</p>';
+                }
+            });
+        });
+    }
+
+    // Create task card
+    function createTaskCard(taskId, task, isCompleted) {
+        const card = document.createElement('div');
+        card.className = 'task-card';
+
+        const statusClass = isCompleted ? 'btn-success' : 'btn-primary';
+        const statusText = isCompleted ? 'Completed' : 'Start Task';
+        const statusIcon = isCompleted ? 'check_circle' : 'play_arrow';
+
+        card.innerHTML = `
+            <div class="task-header">
+                <div class="task-title">${task.title}</div>
+                <div class="task-reward">${formatNumber(task.reward)} points</div>
+            </div>
+            <div class="task-description">${task.description}</div>
+            <div class="task-actions">
+                <button class="btn ${statusClass}" ${isCompleted ? 'disabled' : `onclick="startTask('${taskId}', '${task.url}', ${task.reward})"`}>
+                    <span class="material-icons">${statusIcon}</span>
+                    ${statusText}
+                </button>
+            </div>
+        `;
+
+        return card;
+    }
+
+    // Start task
+    function startTask(taskId, url, reward) {
+        window.open(url, '_blank');
+        document.getElementById('taskModal').style.display = 'block';
+
+        let countdown = 5;
+        const countdownElement = document.getElementById('taskCountdown');
+        const progressElement = document.getElementById('taskProgress');
+
+        const timer = setInterval(() => {
+            countdown--;
+            countdownElement.textContent = countdown;
+            progressElement.style.width = ((5 - countdown) / 5) * 100 + '%';
+
+            if (countdown <= 0) {
+                clearInterval(timer);
+                completeTask(taskId, reward);
+            }
+        }, 1000);
+    }
+
+    // Complete task
+    async function completeTask(taskId, reward) {
+        try {
+            const userRef = database.ref('users/' + currentUser.id);
+            const userTaskRef = database.ref('userTasks/' + currentUser.id + '/' + taskId);
+
+            const existingUserTaskSnapshot = await userTaskRef.once('value');
+            if (existingUserTaskSnapshot.exists() && existingUserTaskSnapshot.val().completed === true) {
+                closeModal('taskModal');
+                showAlert('This task has already been completed.', 'warning');
                 return;
             }
 
-            try {
-                const newUserRef = database.ref('users/' + currentUser.id);
-                const newUserSnapshot = await newUserRef.once('value');
-
-                // Only process if the new user doesn't exist yet (first join via referral)
-                if (!newUserSnapshot.exists()) {
-                    const referrerUserRef = database.ref('users/' + referrerId);
-                    const referrerUserSnapshot = await referrerUserRef.once('value');
-
-                    if (referrerUserSnapshot.exists()) {
-                        // Update referrer's balance and referral count
-                        await referrerUserRef.transaction((referrerData) => {
-                            if (referrerData) {
-                                referrerData.referrals = (referrerData.referrals || 0) + 1;
-                                referrerData.balance = (referrerData.balance || 0) + REFERRAL_BONUS_POINTS;
-                                referrerData.totalEarned = (referrerData.totalEarned || 0) + REFERRAL_BONUS_POINTS;
-                            }
-                            return referrerData;
-                        });
-
-                        // Record the referral for the referrer
-                        await database.ref('referrals/' + referrerId + '/' + currentUser.id).set({
-                            userId: currentUser.id,
-                            username: currentUser.username,
-                            joinedAt: Date.now(),
-                            completed: true // Mark as completed
-                        });
-
-                        showAlert(`Welcome! You've been referred by user ID: ${referrerId}. Your referrer has been rewarded!`, 'success');
-                    }
+            await userRef.transaction((userData) => {
+                if (userData) {
+                    userData.balance = (userData.balance || 0) + reward;
+                    userData.totalEarned = (userData.totalEarned || 0) + reward;
+                    userData.tasksCompleted = (userData.tasksCompleted || 0) + 1;
+                    userData.spins = (userData.spins || 0) + 1;
                 }
-            } catch (error) {
-                console.error('Error handling referral:', error);
-                showAlert('Error processing referral link. Please try again.', 'danger');
-            }
+                return userData;
+            });
+
+            await userTaskRef.set({
+                completedAt: Date.now(),
+                reward: reward,
+                completed: true
+            });
+
+            closeModal('taskModal');
+            showAlert(`Task completed! You earned ${formatNumber(reward)} points and 1 spin!`, 'success');
+
+        } catch (error) {
+            console.error('Error completing task:', error);
+            showAlert('Error completing task. Please try again.', 'danger');
+            closeModal('taskModal');
+        }
+    }
+
+    // Apply lucky code
+    async function applyLuckyCode() {
+        const code = document.getElementById('luckyCodeInput').value.trim().toUpperCase();
+        if (!code) {
+            showAlert('Please enter a lucky code', 'danger');
+            return;
         }
 
-        // Load referrals for the current user
-        function loadReferrals() {
-            if (!currentUser) return;
+        try {
+            const codesRef = database.ref('luckyCodes');
+            const snapshot = await codesRef.once('value');
+            const codes = snapshot.val();
 
-            const referralList = document.getElementById('referralList');
-            let totalReferralEarnings = 0;
+            if (!codes) {
+                showAlert('No lucky codes available.', 'danger');
+                return;
+            }
 
-            database.ref('referrals/' + currentUser.id).on('value', (snapshot) => {
-                referralList.innerHTML = '';
-                const referrals = snapshot.val();
+            let foundCode = null;
+            let codeKey = null;
 
-                if (!referrals) {
-                    referralList.innerHTML = '<p style="text-align: center; color: var(--text-light);">No referrals yet.</p>';
-                    document.getElementById('totalReferrals').textContent = '0';
-                    document.getElementById('referralEarnings').textContent = '0';
+            Object.keys(codes).forEach(key => {
+                if (codes[key].code === code && !codes[key].used && codes[key].expiresAt > Date.now()) {
+                    foundCode = codes[key];
+                    codeKey = key;
+                }
+            });
+
+            if (!foundCode) {
+                showAlert('Invalid, expired, or already used lucky code', 'danger');
+                return;
+            }
+
+            const userRef = database.ref('users/' + currentUser.id);
+            await userRef.transaction((userData) => {
+                if (userData) {
+                    userData.balance = (userData.balance || 0) + foundCode.reward;
+                    userData.totalEarned = (userData.totalEarned || 0) + foundCode.reward;
+                }
+                return userData;
+            });
+
+            await database.ref('luckyCodes/' + codeKey).update({ used: true });
+
+            document.getElementById('luckyCodeInput').value = '';
+            showAlert(`Lucky code applied! You earned ${formatNumber(foundCode.reward)} points!`, 'success');
+
+        } catch (error) {
+            console.error('Error applying lucky code:', error);
+            showAlert('Error applying lucky code. Please try again.', 'danger');
+        }
+    }
+
+    // Spin wheel
+    function spinWheel() {
+        if (userSpins <= 0) {
+            showAlert('No spins available! Complete tasks to earn spins.', 'danger');
+            return;
+        }
+
+        const spinButton = document.getElementById('spinButton');
+        const wheel = document.getElementById('spinWheel');
+
+        spinButton.disabled = true;
+
+        const randomRotation = Math.floor(Math.random() * 360) + 1800; // Add a few full rotations
+        wheel.style.transform = `rotate(${randomRotation}deg)`;
+
+        setTimeout(async () => {
+            // Determine the reward based on the final rotation segment
+            const finalRotation = randomRotation % 360;
+            let reward;
+
+            if (finalRotation < 60) reward = 100; // Segment 1
+            else if (finalRotation < 120) reward = 150; // Segment 2
+            else if (finalRotation < 180) reward = 200; // Segment 3
+            else if (finalRotation < 240) reward = 300; // Segment 4
+            else if (finalRotation < 300) reward = 400; // Segment 5
+            else reward = 500; // Segment 6
+
+            const userRef = database.ref('users/' + currentUser.id);
+            await userRef.transaction((userData) => {
+                if (userData) {
+                    userData.balance = (userData.balance || 0) + reward;
+                    userData.totalEarned = (userData.totalEarned || 0) + reward;
+                    userData.spins = Math.max(0, (userData.spins || 0) - 1);
+                }
+                return userData;
+            });
+
+            spinButton.disabled = false;
+            showAlert(`Congratulations! You won ${formatNumber(reward)} points!`, 'success');
+
+        }, 3000); // Duration of the spin animation
+    }
+
+    // Watch ad
+    async function watchAd() {
+        if (adsWatchedToday >= 50) {
+            showAlert('Daily ad limit reached. Come back tomorrow!', 'danger');
+            return;
+        }
+
+        // Prevent rapid clicking for ads
+        if (Date.now() - lastAdCompletionTime < 30000) { // 30 second cooldown
+            showAlert('Please wait a moment before watching another ad.', 'warning');
+            return;
+        }
+
+        try {
+            // Try to call the ad SDK function
+            if (typeof show_9809601 === 'function') {
+                await show_9809601();
+            } else {
+                // Simulate ad watching for testing if SDK is not available
+                console.warn("Ad SDK not found. Simulating ad watch.");
+                await new Promise(resolve => setTimeout(resolve, 15000)); // Simulate 15 seconds ad
+            }
+
+            const userRef = database.ref('users/' + currentUser.id);
+            await userRef.transaction((userData) => {
+                if (userData) {
+                    userData.balance = (userData.balance || 0) + 10;
+                    userData.totalEarned = (userData.totalEarned || 0) + 10;
+                    userData.adsWatched = (userData.adsWatched || 0) + 1;
+                }
+                return userData;
+            });
+
+            adsWatchedToday++;
+            lastAdCompletionTime = Date.now();
+            showAlert('Ad watched! You earned 10 points!', 'success');
+
+        } catch (error) {
+            console.error('Error watching ad:', error);
+            showAlert('Error loading ad. Please try again.', 'danger');
+        }
+    }
+
+    // Daily check-in
+    async function dailyCheckin() {
+        const today = new Date().toDateString();
+        const userRef = database.ref('users/' + currentUser.id);
+        const snapshot = await userRef.once('value');
+        const userData = snapshot.val();
+
+        if (userData.lastCheckin === today) {
+            showAlert('You have already checked in today!', 'danger');
+            return;
+        }
+
+        // Open a link to an external site for check-in, could be a confirmation page or just a link
+        window.open('https://t.me/PixelfrogCommunity', '_blank');
+
+        // Simulate waiting for confirmation or user to return
+        setTimeout(async () => {
+            await userRef.update({
+                balance: (userData.balance || 0) + 50,
+                totalEarned: (userData.totalEarned || 0) + 50,
+                lastCheckin: today
+            });
+
+            showAlert('Daily check-in completed! You earned 50 points!', 'success');
+            const dailyCheckinButton = document.querySelector('.btn-success[onclick="dailyCheckin()"]');
+            if (dailyCheckinButton) {
+                dailyCheckinButton.textContent = 'Checked In!';
+                dailyCheckinButton.disabled = true;
+                dailyCheckinButton.classList.remove('btn-success');
+                dailyCheckinButton.classList.add('btn-secondary');
+            }
+        }, 5000); // Give user time to click the link and return
+    }
+
+    // Add task form submission with TON payment
+    document.getElementById('addTaskForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        if (!tonConnectUI.account) {
+            showAlert('Please connect your TON wallet first to create a task.', 'danger');
+            document.getElementById('connectWalletButtonAddTask').scrollIntoView({ behavior: 'smooth' });
+            return;
+        }
+
+        const title = document.getElementById('newTaskTitle').value;
+        const description = document.getElementById('newTaskDescription').value;
+        const url = document.getElementById('newTaskUrl').value;
+        const impressions = parseInt(document.getElementById('taskImpressions').value);
+        const cost = (impressions / 100) * 0.1; // Calculated cost in TON
+
+        if (isNaN(impressions) || impressions < 100 || impressions > 5000) {
+            showAlert('Please enter a valid number of impressions between 100 and 5000.', 'danger');
+            return;
+        }
+        if (!title || !description || !url) {
+            showAlert('Please fill in all task details.', 'danger');
+            return;
+        }
+
+        const createTaskButton = document.getElementById('createTaskButton');
+        createTaskButton.disabled = true;
+        createTaskButton.innerHTML = '<div class="loading"></div> Processing...';
+
+        try {
+            const transaction = {
+                validUntil: Math.floor(Date.now() / 1000) + 60, // Transaction valid for 60 seconds
+                messages: [{
+                    address: "UQDLsNfQBwWXD9aaNxNS3udGo-9o8ybrlKmmbI5gjjRfs17M", // Your contract address or a designated payment address
+                    amount: Math.floor(cost * 1e9).toString() // Amount in nanoTON
+                }]
+            };
+
+            const result = await tonConnectUI.sendTransaction(transaction);
+
+            if (result && result.boc) { // Check if transaction was successful
+                const taskData = {
+                    title,
+                    description,
+                    url,
+                    reward: 100, // Fixed reward for now, can be made dynamic
+                    impressions,
+                    remainingImpressions: impressions,
+                    createdBy: currentUser.id,
+                    createdAt: Date.now(),
+                    status: 'active',
+                    transactionHash: result.boc // Store transaction hash for verification
+                };
+
+                await database.ref('tasks').push(taskData);
+
+                document.getElementById('addTaskForm').reset();
+                document.getElementById('totalCost').textContent = '0';
+                showAlert('Task created successfully! Transaction confirmed.', 'success');
+                loadUserTasks();
+                showSection('tasks'); // Redirect to tasks section after creation
+            } else {
+                showAlert('Transaction failed or was cancelled. Task not created.', 'danger');
+            }
+
+        } catch (error) {
+            console.error('Error creating task:', error);
+            if (error.message && error.message.includes('User rejects')) {
+                showAlert('Transaction was cancelled by user.', 'warning');
+            } else {
+                showAlert('Error creating task. Please check your wallet connection and try again.', 'danger');
+            }
+        } finally {
+            createTaskButton.disabled = false;
+            createTaskButton.innerHTML = '<span class="material-icons">payment</span> Create & Pay';
+        }
+    });
+
+    // Update total cost display for task creation
+    document.getElementById('taskImpressions').addEventListener('input', (e) => {
+        const impressions = parseInt(e.target.value) || 0;
+        const cost = (impressions / 100) * 0.1; // Calculate cost in TON
+        document.getElementById('totalCost').textContent = cost.toFixed(3);
+    });
+
+    // Load user's created tasks
+    function loadUserTasks() {
+        if (!currentUser) return;
+
+        const myTasksGrid = document.getElementById('myTasksGrid');
+
+        database.ref('tasks').orderByChild('createdBy').equalTo(currentUser.id).on('value', (snapshot) => {
+            myTasksGrid.innerHTML = '';
+            const tasks = snapshot.val();
+
+            if (!tasks) {
+                myTasksGrid.innerHTML = '<p style="text-align: center; color: var(--text-light);">No tasks created by you yet.</p>';
+                return;
+            }
+
+            Object.keys(tasks).forEach(taskId => {
+                const task = tasks[taskId];
+                const taskCard = createUserTaskCard(taskId, task);
+                myTasksGrid.appendChild(taskCard);
+            });
+        });
+    }
+
+    // Create card for user's own tasks
+    function createUserTaskCard(taskId, task) {
+        const card = document.createElement('div');
+        card.className = 'task-card';
+
+        const isTaskCompleted = task.remainingImpressions <= 0;
+        const progressPercentage = task.impressions > 0 ? ((task.impressions - task.remainingImpressions) / task.impressions) * 100 : 0;
+
+        card.innerHTML = `
+            <div class="task-header">
+                <div class="task-title">${task.title}</div>
+                <div class="task-reward">${task.remainingImpressions}/${task.impressions}</div>
+            </div>
+            <div class="task-description">${task.description}</div>
+            <div class="progress-bar">
+                <div class="progress-fill" style="width: ${progressPercentage}%"></div>
+            </div>
+            <div class="task-actions">
+                ${isTaskCompleted ?
+                    `<button class="btn btn-danger" onclick="deleteUserTask('${taskId}')">
+                        <span class="material-icons">delete</span>
+                        Delete
+                    </button>` :
+                    `<span style="color: var(--text-light); font-size: 12px;">Active</span>`
+                }
+            </div>
+        `;
+
+        return card;
+    }
+
+    // Delete user task
+    async function deleteUserTask(taskId) {
+        if (confirm('Are you sure you want to delete this task? This action cannot be undone.')) {
+            try {
+                await database.ref('tasks/' + taskId).remove();
+                showAlert('Task deleted successfully!', 'success');
+            } catch (error) {
+                console.error('Error deleting task:', error);
+                showAlert('Error deleting task. Please try again.', 'danger');
+            }
+        }
+    }
+
+    // Handle referral logic
+    async function handleReferral(referrerId) {
+        if (!currentUser || currentUser.id.toString() === referrerId) {
+            return; // Don't process if it's the same user or no current user
+        }
+
+        try {
+            const newUserRef = database.ref('users/' + currentUser.id);
+            const newUserSnapshot = await newUserRef.once('value');
+
+            // Only reward if the new user hasn't been recorded yet
+            if (!newUserSnapshot.exists() || !newUserSnapshot.val().referrer) {
+                const referrerUserRef = database.ref('users/' + referrerId);
+                const referrerUserSnapshot = await referrerUserRef.once('value');
+
+                if (referrerUserSnapshot.exists()) {
+                    // Update referrer's stats
+                    await referrerUserRef.transaction((referrerData) => {
+                        if (referrerData) {
+                            referrerData.referrals = (referrerData.referrals || 0) + 1;
+                            referrerData.balance = (referrerData.balance || 0) + REFERRAL_BONUS_POINTS;
+                            referrerData.totalEarned = (referrerData.totalEarned || 0) + REFERRAL_BONUS_POINTS;
+                        }
+                        return referrerData;
+                    });
+
+                    // Record the referral
+                    await database.ref('referrals/' + referrerId + '/' + currentUser.id).set({
+                        userId: currentUser.id,
+                        username: currentUser.username,
+                        joinedAt: Date.now(),
+                        completed: true // Mark as completed for bonus
+                    });
+
+                    // Mark the new user with their referrer
+                    await newUserRef.update({
+                        referrer: referrerId,
+                        referredBy: referrerId
+                    });
+
+                    showAlert(`Welcome! You've been referred by user ID: ${referrerId}. Your referrer has been rewarded!`, 'success');
+                }
+            }
+        } catch (error) {
+            console.error('Error handling referral:', error);
+            showAlert('Error processing referral link. Please try again.', 'danger');
+        }
+    }
+
+    // Load referrals
+    function loadReferrals() {
+        if (!currentUser) return;
+
+        const referralList = document.getElementById('referralList');
+        let totalReferralEarnings = 0;
+
+        database.ref('referrals/' + currentUser.id).on('value', (snapshot) => {
+            referralList.innerHTML = '';
+            const referrals = snapshot.val();
+
+            if (!referrals) {
+                referralList.innerHTML = '<p style="text-align: center; color: var(--text-light);">No referrals yet.</p>';
+                document.getElementById('totalReferrals').textContent = '0';
+                document.getElementById('referralEarnings').textContent = '0';
+                return;
+            }
+
+            const referralIds = Object.keys(referrals);
+            document.getElementById('totalReferrals').textContent = formatNumber(referralIds.length);
+
+            referralIds.forEach(referredUserId => {
+                const referral = referrals[referredUserId];
+                // Assuming each referral gives a fixed bonus, sum them up
+                // If rewards are dynamic, you'd need to fetch user data or have a separate rewards table
+                totalReferralEarnings += REFERRAL_BONUS_POINTS;
+
+                const referralItem = document.createElement('div');
+                referralItem.className = 'history-item';
+                referralItem.innerHTML = `
+                    <div>
+                        <strong>${referral.username || 'User'}</strong>
+                        <div style="font-size: 12px; color: var(--text-light);">
+                            Joined: ${new Date(referral.joinedAt).toLocaleDateString()}
+                        </div>
+                    </div>
+                    <div class="history-status status-completed">Referred</div>
+                `;
+                referralList.appendChild(referralItem);
+            });
+
+            document.getElementById('referralEarnings').textContent = formatNumber(totalReferralEarnings);
+        });
+    }
+
+    // Claim referral rewards (currently automated, but can be used for manual claim if needed)
+    async function claimReferralRewards() {
+        showAlert('Referral rewards are automatically credited when a new user joins via your link!', 'success');
+        // If you want a manual claim, you would implement logic here to check for unredeemed rewards.
+    }
+
+    // Copy referral link
+    function copyReferralLink() {
+        const botUsername = 'EarnFluxBot'; // Assuming this is your bot's username
+        const link = `https://t.me/${botUsername}/app?startapp=ref_${currentUser.id}`;
+        navigator.clipboard.writeText(link).then(() => {
+            showAlert('Referral link copied to clipboard!', 'success');
+        }).catch(err => {
+            console.error('Failed to copy referral link: ', err);
+            showAlert('Failed to copy link. Please copy it manually.', 'danger');
+        });
+    }
+
+    // Show withdraw modal
+    function showWithdrawModal() {
+        if (!tonConnectUI.account) {
+            showAlert('Please connect your TON wallet first to withdraw.', 'danger');
+            connectToWallet(); // Prompt to connect wallet
+            return;
+        }
+
+        if (userBalance < MIN_WITHDRAWAL_POINTS) {
+            showAlert(`Minimum withdrawal amount is ${formatNumber(MIN_WITHDRAWAL_POINTS)} points!`, 'danger');
+            return;
+        }
+        document.getElementById('withdrawModal').style.display = 'block';
+    }
+
+    // Submit withdrawal request
+    document.getElementById('withdrawForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        const tonAddress = document.getElementById('tonAddress').value.trim();
+        const amount = parseInt(document.getElementById('withdrawAmount').value);
+
+        // Basic validation for TON address format
+        if (!tonAddress || !/^((UQ|EQ|0:)[a-zA-Z0-9_-]{47})$/.test(tonAddress)) {
+            showAlert('Please enter a valid TON address (starts with UQ, EQ, or 0:).', 'danger');
+            return;
+        }
+        if (amount < MIN_WITHDRAWAL_POINTS) {
+            showAlert(`Minimum withdrawal amount is ${formatNumber(MIN_WITHDRAWAL_POINTS)} points!`, 'danger');
+            return;
+        }
+        if (amount > userBalance) {
+            showAlert('Insufficient balance!', 'danger');
+            return;
+        }
+
+        const requestWithdrawButton = document.getElementById('requestWithdrawButton');
+        requestWithdrawButton.disabled = true;
+        requestWithdrawButton.innerHTML = '<div class="loading"></div> Requesting...';
+
+        try {
+            const withdrawalData = {
+                userId: currentUser.id,
+                username: currentUser.username,
+                tonAddress,
+                amount,
+                tonAmount: amount * WITHDRAWAL_RATE, // Calculate TON amount
+                status: 'pending',
+                createdAt: Date.now()
+            };
+
+            await database.ref('withdrawals').push(withdrawalData);
+
+            const userRef = database.ref('users/' + currentUser.id);
+            await userRef.transaction((userData) => {
+                if (userData) {
+                    userData.balance = Math.max(0, (userData.balance || 0) - amount);
+                }
+                return userData;
+            });
+
+            // Store the last used withdrawal address for convenience
+            await userRef.update({ connectedWalletAddress: tonAddress });
+
+            closeModal('withdrawModal');
+            document.getElementById('withdrawForm').reset();
+            showAlert('Withdrawal request submitted successfully! It will be processed shortly.', 'success');
+            loadWithdrawalHistory();
+
+        } catch (error) {
+            console.error('Error submitting withdrawal:', error);
+            showAlert('Error submitting withdrawal. Please try again.', 'danger');
+        } finally {
+            requestWithdrawButton.disabled = false;
+            requestWithdrawButton.innerHTML = '<span class="material-icons">send</span> Request Withdrawal';
+        }
+    });
+
+    // Update TON receive amount in modal
+    document.getElementById('withdrawAmount').addEventListener('input', (e) => {
+        const amount = parseInt(e.target.value) || 0;
+        const tonAmount = amount * WITHDRAWAL_RATE;
+        document.getElementById('tonReceive').textContent = tonAmount.toFixed(8); // Display with high precision
+    });
+
+    // Load withdrawal history
+    function loadWithdrawalHistory() {
+        if (!currentUser) return;
+
+        const withdrawalHistory = document.getElementById('withdrawalHistory');
+
+        database.ref('withdrawals')
+            .orderByChild('userId').equalTo(currentUser.id)
+            .limitToLast(10) // Show last 10 requests
+            .on('value', (snapshot) => {
+                withdrawalHistory.innerHTML = '';
+                const withdrawals = snapshot.val();
+
+                if (!withdrawals) {
+                    withdrawalHistory.innerHTML = '<p style="text-align: center; color: var(--text-light);">No withdrawal history yet.</p>';
                     return;
                 }
 
-                const referralIds = Object.keys(referrals);
-                document.getElementById('totalReferrals').textContent = formatNumber(referralIds.length);
+                Object.values(withdrawals).reverse().forEach(withdrawal => {
+                    const historyItem = document.createElement('div');
+                    historyItem.className = 'history-item';
 
-                referralIds.forEach(referredUserId => {
-                    const referral = referrals[referredUserId];
-                    totalReferralEarnings += REFERRAL_BONUS_POINTS; // Sum up earnings
+                    const statusClass = `status-${withdrawal.status}`;
+                    const statusText = withdrawal.status.charAt(0).toUpperCase() + withdrawal.status.slice(1);
 
-                    const referralItem = document.createElement('div');
-                    referralItem.className = 'history-item';
-                    referralItem.innerHTML = `
+                    historyItem.innerHTML = `
                         <div>
-                            <strong>${referral.username || 'User'}</strong>
+                            <strong>${formatNumber(withdrawal.amount)} points</strong>
                             <div style="font-size: 12px; color: var(--text-light);">
-                                Joined: ${new Date(referral.joinedAt).toLocaleDateString()}
+                                ${withdrawal.tonAmount.toFixed(8)} TON • ${new Date(withdrawal.createdAt).toLocaleDateString()}
                             </div>
                         </div>
-                        <div class="history-status status-completed">Referred</div>
+                        <div class="history-status ${statusClass}">${statusText}</div>
                     `;
-                    referralList.appendChild(referralItem);
+                    withdrawalHistory.appendChild(historyItem);
                 });
-
-                document.getElementById('referralEarnings').textContent = formatNumber(totalReferralEarnings);
             });
+    }
+
+    // Connect to wallet
+    async function connectToWallet() {
+        try {
+            await tonConnectUI.openModal();
+        } catch (error) {
+            console.error("Error connecting to wallet:", error);
+            showAlert('Error connecting to wallet. Please ensure you have a TON wallet installed and try again.', 'danger');
         }
+    }
 
-        // Claim referral rewards (currently automated, this is a placeholder)
-        async function claimReferralRewards() {
-            showAlert('Referral rewards are automatically credited when a new user joins via your link!', 'success');
+    // Disconnect wallet
+    async function disconnectWallet() {
+        await tonConnectUI.disconnect();
+        showAlert('Wallet disconnected.', 'success');
+        updateConnectWalletButtonState();
+        // Optionally, clear the stored wallet address from user profile
+        if (currentUser) {
+            await database.ref('users/' + currentUser.id).update({ connectedWalletAddress: null });
         }
+    }
 
-        // Copy referral link to clipboard
-        function copyReferralLink() {
-            const botUsername = 'adflareprobot'; // Ensure this is your bot's username
-            const link = `https://t.me/${botUsername}/app?startapp=ref_${currentUser.id}`;
-            navigator.clipboard.writeText(link).then(() => {
-                showAlert('Referral link copied to clipboard!', 'success');
-            }).catch(err => {
-                console.error('Failed to copy referral link: ', err);
-                showAlert('Failed to copy link. Please copy it manually.', 'danger');
-            });
-        }
-
-        // Show withdrawal modal, with initial checks
-        function showWithdrawModal() {
-            if (userBalance < MIN_WITHDRAWAL_POINTS) {
-                showAlert(`Minimum withdrawal amount is ${MIN_WITHDRAWAL_POINTS} points!`, 'danger');
-                return;
-            }
-            document.getElementById('withdrawModal').style.display = 'block';
-            updateWithdrawalFormState(); // Update form state when modal opens
-        }
-
-        // Submit withdrawal request
-        document.getElementById('withdrawForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-
-            const tonAddress = document.getElementById('tonAddress').value.trim();
-            const amount = parseInt(document.getElementById('withdrawAmount').value);
-
-            // Validate TON address
-            if (!tonAddress || !tonAddress.startsWith('UQ')) {
-                showAlert('Please enter a valid TON address (starts with UQ).', 'danger');
-                return;
-            }
-            // Validate amount
-            if (isNaN(amount) || amount < MIN_WITHDRAWAL_POINTS) {
-                showAlert(`Minimum withdrawal amount is ${MIN_WITHDRAWAL_POINTS} points!`, 'danger');
-                return;
-            }
-            if (amount > userBalance) {
-                showAlert('Insufficient balance!', 'danger');
-                return;
-            }
-
-            try {
-                const withdrawalData = {
-                    userId: currentUser.id,
-                    username: currentUser.username,
-                    tonAddress,
-                    amount,
-                    tonAmount: amount * WITHDRAWAL_RATE_POINTS_TO_TON, // Calculate TON amount
-                    status: 'pending',
-                    createdAt: Date.now()
-                };
-
-                // Save withdrawal request to Firebase
-                await database.ref('withdrawals').push(withdrawalData);
-
-                // Deduct points from user balance
-                const userRef = database.ref('users/' + currentUser.id);
-                await userRef.transaction((userData) => {
-                    if (userData) {
-                        userData.balance = Math.max(0, (userData.balance || 0) - amount); // Ensure balance doesn't go negative
-                    }
-                    return userData;
-                });
-
-                closeModal('withdrawModal'); // Close modal on successful submission
-                document.getElementById('withdrawForm').reset(); // Clear form
-                showAlert('Withdrawal request submitted successfully! It will be processed shortly.', 'success');
-                loadWithdrawalHistory(); // Refresh withdrawal history
-
-            } catch (error) {
-                console.error('Error submitting withdrawal:', error);
-                showAlert('Error submitting withdrawal. Please try again.', 'danger');
-            }
+    // Navigation functions
+    function showSection(sectionName) {
+        document.querySelectorAll('.section').forEach(section => {
+            section.classList.remove('active');
+            section.style.display = 'none'; // Hide all sections
         });
 
-        // Update TON receive amount based on points entered
-        document.getElementById('withdrawAmount').addEventListener('input', (e) => {
-            const amount = parseInt(e.target.value) || 0;
-            const tonAmount = amount * WITHDRAWAL_RATE_POINTS_TO_TON;
-            document.getElementById('tonReceive').textContent = tonAmount.toFixed(8); // Display TON with 8 decimal places
-            updateWithdrawalFormState(); // Re-validate button state
+        const activeSection = document.getElementById(sectionName + 'Section');
+        if (activeSection) {
+            activeSection.style.display = 'block'; // Show the selected section
+            activeSection.classList.add('active');
+        }
+
+        document.querySelectorAll('.nav-item').forEach(item => {
+            item.classList.remove('active');
         });
 
-        // Load withdrawal history for the current user
-        function loadWithdrawalHistory() {
-            if (!currentUser) return;
+        document.querySelector(`.nav-item[onclick*="showSection('${sectionName}')"]`).classList.add('active');
 
-            const withdrawalHistory = document.getElementById('withdrawalHistory');
-
-            // Fetch last 10 withdrawal requests for the user, ordered by creation date
-            database.ref('withdrawals')
-                .orderByChild('userId').equalTo(currentUser.id)
-                .limitToLast(10)
-                .on('value', (snapshot) => {
-                    withdrawalHistory.innerHTML = '';
-                    const withdrawals = snapshot.val();
-
-                    if (!withdrawals) {
-                        withdrawalHistory.innerHTML = '<p style="text-align: center; color: var(--text-light);">No withdrawal history yet.</p>';
-                        return;
-                    }
-
-                    // Reverse to show most recent first
-                    Object.values(withdrawals).reverse().forEach(withdrawal => {
-                        const historyItem = document.createElement('div');
-                        historyItem.className = 'history-item';
-
-                        const statusClass = `status-${withdrawal.status}`;
-                        const statusText = withdrawal.status.charAt(0).toUpperCase() + withdrawal.status.slice(1);
-
-                        historyItem.innerHTML = `
-                            <div>
-                                <strong>${withdrawal.amount} points</strong>
-                                <div style="font-size: 12px; color: var(--text-light);">
-                                    ${withdrawal.tonAmount.toFixed(8)} TON • ${new Date(withdrawal.createdAt).toLocaleDateString()}
-                                </div>
-                            </div>
-                            <div class="history-status ${statusClass}">${statusText}</div>
-                        `;
-                        withdrawalHistory.appendChild(historyItem);
-                    });
-                });
-        }
-
-        // Connect to TON wallet via TON Connect UI
-        async function connectToWallet() {
-            try {
-                await tonConnectUI.openModal(); // Opens the TON Connect wallet selection modal
-            } catch (error) {
-                console.error("Error connecting to wallet:", error);
-                showAlert('Error connecting to wallet. Please ensure you have a TON wallet installed and try again.', 'danger');
+        // Special handling for addTask to ensure wallet connection is prompted if needed
+        if (sectionName === 'addTask') {
+            updateConnectWalletButtonState(); // Ensure button state is correct
+            if (!tonConnectUI.account) {
+                 // Auto-scroll or show a message to connect wallet for task creation
+                 const connectButton = document.getElementById('connectWalletButtonAddTask');
+                 if (connectButton) {
+                    connectButton.scrollIntoView({ behavior: 'smooth' });
+                 }
             }
         }
+    }
 
-        // Navigate between sections
-        function showSection(sectionName) {
-            document.querySelectorAll('.section').forEach(section => {
-                section.classList.remove('active');
-                section.style.display = 'none'; // Hide all sections
-            });
-
-            // Show the target section
-            const targetSection = document.getElementById(sectionName + 'Section');
-            if (targetSection) {
-                targetSection.classList.add('active');
-                targetSection.style.display = 'block';
-            }
-
-            // Update active state in bottom navigation
-            document.querySelectorAll('.nav-item').forEach(item => {
-                item.classList.remove('active');
-                if (item.getAttribute('onclick').includes(`showSection('${sectionName}')`)) {
-                    item.classList.add('active');
-                }
-            });
-
-            // Special handling for task creation section to ensure wallet button is updated
-            if (sectionName === 'addTask') {
-                updateConnectWalletButtonState();
-            }
-        }
-
-        // Switch tabs within the tasks section
-        function showTaskTab(event, tabName) {
-            document.querySelectorAll('.tab').forEach(tab => {
-                tab.classList.remove('active');
-            });
-            document.querySelectorAll('.tab-content').forEach(content => {
-                content.classList.remove('active');
-            });
-
-            event.target.classList.add('active');
-            document.getElementById(tabName + 'Tasks').classList.add('active');
-        }
-
-        // Close a modal by its ID
-        function closeModal(modalId) {
-            const modal = document.getElementById(modalId);
-            if (modal) {
-                modal.style.display = 'none';
-            }
-        }
-
-        // Display a temporary alert message to the user
-        function showAlert(message, type) {
-            const alert = document.createElement('div');
-            alert.className = `alert alert-${type}`;
-            alert.innerHTML = `
-                <span class="material-icons">${type === 'success' ? 'check_circle' : type === 'warning' ? 'warning' : 'error'}</span>
-                ${message}
-            `;
-
-            document.querySelector('.container').prepend(alert); // Add alert at the top of the container
-
-            // Remove alert after a few seconds
-            setTimeout(() => {
-                alert.remove();
-            }, 5000);
-        }
-
-        // Format large numbers for better readability (e.g., 1.5M, 2.3B)
-        function formatNumber(num) {
-            if (num === null || num === undefined) return '0';
-            num = Number(num);
-
-            if (num >= 1e12) {
-                return (num / 1e12).toFixed(1).replace(/\.0$/, '') + 'T';
-            } else if (num >= 1e9) {
-                return (num / 1e9).toFixed(1).replace(/\.0$/, '') + 'B';
-            } else if (num >= 1e6) {
-                return (num / 1e6).toFixed(1).replace(/\.0$/, '') + 'M';
-            } else if (num >= 1e3) {
-                return (num / 1e3).toFixed(1).replace(/\.0$/, '') + 'K';
-            }
-            return num.toString();
-        }
-
-        // Placeholder for theme toggle function
-        function toggleTheme() {
-            showAlert('Red Moon theme is the current and only theme!', 'success');
-        }
-
-        // Event listener for DOM content loaded
-        document.addEventListener('DOMContentLoaded', () => {
-            initTelegramWebApp(); // Initialize Telegram Web App
-            showSection('home'); // Show the home section by default
-            updateConnectWalletButtonState(); // Set initial wallet button states
-            updateWithdrawalFormState(); // Set initial withdrawal form state
+    // Switch task tabs
+    function showTaskTab(event, tabName) {
+        document.querySelectorAll('.tab').forEach(tab => {
+            tab.classList.remove('active');
+        });
+        document.querySelectorAll('.tab-content').forEach(content => {
+            content.classList.remove('active');
         });
 
-        // Close modals when clicking outside of them
-        window.addEventListener('click', (e) => {
-            if (e.target.classList.contains('modal')) {
-                e.target.style.display = 'none';
-            }
-        });
+        event.target.classList.add('active');
+        document.getElementById(tabName + 'Tasks').classList.add('active');
+    }
 
-        // Listen for TON Connect status changes to update UI
+    // Close modal
+    function closeModal(modalId) {
+        const modal = document.getElementById(modalId);
+        if (modal) {
+            modal.style.display = 'none';
+        }
+    }
+
+    // Show alert
+    function showAlert(message, type) {
+        const alertContainer = document.createElement('div');
+        alertContainer.className = `alert alert-${type}`;
+        alertContainer.innerHTML = `
+            <span class="material-icons">${type === 'success' ? 'check_circle' : type === 'warning' ? 'warning' : 'error'}</span>
+            ${message}
+        `;
+
+        // Prepend the alert to the container so it appears above other content
+        document.querySelector('.container').prepend(alertContainer);
+
+        setTimeout(() => {
+            alertContainer.remove();
+        }, 5000); // Alert disappears after 5 seconds
+    }
+
+    // Format number with K, M, B, T suffixes
+    function formatNumber(num) {
+        if (num === null || num === undefined) return '0';
+        num = Number(num);
+
+        if (num >= 1e12) {
+            return (num / 1e12).toFixed(1).replace(/\.0$/, '') + 'T';
+        } else if (num >= 1e9) {
+            return (num / 1e9).toFixed(1).replace(/\.0$/, '') + 'B';
+        } else if (num >= 1e6) {
+            return (num / 1e6).toFixed(1).replace(/\.0$/, '') + 'M';
+        } else if (num >= 1e3) {
+            return (num / 1e3).toFixed(1).replace(/\.0$/, '') + 'K';
+        }
+        return num.toString();
+    }
+
+    // Theme toggle (currently just a placeholder)
+    function toggleTheme() {
+        showAlert('Red Moon theme is the current and only theme!', 'success');
+    }
+
+    // Initialization
+    document.addEventListener('DOMContentLoaded', () => {
+        initTelegramWebApp();
+        showSection('home'); // Show home section by default
+        // Add event listener for when TON Connect status changes
         tonConnectUI.onStatusChange(wallet => {
             updateConnectWalletButtonState();
-            updateWithdrawalFormState(); // Update withdrawal form when wallet status changes
         });
-    </script>
+    });
+
+    // Close modals when clicking outside of the modal content
+    window.addEventListener('click', (e) => {
+        if (e.target.classList.contains('modal')) {
+            e.target.style.display = 'none';
+        }
+    });
+
+</script>
+
 </body>
 </html>
