@@ -7,9 +7,16 @@
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <script src="https://unpkg.com/@tonconnect/ui@latest/dist/tonconnect-ui.min.js"></script>
+    <script src="https://unpkg.com/@tonconnect/ui@latest/dist/tonconnect-ui.min.js"></script>]
     <script src="security.js"></script>
     <style>
+        /* ... (your existing CSS remains the same) ... */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         :root {
             --primary: #dc2626;
             --primary-dark: #b91c1c;
@@ -92,6 +99,7 @@
             0% {
                 left: -100%;
             }
+
             100% {
                 left: 100%;
             }
@@ -590,6 +598,7 @@
                 transform: translateX(-100%);
                 opacity: 0;
             }
+
             to {
                 transform: translateX(0);
                 opacity: 1;
@@ -684,9 +693,11 @@
             0% {
                 box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.7);
             }
+
             70% {
                 box-shadow: 0 0 0 10px rgba(220, 38, 38, 0);
             }
+
             100% {
                 box-shadow: 0 0 0 0 rgba(220, 38, 38, 0);
             }
@@ -707,7 +718,7 @@
             margin: 10px 0;
         }
 
-        .withdrawal-history, .task-grid {
+        .withdrawal-history {
             max-height: 300px;
             overflow-y: auto;
         }
@@ -757,48 +768,6 @@
             transform: translateY(-2px);
             box-shadow: 0 8px 25px rgba(245, 158, 11, 0.4);
         }
-
-        /* Specific styles for the profile section */
-        .profile-card-content {
-            text-align: center;
-            margin-bottom: 20px;
-        }
-
-        .profile-card-content img {
-            width: 100px;
-            height: 100px;
-            border-radius: 50%;
-            border: 3px solid var(--primary);
-            object-fit: cover;
-            box-shadow: 0 0 20px rgba(220, 38, 38, 0.4);
-        }
-
-        .profile-buttons-container {
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-            justify-content: center;
-        }
-
-        /* Style for the TON Connect UI button wrapper */
-        #ton-connect {
-            margin-top: 15px;
-            display: flex;
-            justify-content: center;
-        }
-        #ton-connect .connect-button { /* Target the actual button injected by TonConnectUI */
-            background: linear-gradient(135deg, var(--primary), var(--primary-dark)) !important; /* Overrides default styling */
-            color: white !important;
-            border-radius: 12px !important;
-            padding: 12px 24px !important;
-            font-weight: 600 !important;
-            font-size: 14px !important;
-        }
-        #ton-connect .connect-button:hover {
-            transform: translateY(-2px) !important;
-            box-shadow: 0 8px 25px rgba(220, 38, 38, 0.4) !important;
-        }
-
     </style>
 </head>
 <body>
@@ -875,6 +844,23 @@
                     Apply Code
                 </button>
             </div>
+
+            <!-- REMOVED: TON Wallet card from Home Section -->
+            <!--
+            <div class="card">
+                <h2 class="card-title">
+                    <span class="material-icons">account_balance_wallet</span>
+                    TON Wallet
+                </h2>
+                <div id="ton-connect"></div>
+                <div style="margin-top: 15px;">
+                    <button class="btn btn-primary" onclick="connectToWallet()">
+                        <span class="material-icons">account_balance_wallet</span>
+                        Connect Wallet
+                    </button>
+                </div>
+            </div>
+            -->
         </div>
 
         <!-- Tasks Section -->
@@ -884,7 +870,7 @@
                     <span class="material-icons">assignment</span>
                     Tasks
                 </h2>
-                <div class="add-task-button" style="text-align: left; margin-bottom: 20px;">
+                <div class="add-task-button">
                     <button class="btn btn-primary" onclick="showSection('addTask')">
                         <span class="material-icons">add</span>
                         Create New Task
@@ -927,14 +913,14 @@
                     </div>
                     <div class="form-group">
                         <label class="form-label">Task URL</label>
-                        <input type="url" class="form-input" id="newTaskUrl" placeholder="https://example.com" required>
+                        <input type="url" class="form-input" id="newTaskUrl" required>
                     </div>
                     <div class="form-group">
                         <label class="form-label">Impressions (100-5000)</label>
                         <input type="number" class="form-input" id="taskImpressions" min="100" max="5000" required>
                     </div>
                     <div class="form-group">
-                        <label class="form-label">Total Cost: <span id="totalCost">0.000</span> TON</label>
+                        <label class="form-label">Total Cost: <span id="totalCost">0</span> TON</label>
                         <div class="form-label" style="font-size: 12px; color: var(--text-light);">
                             Rate: 0.1 TON per 100 impressions
                         </div>
@@ -1028,6 +1014,11 @@
                     </div>
                 </div>
 
+                <button class="btn btn-success" onclick="claimReferralRewards()">
+                    <span class="material-icons">redeem</span>
+                    Claim Rewards
+                </button>
+
                 <div style="margin-top: 20px;">
                     <h3 style="color: var(--primary); margin-bottom: 15px;">Referral List</h3>
                     <div id="referralList">
@@ -1044,30 +1035,33 @@
                     <span class="material-icons">person</span>
                     Profile
                 </h2>
-                <div class="profile-card-content">
-                    <img src="https://via.placeholder.com/100" alt="Profile" id="profileAvatar">
+                <div style="text-align: center; margin-bottom: 20px;">
+                    <img src="https://via.placeholder.com/100" alt="Profile" class="user-avatar" style="width: 100px; height: 100px;" id="profileAvatar">
                     <h3 style="margin: 15px 0; color: var(--text);" id="profileName">Loading...</h3>
-                    <!-- TON Connect button will be rendered here by TonConnectUI -->
-                    <div id="ton-connect"></div>
-
-                    <div class="profile-buttons-container">
-                        <button class="btn btn-primary" onclick="showSection('profile')">
-                            <span class="material-icons">settings</span>
-                            Profile Settings
-                        </button>
-                        <button class="btn btn-secondary" onclick="window.open('https://t.me/PixelfrogCommunity', '_blank')">
-                            <span class="material-icons">support</span>
-                            Support
-                        </button>
-                        <button class="btn btn-secondary" onclick="window.open('https://t.me/Pixelfrogchat', '_blank')">
-                            <span class="material-icons">code</span>
-                            Developer
-                        </button>
-                        <button class="btn btn-primary" onclick="showWithdrawModal()">
-                            <span class="material-icons">payments</span>
-                            Withdraw
+                    <!-- MODIFIED: TON Connect button moved here -->
+                    <div id="ton-connect"></div> <!-- This is where TonConnectUI will render its button -->
+                    <div style="margin-top: 15px;">
+                        <button class="btn btn-primary" onclick="connectToWallet()">
+                            <span class="material-icons">account_balance_wallet</span>
+                            Connect Wallet
                         </button>
                     </div>
+                </div>
+
+                <div style="display: flex; gap: 10px; flex-wrap: wrap; justify-content: center;">
+                    <!-- MODIFIED: Renamed "Withdraw" to "Profile" and changed its function -->
+                    <button class="btn btn-primary" onclick="showSection('profile')"> <!-- Changed to show profile section itself -->
+                        <span class="material-icons">person</span>
+                        Profile Settings <!-- Changed text to something relevant -->
+                    </button>
+                    <button class="btn btn-secondary" onclick="window.open('https://t.me/PixelfrogCommunity', '_blank')">
+                        <span class="material-icons">support</span>
+                        Support
+                    </button>
+                    <button class="btn btn-secondary" onclick="window.open('https://t.me/Pixelfrogchat', '_blank')">
+                        <span class="material-icons">code</span>
+                        Developer
+                    </button>
                 </div>
             </div>
 
@@ -1084,32 +1078,38 @@
     </div>
 
     <!-- Bottom Navigation -->
+
     <div class="bottom-nav">
         <div class="nav-container">
             <a href="#" class="nav-item active" onclick="showSection('home'); return false;">
                 <span class="material-icons">home</span>
                 <span>Home</span>
             </a>
+
             <a href="#" class="nav-item" onclick="showSection('ads'); return false;">
                 <span class="material-icons">play_circle</span>
                 <span>Ads</span>
             </a>
+
             <a href="#" class="nav-item" onclick="showSection('tasks'); return false;">
                 <span class="material-icons">assignment</span>
                 <span>Tasks</span>
             </a>
+
             <a href="#" class="nav-item" onclick="showSection('referral'); return false;">
                 <span class="material-icons">people</span>
                 <span>Referral</span>
             </a>
+
             <a href="#" class="nav-item" onclick="showSection('profile'); return false;">
-                <span class="material-icons">person</span>
-                <span>Profile</span>
+                <span class="material-icons">account_balance_wallet</span>
+                <span>Withdrow</span>
             </a>
         </div>
     </div>
 
     <!-- Task Verification Modal -->
+
     <div id="taskModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
@@ -1129,6 +1129,7 @@
     </div>
 
     <!-- Withdraw Modal -->
+
     <div id="withdrawModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
@@ -1138,17 +1139,17 @@
             <form id="withdrawForm">
                 <div class="form-group">
                     <label class="form-label">TON Address</label>
-                    <input type="text" class="form-input" id="tonAddress" placeholder="UQ..." required>
+                    <input type="text" class="form-input" id="tonAddress" required>
                 </div>
                 <div class="form-group">
                     <label class="form-label">Amount (Points)</label>
-                    <input type="number" class="form-input" id="withdrawAmount" min="10000" required>
+                    <input type="number" class="form-input" id="withdrawAmount" min="2000" required>
                     <div style="font-size: 12px; color: var(--text-light); margin-top: 5px;">
-                        Minimum: 10000 points | Rate: 1 point = 0.00001 TON
+                        Minimum: 2000 points | Rate: 100 points = 0.000078 TON
                     </div>
                 </div>
                 <div class="form-group">
-                    <label class="form-label">You will receive: <span id="tonReceive">0.00000000</span> TON</label>
+                    <label class="form-label">You will receive: <span id="tonReceive">0</span> TON</label>
                 </div>
                 <button type="submit" class="btn btn-primary">
                     <span class="material-icons">send</span>
@@ -1161,8 +1162,6 @@
     <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
-
-    <!-- Ad SDK (Ensure this is correct and working) -->
     <script src='//libtl.com/sdk.js' data-zone='9809601' data-sdk='show_9809601'></script>
 
     <script>
@@ -1200,15 +1199,7 @@
         let lastAdTime = 0;
         let dailyCheckinDone = false;
         let lastAdCompletionTime = 0; // To prevent rapid ad watching
-
-        // Constants
-        const REFERRAL_BONUS_POINTS = 500; // Bonus for a new referral
-        const MIN_WITHDRAWAL_POINTS = 10000;
-        const WITHDRAWAL_RATE_TON_PER_POINT = 0.00001; // 1 point = 0.00001 TON
-        const TASK_COST_RATE_TON_PER_100_IMPRESSIONS = 0.1;
-        const DAILY_AD_LIMIT = 50;
-        const AD_REWARD_POINTS = 10;
-        const DAILY_CHECKIN_REWARD_POINTS = 50;
+        const REFERRAL_BONUS_POINTS = 500; // Configurable bonus for a new referral
 
         // Initialize Telegram Web App
         function initTelegramWebApp() {
@@ -1275,7 +1266,7 @@
                     totalEarned: 0,
                     tasksCompleted: 0,
                     referrals: 0,
-                    referralEarnings: 0, // This will be calculated dynamically based on bonuses
+                    referralEarnings: 0, // This will be calculated dynamically
                     adsWatched: 0,
                     lastAdReset: Date.now(),
                     lastCheckin: null, // Initialize lastCheckin to null
@@ -1335,28 +1326,26 @@
 
             // Update watch ad button
             const watchAdButton = document.getElementById('watchAdButton');
-            if (adsWatchedToday >= DAILY_AD_LIMIT) {
+            if (adsWatchedToday >= 50) {
                 watchAdButton.disabled = true;
                 watchAdButton.innerHTML = '<span class="material-icons">block</span> Daily Limit Reached';
             } else {
                 watchAdButton.disabled = false;
-                watchAdButton.innerHTML = `<span class="material-icons">play_arrow</span> Watch Ad (+${AD_REWARD_POINTS} Points)`;
+                watchAdButton.innerHTML = '<span class="material-icons">play_arrow</span> Watch Ad (+10 Points)';
             }
 
             // Update daily check-in button state
             const dailyCheckinButton = document.querySelector('.btn-success[onclick="dailyCheckin()"]');
-            if (dailyCheckinButton) {
-                if (dailyCheckinDone) {
-                    dailyCheckinButton.textContent = 'Checked In!';
-                    dailyCheckinButton.disabled = true;
-                    dailyCheckinButton.classList.remove('btn-success');
-                    dailyCheckinButton.classList.add('btn-secondary');
-                } else {
-                    dailyCheckinButton.textContent = `Daily Check-in (+${DAILY_CHECKIN_REWARD_POINTS} Points)`;
-                    dailyCheckinButton.disabled = false;
-                    dailyCheckinButton.classList.remove('btn-secondary');
-                    dailyCheckinButton.classList.add('btn-success');
-                }
+            if (dailyCheckinDone) {
+                dailyCheckinButton.textContent = 'Checked In!';
+                dailyCheckinButton.disabled = true;
+                dailyCheckinButton.classList.remove('btn-success');
+                dailyCheckinButton.classList.add('btn-secondary');
+            } else {
+                dailyCheckinButton.textContent = 'Daily Check-in';
+                dailyCheckinButton.disabled = false;
+                dailyCheckinButton.classList.remove('btn-secondary');
+                dailyCheckinButton.classList.add('btn-success');
             }
         }
 
@@ -1597,7 +1586,7 @@
 
         // Watch ad
         async function watchAd() {
-            if (adsWatchedToday >= DAILY_AD_LIMIT) {
+            if (adsWatchedToday >= 50) {
                 showAlert('Daily ad limit reached. Come back tomorrow!', 'danger');
                 return;
             }
@@ -1610,16 +1599,14 @@
 
             try {
                 // Show ad using the provided SDK
-                // IMPORTANT: Ensure show_9809601() is correctly implemented and available
-                // from your ad SDK. If it fails, the reward will not be given.
-                await window['show_9809601'](); // Access global function
+                await show_9809601(); // This function needs to be defined by the external SDK
 
                 // Reward user
                 const userRef = database.ref('users/' + currentUser.id);
                 await userRef.transaction((userData) => {
                     if (userData) {
-                        userData.balance = (userData.balance || 0) + AD_REWARD_POINTS;
-                        userData.totalEarned = (userData.totalEarned || 0) + AD_REWARD_POINTS;
+                        userData.balance = (userData.balance || 0) + 10;
+                        userData.totalEarned = (userData.totalEarned || 0) + 10;
                         userData.adsWatched = (userData.adsWatched || 0) + 1;
                     }
                     return userData;
@@ -1627,7 +1614,7 @@
 
                 adsWatchedToday++;
                 lastAdCompletionTime = Date.now(); // Record ad completion time
-                showAlert(`Ad watched! You earned ${AD_REWARD_POINTS} points!`, 'success');
+                showAlert('Ad watched! You earned 10 points!', 'success');
 
             } catch (error) {
                 console.error('Error watching ad:', error);
@@ -1653,12 +1640,12 @@
             // Give reward after a short delay (to allow user to potentially interact with the channel)
             setTimeout(async () => {
                 await userRef.update({
-                    balance: (userData.balance || 0) + DAILY_CHECKIN_REWARD_POINTS, // Example: 50 points for daily check-in
-                    totalEarned: (userData.totalEarned || 0) + DAILY_CHECKIN_REWARD_POINTS,
+                    balance: (userData.balance || 0) + 50, // Example: 50 points for daily check-in
+                    totalEarned: (userData.totalEarned || 0) + 50,
                     lastCheckin: today
                 });
 
-                showAlert(`Daily check-in completed! You earned ${DAILY_CHECKIN_REWARD_POINTS} points!`, 'success');
+                showAlert('Daily check-in completed! You earned 50 points!', 'success');
                 // Update UI immediately to reflect check-in status
                 const dailyCheckinButton = document.querySelector('.btn-success[onclick="dailyCheckin()"]');
                 if (dailyCheckinButton) {
@@ -1678,7 +1665,7 @@
             const description = document.getElementById('newTaskDescription').value;
             const url = document.getElementById('newTaskUrl').value;
             const impressions = parseInt(document.getElementById('taskImpressions').value);
-            const cost = (impressions / 100) * TASK_COST_RATE_TON_PER_100_IMPRESSIONS; // Assuming 0.1 TON per 100 impressions
+            const cost = (impressions / 100) * 0.1; // Assuming 0.1 TON per 100 impressions
 
             // Basic validation
             if (isNaN(impressions) || impressions < 100 || impressions > 5000) {
@@ -1735,7 +1722,7 @@
         // Update total cost display in the add task form
         document.getElementById('taskImpressions').addEventListener('input', (e) => {
             const impressions = parseInt(e.target.value) || 0;
-            const cost = (impressions / 100) * TASK_COST_RATE_TON_PER_100_IMPRESSIONS; // Cost calculation
+            const cost = (impressions / 100) * 0.1; // Cost calculation
             document.getElementById('totalCost').textContent = cost.toFixed(3); // Display cost with 3 decimal places
         });
 
@@ -1913,7 +1900,7 @@
                     totalReferralEarnings += REFERRAL_BONUS_POINTS;
 
                     const referralItem = document.createElement('div');
-                    referralItem.className = 'history-item'; // Reusing history-item styling
+                    referralItem.className = 'history-item';
                     referralItem.innerHTML = `
                         <div>
                             <strong>${referral.username || 'User'}</strong>
@@ -1950,14 +1937,11 @@
 
         // Show withdraw modal
         function showWithdrawModal() {
-            if (userBalance < MIN_WITHDRAWAL_POINTS) {
-                showAlert(`Minimum withdrawal amount is ${MIN_WITHDRAWAL_POINTS} points!`, 'danger');
+            if (userBalance < 2000) {
+                showAlert('Minimum withdrawal amount is 2000 points!', 'danger');
                 return;
             }
             document.getElementById('withdrawModal').style.display = 'block';
-            // Set the current balance to the withdraw amount input for convenience
-            document.getElementById('withdrawAmount').value = '';
-            document.getElementById('tonReceive').textContent = '0.00000000';
         }
 
         // Submit withdrawal request form
@@ -1965,33 +1949,30 @@
             e.preventDefault();
 
             const tonAddress = document.getElementById('tonAddress').value.trim();
-            const amountPoints = parseInt(document.getElementById('withdrawAmount').value);
+            const amount = parseInt(document.getElementById('withdrawAmount').value);
 
             // Input validation
             if (!tonAddress || !tonAddress.startsWith('UQ')) { // Basic TON address validation
                 showAlert('Please enter a valid TON address.', 'danger');
                 return;
             }
-            if (amountPoints < MIN_WITHDRAWAL_POINTS) {
-                showAlert(`Minimum withdrawal amount is ${MIN_WITHDRAWAL_POINTS} points!`, 'danger');
+            if (amount < 2000) {
+                showAlert('Minimum withdrawal amount is 2000 points!', 'danger');
                 return;
             }
-            if (amountPoints > userBalance) {
+            if (amount > userBalance) {
                 showAlert('Insufficient balance!', 'danger');
                 return;
             }
 
             try {
-                // Calculate TON amount
-                const amountTon = amountPoints * WITHDRAWAL_RATE_TON_PER_POINT;
-
                 // Create withdrawal request in the database
                 const withdrawalData = {
                     userId: currentUser.id,
                     username: currentUser.username,
                     tonAddress,
-                    amountPoints, // Amount in points
-                    amountTon, // Amount in TON
+                    amount, // Amount in points
+                    tonAmount: (amount / 100) * 0.000078, // Calculate TON amount (example rate)
                     status: 'pending', // Initial status
                     createdAt: Date.now()
                 };
@@ -2002,7 +1983,7 @@
                 const userRef = database.ref('users/' + currentUser.id);
                 await userRef.transaction((userData) => {
                     if (userData) {
-                        userData.balance = Math.max(0, (userData.balance || 0) - amountPoints); // Ensure balance doesn't go below 0
+                        userData.balance = Math.max(0, (userData.balance || 0) - amount); // Ensure balance doesn't go below 0
                     }
                     return userData;
                 });
@@ -2020,8 +2001,8 @@
 
         // Update TON receive amount dynamically in the withdraw form
         document.getElementById('withdrawAmount').addEventListener('input', (e) => {
-            const amountPoints = parseInt(e.target.value) || 0;
-            const tonAmount = amountPoints * WITHDRAWAL_RATE_TON_PER_POINT;
+            const amount = parseInt(e.target.value) || 0;
+            const tonAmount = (amount / 100) * 0.000078; // Same rate as used in submission
             document.getElementById('tonReceive').textContent = tonAmount.toFixed(8); // Display TON with 8 decimal places
         });
 
@@ -2054,9 +2035,9 @@
 
                         historyItem.innerHTML = `
                             <div>
-                                <strong>${withdrawal.amountPoints} points</strong>
+                                <strong>${withdrawal.amount} points</strong>
                                 <div style="font-size: 12px; color: var(--text-light);">
-                                    ${withdrawal.amountTon.toFixed(8)} TON • ${new Date(withdrawal.createdAt).toLocaleDateString()}
+                                    ${withdrawal.tonAmount.toFixed(8)} TON • ${new Date(withdrawal.createdAt).toLocaleDateString()}
                                 </div>
                             </div>
                             <div class="history-status ${statusClass}">${statusText}</div>
@@ -2183,16 +2164,12 @@
                     // Wallet is connected
                     connectWalletButton.textContent = 'Wallet Connected';
                     connectWalletButton.disabled = true;
-                    // Use the same style as the primary button but ensure it's green
-                    connectWalletButton.style.background = 'linear-gradient(135deg, var(--success), #047857)';
-                    connectWalletButton.style.boxShadow = '0 8px 25px rgba(5, 150, 105, 0.4)'; // Add a subtle glow
+                    connectWalletButton.style.background = 'linear-gradient(135deg, var(--success), #047857)'; // Green gradient
                 } else {
                     // Wallet is disconnected
                     connectWalletButton.textContent = 'Connect Wallet';
                     connectWalletButton.disabled = false;
-                    // Revert to primary button style
-                    connectWalletButton.style.background = 'linear-gradient(135deg, var(--primary), var(--primary-dark))';
-                    connectWalletButton.style.boxShadow = '0 8px 25px rgba(220, 38, 38, 0.4)';
+                    connectWalletButton.style.background = 'linear-gradient(135deg, var(--primary), var(--primary-dark))'; // Red gradient
                 }
             }
         });
