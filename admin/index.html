@@ -1,0 +1,889 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pro Admin Panel</title>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #667eea;
+            --primary-dark: #5a6fd8;
+            --secondary: #764ba2;
+            --success: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --dark: #1a1a2e;
+            --light: #f8fafc;
+            --border: #e2e8f0;
+            --text: #334155;
+            --text-light: #64748b;
+        }
+
+        [data-theme="dark"] {
+            --dark: #f8fafc;
+            --light: #1a1a2e;
+            --border: #374151;
+            --text: #f1f5f9;
+            --text-light: #cbd5e1;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            min-height: 100vh;
+            color: var(--text);
+            transition: all 0.3s ease;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            padding-bottom: 80px;
+        }
+
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .theme-toggle {
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            padding: 10px 20px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .theme-toggle:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 24px;
+            margin-bottom: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 16px 48px rgba(0, 0, 0, 0.15);
+        }
+
+        .card-title {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--primary);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: var(--text);
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            background: white;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-success {
+            background: var(--success);
+            color: white;
+        }
+
+        .btn-danger {
+            background: var(--danger);
+            color: white;
+        }
+
+        .btn-warning {
+            background: var(--warning);
+            color: white;
+        }
+
+        .task-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .task-card {
+            background: white;
+            border-radius: 16px;
+            padding: 20px;
+            border: 1px solid var(--border);
+            transition: all 0.3s ease;
+        }
+
+        .task-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 32px rgba(0, 0, 0, 0.1);
+        }
+
+        .task-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 12px;
+        }
+
+        .task-title {
+            font-weight: 600;
+            color: var(--primary);
+            margin-bottom: 8px;
+        }
+
+        .task-reward {
+            background: linear-gradient(135deg, var(--success), #059669);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .task-description {
+            color: var(--text-light);
+            margin-bottom: 12px;
+            line-height: 1.5;
+        }
+
+        .task-url {
+            color: var(--primary);
+            font-size: 12px;
+            word-break: break-all;
+            margin-bottom: 16px;
+        }
+
+        .task-actions {
+            display: flex;
+            gap: 8px;
+            justify-content: flex-end;
+        }
+
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-top: 1px solid var(--border);
+            padding: 12px 0;
+            z-index: 1000;
+        }
+
+        .nav-container {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            text-decoration: none;
+            color: var(--text-light);
+            transition: all 0.3s ease;
+            padding: 8px 16px;
+            border-radius: 12px;
+        }
+
+        .nav-item.active,
+        .nav-item:hover {
+            color: var(--primary);
+            background: rgba(102, 126, 234, 0.1);
+        }
+
+        .nav-item span {
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 16px;
+            padding: 24px;
+            text-align: center;
+            border: 1px solid var(--border);
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 32px rgba(0, 0, 0, 0.1);
+        }
+
+        .stat-number {
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 8px;
+        }
+
+        .stat-label {
+            color: var(--text-light);
+            font-weight: 500;
+        }
+
+        .lucky-codes-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 16px;
+            margin-top: 20px;
+        }
+
+        .lucky-code-card {
+            background: linear-gradient(135deg, #fbbf24, #f59e0b);
+            color: white;
+            border-radius: 16px;
+            padding: 20px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .lucky-code-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255,255,255,0.1), transparent);
+            transform: rotate(45deg);
+            animation: shine 2s infinite;
+        }
+
+        @keyframes shine {
+            0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+            100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+        }
+
+        .code-text {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            letter-spacing: 2px;
+        }
+
+        .code-reward {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 2000;
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            max-width: 500px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .modal-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: var(--text-light);
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+            
+            .header {
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+            }
+            
+            .task-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .modal-content {
+                width: 95%;
+                padding: 20px;
+            }
+        }
+
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .alert {
+            padding: 16px 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            border-left: 4px solid;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .alert-success {
+            background: rgba(16, 185, 129, 0.1);
+            border-left-color: var(--success);
+            color: var(--success);
+        }
+
+        .alert-danger {
+            background: rgba(239, 68, 68, 0.1);
+            border-left-color: var(--danger);
+            color: var(--danger);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="logo">
+                <span class="material-icons">admin_panel_settings</span>
+                Pro Admin Panel
+            </div>
+            <button class="theme-toggle" onclick="toggleTheme()">
+                <span class="material-icons">dark_mode</span>
+                Theme
+            </button>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-number" id="totalTasks">0</div>
+                <div class="stat-label">Total Tasks</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="totalCodes">0</div>
+                <div class="stat-label">Lucky Codes</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="totalRewards">0</div>
+                <div class="stat-label">Total Rewards</div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2 class="card-title">
+                <span class="material-icons">add_task</span>
+                Add New Task
+            </h2>
+            <form id="taskForm">
+                <div class="form-group">
+                    <label class="form-label">Task Title</label>
+                    <input type="text" class="form-input" id="taskTitle" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Task Description</label>
+                    <textarea class="form-input" id="taskDescription" rows="3" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Task URL</label>
+                    <input type="url" class="form-input" id="taskUrl" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Reward (10-100)</label>
+                    <input type="number" class="form-input" id="taskReward" min="10" max="100" required>
+                </div>
+                <button type="submit" class="btn btn-primary">
+                    <span class="material-icons">add</span>
+                    Add Task
+                </button>
+            </form>
+        </div>
+
+        <div class="card">
+            <h2 class="card-title">
+                <span class="material-icons">casino</span>
+                Add Lucky Code
+            </h2>
+            <form id="luckyCodeForm">
+                <div class="form-group">
+                    <label class="form-label">Lucky Code</label>
+                    <input type="text" class="form-input" id="luckyCode" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Reward (1-100)</label>
+                    <input type="number" class="form-input" id="luckyReward" min="1" max="100" required>
+                </div>
+                <button type="submit" class="btn btn-warning">
+                    <span class="material-icons">card_giftcard</span>
+                    Add Lucky Code
+                </button>
+            </form>
+        </div>
+
+        <div class="card">
+            <h2 class="card-title">
+                <span class="material-icons">task_alt</span>
+                All Tasks
+            </h2>
+            <div class="task-grid" id="tasksContainer">
+                <!-- Tasks will be loaded here -->
+            </div>
+        </div>
+
+        <div class="card">
+            <h2 class="card-title">
+                <span class="material-icons">redeem</span>
+                Lucky Codes
+            </h2>
+            <div class="lucky-codes-grid" id="luckyCodesContainer">
+                <!-- Lucky codes will be loaded here -->
+            </div>
+        </div>
+    </div>
+
+    <div class="bottom-nav">
+        <div class="nav-container">
+            <a href="#" class="nav-item active">
+                <span class="material-icons">dashboard</span>
+                <span>Dashboard</span>
+            </a>
+            <a href="#" class="nav-item" onclick="scrollToSection('tasks')">
+                <span class="material-icons">assignment</span>
+                <span>Tasks</span>
+            </a>
+            <a href="#" class="nav-item" onclick="scrollToSection('codes')">
+                <span class="material-icons">casino</span>
+                <span>Codes</span>
+            </a>
+            <a href="#" class="nav-item">
+                <span class="material-icons">analytics</span>
+                <span>Analytics</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
+
+    <script>
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyA3SqCHzN3kLj7DC8Cyu9OzxPFtIlyyii4",
+            authDomain: "maneybux-clone.firebaseapp.com",
+            projectId: "maneybux-clone",
+            storageBucket: "maneybux-clone.firebasestorage.app",
+            messagingSenderId: "153207109623",
+            appId: "1:153207109623:web:4cd48633c49c2ba3c1a0f2c1a0f2"
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const database = firebase.database();
+
+        // Theme toggle functionality
+        function toggleTheme() {
+            const body = document.body;
+            const currentTheme = body.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            body.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+        }
+
+        // Load saved theme
+        const savedTheme = localStorage.getItem('theme') || 'light';
+        document.body.setAttribute('data-theme', savedTheme);
+
+        // Task form submission
+        document.getElementById('taskForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const submitBtn = e.target.querySelector('button[type="submit"]');
+            const originalText = submitBtn.innerHTML;
+            submitBtn.innerHTML = '<span class="loading"></span> Adding...';
+            submitBtn.disabled = true;
+            
+            try {
+                const taskData = {
+                    title: document.getElementById('taskTitle').value,
+                    description: document.getElementById('taskDescription').value,
+                    url: document.getElementById('taskUrl').value,
+                    reward: parseInt(document.getElementById('taskReward').value),
+                    createdAt: Date.now(),
+                    status: 'active'
+                };
+                
+                await database.ref('tasks').push(taskData);
+                
+                // Reset form
+                e.target.reset();
+                showAlert('Task added successfully!', 'success');
+                loadTasks();
+                updateStats();
+            } catch (error) {
+                console.error('Error adding task:', error);
+                showAlert('Error adding task. Please try again.', 'danger');
+            } finally {
+                submitBtn.innerHTML = originalText;
+                submitBtn.disabled = false;
+            }
+        });
+
+        // Lucky code form submission
+        document.getElementById('luckyCodeForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const submitBtn = e.target.querySelector('button[type="submit"]');
+            const originalText = submitBtn.innerHTML;
+            submitBtn.innerHTML = '<span class="loading"></span> Adding...';
+            submitBtn.disabled = true;
+            
+            try {
+                const codeData = {
+                    code: document.getElementById('luckyCode').value.toUpperCase(),
+                    reward: parseInt(document.getElementById('luckyReward').value),
+                    createdAt: Date.now(),
+                    used: false
+                };
+                
+                await database.ref('luckyCodes').push(codeData);
+                
+                // Reset form
+                e.target.reset();
+                showAlert('Lucky code added successfully!', 'success');
+                loadLuckyCodes();
+                updateStats();
+            } catch (error) {
+                console.error('Error adding lucky code:', error);
+                showAlert('Error adding lucky code. Please try again.', 'danger');
+            } finally {
+                submitBtn.innerHTML = originalText;
+                submitBtn.disabled = false;
+            }
+        });
+
+        // Load tasks from Firebase
+        function loadTasks() {
+            const tasksContainer = document.getElementById('tasksContainer');
+            
+            database.ref('tasks').on('value', (snapshot) => {
+                tasksContainer.innerHTML = '';
+                const tasks = snapshot.val();
+                
+                if (!tasks) {
+                    tasksContainer.innerHTML = '<p style="text-align: center; color: var(--text-light); grid-column: 1/-1;">No tasks found</p>';
+                    return;
+                }
+                
+                Object.keys(tasks).forEach(key => {
+                    const task = tasks[key];
+                    const taskCard = createTaskCard(key, task);
+                    tasksContainer.appendChild(taskCard);
+                });
+            });
+        }
+
+        // Create task card
+        function createTaskCard(id, task) {
+            const card = document.createElement('div');
+            card.className = 'task-card';
+            card.innerHTML = `
+                <div class="task-header">
+                    <div class="task-title">${task.title}</div>
+                    <div class="task-reward">${task.reward} points</div>
+                </div>
+                <div class="task-description">${task.description}</div>
+                <div class="task-url">${task.url}</div>
+                <div class="task-actions">
+                    <button class="btn btn-danger" onclick="deleteTask('${id}')">
+                        <span class="material-icons">delete</span>
+                    </button>
+                </div>
+            `;
+            return card;
+        }
+
+        // Delete task
+        async function deleteTask(taskId) {
+            if (confirm('Are you sure you want to delete this task?')) {
+                try {
+                    await database.ref('tasks/' + taskId).remove();
+                    showAlert('Task deleted successfully!', 'success');
+                    updateStats();
+                } catch (error) {
+                    console.error('Error deleting task:', error);
+                    showAlert('Error deleting task. Please try again.', 'danger');
+                }
+            }
+        }
+
+        // Load lucky codes
+        function loadLuckyCodes() {
+            const codesContainer = document.getElementById('luckyCodesContainer');
+            
+            database.ref('luckyCodes').on('value', (snapshot) => {
+                codesContainer.innerHTML = '';
+                const codes = snapshot.val();
+                
+                if (!codes) {
+                    codesContainer.innerHTML = '<p style="text-align: center; color: var(--text-light); grid-column: 1/-1;">No lucky codes found</p>';
+                    return;
+                }
+                
+                Object.keys(codes).forEach(key => {
+                    const code = codes[key];
+                    const codeCard = createLuckyCodeCard(key, code);
+                    codesContainer.appendChild(codeCard);
+                });
+            });
+        }
+
+        // Create lucky code card
+        function createLuckyCodeCard(id, code) {
+            const card = document.createElement('div');
+            card.className = 'lucky-code-card';
+            card.innerHTML = `
+                <div class="code-text">${code.code}</div>
+                <div class="code-reward">${code.reward} points</div>
+                <div style="margin-top: 10px;">
+                    <button class="btn btn-danger" onclick="deleteLuckyCode('${id}')" style="background: rgba(239, 68, 68, 0.8);">
+                        <span class="material-icons">delete</span>
+                    </button>
+                </div>
+            `;
+            return card;
+        }
+
+        // Delete lucky code
+        async function deleteLuckyCode(codeId) {
+            if (confirm('Are you sure you want to delete this lucky code?')) {
+                try {
+                    await database.ref('luckyCodes/' + codeId).remove();
+                    showAlert('Lucky code deleted successfully!', 'success');
+                    updateStats();
+                } catch (error) {
+                    console.error('Error deleting lucky code:', error);
+                    showAlert('Error deleting lucky code. Please try again.', 'danger');
+                }
+            }
+        }
+
+        // Update statistics
+        function updateStats() {
+            // Update total tasks
+            database.ref('tasks').once('value', (snapshot) => {
+                const tasks = snapshot.val();
+                const totalTasks = tasks ? Object.keys(tasks).length : 0;
+                document.getElementById('totalTasks').textContent = totalTasks;
+            });
+
+            // Update total codes
+            database.ref('luckyCodes').once('value', (snapshot) => {
+                const codes = snapshot.val();
+                const totalCodes = codes ? Object.keys(codes).length : 0;
+                document.getElementById('totalCodes').textContent = totalCodes;
+            });
+
+            // Update total rewards
+            database.ref('tasks').once('value', (snapshot) => {
+                const tasks = snapshot.val();
+                let totalRewards = 0;
+                if (tasks) {
+                    Object.values(tasks).forEach(task => {
+                        totalRewards += task.reward;
+                    });
+                }
+                
+                database.ref('luckyCodes').once('value', (codesSnapshot) => {
+                    const codes = codesSnapshot.val();
+                    if (codes) {
+                        Object.values(codes).forEach(code => {
+                            totalRewards += code.reward;
+                        });
+                    }
+                    document.getElementById('totalRewards').textContent = formatNumber(totalRewards);
+                });
+            });
+        }
+
+        // Format numbers
+        function formatNumber(num) {
+            if (num >= 1000000000000) {
+                return (num / 1000000000000).toFixed(1) + 'T';
+            } else if (num >= 1000000000) {
+                return (num / 1000000000).toFixed(1) + 'B';
+            } else if (num >= 1000000) {
+                return (num / 1000000).toFixed(1) + 'M';
+            } else if (num >= 1000) {
+                return (num / 1000).toFixed(1) + 'K';
+            }
+            return num.toString();
+        }
+
+        // Show alerts
+        function showAlert(message, type) {
+            const alert = document.createElement('div');
+            alert.className = `alert alert-${type}`;
+            alert.innerHTML = `
+                <span class="material-icons">${type === 'success' ? 'check_circle' : 'error'}</span>
+                ${message}
+            `;
+            
+            document.querySelector('.container').insertBefore(alert, document.querySelector('.stats-grid'));
+            
+            setTimeout(() => {
+                alert.remove();
+            }, 5000);
+        }
+
+        // Scroll to section
+        function scrollToSection(section) {
+            // Simple scroll implementation
+            if (section === 'tasks') {
+                document.querySelector('.task-grid').scrollIntoView({ behavior: 'smooth' });
+            } else if (section === 'codes') {
+                document.querySelector('.lucky-codes-grid').scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+
+        // Initialize app
+        document.addEventListener('DOMContentLoaded', () => {
+            loadTasks();
+            loadLuckyCodes();
+            updateStats();
+        });
+    </script>
+</body>
+</html>
