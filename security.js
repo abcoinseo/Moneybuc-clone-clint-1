@@ -1,106 +1,85 @@
-// ---------------- FIREBASE CONFIG ----------------
-const firebaseConfig = {
-    apiKey: "AIzaSyA3SqCHzN3kLj7DC8Cyu9OzxPFtIlyyii4",
-    authDomain: "maneybux-clone.firebaseapp.com",
-    projectId: "maneybux-clone",
-    storageBucket: "maneybux-clone.firebasestorage.app",
-    messagingSenderId: "153207109623",
-    appId: "1:153207109623:web:4cd48633c49c2ba3c1a0f2",
-    databaseURL: "https://maneybux-clone-default-rtdb.firebaseio.com/"
+// ===================== TELEGRAM USER =====================
+const tg = window.Telegram.WebApp;
+tg.expand(); // Full screen
+
+const user = tg.initDataUnsafe?.user || {
+  id: "test_" + Math.floor(Math.random() * 100000),
+  first_name: "Guest",
+  username: "guest_user"
 };
 
-const app = firebase.initializeApp(firebaseConfig);
-const db = firebase.database();
-
-// --------------- TELEGRAM MINI APP ----------------
-const tg = window.Telegram.WebApp;
-tg.expand();
-
-// Get IP
-async function getUserIP() {
-  try {
-    let res = await fetch("https://api64.ipify.org?format=json");
-    let data = await res.json();
-    return data.ip;
-  } catch (e) {
-    return "unknown";
-  }
+// ===================== DEVICE ID =====================
+let deviceId = localStorage.getItem("device_id");
+if (!deviceId) {
+  deviceId = "dev_" + Math.random().toString(36).substring(2);
+  localStorage.setItem("device_id", deviceId);
 }
 
-// Save User Data
-async function saveUserData() {
-  const user = tg.initDataUnsafe?.user;
-  if (!user) return;
+// ===================== MULTI ACCOUNT CHECK =====================
+async function checkUser() {
+  if (!firebase || !firebase.database) {
+    console.error("Firebase not initialized!");
+    return;
+  }
 
-  let ip = await getUserIP();
-  let userId = user.id;
-  let username = user.username || ("user_" + userId);
+  const db = firebase.database();
+  const userRef = db.ref("users/" + user.id);
 
-  let userRef = db.ref("users/" + userId);
+  userRef.once("value", async (snapshot) => {
+    const data = snapshot.val();
 
-  userRef.once("value", (snapshot) => {
-    let data = snapshot.val();
-
-    // যদি data না থাকে তাহলে নতুন user তৈরি করো
-    if (!data) {
-      userRef.set({
-        id: userId,
-        username: username,
-        first_name: user.first_name || "",
-        photo_url: user.photo_url || "",
-        ip: ip,
-        balance: 0,
-        adsWatched: 0,
-        spins: 0,
-        tasksCompleted: 0,
-        referrals: 0,
-        referralEarnings: 0,
-        totalEarned: 0,
-        createdAt: Date.now(),
-        lastAdReset: Date.now(),
-        ban: false
-      });
+    if (data && data.ban === true) {
+      showBanPopup();
       return;
     }
 
-    // BAN CHECK
-    if (data.ban === true) {
-      alert("🚫 You are banned for multiple accounts!");
-      tg.close();
-      return;
-    }
+    // Save user with deviceId
+    await userRef.set({
+      id: user.id,
+      first_name: user.first_name,
+      username: user.username,
+      deviceId: deviceId,
+      ban: false,
+      lastLogin: Date.now()
+    });
 
-    // Multi-account detect (same IP but different username)
-    db.ref("users").once("value", (allSnap) => {
-      let allUsers = allSnap.val();
-      let conflict = false;
+    // Check all users for multi-account on same device
+    db.ref("users").once("value", (snap) => {
+      const users = snap.val();
+      let count = 0;
 
-      for (let uid in allUsers) {
-        if (
-          allUsers[uid].ip === ip &&
-          allUsers[uid].username !== username
-        ) {
-          conflict = true;
-          break;
+      for (let uid in users) {
+        if (users[uid].deviceId === deviceId) {
+          count++;
         }
       }
 
-      if (conflict) {
-        userRef.update({ ban: true }); // Mark user as banned
-        alert("🚫 You are banned for using multiple accounts on one device!");
-        tg.close();
-        return;
+      if (count > 1) {
+        // BAN all users on this device
+        for (let uid in users) {
+          if (users[uid].deviceId === deviceId) {
+            db.ref("users/" + uid).update({ ban: true });
+          }
+        }
+        showBanPopup();
       } else {
-        // Update normal user info
-        userRef.update({
-          username: username,
-          ip: ip,
-          lastLogin: Date.now(),
-          ban: false
-        });
+        document.getElementById("status").innerText =
+          "✅ Safe login: " + user.first_name;
       }
     });
   });
 }
 
-saveUserData();
+function showBanPopup() {
+  document.body.innerHTML =
+    "<div style='color:red;font-weight:bold;font-size:20px;text-align:center;margin-top:50px'>🚫 You are banned for using multiple accounts.<br>Please contact support.</div>";
+
+  setTimeout(() => {
+    if (window.Telegram && window.Telegram.WebApp) {
+      window.Telegram.WebApp.close();
+    }
+  }, 4000);
+}
+
+// Run check
+checkUser();
