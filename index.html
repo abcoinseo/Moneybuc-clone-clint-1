@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -726,7 +725,7 @@
         }
 
         #ton-connect {
-            display: none; /* We're managing buttons manually */
+            display: none;
         }
 
         @media (max-width: 768px) {
@@ -785,29 +784,6 @@
 
         .glow {
             box-shadow: 0 0 20px rgba(220, 38, 38, 0.5);
-        }
-
-        /* Specific styles for wallet buttons */
-        .wallet-btn-container {
-            display: flex;
-            justify-content: center;
-            gap: 10px;
-            margin-top: 15px;
-        }
-        .wallet-btn-container .btn {
-            min-width: 180px; /* Ensure consistent button width */
-        }
-
-        .loading-indicator {
-            display: inline-block;
-            width: 16px;
-            height: 16px;
-            border: 2px solid rgba(255, 255, 255, 0.3);
-            border-radius: 50%;
-            border-top-color: #fff;
-            animation: spin 0.8s linear infinite;
-            margin-right: 8px;
-            vertical-align: middle;
         }
     </style>
 </head>
@@ -891,13 +867,11 @@
                     <span class="material-icons">link</span>
                     TON Wallet
                 </h2>
-                <div id="ton-connect"></div> <!-- TON Connect UI button placeholder -->
-                <div class="wallet-btn-container">
-                    <button class="btn btn-primary" id="connectWalletButton" onclick="handleWalletConnection()">
-                        <span class="material-icons">account_balance_wallet</span>
-                        Connect Wallet
-                    </button>
-                </div>
+                <div id="ton-connect"></div>
+                <button class="btn btn-primary" onclick="connectToWallet()" id="connectWalletButton">
+                    <span class="material-icons">account_balance_wallet</span>
+                    Connect Wallet
+                </button>
             </div>
         </div>
 
@@ -941,8 +915,8 @@
                     Create Task
                 </h2>
 
-                <div class="wallet-btn-container">
-                    <button class="btn btn-primary" id="connectWalletButtonAddTask" onclick="handleWalletConnection()">
+                <div class="add-task-connect-wallet-button">
+                    <button class="btn btn-primary" onclick="connectToWallet()" id="connectWalletButtonAddTask">
                         <span class="material-icons">account_balance_wallet</span>
                         Connect Wallet
                     </button>
@@ -1086,14 +1060,7 @@
                     <h3 style="margin: 15px 0; color: var(--text);" id="profileName">Loading...</h3>
                 </div>
 
-                <div class="wallet-btn-container">
-                    <button class="btn btn-primary" id="profileConnectWalletButton" onclick="handleWalletConnection()">
-                        <span class="material-icons">account_balance_wallet</span>
-                        Connect Wallet
-                    </button>
-                </div>
-
-                <div style="display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; margin-top: 20px;">
+                <div style="display: flex; gap: 10px; flex-wrap: wrap; justify-content: center;">
                     <button class="btn btn-primary" onclick="showWithdrawModal()">
                         <span class="material-icons">account_balance</span>
                         Withdraw
@@ -1188,7 +1155,7 @@
                 <div class="form-group">
                     <label class="form-label">You will receive: <span id="tonReceive">0</span> TON</label>
                 </div>
-                <button type="submit" class="btn btn-primary" id="withdrawSubmitButton">
+                <button type="submit" class="btn btn-primary">
                     <span class="material-icons">send</span>
                     Request Withdrawal
                 </button>
@@ -1219,7 +1186,7 @@
         // TON Connect setup with proper configuration
         const tonConnectUI = new TON_CONNECT_UI.TonConnectUI({
             manifestUrl: 'https://moneybuc-clone-clint-1.vercel.app/tonconnect-manifest.json',
-            buttonRootId: 'ton-connect' // Assign this to the placeholder div
+            buttonRootId: null // We'll handle buttons manually
         });
 
         tonConnectUI.uiOptions = {
@@ -1237,24 +1204,6 @@
         let dailyCheckinDone = false;
         let lastAdCompletionTime = 0;
         const REFERRAL_BONUS_POINTS = 500;
-        const WITHDRAWAL_RATE_TON_PER_POINT = 0.000078 / 100; // TON per 1 point
-
-        // DOM Elements
-        const connectWalletButton = document.getElementById('connectWalletButton');
-        const connectWalletButtonAddTask = document.getElementById('connectWalletButtonAddTask');
-        const profileConnectWalletButton = document.getElementById('profileConnectWalletButton');
-        const withdrawSubmitButton = document.getElementById('withdrawSubmitButton');
-        const tonAddressInput = document.getElementById('tonAddress');
-        const withdrawAmountInput = document.getElementById('withdrawAmount');
-        const tonReceiveSpan = document.getElementById('tonReceive');
-
-        // --- Initialization ---
-        async function initApp() {
-            initTelegramWebApp();
-            await initializeTonConnect(); // Initialize TON Connect first
-            updateUIElementsState();
-            showSection('home');
-        }
 
         // Initialize Telegram Web App
         function initTelegramWebApp() {
@@ -1278,6 +1227,8 @@
                             handleReferral(referrerId);
                         }
                     }
+
+                    initializeUser();
                 } else {
                     const randomId = Math.floor(Math.random() * 1000000000);
                     currentUser = {
@@ -1287,52 +1238,17 @@
                         photo_url: 'https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?auto=compress&cs=tinysrgb&w=100&h=100&dpr=1'
                     };
                     console.warn("Running without Telegram Web App user data. Using a random ID for testing:", currentUser.id);
+                    initializeUser();
                 }
-                // If running in Telegram, always load user data
-                initializeUser();
             } else {
                 console.error("Telegram Web App is not available.");
                 showAlert("Error: Telegram Web App not detected. Please open this in Telegram.", "danger");
-                // For non-Telegram environments, we might need a fallback or direct login
-                // For now, we'll assume it must be opened in Telegram.
             }
         }
 
-        // Initialize TON Connect and its event listeners
-        async function initializeTonConnect() {
-            try {
-                tonConnectUI.onStatusChange(wallet => {
-                    console.log("TON Connect status changed:", wallet);
-                    updateUIElementsState();
-                    if (wallet && wallet.account) {
-                        // Pre-fill withdrawal address if it's empty
-                        if (!tonAddressInput.value) {
-                            tonAddressInput.value = wallet.account.address;
-                            updateTonReceiveAmount(); // Update potential TON receive amount
-                        }
-                    } else {
-                        // Clear address if wallet is disconnected and no value was manually set
-                        if (tonAddressInput.value === tonConnectUI.account?.address) {
-                            tonAddressInput.value = '';
-                        }
-                        updateTonReceiveAmount();
-                    }
-                });
-
-                await tonConnectUI.restoreConnection(); // Attempt to restore previous connection
-                console.log("TON Connect initialized and connection restored.");
-            } catch (error) {
-                console.error("Error initializing TON Connect:", error);
-                showAlert("Failed to initialize TON Connect. Please check your wallet extension.", "danger");
-            }
-        }
-
-        // Initialize user data from Firebase
+        // Initialize user data
         async function initializeUser() {
-            if (!currentUser) {
-                console.error("Cannot initialize user: currentUser is not set.");
-                return;
-            }
+            if (!currentUser) return;
 
             const userRef = database.ref('users/' + currentUser.id);
             const snapshot = await userRef.once('value');
@@ -1366,7 +1282,6 @@
                     lastAdTime = userData.lastAdReset || 0;
                     dailyCheckinDone = userData.lastCheckin === new Date().toDateString();
 
-                    // Reset ads watched daily
                     if (Date.now() - lastAdTime > 24 * 60 * 60 * 1000) {
                         adsWatchedToday = 0;
                         userRef.update({
@@ -1385,9 +1300,7 @@
             loadWithdrawalHistory();
         }
 
-        // --- UI Update and State Management ---
-
-        // Update UI elements based on user data and wallet connection
+        // Update UI with user data
         function updateUI(userData) {
             document.getElementById('userName').textContent = userData.first_name || 'User';
             document.getElementById('userBalance').textContent = formatNumber(userData.balance || 0);
@@ -1429,107 +1342,30 @@
                     dailyCheckinButton.classList.add('btn-success');
                 }
             }
+
+            updateConnectWalletButtonState();
         }
 
-        // Update the state of all wallet-related buttons
-        function updateUIElementsState() {
-            const isWalletConnected = tonConnectUI.account !== null;
-            const walletAddress = isWalletConnected ? tonConnectUI.account.address : null;
+        // Update wallet button states
+        function updateConnectWalletButtonState() {
+            const connectWalletButton = document.getElementById('connectWalletButton');
+            const connectWalletButtonAddTask = document.getElementById('connectWalletButtonAddTask');
+            const connectedWallet = tonConnectUI.account;
 
-            // Home screen wallet button
-            updateWalletButton(connectWalletButton, isWalletConnected, walletAddress, 'Connect Wallet', 'Wallet Connected', 'Disconnect Wallet');
+            [connectWalletButton, connectWalletButtonAddTask].forEach(button => {
+                if (!button) return;
 
-            // Add Task screen wallet button
-            updateWalletButton(connectWalletButtonAddTask, isWalletConnected, walletAddress, 'Connect Wallet', 'Wallet Connected', 'Disconnect Wallet');
-
-            // Profile screen wallet button
-            updateWalletButton(profileConnectWalletButton, isWalletConnected, walletAddress, 'Connect Wallet', 'Wallet Connected', 'Disconnect Wallet');
-
-            // Enable/disable withdraw form based on connection status
-            if (isWalletConnected) {
-                withdrawSubmitButton.disabled = false;
-                if (!tonAddressInput.value) { // Auto-fill if not already filled
-                    tonAddressInput.value = walletAddress;
+                if (connectedWallet) {
+                    button.innerHTML = '<span class="material-icons">check_circle</span> Wallet Connected';
+                    button.disabled = true;
+                    button.style.background = 'linear-gradient(135deg, var(--success), #047857)';
+                } else {
+                    button.innerHTML = '<span class="material-icons">account_balance_wallet</span> Connect Wallet';
+                    button.disabled = false;
+                    button.style.background = 'linear-gradient(135deg, var(--primary), var(--primary-dark))';
                 }
-            } else {
-                withdrawSubmitButton.disabled = true;
-                // Optionally clear the address if it matches the disconnected wallet's address
-                if (tonAddressInput.value === walletAddress) {
-                    tonAddressInput.value = '';
-                }
-            }
-            updateTonReceiveAmount(); // Ensure amount is updated based on current state
+            });
         }
-
-        // Helper function to update individual wallet buttons
-        function updateWalletButton(button, isConnected, address, connectedText, connectingText, disconnectedText) {
-            if (!button) return;
-
-            button.style.background = isConnected
-                ? 'linear-gradient(135deg, var(--success), #047857)' // Success color
-                : 'linear-gradient(135deg, var(--primary), var(--primary-dark))'; // Primary color
-
-            if (isConnected) {
-                button.innerHTML = `<span class="material-icons">check_circle</span> ${disconnectedText}`;
-                button.disabled = false; // Keep enabled for disconnection
-            } else {
-                button.innerHTML = `<span class="material-icons">account_balance_wallet</span> ${connectedText}`;
-                button.disabled = false;
-            }
-        }
-
-        // --- Wallet Connection/Disconnection Logic ---
-
-        async function handleWalletConnection() {
-            const isConnected = tonConnectUI.account !== null;
-
-            if (isConnected) {
-                // Disconnect wallet
-                try {
-                    await tonConnectUI.disconnect();
-                    showAlert('Wallet disconnected successfully.', 'success');
-                } catch (error) {
-                    console.error("Error disconnecting wallet:", error);
-                    showAlert('Failed to disconnect wallet. Please try again.', 'danger');
-                }
-            } else {
-                // Connect wallet
-                try {
-                    await tonConnectUI.openModal();
-                    // The status change listener will handle UI updates after connection
-                } catch (error) {
-                    console.error("Error opening wallet connection modal:", error);
-                    showAlert('Error opening wallet connection. Please ensure you have a TON wallet installed and try again.', 'danger');
-                }
-            }
-        }
-
-        // --- Event Listeners for Form Inputs ---
-
-        // Update TON receive amount dynamically
-        withdrawAmountInput.addEventListener('input', updateTonReceiveAmount);
-        tonAddressInput.addEventListener('input', updateTonReceiveAmount); // Update if address changes
-
-        function updateTonReceiveAmount() {
-            const amountPoints = parseInt(withdrawAmountInput.value) || 0;
-            const minWithdrawalPoints = 2000;
-            const tonAmount = amountPoints * WITHDRAWAL_RATE_TON_PER_POINT;
-
-            if (amountPoints < minWithdrawalPoints) {
-                tonReceiveSpan.textContent = '0.00000000';
-            } else {
-                tonReceiveSpan.textContent = tonAmount.toFixed(8);
-            }
-        }
-
-        // Update total cost display for task creation
-        document.getElementById('taskImpressions').addEventListener('input', (e) => {
-            const impressions = parseInt(e.target.value) || 0;
-            const cost = (impressions / 100) * 0.1;
-            document.getElementById('totalCost').textContent = cost.toFixed(3);
-        });
-
-        // --- Firebase Data Loading and Management ---
 
         // Load available tasks
         function loadTasks() {
@@ -1546,7 +1382,6 @@
                     return;
                 }
 
-                // Fetch user tasks to check completion status
                 database.ref('userTasks/' + currentUser.id).once('value', (userTasksSnapshot) => {
                     const userTasksData = userTasksSnapshot.val() || {};
 
@@ -1565,6 +1400,7 @@
                     if (availableTasksGrid.children.length === 0) {
                         availableTasksGrid.innerHTML = '<p style="text-align: center; color: var(--text-light);">No available tasks</p>';
                     }
+
                     if (completedTasksGrid.children.length === 0) {
                         completedTasksGrid.innerHTML = '<p style="text-align: center; color: var(--text-light);">No completed tasks</p>';
                     }
@@ -1572,7 +1408,7 @@
             });
         }
 
-        // Create task card for display in task list
+        // Create task card
         function createTaskCard(taskId, task, isCompleted) {
             const card = document.createElement('div');
             card.className = 'task-card';
@@ -1584,7 +1420,7 @@
             card.innerHTML = `
                 <div class="task-header">
                     <div class="task-title">${task.title}</div>
-                    <div class="task-reward">${formatNumber(task.reward)} points</div>
+                    <div class="task-reward">${task.reward} points</div>
                 </div>
                 <div class="task-description">${task.description}</div>
                 <div class="task-actions">
@@ -1594,10 +1430,11 @@
                     </button>
                 </div>
             `;
+
             return card;
         }
 
-        // Start task process
+        // Start task
         function startTask(taskId, url, reward) {
             window.open(url, '_blank');
             document.getElementById('taskModal').style.display = 'block';
@@ -1618,7 +1455,7 @@
             }, 1000);
         }
 
-        // Complete task and update user data
+        // Complete task
         async function completeTask(taskId, reward) {
             try {
                 const userRef = database.ref('users/' + currentUser.id);
@@ -1631,13 +1468,12 @@
                     return;
                 }
 
-                // Atomically update user balance, total earned, tasks completed, and spins
                 await userRef.transaction((userData) => {
                     if (userData) {
                         userData.balance = (userData.balance || 0) + reward;
                         userData.totalEarned = (userData.totalEarned || 0) + reward;
                         userData.tasksCompleted = (userData.tasksCompleted || 0) + 1;
-                        userData.spins = (userData.spins || 0) + 1; // Earn a spin for completing a task
+                        userData.spins = (userData.spins || 0) + 1;
                     }
                     return userData;
                 });
@@ -1649,7 +1485,7 @@
                 });
 
                 closeModal('taskModal');
-                showAlert(`Task completed! You earned ${formatNumber(reward)} points and 1 spin!`, 'success');
+                showAlert(`Task completed! You earned ${reward} points and 1 spin!`, 'success');
 
             } catch (error) {
                 console.error('Error completing task:', error);
@@ -1660,8 +1496,7 @@
 
         // Apply lucky code
         async function applyLuckyCode() {
-            const codeInput = document.getElementById('luckyCodeInput');
-            const code = codeInput.value.trim().toUpperCase();
+            const code = document.getElementById('luckyCodeInput').value.trim().toUpperCase();
             if (!code) {
                 showAlert('Please enter a lucky code', 'danger');
                 return;
@@ -1703,8 +1538,8 @@
 
                 await database.ref('luckyCodes/' + codeKey).update({ used: true });
 
-                codeInput.value = '';
-                showAlert(`Lucky code applied! You earned ${formatNumber(foundCode.reward)} points!`, 'success');
+                document.getElementById('luckyCodeInput').value = '';
+                showAlert(`Lucky code applied! You earned ${foundCode.reward} points!`, 'success');
 
             } catch (error) {
                 console.error('Error applying lucky code:', error);
@@ -1712,7 +1547,7 @@
             }
         }
 
-        // Spin wheel logic
+        // Spin wheel
         function spinWheel() {
             if (userSpins <= 0) {
                 showAlert('No spins available! Complete tasks to earn spins.', 'danger');
@@ -1722,25 +1557,21 @@
             const spinButton = document.getElementById('spinButton');
             const wheel = document.getElementById('spinWheel');
 
-            spinButton.disabled = true; // Disable button during spin
+            spinButton.disabled = true;
 
-            // Generate a random rotation, ensuring at least a few full spins for dramatic effect
-            const randomRotation = Math.floor(Math.random() * 360) + (3 * 360); // Between 3 to 4 full rotations
-            wheel.style.transition = 'transform 3s cubic-bezier(0.23, 1, 0.32, 1)'; // Ensure transition is active
+            const randomRotation = Math.floor(Math.random() * 360) + 1800;
             wheel.style.transform = `rotate(${randomRotation}deg)`;
 
             setTimeout(async () => {
-                const finalRotationDegrees = randomRotation;
-                const finalPosition = finalRotationDegrees % 360; // Normalize to 0-360 degrees
-
+                const finalPosition = randomRotation % 360;
                 let reward;
-                // Define rewards based on the segments
-                if (finalPosition >= 0 && finalPosition < 60) reward = 100; // Red
-                else if (finalPosition >= 60 && finalPosition < 120) reward = 150; // Light Red
-                else if (finalPosition >= 120 && finalPosition < 180) reward = 200; // Yellow
-                else if (finalPosition >= 180 && finalPosition < 240) reward = 300; // Green
-                else if (finalPosition >= 240 && finalPosition < 300) reward = 400; // Dark Red
-                else reward = 500; // Orange/Accent
+
+                if (finalPosition < 60) reward = 100;
+                else if (finalPosition < 120) reward = 150;
+                else if (finalPosition < 180) reward = 200;
+                else if (finalPosition < 240) reward = 300;
+                else if (finalPosition < 300) reward = 400;
+                else reward = 500;
 
                 const userRef = database.ref('users/' + currentUser.id);
                 await userRef.transaction((userData) => {
@@ -1752,39 +1583,32 @@
                     return userData;
                 });
 
-                spinButton.disabled = false; // Re-enable button
-                showAlert(`Congratulations! You won ${formatNumber(reward)} points!`, 'success');
+                spinButton.disabled = false;
+                showAlert(`Congratulations! You won ${reward} points!`, 'success');
 
-            }, 3000); // Match setTimeout duration with CSS transition duration
+            }, 3000);
         }
 
-        // Watch ad logic
+        // Watch ad
         async function watchAd() {
             if (adsWatchedToday >= 50) {
                 showAlert('Daily ad limit reached. Come back tomorrow!', 'danger');
                 return;
             }
 
-            // Check if enough time has passed since the last ad completion
-            const cooldownPeriod = 30 * 1000; // 30 seconds
-            if (Date.now() - lastAdCompletionTime < cooldownPeriod) {
-                const remaining = Math.ceil((cooldownPeriod - (Date.now() - lastAdCompletionTime)) / 1000);
-                showAlert(`Please wait ${remaining} seconds before watching another ad.`, 'warning');
+            if (Date.now() - lastAdCompletionTime < 30000) {
+                showAlert('Please wait a moment before watching another ad.', 'warning');
                 return;
             }
 
-            // Attempt to show the ad
             try {
-                // Check if the ad SDK function is available
                 if (typeof show_9809601 === 'function') {
-                    await show_9809601(); // Execute the ad SDK function
+                    await show_9809601();
                 } else {
-                    // Fallback: Simulate ad watching if SDK is not available (for testing)
-                    console.warn("Ad SDK function 'show_9809601' not found. Simulating ad watch.");
-                    await new Promise(resolve => setTimeout(resolve, 5000)); // Simulate ad duration
+                    // Simulate ad watching for testing
+                    await new Promise(resolve => setTimeout(resolve, 2000));
                 }
 
-                // Update user points and ad stats
                 const userRef = database.ref('users/' + currentUser.id);
                 await userRef.transaction((userData) => {
                     if (userData) {
@@ -1796,21 +1620,16 @@
                 });
 
                 adsWatchedToday++;
-                lastAdCompletionTime = Date.now(); // Record the time of this ad completion
+                lastAdCompletionTime = Date.now();
                 showAlert('Ad watched! You earned 10 points!', 'success');
 
             } catch (error) {
                 console.error('Error watching ad:', error);
-                // Check if the error is due to ad blocking or network issues
-                if (error.message && error.message.includes('adblock')) {
-                    showAlert('Ad blocker detected. Please disable it to watch ads.', 'danger');
-                } else {
-                    showAlert('Error loading ad. Please try again.', 'danger');
-                }
+                showAlert('Error loading ad. Please try again.', 'danger');
             }
         }
 
-        // Daily check-in logic
+        // Daily check-in
         async function dailyCheckin() {
             const today = new Date().toDateString();
             const userRef = database.ref('users/' + currentUser.id);
@@ -1822,31 +1641,24 @@
                 return;
             }
 
-            // Open a link and then confirm check-in after a delay
             window.open('https://t.me/PixelfrogCommunity', '_blank');
 
-            // Simulate a delay to allow user to visit the link if desired
             setTimeout(async () => {
-                try {
-                    await userRef.update({
-                        balance: (userData.balance || 0) + 50,
-                        totalEarned: (userData.totalEarned || 0) + 50,
-                        lastCheckin: today
-                    });
-                    showAlert('Daily check-in completed! You earned 50 points!', 'success');
-                    // Update button state immediately
-                    const dailyCheckinButton = document.querySelector('.btn-success[onclick="dailyCheckin()"]');
-                    if (dailyCheckinButton) {
-                        dailyCheckinButton.textContent = 'Checked In!';
-                        dailyCheckinButton.disabled = true;
-                        dailyCheckinButton.classList.remove('btn-success');
-                        dailyCheckinButton.classList.add('btn-secondary');
-                    }
-                } catch (error) {
-                    console.error('Error updating daily check-in:', error);
-                    showAlert('Error processing daily check-in. Please try again.', 'danger');
+                await userRef.update({
+                    balance: (userData.balance || 0) + 50,
+                    totalEarned: (userData.totalEarned || 0) + 50,
+                    lastCheckin: today
+                });
+
+                showAlert('Daily check-in completed! You earned 50 points!', 'success');
+                const dailyCheckinButton = document.querySelector('.btn-success[onclick="dailyCheckin()"]');
+                if (dailyCheckinButton) {
+                    dailyCheckinButton.textContent = 'Checked In!';
+                    dailyCheckinButton.disabled = true;
+                    dailyCheckinButton.classList.remove('btn-success');
+                    dailyCheckinButton.classList.add('btn-secondary');
                 }
-            }, 3000); // 3 second delay
+            }, 3000);
         }
 
         // Add task form submission with TON payment
@@ -1863,9 +1675,8 @@
             const description = document.getElementById('newTaskDescription').value;
             const url = document.getElementById('newTaskUrl').value;
             const impressions = parseInt(document.getElementById('taskImpressions').value);
-            const costInTON = (impressions / 100) * 0.1; // Cost in TON
+            const cost = (impressions / 100) * 0.1;
 
-            // Basic validation
             if (isNaN(impressions) || impressions < 100 || impressions > 5000) {
                 showAlert('Please enter a valid number of impressions between 100 and 5000.', 'danger');
                 return;
@@ -1877,17 +1688,14 @@
 
             const createTaskButton = document.getElementById('createTaskButton');
             createTaskButton.disabled = true;
-            createTaskButton.innerHTML = '<div class="loading-indicator"></div> Processing...'; // Use loading indicator
+            createTaskButton.innerHTML = '<div class="loading"></div> Processing...';
 
             try {
-                // Convert TON to nanoTON (1 TON = 1,000,000,000 nanoTON)
-                const amountInNanoTON = Math.floor(costInTON * 1e9).toString();
-
                 const transaction = {
-                    validUntil: Math.floor(Date.now() / 1000) + 300, // 5 minutes validity
+                    validUntil: Math.floor(Date.now() / 1000) + 60,
                     messages: [{
-                        address: "UQDLsNfQBwWXD9aaNxNS3udGo-9o8ybrlKmmbI5gjjRfs17M", // Target TON address for payment
-                        amount: amountInNanoTON
+                        address: "UQDLsNfQBwWXD9aaNxNS3udGo-9o8ybrlKmmbI5gjjRfs17M",
+                        amount: Math.floor(cost * 1000000000).toString()
                     }]
                 };
 
@@ -1898,22 +1706,21 @@
                         title,
                         description,
                         url,
-                        reward: 100, // Default reward per impression or task completion
-                        impressions: impressions,
+                        reward: 100,
+                        impressions,
                         remainingImpressions: impressions,
                         createdBy: currentUser.id,
                         createdAt: Date.now(),
                         status: 'active',
-                        transactionHash: result.boc // Store transaction hash for verification if needed
+                        transactionHash: result.boc
                     };
 
-                    await database.ref('tasks').push(taskData); // Add new task to Firebase
+                    await database.ref('tasks').push(taskData);
 
                     document.getElementById('addTaskForm').reset();
                     document.getElementById('totalCost').textContent = '0';
                     showAlert('Task created successfully! Transaction confirmed.', 'success');
-                    loadUserTasks(); // Refresh user's created tasks
-                    showSection('tasks'); // Navigate back to tasks section
+                    loadUserTasks();
                 } else {
                     showAlert('Transaction failed or was cancelled. Task not created.', 'danger');
                 }
@@ -1927,8 +1734,15 @@
                 }
             } finally {
                 createTaskButton.disabled = false;
-                createTaskButton.innerHTML = '<span class="material-icons">payment</span> Create & Pay'; // Reset button text
+                createTaskButton.innerHTML = '<span class="material-icons">payment</span> Create & Pay';
             }
+        });
+
+        // Update total cost display
+        document.getElementById('taskImpressions').addEventListener('input', (e) => {
+            const impressions = parseInt(e.target.value) || 0;
+            const cost = (impressions / 100) * 0.1;
+            document.getElementById('totalCost').textContent = cost.toFixed(3);
         });
 
         // Load user's created tasks
@@ -1960,7 +1774,7 @@
             card.className = 'task-card';
 
             const isTaskCompleted = task.remainingImpressions <= 0;
-            const progressPercentage = task.impressions > 0 ? ((task.impressions - task.remainingImpressions) / task.impressions) * 100 : 0;
+            const progressPercentage = ((task.impressions - task.remainingImpressions) / task.impressions) * 100;
 
             card.innerHTML = `
                 <div class="task-header">
@@ -1981,6 +1795,7 @@
                     }
                 </div>
             `;
+
             return card;
         }
 
@@ -2000,20 +1815,18 @@
         // Handle referral logic
         async function handleReferral(referrerId) {
             if (!currentUser || currentUser.id.toString() === referrerId) {
-                return; // Don't process if it's the same user or no current user
+                return;
             }
 
             try {
                 const newUserRef = database.ref('users/' + currentUser.id);
                 const newUserSnapshot = await newUserRef.once('value');
 
-                // Only proceed if the current user is new AND the referrer exists
                 if (!newUserSnapshot.exists()) {
                     const referrerUserRef = database.ref('users/' + referrerId);
                     const referrerUserSnapshot = await referrerUserRef.once('value');
 
                     if (referrerUserSnapshot.exists()) {
-                        // Update referrer's stats
                         await referrerUserRef.transaction((referrerData) => {
                             if (referrerData) {
                                 referrerData.referrals = (referrerData.referrals || 0) + 1;
@@ -2023,17 +1836,14 @@
                             return referrerData;
                         });
 
-                        // Record the referral for the referrer
                         await database.ref('referrals/' + referrerId + '/' + currentUser.id).set({
                             userId: currentUser.id,
                             username: currentUser.username,
                             joinedAt: Date.now(),
-                            completed: true // Mark as completed upon successful referral
+                            completed: true
                         });
 
                         showAlert(`Welcome! You've been referred by user ID: ${referrerId}. Your referrer has been rewarded!`, 'success');
-                    } else {
-                        console.warn(`Referrer with ID ${referrerId} not found.`);
                     }
                 }
             } catch (error) {
@@ -2042,7 +1852,7 @@
             }
         }
 
-        // Load referrals for the current user
+        // Load referrals
         function loadReferrals() {
             if (!currentUser) return;
 
@@ -2065,7 +1875,7 @@
 
                 referralIds.forEach(referredUserId => {
                     const referral = referrals[referredUserId];
-                    totalReferralEarnings += REFERRAL_BONUS_POINTS; // Add fixed bonus per referral
+                    totalReferralEarnings += REFERRAL_BONUS_POINTS;
 
                     const referralItem = document.createElement('div');
                     referralItem.className = 'history-item';
@@ -2085,14 +1895,14 @@
             });
         }
 
-        // Claim referral rewards (currently automated)
-        function claimReferralRewards() {
-            showAlert('Referral rewards are automatically credited when a new user joins via your link!', 'info');
+        // Claim referral rewards
+        async function claimReferralRewards() {
+            showAlert('Referral rewards are automatically credited when a new user joins via your link!', 'success');
         }
 
-        // Copy referral link to clipboard
+        // Copy referral link
         function copyReferralLink() {
-            const botUsername = 'adflareprobot'; // Replace with your actual bot username if different
+            const botUsername = 'adflareprobot';
             const link = `https://t.me/${botUsername}/app?startapp=ref_${currentUser.id}`;
             navigator.clipboard.writeText(link).then(() => {
                 showAlert('Referral link copied to clipboard!', 'success');
@@ -2102,100 +1912,75 @@
             });
         }
 
-        // --- Withdrawal Logic ---
-
-        // Show withdraw modal and pre-fill address if wallet is connected
+        // Show withdraw modal
         function showWithdrawModal() {
             if (userBalance < 2000) {
                 showAlert('Minimum withdrawal amount is 2000 points!', 'danger');
                 return;
             }
             document.getElementById('withdrawModal').style.display = 'block';
-
-            // Auto-fill address if wallet is connected and input is empty
-            if (tonConnectUI.account && !tonAddressInput.value) {
-                tonAddressInput.value = tonConnectUI.account.address;
-                updateTonReceiveAmount();
-            }
         }
 
         // Submit withdrawal request
         document.getElementById('withdrawForm').addEventListener('submit', async (e) => {
             e.preventDefault();
 
-            const tonAddress = tonAddressInput.value.trim();
-            const amountPoints = parseInt(withdrawAmountInput.value);
+            const tonAddress = document.getElementById('tonAddress').value.trim();
+            const amount = parseInt(document.getElementById('withdrawAmount').value);
 
-            // Validation
-            if (!tonAddress || !tonAddress.startsWith('UQ')) { // Basic check for TON address format
-                showAlert('Please enter a valid TON address (starting with UQ).', 'danger');
+            if (!tonAddress || !tonAddress.startsWith('UQ')) {
+                showAlert('Please enter a valid TON address.', 'danger');
                 return;
             }
-            if (isNaN(amountPoints) || amountPoints < 2000) {
+            if (amount < 2000) {
                 showAlert('Minimum withdrawal amount is 2000 points!', 'danger');
                 return;
             }
-            if (amountPoints > userBalance) {
+            if (amount > userBalance) {
                 showAlert('Insufficient balance!', 'danger');
                 return;
             }
-
-            const currentWalletAddress = tonConnectUI.account ? tonConnectUI.account.address : null;
-            if (tonAddress === currentWalletAddress) {
-                // If withdrawing to the connected wallet, proceed directly
-                // No specific transaction signing needed from the app side for this flow,
-                // as the user will approve it via the TON Connect UI prompt.
-            } else {
-                // If withdrawing to a different address, warn the user
-                if (!confirm('You are withdrawing to a different address than your connected wallet. Ensure this is the correct address. Continue?')) {
-                    return;
-                }
-            }
-
-            withdrawSubmitButton.disabled = true;
-            withdrawSubmitButton.innerHTML = '<div class="loading-indicator"></div> Processing...';
 
             try {
                 const withdrawalData = {
                     userId: currentUser.id,
                     username: currentUser.username,
-                    tonAddress: tonAddress,
-                    amountPoints: amountPoints,
-                    tonAmount: amountPoints * WITHDRAWAL_RATE_TON_PER_POINT,
-                    status: 'pending', // Initial status
-                    createdAt: Date.now(),
-                    processedAt: null,
-                    transactionHash: null // To be filled upon successful payout
+                    tonAddress,
+                    amount,
+                    tonAmount: (amount / 100) * 0.000078,
+                    status: 'pending',
+                    createdAt: Date.now()
                 };
 
-                // Store the withdrawal request in Firebase
-                const newWithdrawalRef = database.ref('withdrawals').push();
-                await newWithdrawalRef.set(withdrawalData);
+                await database.ref('withdrawals').push(withdrawalData);
 
-                // Deduct points from user balance immediately
                 const userRef = database.ref('users/' + currentUser.id);
                 await userRef.transaction((userData) => {
                     if (userData) {
-                        userData.balance = Math.max(0, (userData.balance || 0) - amountPoints);
+                        userData.balance = Math.max(0, (userData.balance || 0) - amount);
                     }
                     return userData;
                 });
 
                 closeModal('withdrawModal');
-                document.getElementById('withdrawForm').reset(); // Clear the form
+                document.getElementById('withdrawForm').reset();
                 showAlert('Withdrawal request submitted successfully! It will be processed shortly.', 'success');
-                loadWithdrawalHistory(); // Refresh history
+                loadWithdrawalHistory();
 
             } catch (error) {
                 console.error('Error submitting withdrawal:', error);
                 showAlert('Error submitting withdrawal. Please try again.', 'danger');
-            } finally {
-                withdrawSubmitButton.disabled = false;
-                withdrawSubmitButton.innerHTML = '<span class="material-icons">send</span> Request Withdrawal';
             }
         });
 
-        // Load withdrawal history for the current user
+        // Update TON receive amount
+        document.getElementById('withdrawAmount').addEventListener('input', (e) => {
+            const amount = parseInt(e.target.value) || 0;
+            const tonAmount = (amount / 100) * 0.000078;
+            document.getElementById('tonReceive').textContent = tonAmount.toFixed(8);
+        });
+
+        // Load withdrawal history
         function loadWithdrawalHistory() {
             if (!currentUser) return;
 
@@ -2203,7 +1988,7 @@
 
             database.ref('withdrawals')
                 .orderByChild('userId').equalTo(currentUser.id)
-                .limitToLast(10) // Show last 10 withdrawals
+                .limitToLast(10)
                 .on('value', (snapshot) => {
                     withdrawalHistory.innerHTML = '';
                     const withdrawals = snapshot.val();
@@ -2213,10 +1998,7 @@
                         return;
                     }
 
-                    // Sort by timestamp to show most recent first
-                    const sortedWithdrawals = Object.entries(withdrawals).sort(([, a], [, b]) => b.createdAt - a.createdAt);
-
-                    sortedWithdrawals.forEach(([id, withdrawal]) => {
+                    Object.values(withdrawals).reverse().forEach(withdrawal => {
                         const historyItem = document.createElement('div');
                         historyItem.className = 'history-item';
 
@@ -2225,7 +2007,7 @@
 
                         historyItem.innerHTML = `
                             <div>
-                                <strong>${formatNumber(withdrawal.amountPoints)} points</strong>
+                                <strong>${withdrawal.amount} points</strong>
                                 <div style="font-size: 12px; color: var(--text-light);">
                                     ${withdrawal.tonAmount.toFixed(8)} TON • ${new Date(withdrawal.createdAt).toLocaleDateString()}
                                 </div>
@@ -2237,37 +2019,36 @@
                 });
         }
 
-        // --- General Utility Functions ---
+        // Connect to wallet
+        async function connectToWallet() {
+            try {
+                await tonConnectUI.openModal();
+            } catch (error) {
+                console.error("Error connecting to wallet:", error);
+                showAlert('Error connecting to wallet. Please ensure you have a TON wallet installed and try again.', 'danger');
+            }
+        }
 
-        // Navigate between sections
+        // Navigation functions
         function showSection(sectionName) {
             document.querySelectorAll('.section').forEach(section => {
-                section.classList.remove('active');
+                section.style.display = 'none';
             });
 
-            const targetSection = document.getElementById(sectionName + 'Section');
-            if (targetSection) {
-                targetSection.classList.add('active');
-            }
+            document.getElementById(sectionName + 'Section').style.display = 'block';
 
             document.querySelectorAll('.nav-item').forEach(item => {
                 item.classList.remove('active');
-                if (item.getAttribute('onclick') && item.getAttribute('onclick').includes(`showSection('${sectionName}')`)) {
+            });
+
+            document.querySelectorAll('.nav-item').forEach(item => {
+                if (item.getAttribute('onclick').includes(`showSection('${sectionName}')`)) {
                     item.classList.add('active');
                 }
             });
 
-            // Special handling for task tabs if we navigate to tasks section
-            if (sectionName === 'tasks') {
-                // Ensure the active tab is set correctly if coming from elsewhere
-                const activeTab = document.querySelector('.tab.active');
-                if (activeTab) {
-                    showTaskTab(new MouseEvent('click'), activeTab.textContent.toLowerCase()); // Trigger tab logic
-                }
-            }
-            // Update wallet button states when sections change, e.g., to addTaskSection
             if (sectionName === 'addTask') {
-                updateUIElementsState();
+                updateConnectWalletButtonState();
             }
         }
 
@@ -2292,9 +2073,8 @@
             }
         }
 
-        // Display temporary alerts
+        // Show alert
         function showAlert(message, type) {
-            const alertContainer = document.querySelector('.container'); // Or any other suitable container
             const alert = document.createElement('div');
             alert.className = `alert alert-${type}`;
             alert.innerHTML = `
@@ -2302,14 +2082,14 @@
                 ${message}
             `;
 
-            alertContainer.prepend(alert); // Add alert to the top of the container
+            document.querySelector('.container').prepend(alert);
 
             setTimeout(() => {
                 alert.remove();
-            }, 5000); // Alert disappears after 5 seconds
+            }, 5000);
         }
 
-        // Format numbers for display (e.g., 1000 -> 1K, 1000000 -> 1M)
+        // Format number
         function formatNumber(num) {
             if (num === null || num === undefined) return '0';
             num = Number(num);
@@ -2326,21 +2106,28 @@
             return num.toString();
         }
 
-        // Theme toggle - Currently just a placeholder
+        // Theme toggle
         function toggleTheme() {
-            showAlert('Red Moon theme is the current and only theme!', 'info');
+            showAlert('Red Moon theme is the current and only theme!', 'success');
         }
 
-        // --- Document Ready and Initialization ---
+        // Initialization
         document.addEventListener('DOMContentLoaded', () => {
-            initApp(); // Start the application initialization
+            initTelegramWebApp();
+            showSection('home');
+            updateConnectWalletButtonState();
         });
 
-        // Close modals when clicking outside of them
+        // Close modals on outside click
         window.addEventListener('click', (e) => {
             if (e.target.classList.contains('modal')) {
                 e.target.style.display = 'none';
             }
+        });
+
+        // Handle TON Connect status changes
+        tonConnectUI.onStatusChange(wallet => {
+            updateConnectWalletButtonState();
         });
     </script>
 </body>
