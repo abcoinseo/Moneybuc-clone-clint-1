@@ -9,8 +9,6 @@
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src="https://unpkg.com/@tonconnect/ui@latest/dist/tonconnect-ui.min.js"></script>
     <style>
-        /* styles.css */
-
         * {
             margin: 0;
             padding: 0;
@@ -99,7 +97,6 @@
             0% {
                 left: -100%;
             }
-
             100% {
                 left: 100%;
             }
@@ -591,22 +588,15 @@
             align-items: center;
             gap: 12px;
             animation: slideIn 0.3s ease;
-            z-index: 100; /* Ensure alerts appear above other content */
-            position: fixed; /* Position at the top */
-            top: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: calc(100% - 40px); /* Full width with padding */
-            max-width: 500px; /* Max width for alerts */
         }
 
         @keyframes slideIn {
             from {
-                transform: translate(-50%, -100%); /* Slide from top */
+                transform: translateX(-100%);
                 opacity: 0;
             }
             to {
-                transform: translate(-50%, 0); /* Slide to final position */
+                transform: translateX(0);
                 opacity: 1;
             }
         }
@@ -699,11 +689,9 @@
             0% {
                 box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.7);
             }
-
             70% {
                 box-shadow: 0 0 0 10px rgba(220, 38, 38, 0);
             }
-
             100% {
                 box-shadow: 0 0 0 0 rgba(220, 38, 38, 0);
             }
@@ -774,6 +762,20 @@
             transform: translateY(-2px);
             box-shadow: 0 8px 25px rgba(245, 158, 11, 0.4);
         }
+
+        /* Styles for the new connect wallet button specifically on the Add Task page */
+        .add-task-connect-wallet-button {
+            margin-top: 15px; /* Add some space above the button */
+            text-align: center;
+            display: block; /* Ensure it takes its own line */
+            width: 100%; /* Make it full width if needed, or adjust as desired */
+        }
+
+        /* Ensure the TON Connect UI button root is still handled */
+        #ton-connect {
+            display: none; /* Hidden by default, but TON Connect UI might inject its button here */
+        }
+
     </style>
 </head>
 <body>
@@ -856,13 +858,8 @@
                     <span class="material-icons">link</span>
                     TON Wallet
                 </h2>
-                <div id="ton-connect"></div>
-                <div style="margin-top: 15px;">
-                    <button class="btn btn-primary" onclick="connectToWallet()">
-                        <span class="material-icons">account_balance_wallet</span>
-                        Connect Wallet
-                    </button>
-                </div>
+                <div id="ton-connect"></div> <!-- TON Connect UI might inject its button here -->
+                <!-- The manual "Connect Wallet" button is now moved to the Add Task page -->
             </div>
         </div>
 
@@ -905,6 +902,16 @@
                     <span class="material-icons">add_task</span>
                     Create Task
                 </h2>
+
+                <!-- MODIFIED: Added the "Connect Wallet" button here -->
+                <div class="add-task-connect-wallet-button">
+                    <button class="btn btn-primary" onclick="connectToWallet()" id="connectWalletButtonAddTask">
+                        <span class="material-icons">account_balance_wallet</span>
+                        Connect Wallet
+                    </button>
+                </div>
+                <!-- END MODIFIED -->
+
                 <form id="addTaskForm">
                     <div class="form-group">
                         <label class="form-label">Task Title</label>
@@ -1072,7 +1079,6 @@
     </div>
 
     <!-- Bottom Navigation -->
-
     <div class="bottom-nav">
         <div class="nav-container">
             <a href="#" class="nav-item active" onclick="showSection('home'); return false;">
@@ -1103,7 +1109,6 @@
     </div>
 
     <!-- Task Verification Modal -->
-
     <div id="taskModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
@@ -1123,7 +1128,6 @@
     </div>
 
     <!-- Withdraw Modal -->
-
     <div id="withdrawModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
@@ -1176,7 +1180,7 @@
         // TON Connect setup
         const tonConnectUI = new TON_CONNECT_UI.TonConnectUI({
             manifestUrl: 'https://raw.githubusercontent.com/ton-community/tutorials/main/03-client/test/public/tonconnect-manifest.json',
-            buttonRootId: 'ton-connect' // Ensure this ID exists if you use the button for TON connect
+            buttonRootId: 'ton-connect' // This is the ID where TON Connect UI might inject its button
         });
 
         tonConnectUI.uiOptions = {
@@ -1341,7 +1345,33 @@
                 dailyCheckinButton.classList.remove('btn-secondary');
                 dailyCheckinButton.classList.add('btn-success');
             }
+
+            // Update the state of the "Connect Wallet" button on the Add Task page
+            updateConnectWalletButtonState();
         }
+
+        // Function to update the state of the specific "Connect Wallet" button on the Add Task page
+        function updateConnectWalletButtonState() {
+            const connectWalletButtonAddTask = document.getElementById('connectWalletButtonAddTask');
+            if (!connectWalletButtonAddTask) return; // Button not found, so nothing to do
+
+            const connectedWallet = tonConnectUI.connectedWallet(); // Get current connection status
+
+            if (connectedWallet) {
+                // Wallet is connected
+                connectWalletButtonAddTask.textContent = 'Wallet Connected';
+                connectWalletButtonAddTask.disabled = true;
+                connectWalletButtonAddTask.style.background = 'linear-gradient(135deg, var(--success), #047857)'; // Green gradient
+                connectWalletButtonAddTask.style.borderColor = 'var(--success)'; // Optional: add border color
+            } else {
+                // Wallet is disconnected
+                connectWalletButtonAddTask.textContent = 'Connect Wallet';
+                connectWalletButtonAddTask.disabled = false;
+                connectWalletButtonAddTask.style.background = 'linear-gradient(135deg, var(--primary), var(--primary-dark))'; // Red gradient
+                connectWalletButtonAddTask.style.borderColor = 'var(--primary)'; // Optional: add border color
+            }
+        }
+
 
         // Load available tasks
         function loadTasks() {
@@ -1654,6 +1684,14 @@
         // Add task form submission
         document.getElementById('addTaskForm').addEventListener('submit', async (e) => {
             e.preventDefault();
+
+            // Check wallet connection BEFORE attempting to create task
+            if (!tonConnectUI.connectedWallet()) {
+                showAlert('Please connect your TON wallet first to create a task.', 'danger');
+                // Optional: Scroll to the connect wallet button if it's not visible
+                document.getElementById('connectWalletButtonAddTask').scrollIntoView({ behavior: 'smooth' });
+                return;
+            }
 
             const title = document.getElementById('newTaskTitle').value;
             const description = document.getElementById('newTaskDescription').value;
@@ -2072,6 +2110,11 @@
                     item.classList.add('active');
                 }
             });
+
+            // After switching sections, ensure the connect wallet button state is correct on the Add Task page if visible
+            if (sectionName === 'addTask') {
+                updateConnectWalletButtonState();
+            }
         }
 
         // Switch tabs within the Tasks section (Available/Completed)
@@ -2141,6 +2184,8 @@
             initTelegramWebApp();
             // Set initial section to home on load
             showSection('home');
+            // Update the connect wallet button state initially, in case a wallet is already connected
+            updateConnectWalletButtonState();
         });
 
         // Close modals when clicking outside of the modal content
@@ -2152,20 +2197,22 @@
 
         // Handle TON Connect UI status changes
         tonConnectUI.onStatusChange(wallet => {
-            const connectWalletButton = document.querySelector('.btn-primary[onclick="connectToWallet()"]');
-            if (connectWalletButton) { // Ensure the button exists
+            // This listener updates the generic connect button if it exists.
+            // The specific button on the Add Task page is handled by updateConnectWalletButtonState().
+            const genericConnectButton = document.querySelector('.btn-primary[onclick="connectToWallet()"]');
+            if (genericConnectButton) {
                 if (wallet) {
-                    // Wallet is connected
-                    connectWalletButton.textContent = 'Wallet Connected';
-                    connectWalletButton.disabled = true;
-                    connectWalletButton.style.background = 'linear-gradient(135deg, var(--success), #047857)'; // Green gradient
+                    genericConnectButton.textContent = 'Wallet Connected';
+                    genericConnectButton.disabled = true;
+                    genericConnectButton.style.background = 'linear-gradient(135deg, var(--success), #047857)';
                 } else {
-                    // Wallet is disconnected
-                    connectWalletButton.textContent = 'Connect Wallet';
-                    connectWalletButton.disabled = false;
-                    connectWalletButton.style.background = 'linear-gradient(135deg, var(--primary), var(--primary-dark))'; // Red gradient
+                    genericConnectButton.textContent = 'Connect Wallet';
+                    genericConnectButton.disabled = false;
+                    genericConnectButton.style.background = 'linear-gradient(135deg, var(--primary), var(--primary-dark))';
                 }
             }
+            // Crucially, update the specific button on the Add Task page too
+            updateConnectWalletButtonState();
         });
     </script>
 </body>
