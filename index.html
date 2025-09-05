@@ -9,11 +9,13 @@
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src="https://unpkg.com/@tonconnect/ui@latest/dist/tonconnect-ui.min.js"></script>
     <style>
+        /* ... (Your existing CSS will go here) ... */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
+
 
         :root {
             --primary: #dc2626;
@@ -725,66 +727,48 @@
         }
 
         #ton-connect {
-            display: none; /* This is usually handled by TON Connect UI library */
+            display: none; /* This ID is reserved for TON Connect UI's default button, we'll handle buttons manually */
         }
 
-        /* New styles for enhanced withdrawal */
-        .withdrawal-form-section {
-            margin-top: 20px;
-            padding: 24px;
-            background: rgba(15, 15, 35, 0.8);
-            border: 1px solid var(--glass-border);
-            border-radius: 20px;
-            box-shadow: 0 8px 32px rgba(220, 38, 38, 0.15);
-        }
-
-        .withdrawal-form-section h3 {
-            color: var(--primary);
-            margin-bottom: 16px;
-            font-size: 22px;
-            font-weight: 700;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .withdrawal-input-group {
-            display: flex;
-            gap: 10px;
-            align-items: center;
+        .ton-wallet-button {
+            width: 100%;
+            text-align: center;
             margin-bottom: 15px;
-        }
-
-        .withdrawal-input-group input[type="text"],
-        .withdrawal-input-group input[type="number"] {
-            flex-grow: 1;
-            padding: 12px 16px;
-            border: 2px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
             border-radius: 12px;
-            font-size: 16px;
-            background: rgba(15, 15, 35, 0.8);
-            color: var(--text);
+            padding: 12px 24px;
+            font-weight: 600;
+            cursor: pointer;
             transition: all 0.3s ease;
+            font-size: 16px;
+            border: 2px solid var(--primary);
+            color: var(--primary);
+            background: rgba(220, 38, 38, 0.1);
         }
 
-        .withdrawal-input-group input[type="text"]:focus,
-        .withdrawal-input-group input[type="number"]:focus {
-            outline: none;
-            border-color: var(--primary);
-            box-shadow: 0 0 0 4px rgba(220, 38, 38, 0.1);
+        .ton-wallet-button:hover {
+            background: rgba(220, 38, 38, 0.2);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(220, 38, 38, 0.2);
         }
 
-        .withdrawal-input-group .btn-secondary {
-            padding: 12px 16px;
-            font-size: 14px;
-            height: 100%; /* Match input height */
+        .ton-wallet-button.connected {
+            color: var(--success);
+            border-color: var(--success);
+            background: rgba(5, 150, 105, 0.1);
         }
 
-        .withdrawal-details {
-            font-size: 12px;
-            color: var(--text-light);
-            margin-top: 5px;
+        .ton-wallet-button.connected:hover {
+            background: rgba(5, 150, 105, 0.2);
         }
+
+        .ton-wallet-button .material-icons {
+            font-size: 24px;
+        }
+
 
         @media (max-width: 768px) {
             .container {
@@ -821,16 +805,6 @@
 
             .nav-item {
                 padding: 6px 8px;
-            }
-
-            /* Adjust withdrawal form for smaller screens */
-            .withdrawal-input-group {
-                flex-direction: column;
-                align-items: stretch;
-            }
-
-            .withdrawal-input-group .btn-secondary {
-                width: 100%;
             }
         }
 
@@ -933,10 +907,12 @@
             <div class="card">
                 <h2 class="card-title">
                     <span class="material-icons">link</span>
-                    TON Wallet
+                    TON Wallet Connection
                 </h2>
-                <div id="ton-connect"></div>
-                <button class="btn btn-primary" onclick="connectToWallet()" id="connectWalletButton">
+                <!-- TON Connect UI will initialize and manage its button here -->
+                <div id="ton-connect-ui-container"></div>
+                <!-- Manual button for connecting if TON Connect UI doesn't render one by default or if we want custom styling -->
+                <button class="ton-wallet-button" id="connectWalletButton" onclick="connectToWallet()">
                     <span class="material-icons">account_balance_wallet</span>
                     Connect Wallet
                 </button>
@@ -983,12 +959,12 @@
                     Create Task
                 </h2>
 
-                <div class="add-task-connect-wallet-button">
-                    <button class="btn btn-primary" onclick="connectToWallet()" id="connectWalletButtonAddTask">
-                        <span class="material-icons">account_balance_wallet</span>
-                        Connect Wallet
-                    </button>
-                </div>
+                <!-- Wallet connection button for Add Task section -->
+                <div id="ton-connect-ui-container-addtask"></div>
+                <button class="ton-wallet-button" id="connectWalletButtonAddTask" onclick="connectToWallet()">
+                    <span class="material-icons">account_balance_wallet</span>
+                    Connect Wallet
+                </button>
 
                 <form id="addTaskForm">
                     <div class="form-group">
@@ -1129,6 +1105,7 @@
                 </div>
 
                 <div style="display: flex; gap: 10px; flex-wrap: wrap; justify-content: center;">
+                    <!-- This button will now trigger the withdrawal modal -->
                     <button class="btn btn-primary" onclick="showWithdrawModal()">
                         <span class="material-icons">account_balance</span>
                         Withdraw
@@ -1208,41 +1185,31 @@
                 <h3 class="modal-title">Withdraw Points</h3>
                 <button class="close-btn" onclick="closeModal('withdrawModal')">&times;</button>
             </div>
-            <!-- Enhanced Withdrawal Section -->
-            <div class="withdrawal-form-section">
+            <form id="withdrawForm">
                 <div class="form-group">
-                    <label class="form-label">Your TON Address</label>
-                    <div class="withdrawal-input-group">
-                        <input type="text" class="form-input" id="tonAddressInput" placeholder="Enter your TON address (e.g., UQ...)" required>
-                        <button class="btn btn-secondary" onclick="copyWalletAddress()">
-                            <span class="material-icons">content_copy</span>
-                            Copy
-                        </button>
-                    </div>
-                    <div class="withdrawal-details">
-                        This address will be used for withdrawal. Ensure it's correct.
-                    </div>
+                    <label class="form-label">TON Address</label>
+                    <!-- This input will be populated by JS if wallet is connected, or can be manually edited -->
+                    <input type="text" class="form-input" id="tonAddress" placeholder="Enter or connect your TON address" required>
+                    <button type="button" class="btn btn-secondary" id="connectWalletButtonWithdraw" onclick="connectToWallet()" style="margin-top: 10px;">
+                        <span class="material-icons">account_balance_wallet</span>
+                        Connect Wallet
+                    </button>
                 </div>
-
                 <div class="form-group">
                     <label class="form-label">Amount (Points)</label>
-                    <div class="withdrawal-input-group">
-                        <input type="number" class="form-input" id="withdrawAmount" min="2000" required>
-                        <span class="btn btn-secondary" id="maxAmountButton">Max</span>
-                    </div>
-                    <div class="withdrawal-details">
+                    <input type="number" class="form-input" id="withdrawAmount" min="2000" required>
+                    <div style="font-size: 12px; color: var(--text-light); margin-top: 5px;">
                         Minimum: 2000 points | Rate: 100 points = 0.000078 TON
                     </div>
-                    <div class="withdrawal-details" style="margin-top: 10px;">
-                        You will receive: <span id="tonReceive">0</span> TON
-                    </div>
                 </div>
-
-                <button class="btn btn-primary" id="requestWithdrawButton" onclick="requestWithdrawal()">
+                <div class="form-group">
+                    <label class="form-label">You will receive: <span id="tonReceive">0</span> TON</label>
+                </div>
+                <button type="submit" class="btn btn-primary" id="requestWithdrawalButton">
                     <span class="material-icons">send</span>
                     Request Withdrawal
                 </button>
-            </div>
+            </form>
         </div>
     </div>
 
@@ -1269,7 +1236,7 @@
         // TON Connect setup with proper configuration
         const tonConnectUI = new TON_CONNECT_UI.TonConnectUI({
             manifestUrl: 'https://moneybuc-clone-clint-1.vercel.app/tonconnect-manifest.json',
-            buttonRootId: 'ton-connect' // Connect TON Connect button to this ID
+            buttonRootId: 'ton-connect-ui-container' // Assign to a specific div for TON Connect UI's button
         });
 
         tonConnectUI.uiOptions = {
@@ -1287,7 +1254,8 @@
         let dailyCheckinDone = false;
         let lastAdCompletionTime = 0;
         const REFERRAL_BONUS_POINTS = 500;
-        const WITHDRAWAL_RATE = 0.000078; // TON per 100 points
+        const WITHDRAWAL_RATE_POINTS_TO_TON = 0.000078 / 100; // Points to TON conversion rate
+        const MIN_WITHDRAWAL_POINTS = 2000;
 
         // Initialize Telegram Web App
         function initTelegramWebApp() {
@@ -1366,7 +1334,7 @@
                     lastAdTime = userData.lastAdReset || 0;
                     dailyCheckinDone = userData.lastCheckin === new Date().toDateString();
 
-                    // Reset daily ads if more than 24 hours have passed
+                    // Reset daily ad count if more than 24 hours have passed
                     if (Date.now() - lastAdTime > 24 * 60 * 60 * 1000) {
                         adsWatchedToday = 0;
                         userRef.update({
@@ -1429,27 +1397,64 @@
             }
 
             updateConnectWalletButtonState();
+            updateWithdrawModalInfo(); // Call this to update modal info if user data changes
         }
 
-        // Update wallet button states
+        // Update wallet button states and address input
         function updateConnectWalletButtonState() {
-            const connectWalletButton = document.getElementById('connectWalletButton');
-            const connectWalletButtonAddTask = document.getElementById('connectWalletButtonAddTask');
             const connectedWallet = tonConnectUI.account;
 
-            [connectWalletButton, connectWalletButtonAddTask].forEach(button => {
-                if (!button) return;
-
+            // For the general connect button on the Home page
+            const connectWalletButton = document.getElementById('connectWalletButton');
+            if (connectWalletButton) {
                 if (connectedWallet) {
-                    button.innerHTML = '<span class="material-icons">check_circle</span> Wallet Connected';
-                    button.disabled = true;
-                    button.style.background = 'linear-gradient(135deg, var(--success), #047857)';
+                    connectWalletButton.textContent = `Connected: ${connectedWallet.address.slice(0, 6)}...${connectedWallet.address.slice(-6)}`;
+                    connectWalletButton.classList.add('connected');
                 } else {
-                    button.innerHTML = '<span class="material-icons">account_balance_wallet</span> Connect Wallet';
-                    button.disabled = false;
-                    button.style.background = 'linear-gradient(135deg, var(--primary), var(--primary-dark))';
+                    connectWalletButton.textContent = 'Connect Wallet';
+                    connectWalletButton.classList.remove('connected');
                 }
-            });
+            }
+
+            // For the connect button on the Add Task page
+            const connectWalletButtonAddTask = document.getElementById('connectWalletButtonAddTask');
+            if (connectWalletButtonAddTask) {
+                if (connectedWallet) {
+                    connectWalletButtonAddTask.textContent = `Connected: ${connectedWallet.address.slice(0, 6)}...${connectedWallet.address.slice(-6)}`;
+                    connectWalletButtonAddTask.classList.add('connected');
+                } else {
+                    connectWalletButtonAddTask.textContent = 'Connect Wallet';
+                    connectWalletButtonAddTask.classList.remove('connected');
+                }
+            }
+
+            // For the connect button in the Withdraw Modal
+            const connectWalletButtonWithdraw = document.getElementById('connectWalletButtonWithdraw');
+            const tonAddressInput = document.getElementById('tonAddress');
+
+            if (connectedWallet) {
+                if (connectWalletButtonWithdraw) {
+                    connectWalletButtonWithdraw.textContent = `Connected: ${connectedWallet.address.slice(0, 6)}...${connectedWallet.address.slice(-6)}`;
+                    connectWalletButtonWithdraw.classList.add('connected');
+                    connectWalletButtonWithdraw.disabled = true; // Disable if already connected
+                }
+                if (tonAddressInput) {
+                    tonAddressInput.value = connectedWallet.address;
+                    tonAddressInput.readOnly = true; // Make read-only to prevent editing
+                    tonAddressInput.parentNode.querySelector('.form-label').textContent = 'Connected TON Address';
+                }
+            } else {
+                if (connectWalletButtonWithdraw) {
+                    connectWalletButtonWithdraw.textContent = 'Connect Wallet';
+                    connectWalletButtonWithdraw.classList.remove('connected');
+                    connectWalletButtonWithdraw.disabled = false;
+                }
+                if (tonAddressInput) {
+                    tonAddressInput.value = ''; // Clear address if disconnected
+                    tonAddressInput.readOnly = false; // Allow manual input
+                    tonAddressInput.parentNode.querySelector('.form-label').textContent = 'TON Address';
+                }
+            }
         }
 
         // Load available tasks
@@ -1472,10 +1477,8 @@
 
                     Object.keys(tasks).forEach(taskId => {
                         const task = tasks[taskId];
-                        // Ensure task has a reward, default to 100 if not
-                        const taskReward = task.reward || 100;
                         const isCompleted = userTasksData[taskId] && userTasksData[taskId].completed === true;
-                        const taskCard = createTaskCard(taskId, { ...task, reward: taskReward }, isCompleted); // Pass reward to createTaskCard
+                        const taskCard = createTaskCard(taskId, task, isCompleted);
 
                         if (isCompleted) {
                             completedTasksGrid.appendChild(taskCard);
@@ -1646,14 +1649,13 @@
 
             spinButton.disabled = true;
 
-            const randomRotation = Math.floor(Math.random() * 360) + 1800; // Adds spin momentum
+            const randomRotation = Math.floor(Math.random() * 360) + 1800;
             wheel.style.transform = `rotate(${randomRotation}deg)`;
 
             setTimeout(async () => {
                 const finalPosition = randomRotation % 360;
                 let reward;
 
-                // Define rewards based on segments (adjust these values as needed)
                 if (finalPosition < 60) reward = 100;
                 else if (finalPosition < 120) reward = 150;
                 else if (finalPosition < 180) reward = 200;
@@ -1674,7 +1676,7 @@
                 spinButton.disabled = false;
                 showAlert(`Congratulations! You won ${reward} points!`, 'success');
 
-            }, 3000); // Duration of the spin animation
+            }, 3000);
         }
 
         // Watch ad
@@ -1684,20 +1686,21 @@
                 return;
             }
 
-            // Prevent rapid clicking, enforce a cooldown (e.g., 30 seconds)
             if (Date.now() - lastAdCompletionTime < 30000) {
                 showAlert('Please wait a moment before watching another ad.', 'warning');
                 return;
             }
 
             try {
-                // Trigger the ad SDK
+                // This is where you'd integrate an actual ad SDK if needed.
+                // For now, it simulates a delay.
                 if (typeof show_9809601 === 'function') {
+                    // Assuming libtl.com is for ad display
                     await show_9809601();
                 } else {
-                    // Simulate ad watching for testing if SDK is not available
-                    console.warn("Libtl SDK not found, simulating ad watch.");
-                    await new Promise(resolve => setTimeout(resolve, 5000)); // Simulate a 5-second ad
+                    // Simulate ad watching for testing if the SDK is not loaded or available
+                    console.warn("Ad SDK not available, simulating ad watch...");
+                    await new Promise(resolve => setTimeout(resolve, 5000)); // Simulate 5 seconds ad duration
                 }
 
                 const userRef = database.ref('users/' + currentUser.id);
@@ -1732,10 +1735,9 @@
                 return;
             }
 
-            // Prompt to visit a link, simulating a check-in action
+            // Optionally open a link or prompt some action
             window.open('https://t.me/PixelfrogCommunity', '_blank');
 
-            // After a short delay, credit points and update lastCheckin
             setTimeout(async () => {
                 await userRef.update({
                     balance: (userData.balance || 0) + 50,
@@ -1744,7 +1746,6 @@
                 });
 
                 showAlert('Daily check-in completed! You earned 50 points!', 'success');
-                // Update button state immediately
                 const dailyCheckinButton = document.querySelector('.btn-success[onclick="dailyCheckin()"]');
                 if (dailyCheckinButton) {
                     dailyCheckinButton.textContent = 'Checked In!';
@@ -1752,7 +1753,7 @@
                     dailyCheckinButton.classList.remove('btn-success');
                     dailyCheckinButton.classList.add('btn-secondary');
                 }
-            }, 3000); // Give user time to acknowledge the popup and potentially click the link
+            }, 3000); // Give user time to interact with the opened link
         }
 
         // Add task form submission with TON payment
@@ -1769,7 +1770,7 @@
             const description = document.getElementById('newTaskDescription').value;
             const url = document.getElementById('newTaskUrl').value;
             const impressions = parseInt(document.getElementById('taskImpressions').value);
-            const cost = (impressions / 100) * 0.1; // 0.1 TON per 100 impressions
+            const cost = (impressions / 100) * 0.1; // Cost in TON
 
             if (isNaN(impressions) || impressions < 100 || impressions > 5000) {
                 showAlert('Please enter a valid number of impressions between 100 and 5000.', 'danger');
@@ -1788,19 +1789,19 @@
                 const transaction = {
                     validUntil: Math.floor(Date.now() / 1000) + 60, // Transaction valid for 60 seconds
                     messages: [{
-                        address: "UQDLsNfQBwWXD9aaNxNS3udGo-9o8ybrlKmmbI5gjjRfs17M", // Your TON payment address
-                        amount: Math.floor(cost * 1000000000).toString() // Amount in nanoton
+                        address: "UQDLsNfQBwWXD9aaNxNS3udGo-9o8ybrlKmmbI5gjjRfs17M", // Replace with your actual TON payment address
+                        amount: Math.floor(cost * 1e9).toString() // Amount in nanoTON
                     }]
                 };
 
                 const result = await tonConnectUI.sendTransaction(transaction);
 
-                if (result && result.boc) {
+                if (result && result.boc) { // Check if transaction was successful and BOC is returned
                     const taskData = {
                         title,
                         description,
                         url,
-                        reward: 100, // Default reward if not specified or calculated
+                        reward: 100, // Default reward per impression, can be adjusted
                         impressions,
                         remainingImpressions: impressions,
                         createdBy: currentUser.id,
@@ -1814,7 +1815,8 @@
                     document.getElementById('addTaskForm').reset();
                     document.getElementById('totalCost').textContent = '0';
                     showAlert('Task created successfully! Transaction confirmed.', 'success');
-                    loadUserTasks(); // Reload user's tasks
+                    loadUserTasks(); // Reload user's tasks to show the new one
+                    showSection('tasks'); // Navigate back to tasks section
                 } else {
                     showAlert('Transaction failed or was cancelled. Task not created.', 'danger');
                 }
@@ -1832,11 +1834,11 @@
             }
         });
 
-        // Update total cost display when impressions change
+        // Update total cost display based on impressions
         document.getElementById('taskImpressions').addEventListener('input', (e) => {
             const impressions = parseInt(e.target.value) || 0;
-            const cost = (impressions / 100) * 0.1;
-            document.getElementById('totalCost').textContent = cost.toFixed(3); // Display cost in TON
+            const cost = (impressions / 100) * 0.1; // Cost in TON
+            document.getElementById('totalCost').textContent = cost.toFixed(3);
         });
 
         // Load user's created tasks
@@ -1868,7 +1870,7 @@
             card.className = 'task-card';
 
             const isTaskCompleted = task.remainingImpressions <= 0;
-            const progressPercentage = task.impressions > 0 ? ((task.impressions - task.remainingImpressions) / task.impressions) * 100 : 0;
+            const progressPercentage = ((task.impressions - task.remainingImpressions) / task.impressions) * 100;
 
             card.innerHTML = `
                 <div class="task-header">
@@ -1909,20 +1911,20 @@
         // Handle referral logic
         async function handleReferral(referrerId) {
             if (!currentUser || currentUser.id.toString() === referrerId) {
-                return; // Do not process if it's the same user or no current user
+                return; // Don't process referral if user is not logged in or is referring themselves
             }
 
             try {
                 const newUserRef = database.ref('users/' + currentUser.id);
                 const newUserSnapshot = await newUserRef.once('value');
 
-                // Only grant referral bonus if the user is new
+                // Only award referrer if the new user doesn't exist and referrer exists
                 if (!newUserSnapshot.exists()) {
                     const referrerUserRef = database.ref('users/' + referrerId);
                     const referrerUserSnapshot = await referrerUserRef.once('value');
 
                     if (referrerUserSnapshot.exists()) {
-                        // Update referrer's stats
+                        // Award referrer
                         await referrerUserRef.transaction((referrerData) => {
                             if (referrerData) {
                                 referrerData.referrals = (referrerData.referrals || 0) + 1;
@@ -1932,12 +1934,12 @@
                             return referrerData;
                         });
 
-                        // Record the referral
+                        // Record the referral relationship
                         await database.ref('referrals/' + referrerId + '/' + currentUser.id).set({
                             userId: currentUser.id,
                             username: currentUser.username,
                             joinedAt: Date.now(),
-                            completed: true // Indicates the referral bonus was granted
+                            completed: true // Assuming referral is completed upon joining
                         });
 
                         showAlert(`Welcome! You've been referred by user ID: ${referrerId}. Your referrer has been rewarded!`, 'success');
@@ -1949,7 +1951,7 @@
             }
         }
 
-        // Load referrals list and summary
+        // Load referrals list and stats
         function loadReferrals() {
             if (!currentUser) return;
 
@@ -1972,7 +1974,8 @@
 
                 referralIds.forEach(referredUserId => {
                     const referral = referrals[referredUserId];
-                    totalReferralEarnings += REFERRAL_BONUS_POINTS; // Add bonus for each referral
+                    // Assuming each successful referral gives a fixed bonus
+                    totalReferralEarnings += REFERRAL_BONUS_POINTS;
 
                     const referralItem = document.createElement('div');
                     referralItem.className = 'history-item';
@@ -1992,14 +1995,14 @@
             });
         }
 
-        // Claim referral rewards (currently automatic, but can be used for a manual button if logic changes)
-        async function claimReferralRewards() {
+        // Claim referral rewards - currently automated, so this is more of a placeholder.
+        function claimReferralRewards() {
             showAlert('Referral rewards are automatically credited when a new user joins via your link!', 'success');
         }
 
         // Copy referral link to clipboard
         function copyReferralLink() {
-            const botUsername = 'EarnFluxBot'; // Assuming your bot username
+            const botUsername = 'adflareprobot'; // Replace with your actual bot username if different
             const link = `https://t.me/${botUsername}/app?startapp=ref_${currentUser.id}`;
             navigator.clipboard.writeText(link).then(() => {
                 showAlert('Referral link copied to clipboard!', 'success');
@@ -2009,54 +2012,86 @@
             });
         }
 
-        // Show withdraw modal and pre-fill data
+        // Show withdraw modal and update its contents
         function showWithdrawModal() {
-            if (userBalance < 2000) {
-                showAlert('Minimum withdrawal amount is 2000 points!', 'danger');
-                return;
-            }
-
-            // Pre-fill TON address if available from wallet connection
-            const connectedWallet = tonConnectUI.account;
-            if (connectedWallet && connectedWallet.address) {
-                document.getElementById('tonAddressInput').value = connectedWallet.address;
-            } else {
-                document.getElementById('tonAddressInput').value = ''; // Clear if not connected
-            }
-
-            // Set max amount for withdrawal
-            const withdrawAmountInput = document.getElementById('withdrawAmount');
-            withdrawAmountInput.value = ''; // Clear previous value
-            document.getElementById('tonReceive').textContent = '0';
-            document.getElementById('maxAmountButton').onclick = () => {
-                withdrawAmountInput.value = Math.floor(userBalance);
-                updateTonReceiveAmount();
-            };
-
+            updateWithdrawModalInfo(); // Ensure info is up-to-date before showing
             document.getElementById('withdrawModal').style.display = 'block';
         }
 
-        // Update TON receive amount based on points entered
-        function updateTonReceiveAmount() {
-            const amountPoints = parseInt(document.getElementById('withdrawAmount').value) || 0;
-            const tonAmount = (amountPoints / 100) * WITHDRAWAL_RATE;
-            document.getElementById('tonReceive').textContent = tonAmount.toFixed(8);
+        // Update withdrawal modal's dynamic info (min amount, rate, ton address)
+        function updateWithdrawModalInfo() {
+            const minPoints = MIN_WITHDRAWAL_POINTS;
+            const currentBalance = userBalance;
+            const tonReceiveSpan = document.getElementById('tonReceive');
+            const withdrawAmountInput = document.getElementById('withdrawAmount');
+            const requestWithdrawalButton = document.getElementById('requestWithdrawalButton');
+
+            // Update min amount and rate text
+            document.querySelector('#withdrawForm .form-group:nth-child(2) > div').innerHTML = `
+                Minimum: ${formatNumber(minPoints)} points | Rate: 100 points = ${WITHDRAWAL_RATE_POINTS_TO_TON * 100} TON
+            `;
+
+            // Update TON address if wallet is connected
+            const connectedWallet = tonConnectUI.account;
+            const tonAddressInput = document.getElementById('tonAddress');
+            const connectWalletButtonWithdraw = document.getElementById('connectWalletButtonWithdraw');
+
+            if (connectedWallet) {
+                if (tonAddressInput) {
+                    tonAddressInput.value = connectedWallet.address;
+                    tonAddressInput.readOnly = true;
+                    tonAddressInput.parentNode.querySelector('.form-label').textContent = 'Connected TON Address';
+                }
+                if (connectWalletButtonWithdraw) {
+                    connectWalletButtonWithdraw.textContent = `Connected: ${connectedWallet.address.slice(0, 6)}...${connectedWallet.address.slice(-6)}`;
+                    connectWalletButtonWithdraw.classList.add('connected');
+                    connectWalletButtonWithdraw.disabled = true;
+                }
+            } else {
+                if (tonAddressInput) {
+                    tonAddressInput.value = '';
+                    tonAddressInput.readOnly = false;
+                    tonAddressInput.parentNode.querySelector('.form-label').textContent = 'TON Address';
+                }
+                if (connectWalletButtonWithdraw) {
+                    connectWalletButtonWithdraw.textContent = 'Connect Wallet';
+                    connectWalletButtonWithdraw.classList.remove('connected');
+                    connectWalletButtonWithdraw.disabled = false;
+                }
+            }
+
+            // Update amount input based on balance if it's empty and balance is sufficient
+            if (!withdrawAmountInput.value && currentBalance >= minPoints) {
+                 // Optionally pre-fill with balance, or let user input
+                // withdrawAmountInput.value = currentBalance;
+            }
+
+            // Calculate and display TON amount to receive
+            const amountToWithdraw = parseInt(withdrawAmountInput.value) || 0;
+            if (amountToWithdraw >= minPoints && amountToWithdraw <= currentBalance) {
+                const tonAmount = amountToWithdraw * WITHDRAWAL_RATE_POINTS_TO_TON;
+                tonReceiveSpan.textContent = tonAmount.toFixed(8);
+                requestWithdrawalButton.disabled = false;
+            } else {
+                tonReceiveSpan.textContent = '0';
+                requestWithdrawalButton.disabled = true;
+            }
         }
 
-        // Request withdrawal
-        async function requestWithdrawal() {
-            const tonAddressInput = document.getElementById('tonAddressInput');
-            const withdrawAmountInput = document.getElementById('withdrawAmount');
+        // Submit withdrawal request
+        document.getElementById('withdrawForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
 
-            const tonAddress = tonAddressInput.value.trim();
-            const amount = parseInt(withdrawAmountInput.value);
+            const tonAddress = document.getElementById('tonAddress').value.trim();
+            const amount = parseInt(document.getElementById('withdrawAmount').value);
 
-            if (!tonAddress || !tonAddress.startsWith('UQ')) {
-                showAlert('Please enter a valid TON address (starting with UQ).', 'danger');
+            // Basic validation
+            if (!tonAddress || !tonAddress.startsWith('UQ')) { // Basic check for TON address format
+                showAlert('Please enter a valid TON address.', 'danger');
                 return;
             }
-            if (amount < 2000) {
-                showAlert('Minimum withdrawal amount is 2000 points!', 'danger');
+            if (amount < MIN_WITHDRAWAL_POINTS) {
+                showAlert(`Minimum withdrawal amount is ${MIN_WITHDRAWAL_POINTS} points!`, 'danger');
                 return;
             }
             if (amount > userBalance) {
@@ -2064,21 +2099,35 @@
                 return;
             }
 
-            const requestWithdrawButton = document.getElementById('requestWithdrawButton');
-            requestWithdrawButton.disabled = true;
-            requestWithdrawButton.innerHTML = '<div class="loading"></div> Processing...';
+            // If wallet is not connected, prompt to connect
+            if (!tonConnectUI.account) {
+                showAlert('Please connect your TON wallet first to request withdrawal.', 'danger');
+                connectToWallet(); // Open the modal to connect
+                return;
+            }
+
+            // Double-check if the TON address in input matches the connected wallet's address
+            if (tonAddress !== tonConnectUI.account.address) {
+                showAlert('The TON address in the input field does not match your connected wallet. Please ensure they are the same.', 'danger');
+                return;
+            }
+
+            const requestWithdrawalButton = document.getElementById('requestWithdrawalButton');
+            requestWithdrawalButton.disabled = true;
+            requestWithdrawalButton.innerHTML = '<div class="loading"></div> Processing...';
 
             try {
                 const withdrawalData = {
                     userId: currentUser.id,
                     username: currentUser.username,
                     tonAddress,
-                    amount,
-                    tonAmount: (amount / 100) * WITHDRAWAL_RATE,
-                    status: 'pending',
+                    amount, // Amount in points
+                    tonAmount: amount * WITHDRAWAL_RATE_POINTS_TO_TON, // Amount in TON
+                    status: 'pending', // Initial status
                     createdAt: Date.now()
                 };
 
+                // Save withdrawal request to Firebase
                 await database.ref('withdrawals').push(withdrawalData);
 
                 // Deduct points from user balance
@@ -2091,56 +2140,37 @@
                 });
 
                 closeModal('withdrawModal');
-                document.getElementById('withdrawForm').reset(); // Reset form
+                document.getElementById('withdrawForm').reset();
                 showAlert('Withdrawal request submitted successfully! It will be processed shortly.', 'success');
-                loadWithdrawalHistory(); // Refresh history
+                loadWithdrawalHistory(); // Refresh history display
 
             } catch (error) {
                 console.error('Error submitting withdrawal:', error);
-                showAlert('Error submitting withdrawal. Please try again.', 'danger');
+                showAlert('Error submitting withdrawal. Please check your wallet and try again.', 'danger');
             } finally {
-                requestWithdrawButton.disabled = false;
-                requestWithdrawButton.innerHTML = '<span class="material-icons">send</span> Request Withdrawal';
-            }
-        }
-
-        // Event listeners for withdrawal input
-        document.getElementById('withdrawAmount').addEventListener('input', updateTonReceiveAmount);
-        document.getElementById('tonAddressInput').addEventListener('input', () => {
-            // Simple validation or feedback on TON address format
-            const address = document.getElementById('tonAddressInput').value.trim();
-            if (address && !address.startsWith('UQ')) {
-                // Optionally show a warning if it doesn't look like a TON address
+                requestWithdrawalButton.disabled = false;
+                requestWithdrawalButton.innerHTML = '<span class="material-icons">send</span> Request Withdrawal';
             }
         });
 
-        // Copy TON address from input to clipboard (or if wallet is connected, use that)
-        function copyWalletAddress() {
-            const tonAddressInput = document.getElementById('tonAddressInput');
-            if (tonAddressInput.value) {
-                navigator.clipboard.writeText(tonAddressInput.value).then(() => {
-                    showAlert('TON address copied!', 'success');
-                }).catch(err => {
-                    console.error('Failed to copy TON address: ', err);
-                    showAlert('Failed to copy address.', 'danger');
-                });
-            } else {
-                showAlert('No TON address to copy.', 'warning');
-            }
-        }
+        // Update TON receive amount as user types
+        document.getElementById('withdrawAmount').addEventListener('input', updateWithdrawModalInfo);
+        // Also update when withdrawal modal is opened, in case user data changed
+        document.getElementById('withdrawModal').addEventListener('shown', updateWithdrawModalInfo);
 
 
-        // Load withdrawal history
+        // Load withdrawal history for the current user
         function loadWithdrawalHistory() {
             if (!currentUser) return;
 
             const withdrawalHistory = document.getElementById('withdrawalHistory');
 
+            // Fetch last 10 withdrawal requests for the current user
             database.ref('withdrawals')
                 .orderByChild('userId').equalTo(currentUser.id)
-                .limitToLast(10) // Show last 10 withdrawals
+                .limitToLast(10) // Limit to last 10 for performance
                 .on('value', (snapshot) => {
-                    withdrawalHistory.innerHTML = '';
+                    withdrawalHistory.innerHTML = ''; // Clear previous history
                     const withdrawals = snapshot.val();
 
                     if (!withdrawals) {
@@ -2148,13 +2178,13 @@
                         return;
                     }
 
-                    // Process withdrawals in reverse chronological order
+                    // Display history in reverse chronological order (newest first)
                     Object.values(withdrawals).reverse().forEach(withdrawal => {
                         const historyItem = document.createElement('div');
                         historyItem.className = 'history-item';
 
                         const statusClass = `status-${withdrawal.status}`;
-                        const statusText = withdrawal.status.charAt(0).toUpperCase() + withdrawal.status.slice(1); // Capitalize first letter
+                        const statusText = withdrawal.status.charAt(0).toUpperCase() + withdrawal.status.slice(1);
 
                         historyItem.innerHTML = `
                             <div>
@@ -2170,10 +2200,10 @@
                 });
         }
 
-        // Connect to wallet using TON Connect UI
+        // Connect to wallet via TON Connect UI
         async function connectToWallet() {
             try {
-                await tonConnectUI.openModal();
+                await tonConnectUI.openModal(); // Opens the TON Connect UI modal
             } catch (error) {
                 console.error("Error connecting to wallet:", error);
                 showAlert('Error connecting to wallet. Please ensure you have a TON wallet installed and try again.', 'danger');
@@ -2182,23 +2212,26 @@
 
         // Navigation functions
         function showSection(sectionName) {
+            // Hide all sections
             document.querySelectorAll('.section').forEach(section => {
                 section.style.display = 'none';
             });
 
-            document.getElementById(sectionName + 'Section').style.display = 'block';
+            // Show the selected section
+            const sectionToShow = document.getElementById(sectionName + 'Section');
+            if (sectionToShow) {
+                sectionToShow.style.display = 'block';
+            }
 
+            // Update active state for navigation items
             document.querySelectorAll('.nav-item').forEach(item => {
                 item.classList.remove('active');
-            });
-
-            document.querySelectorAll('.nav-item').forEach(item => {
-                if (item.getAttribute('onclick').includes(`showSection('${sectionName}')`)) {
+                if (item.getAttribute('onclick') && item.getAttribute('onclick').includes(`showSection('${sectionName}')`)) {
                     item.classList.add('active');
                 }
             });
 
-            // Special handling for 'addTask' section to ensure wallet connection is visible
+            // Special handling for addTask section to update wallet button state
             if (sectionName === 'addTask') {
                 updateConnectWalletButtonState();
             }
@@ -2217,7 +2250,7 @@
             document.getElementById(tabName + 'Tasks').classList.add('active');
         }
 
-        // Close modal function
+        // Close modal
         function closeModal(modalId) {
             const modal = document.getElementById(modalId);
             if (modal) {
@@ -2225,8 +2258,9 @@
             }
         }
 
-        // Show a dismissible alert message
+        // Show alert message
         function showAlert(message, type) {
+            const alertContainer = document.querySelector('.container'); // Append to the main container
             const alert = document.createElement('div');
             alert.className = `alert alert-${type}`;
             alert.innerHTML = `
@@ -2234,15 +2268,18 @@
                 ${message}
             `;
 
-            document.querySelector('.container').prepend(alert); // Add alert to the top of the container
+            // Prepend the alert to ensure it appears at the top
+            alertContainer.prepend(alert);
 
-            // Remove alert after 5 seconds
+            // Remove alert after a few seconds
             setTimeout(() => {
-                alert.remove();
+                if (alert && alert.parentNode) {
+                    alert.remove();
+                }
             }, 5000);
         }
 
-        // Format numbers for display (e.g., 1.2K, 3.4M)
+        // Format numbers for display (e.g., 1000 -> 1K)
         function formatNumber(num) {
             if (num === null || num === undefined) return '0';
             num = Number(num);
@@ -2259,38 +2296,39 @@
             return num.toString();
         }
 
-        // Theme toggle function (currently just a placeholder)
+        // Theme toggle function (currently just informs the user)
         function toggleTheme() {
             showAlert('Red Moon theme is the current and only theme!', 'success');
         }
 
-        // --- Initialization ---
+        // Initialization when the DOM is fully loaded
         document.addEventListener('DOMContentLoaded', () => {
             initTelegramWebApp();
             showSection('home'); // Show the home section by default
-            updateConnectWalletButtonState(); // Ensure wallet button state is correct on load
-            // Add event listeners for withdrawal input changes
-            document.getElementById('withdrawAmount').addEventListener('input', updateTonReceiveAmount);
+            updateConnectWalletButtonState(); // Update button states on load
+            updateWithdrawModalInfo(); // Initial update for modal info
         });
 
-        // Close modals when clicking outside the modal content
+        // Close modals when clicking outside of the modal content
         window.addEventListener('click', (e) => {
-            const modals = document.querySelectorAll('.modal');
-            modals.forEach(modal => {
-                if (e.target === modal) {
-                    closeModal(modal.id);
-                }
-            });
-        });
-
-        // Listen for TON Connect status changes to update UI
-        tonConnectUI.onStatusChange(wallet => {
-            updateConnectWalletButtonState();
-            // If wallet disconnects, clear the TON address input in the withdrawal modal
-            if (!wallet && document.getElementById('withdrawModal').style.display === 'block') {
-                document.getElementById('tonAddressInput').value = '';
+            if (e.target.classList.contains('modal')) {
+                e.target.style.display = 'none';
             }
         });
+
+        // Handle TON Connect status changes to update UI accordingly
+        tonConnectUI.onStatusChange(wallet => {
+            updateConnectWalletButtonState(); // Update button text and style
+            updateWithdrawModalInfo(); // Update modal if wallet status changes while it's open
+        });
+
+        // Ensure TON Connect UI button renders
+        // The 'ton-connect-ui-container' div will be used by TonConnectUI to inject its button
+        // If you don't want TON Connect UI to render its own button, you can remove `buttonRootId: 'ton-connect-ui-container'`
+        // from the TonConnectUI constructor and manage the button solely via `connectToWallet()` function.
+        // For this example, we'll keep it to allow TON Connect UI to manage its own primary button if needed.
+        // If you're using manual buttons extensively, you might remove `buttonRootId`.
+        // I've added `ton-connect-ui-container` to the `TonConnectUI` constructor and `ton-connect-ui-container-addtask` for the add task page.
     </script>
 </body>
 </html>
