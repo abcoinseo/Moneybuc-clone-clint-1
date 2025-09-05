@@ -1177,7 +1177,7 @@
             }
         };
 
-        // Global variables
+        // --- GLOBAL VARIABLES FOR APP STATE ---
         let currentUser = null;
         let userBalance = 0;
         let userSpins = 0;
@@ -1187,51 +1187,224 @@
         let lastAdCompletionTime = 0; // To prevent rapid ad watching
         const REFERRAL_BONUS_POINTS = 500; // Configurable bonus for a new referral
 
-        // Initialize Telegram Web App
-        function initTelegramWebApp() {
-            if (window.Telegram && window.Telegram.WebApp) {
-                const tg = window.Telegram.WebApp;
-                tg.ready();
+        // --- SECURITY RELATED GLOBAL VARIABLES AND FUNCTIONS ---
+        let userDeviceID = null;
+        let userIPAddress = null;
+        let userLoggedInAccounts = {}; // Stores { accountId: timestamp } for accounts logged in from this device
 
-                const user = tg.initDataUnsafe?.user;
-                if (user) {
-                    currentUser = {
-                        id: user.id,
-                        username: user.username || 'User',
-                        first_name: user.first_name || 'User',
-                        photo_url: user.photo_url || 'https://via.placeholder.com/100'
-                    };
-
-                    // Check for referral parameters in start_param
-                    const startParam = tg.initDataUnsafe?.start_param;
-                    if (startParam) {
-                        if (startParam.startsWith('ref_')) {
-                            const referrerId = startParam.replace('ref_', '');
-                            handleReferral(referrerId);
-                        } else if (startParam.startsWith('r_')) { // Handle referral code endpoint
-                            const referrerId = startParam.replace('r_', '');
-                            handleReferral(referrerId);
-                        }
-                    }
-
-                    initializeUser();
-                } else {
-                    // Fallback for testing (assign random ID)
-                    const randomId = Math.floor(Math.random() * 1000000000); // Use a larger range for uniqueness
-                    currentUser = {
-                        id: randomId,
-                        username: `testuser_${randomId}`,
-                        first_name: 'Test User',
-                        photo_url: 'https://via.placeholder.com/100'
-                    };
-                    console.warn("Running without Telegram Web App user data. Using a random ID for testing:", currentUser.id);
-                    initializeUser();
-                }
+        // Generates a unique ID for the device/browser.
+        function generateDeviceID() {
+            if (localStorage.getItem('deviceID')) {
+                return localStorage.getItem('deviceID');
             } else {
-                console.error("Telegram Web App is not available.");
-                showAlert("Error: Telegram Web App not detected. Please open this in Telegram.", "danger");
+                const id = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+                    const r = Math.random() * 16 | 0;
+                    const v = c === 'x' ? r : (r & 0x3 | 0x8);
+                    return v.toString(16);
+                });
+                localStorage.setItem('deviceID', id);
+                return id;
             }
         }
+
+        // Attempts to get the user's IP address. This requires a server-side component
+        // or an external API. For a client-side-only solution, this is limited.
+        async function getIPAddress() {
+            // In a real application, you'd make an AJAX request to your backend or a service like ipify.org
+            // Example:
+            // try {
+            //     const response = await fetch('https://api.ipify.org?format=json');
+            //     const data = await response.json();
+            //     return data.ip;
+            // } catch (error) {
+            //     console.error("Failed to fetch IP address:", error);
+            //     return null;
+            // }
+            // For demonstration purposes, we'll use a placeholder.
+            return '192.168.1.100'; // Placeholder IP
+        }
+
+        // Logs the current user's login event to Firebase for IP and Device tracking.
+        async function logUserLogin(userId) {
+            if (!userDeviceID) userDeviceID = generateDeviceID();
+            if (!userIPAddress) userIPAddress = await getIPAddress();
+
+            const loginTimestamp = Date.now();
+
+            // Record the login event
+            await database.ref('loginLogs/' + userId).push({
+                timestamp: loginTimestamp,
+                deviceId: userDeviceID,
+                ipAddress: userIPAddress
+            });
+
+            // Track accounts associated with this device ID
+            userLoggedInAccounts[userId] = loginTimestamp;
+            localStorage.setItem('userLoggedInAccounts', JSON.stringify(userLoggedInAccounts));
+
+            // Check if this device/IP has too many accounts logged in
+            await checkDeviceAndIPLimits(userId);
+        }
+
+        // Checks if the current device or IP address is associated with too many accounts.
+        async function checkDeviceAndIPLimits(currentUserId) {
+            // Get all login logs from Firebase
+            const allLoginLogsSnapshot = await database.ref('loginLogs').once('value');
+            const allLoginLogs = allLoginLogsSnapshot.val() || {};
+
+            const accountsOnThisDevice = {};
+            const accountsOnThisIP = {};
+
+            for (const userId in allLoginLogs) {
+                const logs = allLoginLogs[userId];
+                for (const logId in logs) {
+                    const log = logs[logId];
+                    if (log.deviceId === userDeviceID) {
+                        accountsOnThisDevice[userId] = true;
+                    }
+                    if (log.ipAddress === userIPAddress) {
+                        accountsOnThisIP[userId] = true;
+                    }
+                }
+            }
+
+            // Define your limits (e.g., max 2 accounts per device, max 3 accounts per IP)
+            const MAX_ACCOUNTS_PER_DEVICE = 2;
+            const MAX_ACCOUNTS_PER_IP = 3;
+
+            const numberOfAccountsOnDevice = Object.keys(accountsOnThisDevice).length;
+            const numberOfAccountsOnIP = Object.keys(accountsOnThisIP).length;
+
+            // Check device limit
+            if (numberOfAccountsOnDevice > MAX_ACCOUNTS_PER_DEVICE) {
+                // If the current user is part of the excess, ban them.
+                if (accountsOnThisDevice[currentUserId]) {
+                    banUser(currentUserId, 'device_limit_exceeded', `This device is associated with ${numberOfAccountsOnDevice} accounts, exceeding the limit of ${MAX_ACCOUNTS_PER_DEVICE}.`);
+                    return; // Stop further checks if already flagged
+                }
+            }
+
+            // Check IP limit
+            if (numberOfAccountsOnIP > MAX_ACCOUNTS_PER_IP) {
+                // If the current user is part of the excess, ban them.
+                if (accountsOnThisIP[currentUserId]) {
+                    banUser(currentUserId, 'ip_limit_exceeded', `This IP address is associated with ${numberOfAccountsOnIP} accounts, exceeding the limit of ${MAX_ACCOUNTS_PER_IP}.`);
+                    return;
+                }
+            }
+        }
+
+        // Bans a user and shows a popup.
+        async function banUser(userId, reasonCode, reasonMessage) {
+            console.warn(`User ${userId} is being banned: ${reasonMessage}`);
+
+            // Update user status in Firebase to banned
+            await database.ref('users/' + userId).update({
+                isBanned: true,
+                banReasonCode: reasonCode,
+                banReasonMessage: reasonMessage,
+                bannedAt: Date.now()
+            });
+
+            // Show the ban popup
+            showBanPopup(reasonMessage);
+
+            // Disable all further interactions for this user
+            disableUserInteractions();
+        }
+
+        // Shows the ban popup to the user.
+        function showBanPopup(message) {
+            const banModal = document.createElement('div');
+            banModal.id = 'banModal';
+            banModal.className = 'modal'; // Use the existing modal styling
+            banModal.style.display = 'block';
+            banModal.innerHTML = `
+                <div class="modal-content" style="background: var(--dark-secondary); border-color: var(--danger);">
+                    <div class="modal-header">
+                        <h3 class="modal-title" style="color: var(--danger);">Account Banned</h3>
+                        <button class="close-btn" onclick="closeBanPopup()">&times;</button>
+                    </div>
+                    <div style="text-align: center;">
+                        <span class="material-icons" style="font-size: 60px; color: var(--danger); margin-bottom: 20px;">block</span>
+                        <p style="color: var(--text-light); margin-bottom: 20px;">${message}</p>
+                        <p style="color: var(--text-light);">If you believe this is a mistake, please contact our support.</p>
+                        <button class="btn btn-primary" onclick="contactSupport()" style="margin-top: 20px;">Contact Support</button>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(banModal);
+        }
+
+        // Closes the ban popup.
+        function closeBanPopup() {
+            const modal = document.getElementById('banModal');
+            if (modal) {
+                modal.remove();
+            }
+        }
+
+        // Placeholder for contacting support.
+        function contactSupport() {
+            const supportLink = 'https://t.me/EarnFluxSupport'; // Replace with your actual support Telegram link
+            window.open(supportLink, '_blank');
+            closeBanPopup(); // Close the popup after opening support
+        }
+
+        // Disables all interactive elements for a banned user.
+        function disableUserInteractions() {
+            // Disable buttons, inputs, links within the main content area
+            document.querySelectorAll('.container button, .container input, .container a').forEach(element => {
+                element.disabled = true;
+                element.style.cursor = 'not-allowed';
+            });
+            // You might want to add a semi-transparent overlay to further indicate restriction.
+        }
+
+        // --- Initialization ---
+        async function initializeSecurityChecks() {
+            // 1. Generate or retrieve Device ID
+            userDeviceID = generateDeviceID();
+            console.log("Device ID:", userDeviceID);
+
+            // 2. Attempt to get IP Address
+            userIPAddress = await getIPAddress();
+            console.log("IP Address:", userIPAddress);
+
+            // 3. Load previously logged-in accounts for this device from local storage
+            const storedAccounts = localStorage.getItem('userLoggedInAccounts');
+            if (storedAccounts) {
+                try {
+                    userLoggedInAccounts = JSON.parse(storedAccounts);
+                } catch (e) {
+                    console.error("Failed to parse userLoggedInAccounts from localStorage:", e);
+                    userLoggedInAccounts = {}; // Reset if corrupted
+                }
+            }
+
+            // 4. If there are accounts logged in from this device, re-check limits
+            if (Object.keys(userLoggedInAccounts).length > 0) {
+                // Check if any of these accounts are already banned for device/IP reasons
+                for (const userIdStr in userLoggedInAccounts) {
+                    // Ensure userIdStr is treated as a number if currentUser.id is a number
+                    const userId = parseInt(userIdStr, 10); // Assuming currentUser.id is a number
+
+                    const userRef = database.ref('users/' + userId);
+                    const snapshot = await userRef.once('value');
+                    const userData = snapshot.val();
+                    if (userData && userData.isBanned && (userData.banReasonCode === 'device_limit_exceeded' || userData.banReasonCode === 'ip_limit_exceeded')) {
+                        // If an already banned user is detected, show the ban popup immediately
+                        showBanPopup(userData.banReasonMessage);
+                        disableUserInteractions();
+                        return true; // Indicate that a ban occurred
+                    }
+                }
+                // If no banned users are found, re-verify current limits
+                await checkDeviceAndIPLimits(null); // Pass null as no specific user is logging in *now*
+            }
+            return false; // Indicate no ban occurred during initial checks
+        }
+
 
         // Initialize user data
         async function initializeUser() {
@@ -1256,15 +1429,48 @@
                     adsWatched: 0,
                     lastAdReset: Date.now(),
                     lastCheckin: null, // Initialize lastCheckin to null
-                    createdAt: Date.now()
+                    createdAt: Date.now(),
+                    isBanned: false, // Initialize as not banned
+                    banReasonCode: null,
+                    banReasonMessage: null,
+                    bannedAt: null
                 };
                 await userRef.set(userData);
+            } else {
+                // Check if the existing user is banned
+                const existingUserData = snapshot.val();
+                if (existingUserData.isBanned && (existingUserData.banReasonCode === 'device_limit_exceeded' || existingUserData.banReasonCode === 'ip_limit_exceeded')) {
+                    showBanPopup(existingUserData.banReasonMessage);
+                    disableUserInteractions();
+                    return; // Prevent further initialization
+                }
             }
+
 
             // Load user data and set up real-time listener
             userRef.on('value', (snapshot) => {
                 const userData = snapshot.val();
                 if (userData) {
+                    // If user is banned, re-apply ban UI and interactions
+                    if (userData.isBanned && (userData.banReasonCode === 'device_limit_exceeded' || userData.banReasonCode === 'ip_limit_exceeded')) {
+                        if (!document.getElementById('banModal')) { // Only show if not already visible
+                             showBanPopup(userData.banReasonMessage);
+                             disableUserInteractions();
+                        }
+                    } else {
+                        // If user is not banned (or unbanned), ensure ban UI is removed
+                        const banModal = document.getElementById('banModal');
+                        if (banModal) {
+                            banModal.remove();
+                            // Re-enable interactions if they were disabled due to a ban
+                            document.querySelectorAll('.container button, .container input, .container a').forEach(element => {
+                                element.disabled = false;
+                                element.style.cursor = '';
+                            });
+                        }
+                    }
+
+
                     userBalance = userData.balance || 0;
                     userSpins = userData.spins || 0;
                     adsWatchedToday = userData.adsWatched || 0;
@@ -1322,16 +1528,18 @@
 
             // Update daily check-in button state
             const dailyCheckinButton = document.querySelector('.btn-success[onclick="dailyCheckin()"]');
-            if (dailyCheckinDone) {
-                dailyCheckinButton.textContent = 'Checked In!';
-                dailyCheckinButton.disabled = true;
-                dailyCheckinButton.classList.remove('btn-success');
-                dailyCheckinButton.classList.add('btn-secondary');
-            } else {
-                dailyCheckinButton.textContent = 'Daily Check-in';
-                dailyCheckinButton.disabled = false;
-                dailyCheckinButton.classList.remove('btn-secondary');
-                dailyCheckinButton.classList.add('btn-success');
+            if (dailyCheckinButton) { // Ensure button exists before trying to modify
+                if (dailyCheckinDone) {
+                    dailyCheckinButton.textContent = 'Checked In!';
+                    dailyCheckinButton.disabled = true;
+                    dailyCheckinButton.classList.remove('btn-success');
+                    dailyCheckinButton.classList.add('btn-secondary');
+                } else {
+                    dailyCheckinButton.textContent = 'Daily Check-in';
+                    dailyCheckinButton.disabled = false;
+                    dailyCheckinButton.classList.remove('btn-secondary');
+                    dailyCheckinButton.classList.add('btn-success');
+                }
             }
         }
 
@@ -1781,7 +1989,10 @@
 
         // Handle referral logic
         async function handleReferral(referrerId) {
-            if (!currentUser || currentUser.id.toString() === referrerId) {
+            // Ensure referrerId is a number for comparison
+            const numericReferrerId = parseInt(referrerId, 10);
+
+            if (!currentUser || currentUser.id === numericReferrerId) {
                 // Ignore if it's the same user or no current user
                 return;
             }
@@ -1792,10 +2003,17 @@
 
                 if (!newUserSnapshot.exists()) {
                     // This is a new user being onboarded through a referral link.
-                    const referrerUserRef = database.ref('users/' + referrerId);
+                    const referrerUserRef = database.ref('users/' + numericReferrerId);
                     const referrerUserSnapshot = await referrerUserRef.once('value');
 
                     if (referrerUserSnapshot.exists()) {
+                        // Check if referrer is banned, if so, don't award bonus
+                        const referrerData = referrerUserSnapshot.val();
+                        if (referrerData.isBanned) {
+                            console.warn(`Referrer ${numericReferrerId} is banned. Cannot award referral bonus.`);
+                            return;
+                        }
+
                         // Update referrer's stats and give them the bonus
                         await referrerUserRef.transaction((referrerData) => {
                             if (referrerData) {
@@ -1807,46 +2025,54 @@
                         });
 
                         // Record the referral relationship, marking it as completed immediately.
-                        await database.ref('referrals/' + referrerId + '/' + currentUser.id).set({
+                        await database.ref('referrals/' + numericReferrerId + '/' + currentUser.id).set({
                             userId: currentUser.id,
                             username: currentUser.username, // Store username at the time of referral
                             joinedAt: Date.now(),
                             completed: true // Mark as completed for immediate display/tracking
                         });
 
-                        showAlert(`Welcome! You've been referred by user ID: ${referrerId}. Your referrer has been rewarded!`, 'success');
+                        showAlert(`Welcome! You've been referred by user ID: ${numericReferrerId}. Your referrer has been rewarded!`, 'success');
                     } else {
-                        console.warn(`Referrer with ID ${referrerId} not found.`);
+                        console.warn(`Referrer with ID ${numericReferrerId} not found.`);
                     }
                 } else {
                     // This user already exists. Check if they were referred by this specific referrer.
                     // This prevents giving bonuses repeatedly for the same referral.
-                    const referralEntryRef = database.ref('referrals/' + referrerId + '/' + currentUser.id);
+                    const referralEntryRef = database.ref('referrals/' + numericReferrerId + '/' + currentUser.id);
                     const referralEntrySnapshot = await referralEntryRef.once('value');
 
                     if (!referralEntrySnapshot.exists()) {
                         // User exists, but this referrer hasn't been recorded for them yet.
                         // Award the bonus and record the referral.
-                        const referrerUserRef = database.ref('users/' + referrerId);
-                        await referrerUserRef.transaction((referrerData) => {
-                            if (referrerData) {
-                                referrerData.referrals = (referrerData.referrals || 0) + 1;
-                                referrerData.balance = (referrerData.balance || 0) + REFERRAL_BONUS_POINTS;
-                                referrerData.totalEarned = (referrerData.totalEarned || 0) + REFERRAL_BONUS_POINTS;
-                            }
-                            return referrerData;
-                        });
+                        const referrerUserRef = database.ref('users/' + numericReferrerId);
+                        const referrerUserSnapshot = await referrerUserRef.once('value');
+                        const referrerData = referrerUserSnapshot.val();
 
-                        await referralEntryRef.set({
-                            userId: currentUser.id,
-                            username: currentUser.username,
-                            joinedAt: Date.now(),
-                            completed: true
-                        });
-                        showAlert(`Welcome back! You have been recognized as a referral by user ID: ${referrerId}. Your referrer has been rewarded!`, 'success');
+                        // Check if referrer is banned, if so, don't award bonus
+                        if (referrerData && !referrerData.isBanned) {
+                            await referrerUserRef.transaction((referrerData) => {
+                                if (referrerData) {
+                                    referrerData.referrals = (referrerData.referrals || 0) + 1;
+                                    referrerData.balance = (referrerData.balance || 0) + REFERRAL_BONUS_POINTS;
+                                    referrerData.totalEarned = (referrerData.totalEarned || 0) + REFERRAL_BONUS_POINTS;
+                                }
+                                return referrerData;
+                            });
+
+                            await referralEntryRef.set({
+                                userId: currentUser.id,
+                                username: currentUser.username,
+                                joinedAt: Date.now(),
+                                completed: true
+                            });
+                            showAlert(`Welcome back! You have been recognized as a referral by user ID: ${numericReferrerId}. Your referrer has been rewarded!`, 'success');
+                        } else {
+                             console.warn(`Referrer ${numericReferrerId} is banned or not found. Cannot award referral bonus.`);
+                        }
                     } else {
                         // Referral already recorded, do nothing for this referrer.
-                        console.log(`User ${currentUser.id} already referred by ${referrerId}.`);
+                        console.log(`User ${currentUser.id} already referred by ${numericReferrerId}.`);
                     }
                 }
             } catch (error) {
@@ -2090,6 +2316,11 @@
 
         // Display a temporary alert message to the user
         function showAlert(message, type) {
+            // Prevent showing alerts if the user is banned
+            if (document.getElementById('banModal')) {
+                return;
+            }
+
             const alert = document.createElement('div');
             alert.className = `alert alert-${type}`;
             alert.innerHTML = `
@@ -2129,16 +2360,27 @@
         }
 
         // --- Initialization ---
-        document.addEventListener('DOMContentLoaded', () => {
-            initTelegramWebApp();
-            // Set initial section to home on load
-            showSection('home');
+        document.addEventListener('DOMContentLoaded', async () => {
+            // Initialize security checks first
+            const isBannedOnLoad = await initializeSecurityChecks();
+
+            // If not banned during initial security checks, proceed with Telegram Web App initialization
+            if (!isBannedOnLoad) {
+                initTelegramWebApp();
+                // Set initial section to home on load if not banned
+                showSection('home');
+            }
         });
 
         // Close modals when clicking outside of the modal content
         window.addEventListener('click', (e) => {
-            if (e.target.classList.contains('modal')) {
-                e.target.style.display = 'none';
+            // Check if the click is on the ban modal overlay
+            if (e.target.id === 'banModal' && e.target.classList.contains('modal')) {
+                closeBanPopup(); // Use the specific close function for ban modal
+            }
+            // Check if the click is on other modal overlays
+            else if (e.target.classList.contains('modal') && !e.target.id === 'banModal') {
+                 e.target.style.display = 'none';
             }
         });
 
