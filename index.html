@@ -2750,7 +2750,7 @@ body::before {
             const amountTon = parseFloat(document.getElementById('withdrawAmount').value);
 
             // Basic TON address validation (starts with UQ or EQ)
-            if (!tonAddress || (!tonAddress.startsWith('UQ') && !tonAddress.startsWith('EQ'))) {
+            if (!tonAddress || (!tonAddress.startsWith('UQ') && !tonAddress.startsWith('0:'))) {
                 showAlert('Please enter a valid TON address.', 'danger');
                 return;
             }
