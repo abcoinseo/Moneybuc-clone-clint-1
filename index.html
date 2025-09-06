@@ -1,8 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-     <script src="security.js"></script>
-     
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>EarnFlux - Professional Earning Platform</title>
@@ -10,10 +8,9 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src="https://unpkg.com/@tonconnect/ui@latest/dist/tonconnect-ui.min.js"></script>
-    <script src='//libtl.com/sdk.js' data-zone='9828399' data-sdk='show_9828399'></script>
+    <script src='//libtl.com/sdk.js' data-zone='9809601' data-sdk='show_9809601'></script>
     <style>
         /* Global Resets and Base Styles */
-/* --- Global Resets and Base Styles --- */
 * {
     margin: 0;
     padding: 0;
@@ -21,46 +18,43 @@
 }
 
 :root {
-    /* --- Professional Dark & White Theme Colors --- */
+    /* --- Blue and White Theme Colors --- */
+    --primary: #2563eb; /* A vibrant primary blue */
+    --primary-dark: #1d4ed8; /* Darker shade for depth */
+    --primary-light: #60a5fa; /* Lighter shade for highlights */
+    --secondary: #93c5fd; /* A softer, complementary blue */
+    --accent: #0ea5e9; /* A bright accent blue for calls to action */
+    --success: #10b981; /* Keep success green, it's standard */
+    --danger: #dc2626; /* Keep danger red, it's standard */
+    --warning: #f59e0b; /* Keep warning yellow, it's standard */
+    --info: #0284c7; /* A slightly deeper info blue */
 
-    /* Primary Blues */
-    --primary: #3b82f6;         /* Vivid Blue (good for CTAs, highlights) */
-    --primary-dark: #2563eb;    /* Deep Blue (secondary accents) */
-    --primary-light: #60a5fa;   /* Lighter Blue (subtle highlights) */
-    --accent-blue: #0ea5e9;     /* Bright Aqua (for emphasis) */
-
-    /* Neutrals */
-    --background-dark: #0a0a0a; /* True Black for main backgrounds */
-    --surface-dark: #18181b;    /* Very Dark Gray (for cards, panels) */
-    --surface-dark-alt: #27272a; /* Slightly Lighter Dark Gray (for borders, secondary elements) */
-    --border-color: #3f3f46;    /* Muted Dark Gray (for subtle borders) */
-
-    --text-primary: #ffffff;    /* Pure White (main text) */
-    --text-secondary: #d4d4d8;  /* Light Gray (secondary text, labels) */
-    --text-muted: #71717a;      /* Muted Gray (less emphasis) */
-
-    /* Status Colors (Standard) */
-    --success: #10b981;
-    --danger: #dc2626;
-    --warning: #f59e0b;
-    --info: #0284c7;
+    /* --- Neutral Tones --- */
+    --dark: #0f172a; /* Darkest background, a deep navy */
+    --dark-secondary: #1e293b; /* Slightly lighter dark for secondary backgrounds */
+    --dark-tertiary: #334155; /* Medium dark for borders and subtle elements */
+    --light: #f8fafc; /* Pure white */
+    --light-secondary: #e2e8f0; /* A very light gray */
+    --border: #475569; /* A muted blue-gray for borders */
+    --text: #e2e8f0; /* Light text on dark backgrounds */
+    --text-light: #94a6be; /* Lighter text for secondary info */
+    --text-muted: #64748b; /* Muted text for less emphasis */
 
     /* --- Glass/Blur Effects --- */
-    --glass-backdrop-filter: blur(25px);
-    --glass-overlay-dark: rgba(24, 24, 27, 0.7); /* Semi-transparent dark for glass effect */
-    --glass-border: rgba(63, 63, 70, 0.5);       /* Subtle border for glass elements */
+    --glass: rgba(30, 58, 138, 0.2); /* Semi-transparent primary blue for glass */
+    --glass-border: rgba(71, 85, 105, 0.3); /* Border for glass elements */
 }
 
 body {
-    font-family: 'Inter', 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
-    background-color: var(--background-dark); /* Solid black background */
-    color: var(--text-primary);
+    font-family: 'Inter', sans-serif;
+    /* New gradient for a calm blue feel */
+    background: linear-gradient(135deg, var(--dark) 0%, var(--dark-secondary) 50%, #1e3a8a 100%); /* Deeper blues */
+    min-height: 100vh;
+    color: var(--text);
     overflow-x: hidden;
     position: relative;
-    line-height: 1.6;
 }
 
-/* Subtle animated background gradient */
 body::before {
     content: '';
     position: fixed;
@@ -69,47 +63,34 @@ body::before {
     right: 0;
     bottom: 0;
     background:
-        radial-gradient(circle at 20% 80%, rgba(59, 130, 246, 0.2) 0%, transparent 50%),
-        radial-gradient(circle at 80% 20%, rgba(96, 165, 250, 0.15) 0%, transparent 50%),
-        radial-gradient(circle at 40% 40%, rgba(37, 99, 235, 0.1) 0%, transparent 50%);
+        /* Softer radial gradients in blue tones */
+        radial-gradient(circle at 20% 80%, rgba(37, 99, 235, 0.3) 0%, transparent 50%), /* Primary blue */
+        radial-gradient(circle at 80% 20%, rgba(96, 165, 250, 0.2) 0%, transparent 50%), /* Primary light blue */
+        radial-gradient(circle at 40% 40%, rgba(29, 78, 217, 0.1) 0%, transparent 50%); /* Primary dark blue */
     pointer-events: none;
     z-index: -1;
-    animation: subtleGradients 15s ease infinite alternate;
 }
-
-@keyframes subtleGradients {
-    0% { opacity: 0.8; }
-    50% { opacity: 1; }
-    100% { opacity: 0.8; }
-}
-
 
 .container {
-    max-width: 1200px; /* Slightly wider container */
+    max-width: 1100px; /* Slightly increased max-width for better desktop layout */
     margin: 0 auto;
-    padding: 20px 20px 100px;
+    padding: 20px 15px 100px;
     position: relative;
 }
 
-/* --- Header Styles --- */
 .header {
-    background: var(--glass-overlay-dark);
-    backdrop-filter: var(--glass-backdrop-filter);
+    background: rgba(15, 23, 42, 0.8); /* Slightly softer dark background */
+    backdrop-filter: blur(20px);
     border: 1px solid var(--glass-border);
-    border-radius: 24px; /* More rounded corners */
-    padding: 25px 30px;
-    margin-bottom: 30px;
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4); /* Subtle dark shadow */
+    border-radius: 20px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 8px 32px rgba(37, 99, 235, 0.2); /* Blue glow */
     display: flex;
     justify-content: space-between;
     align-items: center;
     position: relative;
     overflow: hidden;
-    transition: all 0.3s ease;
-}
-
-.header:hover {
-    box-shadow: 0 15px 50px rgba(0, 0, 0, 0.5);
 }
 
 .header::before {
@@ -119,8 +100,9 @@ body::before {
     left: -100%;
     width: 100%;
     height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.03), transparent);
-    animation: shimmer 4s infinite;
+    /* Shimmer effect with white/light blue */
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.05), transparent);
+    animation: shimmer 3s infinite;
 }
 
 @keyframes shimmer {
@@ -131,66 +113,61 @@ body::before {
 .user-info {
     display: flex;
     align-items: center;
-    gap: 16px;
+    gap: 12px;
     z-index: 1;
 }
 
 .user-avatar {
-    width: 56px;
-    height: 56px;
+    width: 50px;
+    height: 50px;
     border-radius: 50%;
-    border: 2px solid var(--primary);
+    border: 2px solid var(--primary); /* Primary blue border */
     object-fit: cover;
-    box-shadow: 0 0 25px rgba(59, 130, 246, 0.3); /* Primary blue glow */
+    box-shadow: 0 0 20px rgba(37, 99, 235, 0.3); /* Blue glow */
 }
 
 .user-details h3 {
-    color: var(--text-primary);
+    color: var(--light); /* White text */
     font-weight: 600;
-    font-size: 1.15rem;
-    margin-bottom: 5px;
+    margin-bottom: 4px;
 }
 
 .user-balance {
-    color: var(--primary);
+    color: var(--primary); /* Primary blue for balance */
     font-weight: 700;
-    font-size: 1.2rem;
+    font-size: 18px;
     display: flex;
     align-items: center;
-    gap: 6px;
+    gap: 5px;
 }
 
-/* --- Buttons and Theme Toggle --- */
 .theme-toggle {
     background: linear-gradient(135deg, var(--primary), var(--primary-dark));
     color: white;
     border: none;
     border-radius: 50px;
-    padding: 12px 20px;
+    padding: 10px 15px;
     cursor: pointer;
     display: flex;
     align-items: center;
-    gap: 10px;
-    font-weight: 600;
+    gap: 8px;
     transition: all 0.3s ease;
     z-index: 1;
-    box-shadow: 0 5px 15px rgba(59, 130, 246, 0.3);
 }
 
 .theme-toggle:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 8px 25px rgba(59, 130, 246, 0.4);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(37, 99, 235, 0.4); /* Blue glow */
 }
 
-/* --- Card Styles --- */
 .card {
-    background: var(--surface-dark);
-    backdrop-filter: var(--glass-backdrop-filter);
+    background: rgba(15, 23, 42, 0.8); /* Softer dark background */
+    backdrop-filter: blur(20px);
     border: 1px solid var(--glass-border);
     border-radius: 20px;
-    padding: 30px;
-    margin-bottom: 25px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3); /* Darker shadow */
+    padding: 24px;
+    margin-bottom: 20px;
+    box-shadow: 0 8px 32px rgba(37, 99, 235, 0.15); /* Blue glow */
     transition: all 0.3s ease;
     position: relative;
     overflow: hidden;
@@ -203,43 +180,42 @@ body::before {
     left: 0;
     right: 0;
     height: 2px;
+    /* Gradient with primary blues */
     background: linear-gradient(90deg, var(--primary), var(--primary-light), var(--primary));
-    opacity: 0.8;
+    opacity: 0.7;
 }
 
 .card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+    transform: translateY(-4px);
+    box-shadow: 0 16px 48px rgba(37, 99, 235, 0.25); /* Deeper blue glow */
 }
 
 .card-title {
-    font-size: 1.4rem;
+    font-size: 20px;
     font-weight: 700;
-    margin-bottom: 20px;
+    margin-bottom: 16px;
     display: flex;
     align-items: center;
-    gap: 12px;
-    color: var(--text-primary); /* White title */
+    gap: 10px;
+    color: var(--primary); /* Primary blue for titles */
 }
 
-/* --- Stat Cards --- */
 .stats-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); /* Slightly larger min-width */
-    gap: 20px;
-    margin-bottom: 30px;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 15px;
+    margin-bottom: 20px;
 }
 
 .stat-card {
-    background: var(--surface-dark-alt); /* Slightly lighter for contrast */
-    border: 1px solid var(--border-color);
+    background: rgba(15, 23, 42, 0.9); /* Softer dark background */
+    border: 1px solid var(--glass-border);
     border-radius: 16px;
-    padding: 25px;
+    padding: 20px;
     text-align: center;
     transition: all 0.3s ease;
     position: relative;
     overflow: hidden;
-    box-shadow: inset 0 0 10px rgba(0,0,0,0.2); /* Inner shadow for depth */
 }
 
 .stat-card::before {
@@ -249,7 +225,8 @@ body::before {
     left: 0;
     right: 0;
     bottom: 0;
-    background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), transparent);
+    /* Subtle blue gradient overlay */
+    background: linear-gradient(135deg, rgba(37, 99, 235, 0.1), transparent);
     opacity: 0;
     transition: opacity 0.3s ease;
 }
@@ -258,36 +235,28 @@ body::before {
     opacity: 1;
 }
 
-.stat-card:hover {
-    transform: translateY(-4px);
-    box-shadow: inset 0 0 10px rgba(0,0,0,0.2), 0 8px 25px rgba(0, 0, 0, 0.3);
-}
-
 .stat-number {
-    font-size: 2.2rem;
-    font-weight: 900; /* Heavier weight for numbers */
-    color: var(--primary);
-    margin-bottom: 10px;
-    letter-spacing: -1px;
+    font-size: 24px;
+    font-weight: 800;
+    color: var(--primary); /* Primary blue */
+    margin-bottom: 8px;
 }
 
 .stat-label {
-    color: var(--text-secondary);
+    color: var(--text-light); /* Lighter text */
     font-weight: 500;
-    font-size: 0.9rem;
+    font-size: 12px;
 }
 
-/* --- Balance Card --- */
 .balance-card {
-    background: var(--surface-dark-alt);
-    border: 1px solid var(--border-color);
+    background: rgba(15, 23, 42, 0.9); /* Softer dark background */
+    border: 1px solid var(--glass-border);
     border-radius: 16px;
-    padding: 25px;
+    padding: 20px;
     text-align: center;
     position: relative;
     overflow: hidden;
-    margin-bottom: 25px;
-    box-shadow: inset 0 0 10px rgba(0,0,0,0.2);
+    margin-bottom: 20px;
 }
 
 .balance-card::before {
@@ -297,46 +266,43 @@ body::before {
     left: 0;
     right: 0;
     bottom: 0;
-    background: linear-gradient(135deg, rgba(16, 185, 121, 0.1), transparent);
+    /* Subtle green gradient overlay for success */
+    background: linear-gradient(135deg, rgba(16, 185, 121, 0.1), transparent); /* Success green */
     opacity: 1;
 }
 
 .balance-amount {
-    font-size: 2.8rem;
-    font-weight: 900;
-    color: var(--success);
-    margin-bottom: 10px;
-    letter-spacing: -1.5px;
+    font-size: 28px;
+    font-weight: 800;
+    color: var(--success); /* Success green */
+    margin-bottom: 8px;
 }
 
 .balance-label {
-    color: var(--text-secondary);
+    color: var(--text-light); /* Lighter text */
     font-weight: 500;
-    font-size: 1rem;
+    font-size: 14px;
 }
 
-/* --- Buttons --- */
 .btn {
-    padding: 14px 28px;
+    padding: 12px 24px;
     border: none;
-    border-radius: 14px; /* More rounded */
+    border-radius: 12px;
     font-weight: 600;
     cursor: pointer;
     display: inline-flex;
     align-items: center;
-    gap: 10px;
+    gap: 8px;
     transition: all 0.3s ease;
     text-decoration: none;
-    font-size: 1rem;
+    font-size: 14px;
     position: relative;
     overflow: hidden;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
 }
 
 .btn:disabled {
-    opacity: 0.7;
+    opacity: 0.6;
     cursor: not-allowed;
-    box-shadow: none;
 }
 
 .btn::before {
@@ -346,8 +312,9 @@ body::before {
     left: -100%;
     width: 100%;
     height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
-    transition: left 0.6s;
+    /* White/light blue shimmer for buttons */
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.15), transparent);
+    transition: left 0.5s;
 }
 
 .btn:hover:not(:disabled)::before {
@@ -356,87 +323,52 @@ body::before {
 
 .btn-primary {
     background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-    color: var(--text-primary);
+    color: white;
 }
 
 .btn-primary:hover:not(:disabled) {
-    transform: translateY(-3px);
-    box-shadow: 0 10px 25px rgba(59, 130, 246, 0.4);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(37, 99, 235, 0.4); /* Blue glow */
 }
 
 .btn-success {
     background: linear-gradient(135deg, var(--success), #047857);
-    color: var(--text-primary);
-}
-
-.btn-success:hover:not(:disabled) {
-    transform: translateY(-3px);
-    box-shadow: 0 10px 25px rgba(16, 185, 121, 0.4);
+    color: white;
 }
 
 .btn-warning {
     background: linear-gradient(135deg, var(--warning), #b45309);
-    color: var(--text-primary);
-}
-
-.btn-warning:hover:not(:disabled) {
-    transform: translateY(-3px);
-    box-shadow: 0 10px 25px rgba(245, 158, 11, 0.4);
+    color: white;
 }
 
 .btn-info {
     background: linear-gradient(135deg, var(--info), #0369a1);
-    color: var(--text-primary);
-}
-
-.btn-info:hover:not(:disabled) {
-    transform: translateY(-3px);
-    box-shadow: 0 10px 25px rgba(2, 132, 199, 0.4);
+    color: white;
 }
 
 .btn-secondary {
-    background: var(--surface-dark);
-    color: var(--text-secondary);
-    border: 1px solid var(--border-color);
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-}
-
-.btn-secondary:hover:not(:disabled) {
-    transform: translateY(-3px);
-    background: var(--surface-dark-alt);
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+    background: rgba(15, 23, 42, 0.8); /* Dark background */
+    color: var(--light); /* White text */
+    border: 1px solid var(--glass-border);
 }
 
 .btn-danger {
     background: linear-gradient(135deg, var(--danger), #b91c1c);
-    color: var(--text-primary);
-}
-
-.btn-danger:hover:not(:disabled) {
-    transform: translateY(-3px);
-    box-shadow: 0 10px 25px rgba(220, 38, 38, 0.4);
+    color: white;
 }
 
 .btn-accent {
-    background: linear-gradient(135deg, var(--accent-blue), var(--primary-light));
-    color: var(--text-primary);
+    background: linear-gradient(135deg, var(--accent), var(--warning)); /* Accent blue to warning */
+    color: white;
 }
 
-.btn-accent:hover:not(:disabled) {
-    transform: translateY(-3px);
-    box-shadow: 0 10px 25px rgba(14, 165, 229, 0.4);
-}
-
-
-/* --- Swap Container --- */
 .swap-container {
-    background: var(--surface-dark);
+    background: rgba(15, 23, 42, 0.9); /* Softer dark background */
     border: 1px solid var(--glass-border);
     border-radius: 16px;
-    padding: 25px;
-    margin-bottom: 25px;
+    padding: 20px;
+    margin-bottom: 20px;
     position: relative;
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
 }
 
 .swap-row {
@@ -448,126 +380,104 @@ body::before {
 
 .swap-input-group {
     flex: 1;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
 }
 
 .swap-input {
     width: 100%;
-    padding: 14px 18px;
-    border: 2px solid var(--border-color);
+    padding: 12px 16px;
+    border: 2px solid var(--border); /* Muted blue-gray border */
     border-radius: 12px;
-    font-size: 1.1rem;
+    font-size: 18px;
     font-weight: 600;
     transition: all 0.3s ease;
-    background: var(--surface-dark-alt);
-    color: var(--text-primary);
+    background: rgba(15, 23, 42, 0.8); /* Dark background */
+    color: var(--text); /* Light text */
     text-align: center;
-    outline: none;
 }
 
 .swap-input:focus {
-    border-color: var(--primary);
-    box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.15);
-}
-
-.swap-input[disabled] {
-    background: rgba(39, 39, 42, 0.6); /* Slightly darker disabled */
-    cursor: not-allowed;
-    opacity: 0.7;
+    outline: none;
+    border-color: var(--primary); /* Primary blue on focus */
+    box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1); /* Blue glow */
 }
 
 .swap-label {
     display: block;
-    margin-bottom: 10px;
+    margin-bottom: 8px;
     font-weight: 600;
-    color: var(--text-secondary);
+    color: var(--text); /* Light text */
     text-align: center;
 }
 
 .swap-icon {
-    background: linear-gradient(135deg, var(--accent-blue), var(--primary-light));
+    background: linear-gradient(135deg, var(--accent), var(--primary-light)); /* Accent blue */
     color: white;
     border: none;
     border-radius: 50%;
-    width: 48px;
-    height: 48px;
+    width: 40px;
+    height: 40px;
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
     transition: all 0.3s ease;
-    flex-shrink: 0;
-    box-shadow: 0 5px 15px rgba(14, 165, 229, 0.3);
 }
 
 .swap-icon:hover {
     transform: rotate(180deg);
-    box-shadow: 0 8px 25px rgba(14, 165, 229, 0.4);
+    box-shadow: 0 4px 15px rgba(37, 99, 235, 0.3); /* Blue glow */
 }
 
-/* --- Form Styles --- */
 .form-group {
-    margin-bottom: 25px;
+    margin-bottom: 20px;
 }
 
 .form-label {
     display: block;
-    margin-bottom: 10px;
+    margin-bottom: 8px;
     font-weight: 600;
-    color: var(--text-secondary);
+    color: var(--text); /* Light text */
 }
 
 .form-input, .form-select {
     width: 100%;
-    padding: 14px 18px;
-    border: 2px solid var(--border-color);
+    padding: 12px 16px;
+    border: 2px solid var(--border); /* Muted blue-gray border */
     border-radius: 12px;
-    font-size: 1rem;
+    font-size: 16px;
     transition: all 0.3s ease;
-    background: var(--surface-dark-alt);
-    color: var(--text-primary);
-    outline: none;
+    background: rgba(15, 23, 42, 0.8); /* Dark background */
+    color: var(--text); /* Light text */
 }
 
 .form-input:focus, .form-select:focus {
-    border-color: var(--primary);
-    box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.15);
+    outline: none;
+    border-color: var(--primary); /* Primary blue on focus */
+    box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1); /* Blue glow */
 }
 
 .form-select {
     cursor: pointer;
-    appearance: none; /* Remove default arrow */
-    background-image: url('data:image/svg+xml;charset=UTF-8,%3Csvg xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22 width%3D%2210%22 height%3D%225%22 viewBox%3D%220 0 10 5%22%3E%3Cpath d%3D%22M0 0l5 5 5-5%22 fill%3D%22%2394a6be%22%2F%3E%3C%2Fsvg%3E'); /* Custom arrow */
-    background-repeat: no-repeat;
-    background-position: calc(100% - 18px) center;
-    background-size: 10px;
 }
 
 .form-select option {
-    background: var(--surface-dark);
-    color: var(--text-primary);
-    padding: 10px;
+    background: var(--dark); /* Dark background for options */
+    color: var(--text); /* Light text for options */
 }
 
-
-/* --- Task Styles --- */
 .task-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); /* Responsive task cards */
-    gap: 20px;
+    gap: 15px;
 }
 
 .task-card {
-    background: var(--surface-dark);
+    background: rgba(15, 23, 42, 0.9); /* Softer dark background */
     border: 1px solid var(--glass-border);
     border-radius: 16px;
-    padding: 25px;
+    padding: 20px;
     transition: all 0.3s ease;
     position: relative;
     overflow: hidden;
-    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
 }
 
 .task-card::before {
@@ -577,136 +487,134 @@ body::before {
     left: 0;
     width: 4px;
     height: 100%;
-    background: linear-gradient(180deg, var(--primary), var(--primary-light));
-    border-radius: 0 4px 4px 0; /* Rounded right side */
+    background: linear-gradient(180deg, var(--primary), var(--primary-light)); /* Primary blue gradient */
 }
 
 .task-card.telegram-task::before {
-    background: linear-gradient(180deg, var(--info), #0369a1);
+    background: linear-gradient(180deg, var(--info), #0369a1); /* Info blue for Telegram tasks */
 }
 
 .task-card:hover {
-    transform: translateX(7px);
-    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.35);
+    transform: translateX(5px);
+    box-shadow: 0 8px 25px rgba(37, 99, 235, 0.2); /* Blue glow */
 }
 
 .task-header {
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
-    margin-bottom: 15px;
+    margin-bottom: 12px;
 }
 
 .task-title {
     font-weight: 700;
-    color: var(--text-primary);
+    color: var(--text); /* Light text */
     margin-bottom: 8px;
     display: flex;
     align-items: center;
     gap: 8px;
-    font-size: 1.1rem;
 }
 
 .task-type-badge {
-    padding: 5px 10px;
+    padding: 4px 8px;
     border-radius: 12px;
-    font-size: 0.8rem;
-    font-weight: 700;
+    font-size: 10px;
+    font-weight: 600;
     text-transform: uppercase;
-    letter-spacing: 0.5px;
 }
 
 .task-type-normal {
-    background: rgba(59, 130, 246, 0.2);
+    background: rgba(37, 99, 235, 0.2); /* Primary blue background */
     color: var(--primary);
 }
 
 .task-type-telegram {
-    background: rgba(2, 132, 199, 0.2);
+    background: rgba(2, 132, 199, 0.2); /* Info blue background */
     color: var(--info);
 }
 
 .task-reward {
-    background: linear-gradient(135deg, var(--primary), var(--primary-light));
+    background: linear-gradient(135deg, var(--primary), var(--primary-light)); /* Primary blue gradient */
     color: white;
-    padding: 8px 15px;
-    border-radius: 25px; /* More rounded */
-    font-size: 0.85rem;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 12px;
     font-weight: 700;
-    box-shadow: 0 3px 10px rgba(59, 130, 246, 0.3);
 }
 
 .task-description {
-    color: var(--text-secondary);
-    margin-bottom: 15px;
-    line-height: 1.7;
-    font-size: 0.95rem;
+    color: var(--text-light); /* Lighter text */
+    margin-bottom: 12px;
+    line-height: 1.5;
 }
 
 .task-channel {
-    color: var(--info);
+    color: var(--info); /* Info blue */
     font-weight: 600;
-    margin-bottom: 10px;
+    margin-bottom: 8px;
     display: flex;
     align-items: center;
-    gap: 6px;
-    font-size: 0.9rem;
+    gap: 4px;
 }
 
 .task-actions {
     display: flex;
-    gap: 10px;
+    gap: 8px;
     justify-content: flex-end;
 }
 
-/* --- Tabs --- */
 .tabs {
     display: flex;
-    background: var(--surface-dark);
+    background: rgba(15, 23, 42, 0.8); /* Softer dark background */
     border-radius: 12px;
-    padding: 5px;
-    margin-bottom: 25px;
-    border: 1px solid var(--border-color);
-    box-shadow: inset 0 0 10px rgba(0,0,0,0.2);
+    padding: 4px;
+    margin-bottom: 20px;
+    border: 1px solid var(--glass-border);
 }
 
 .tab {
     flex: 1;
-    padding: 14px;
+    padding: 12px;
     text-align: center;
     border-radius: 8px;
     cursor: pointer;
     transition: all 0.3s ease;
     font-weight: 600;
-    color: var(--text-muted);
+    color: var(--text-light); /* Lighter text */
 }
 
 .tab.active {
     background: linear-gradient(135deg, var(--primary), var(--primary-dark));
     color: white;
-    box-shadow: 0 5px 15px rgba(59, 130, 246, 0.3);
+    box-shadow: 0 4px 15px rgba(37, 99, 235, 0.3); /* Blue glow */
 }
 
-.tab-content, .section {
+.tab-content {
     display: none;
 }
 
-.tab-content.active, .section.active {
+.tab-content.active {
     display: block;
 }
 
-/* --- Bottom Navigation --- */
+.section {
+    display: none;
+}
+
+.section.active {
+    display: block;
+}
+
 .bottom-nav {
     position: fixed;
     bottom: 0;
     left: 0;
     right: 0;
-    background: var(--surface-dark);
+    background: rgba(15, 23, 42, 0.95); /* Softer dark background */
     backdrop-filter: blur(20px);
-    border-top: 1px solid var(--border-color);
-    padding: 15px 0;
+    border-top: 1px solid var(--glass-border);
+    padding: 12px 0;
     z-index: 1000;
-    box-shadow: 0 -5px 20px rgba(0, 0, 0, 0.3);
 }
 
 .nav-container {
@@ -721,57 +629,56 @@ body::before {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 5px;
+    gap: 4px;
     text-decoration: none;
-    color: var(--text-muted);
+    color: var(--text-muted); /* Muted text */
     transition: all 0.3s ease;
     padding: 8px 12px;
     border-radius: 12px;
     position: relative;
 }
 
-.nav-item.active, .nav-item:hover {
-    color: var(--primary);
-    background: rgba(59, 130, 246, 0.1);
+.nav-item.active,
+.nav-item:hover {
+    color: var(--primary); /* Primary blue on active/hover */
+    background: rgba(37, 99, 235, 0.1); /* Primary blue background */
 }
 
 .nav-item span {
-    font-size: 0.8rem;
+    font-size: 12px;
     font-weight: 600;
 }
 
-/* --- Spin Wheel --- */
 .spin-wheel {
-    width: 260px; /* Slightly larger */
-    height: 260px;
+    width: 250px;
+    height: 250px;
     border-radius: 50%;
-    border: 10px solid var(--primary); /* Thicker primary border */
-    margin: 30px auto;
+    border: 8px solid var(--primary); /* Primary blue border */
+    margin: 20px auto;
     position: relative;
     background: conic-gradient(
         from 0deg,
-        var(--primary) 0deg 60deg,
-        var(--primary-light) 60deg 120deg,
-        var(--warning) 120deg 180deg,
-        var(--success) 180deg 240deg,
-        var(--primary-dark) 240deg 300deg,
-        var(--accent-blue) 300deg 360deg
+        var(--primary) 0deg 60deg, /* Primary blue */
+        var(--primary-light) 60deg 120deg, /* Light blue */
+        var(--warning) 120deg 180deg, /* Keep warning */
+        var(--success) 180deg 240deg, /* Keep success */
+        var(--primary-dark) 240deg 300deg, /* Dark blue */
+        var(--accent) 300deg 360deg /* Accent blue */
     );
     transition: transform 3s cubic-bezier(0.23, 1, 0.32, 1);
-    box-shadow: 0 0 50px rgba(59, 130, 246, 0.3);
 }
 
 .spin-wheel::before {
     content: '';
     position: absolute;
-    top: -18px; /* Adjusted arrow position */
+    top: -15px;
     left: 50%;
     transform: translateX(-50%);
     width: 0;
     height: 0;
-    border-left: 16px solid transparent;
-    border-right: 16px solid transparent;
-    border-top: 32px solid var(--text-primary); /* White arrow */
+    border-left: 15px solid transparent;
+    border-right: 15px solid transparent;
+    border-top: 30px solid var(--text); /* White arrow */
     z-index: 10;
 }
 
@@ -780,21 +687,18 @@ body::before {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    width: 70px; /* Larger center */
-    height: 70px;
-    background: var(--primary);
+    width: 60px;
+    height: 60px;
+    background: var(--primary); /* Primary blue center */
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
     color: white;
     font-weight: 700;
-    font-size: 1.3rem;
     z-index: 5;
-    box-shadow: 0 0 25px rgba(59, 130, 246, 0.5);
 }
 
-/* --- Modal --- */
 .modal {
     display: none;
     position: fixed;
@@ -802,61 +706,54 @@ body::before {
     left: 0;
     right: 0;
     bottom: 0;
-    background: rgba(0, 0, 0, 0.85); /* Darker overlay */
+    background: rgba(0, 0, 0, 0.8);
     z-index: 2000;
-    backdrop-filter: blur(15px);
-    justify-content: center;
-    align-items: center;
-    padding: 20px; /* Add padding for smaller screens */
+    backdrop-filter: blur(10px);
 }
 
 .modal-content {
-    background: var(--surface-dark);
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(15, 23, 42, 0.95); /* Softer dark background */
     border: 1px solid var(--glass-border);
-    border-radius: 24px;
-    padding: 35px;
-    max-width: 450px; /* Wider modal */
-    width: 100%;
-    max-height: 85vh;
+    border-radius: 20px;
+    padding: 30px;
+    max-width: 400px;
+    width: 90%;
+    max-height: 80vh;
     overflow-y: auto;
-    box-shadow: 0 15px 50px rgba(0, 0, 0, 0.5);
 }
 
 .modal-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 25px;
+    margin-bottom: 20px;
 }
 
 .modal-title {
-    font-size: 1.8rem;
+    font-size: 24px;
     font-weight: 700;
-    color: var(--primary);
+    color: var(--primary); /* Primary blue title */
 }
 
 .close-btn {
     background: none;
     border: none;
-    font-size: 28px;
+    font-size: 24px;
     cursor: pointer;
-    color: var(--text-muted);
-    transition: all 0.3s ease;
+    color: var(--text-light); /* Lighter text */
 }
 
-.close-btn:hover {
-    color: var(--text-secondary);
-    transform: scale(1.1);
-}
-
-/* --- Loading Indicator --- */
 .loading {
     display: inline-block;
-    width: 24px;
-    height: 24px;
-    border: 4px solid rgba(255, 255, 255, .3);
+    width: 20px;
+    height: 20px;
+    border: 3px solid rgba(255, 255, 255, .3);
     border-radius: 50%;
-    border-top-color: var(--text-primary);
+    border-top-color: #fff;
     animation: spin 1s ease-in-out infinite;
 }
 
@@ -864,19 +761,17 @@ body::before {
     to { transform: rotate(360deg); }
 }
 
-/* --- Alerts --- */
 .alert {
-    padding: 18px 25px;
-    border-radius: 14px;
-    margin-bottom: 25px;
-    border-left: 5px solid; /* Thicker border */
+    padding: 16px 20px;
+    border-radius: 12px;
+    margin-bottom: 20px;
+    border-left: 4px solid;
     display: flex;
     align-items: center;
-    gap: 15px;
-    animation: slideIn 0.4s ease-out;
+    gap: 12px;
+    animation: slideIn 0.3s ease;
     position: relative;
     z-index: 1001;
-    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15);
 }
 
 @keyframes slideIn {
@@ -890,183 +785,191 @@ body::before {
     }
 }
 
-.alert-success { background: rgba(16, 185, 121, 0.1); border-left-color: var(--success); color: var(--success); }
-.alert-danger { background: rgba(220, 38, 38, 0.1); border-left-color: var(--danger); color: var(--danger); }
-.alert-warning { background: rgba(217, 119, 6, 0.1); border-left-color: var(--warning); color: var(--warning); }
-.alert-info { background: rgba(2, 132, 199, 0.1); border-left-color: var(--info); color: var(--info); }
+.alert-success {
+    background: rgba(16, 185, 121, 0.1); /* Success green background */
+    border-left-color: var(--success);
+    color: var(--success);
+}
 
-/* --- Progress Bar --- */
+.alert-danger {
+    background: rgba(220, 38, 38, 0.1); /* Danger red background */
+    border-left-color: var(--danger);
+    color: var(--danger);
+}
+
+.alert-warning {
+    background: rgba(217, 119, 6, 0.1); /* Warning yellow background */
+    border-left-color: var(--warning);
+    color: var(--warning);
+}
+
+.alert-info {
+    background: rgba(2, 132, 199, 0.1); /* Info blue background */
+    border-left-color: var(--info);
+    color: var(--info);
+}
+
 .progress-bar {
     width: 100%;
-    height: 10px;
-    background: var(--surface-dark-alt);
-    border-radius: 5px;
+    height: 8px;
+    background: rgba(15, 23, 42, 0.8); /* Dark background */
+    border-radius: 4px;
     overflow: hidden;
-    margin: 15px 0;
-    border: 1px solid var(--border-color);
+    margin: 10px 0;
 }
 
 .progress-fill {
     height: 100%;
-    background: linear-gradient(90deg, var(--primary), var(--accent-blue)); /* Blue to Aqua */
-    border-radius: 5px;
-    transition: width 0.4s ease-out;
+    background: linear-gradient(90deg, var(--primary), var(--primary-light)); /* Primary blue gradient */
+    border-radius: 4px;
+    transition: width 0.3s ease;
 }
 
-/* --- Countdown --- */
 .countdown {
-    font-size: 28px;
-    font-weight: 800;
-    color: var(--primary);
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--primary); /* Primary blue */
     text-align: center;
-    margin: 25px 0;
-    letter-spacing: -0.5px;
+    margin: 20px 0;
 }
 
-/* --- Refer Link --- */
 .refer-link {
-    background: var(--surface-dark-alt);
-    border: 1px solid var(--border-color);
+    background: rgba(15, 23, 42, 0.8); /* Dark background */
+    border: 1px solid var(--glass-border);
     border-radius: 12px;
-    padding: 15px;
-    color: var(--text-primary);
-    font-family: 'Courier New', Courier, monospace; /* Monospace for code */
+    padding: 12px;
+    color: var(--text); /* Light text */
+    font-family: monospace;
     word-break: break-all;
-    margin: 15px 0;
-    font-size: 0.9rem;
-    transition: all 0.3s ease;
+    margin: 10px 0;
 }
 
-.refer-link:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-}
-
-/* --- Withdrawal History --- */
 .withdrawal-history {
-    max-height: 320px;
+    max-height: 300px;
     overflow-y: auto;
-    padding-right: 5px; /* For scrollbar visibility */
 }
 
 .history-item {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 15px 10px;
-    border-bottom: 1px solid var(--border-color);
-    margin-bottom: 10px;
-    font-size: 0.95rem;
-}
-
-.history-item:last-child {
-    border-bottom: none;
-    margin-bottom: 0;
+    padding: 12px;
+    border-bottom: 1px solid var(--border); /* Muted blue-gray border */
+    margin-bottom: 8px;
 }
 
 .history-status {
-    padding: 6px 12px;
+    padding: 4px 8px;
     border-radius: 12px;
-    font-size: 0.8rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
+    font-size: 12px;
+    font-weight: 600;
 }
 
-.status-pending { background: rgba(217, 119, 6, 0.2); color: var(--warning); }
-.status-completed { background: rgba(16, 185, 121, 0.2); color: var(--success); }
-.status-rejected { background: rgba(220, 38, 38, 0.2); color: var(--danger); }
+.status-pending {
+    background: rgba(217, 119, 6, 0.2); /* Warning yellow background */
+    color: var(--warning);
+}
 
-/* --- Wallet Status --- */
+.status-completed {
+    background: rgba(16, 185, 121, 0.2); /* Success green background */
+    color: var(--success);
+}
+
+.status-rejected {
+    background: rgba(220, 38, 38, 0.2); /* Danger red background */
+    color: var(--danger);
+}
+
 .wallet-status-info {
-    margin-top: 20px;
-    padding: 12px;
+    margin-top: 15px;
+    padding: 10px;
     border-radius: 8px;
     text-align: center;
-    font-weight: 600;
+    font-weight: 500;
     width: 100%;
-    font-size: 0.95rem;
 }
 
-.wallet-connected { background: rgba(16, 185, 121, 0.1); color: var(--success); }
-.wallet-disconnected { background: rgba(220, 38, 38, 0.1); color: var(--danger); }
+.wallet-connected {
+    background: rgba(16, 185, 121, 0.1); /* Success green */
+    color: var(--success);
+}
+
+.wallet-disconnected {
+    background: rgba(220, 38, 38, 0.1); /* Danger red */
+    color: var(--danger);
+}
 
 .profile-wallet-controls {
     display: flex;
     justify-content: center;
     gap: 15px;
     flex-wrap: wrap;
-    margin-top: 25px;
+    margin-top: 20px;
 }
 
-/* --- Ad Loading --- */
 .ad-loading {
     text-align: center;
-    padding: 25px;
-    background: var(--surface-dark);
+    padding: 20px;
+    background: rgba(15, 23, 42, 0.9); /* Dark background */
     border: 1px solid var(--glass-border);
-    border-radius: 16px;
-    margin: 20px 0;
-    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+    border-radius: 12px;
+    margin: 15px 0;
 }
 
 .ad-loading .loading {
     margin: 0 auto 15px;
 }
 
-/* --- Task Category Selector --- */
 .task-category-selector {
     display: flex;
-    gap: 15px;
-    margin-bottom: 25px;
+    gap: 10px;
+    margin-bottom: 20px;
 }
 
 .category-option {
     flex: 1;
-    padding: 20px;
-    border: 2px solid var(--border-color);
+    padding: 15px;
+    border: 2px solid var(--border); /* Muted blue-gray border */
     border-radius: 12px;
-    background: var(--surface-dark-alt);
+    background: rgba(15, 23, 42, 0.8); /* Dark background */
     cursor: pointer;
     transition: all 0.3s ease;
     text-align: center;
-    box-shadow: inset 0 0 10px rgba(0,0,0,0.1);
 }
 
 .category-option.selected {
-    border-color: var(--primary);
-    background: rgba(59, 130, 246, 0.1);
+    border-color: var(--primary); /* Primary blue border */
+    background: rgba(37, 99, 235, 0.1); /* Primary blue background */
 }
 
 .category-option.telegram.selected {
-    border-color: var(--info);
-    background: rgba(2, 132, 199, 0.1);
+    border-color: var(--info); /* Info blue border */
+    background: rgba(2, 132, 199, 0.1); /* Info blue background */
 }
 
 .category-icon {
-    font-size: 28px;
-    margin-bottom: 10px;
-    color: var(--text-secondary);
+    font-size: 24px;
+    margin-bottom: 8px;
+    color: var(--text-light); /* Lighter text */
 }
 
 .category-option.selected .category-icon {
-    color: var(--primary);
+    color: var(--primary); /* Primary blue icon */
 }
 
 .category-option.telegram.selected .category-icon {
-    color: var(--info);
+    color: var(--info); /* Info blue icon */
 }
 
 .category-title {
     font-weight: 600;
-    color: var(--text-primary);
-    margin-bottom: 5px;
-    font-size: 1.05rem;
+    color: var(--text); /* Light text */
+    margin-bottom: 4px;
 }
 
 .category-description {
-    font-size: 0.8rem;
-    color: var(--text-muted);
+    font-size: 12px;
+    color: var(--text-muted); /* Muted text */
 }
 
 .telegram-fields {
@@ -1075,28 +978,6 @@ body::before {
 
 .telegram-fields.active {
     display: block;
-}
-
-/* --- Media Queries --- */
-@media (max-width: 992px) {
-    .container {
-        padding: 15px 15px 100px;
-    }
-    .header {
-        padding: 20px 25px;
-    }
-    .stats-grid {
-        grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-    }
-    .spin-wheel {
-        width: 220px;
-        height: 220px;
-    }
-    .spin-center {
-        width: 60px;
-        height: 60px;
-        font-size: 1.1rem;
-    }
 }
 
 @media (max-width: 768px) {
@@ -1108,44 +989,15 @@ body::before {
         flex-direction: column;
         gap: 15px;
         text-align: center;
-        border-radius: 16px;
-        padding: 20px;
-    }
-
-    .user-info {
-        flex-direction: column;
-        gap: 8px;
-    }
-
-    .user-avatar {
-        width: 48px;
-        height: 48px;
-    }
-
-    .user-details h3 {
-        font-size: 1rem;
-    }
-
-    .user-balance {
-        font-size: 1.1rem;
     }
 
     .stats-grid {
-        grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
-        gap: 15px;
-    }
-
-    .stat-number {
-        font-size: 1.8rem;
-    }
-
-    .balance-amount {
-        font-size: 2.4rem;
+        grid-template-columns: repeat(2, 1fr);
     }
 
     .modal-content {
         width: 95%;
-        padding: 25px;
+        padding: 20px;
     }
 
     .spin-wheel {
@@ -1153,22 +1005,16 @@ body::before {
         height: 200px;
     }
 
-    .spin-wheel::before {
-        border-left-width: 12px;
-        border-right-width: 12px;
-        border-top-width: 24px;
-    }
-
     .bottom-nav {
-        padding: 12px 0;
+        padding: 10px 0;
     }
 
     .nav-item span {
-        font-size: 0.75rem;
+        font-size: 10px;
     }
 
     .nav-item {
-        padding: 7px 10px;
+        padding: 6px 8px;
     }
 
     .profile-wallet-controls {
@@ -1189,73 +1035,64 @@ body::before {
         transform: rotate(270deg);
     }
 
-    .task-grid {
-        grid-template-columns: 1fr; /* Stack tasks vertically */
-    }
-
-    .task-card {
-        padding: 20px;
-    }
-
-    .task-actions {
-        justify-content: center;
-        margin-top: 10px;
-    }
-
     .task-category-selector {
         flex-direction: column;
         gap: 15px;
     }
-
-    .category-option {
-        padding: 15px;
-    }
 }
 
-
-/* --- Animation for Pulse --- */
 .pulse {
     animation: pulse 2s infinite;
 }
 
 @keyframes pulse {
     0% {
-        box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.7); /* Primary blue pulse */
+        box-shadow: 0 0 0 0 rgba(37, 99, 235, 0.7); /* Blue pulse */
     }
     70% {
-        box-shadow: 0 0 0 12px rgba(59, 130, 246, 0);
+        box-shadow: 0 0 0 10px rgba(37, 99, 235, 0);
     }
     100% {
-        box-shadow: 0 0 0 0 rgba(59, 130, 246, 0);
+        box-shadow: 0 0 0 0 rgba(37, 99, 235, 0);
     }
 }
 
-/* --- Generic Glow --- */
 .glow {
-    box-shadow: 0 0 25px rgba(59, 130, 246, 0.5); /* Primary blue glow */
+    box-shadow: 0 0 20px rgba(37, 99, 235, 0.5); /* Blue glow */
 }
 
-/* --- Balance Grid --- */
 .balance-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-    gap: 20px;
-    margin-bottom: 25px;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px;
+    margin-bottom: 20px;
 }
 
-/* --- Verification Status --- */
 .verification-status {
-    padding: 12px;
+    padding: 10px;
     border-radius: 8px;
-    margin: 15px 0;
+    margin: 10px 0;
     text-align: center;
     font-weight: 600;
-    font-size: 0.95rem;
 }
 
-.verification-pending { background: rgba(217, 119, 6, 0.1); color: var(--warning); border: 1px solid var(--warning); }
-.verification-success { background: rgba(16, 185, 121, 0.1); color: var(--success); border: 1px solid var(--success); }
-.verification-failed { background: rgba(220, 38, 38, 0.1); color: var(--danger); border: 1px solid var(--danger); }
+.verification-pending {
+    background: rgba(217, 119, 6, 0.1); /* Warning yellow */
+    color: var(--warning);
+    border: 1px solid var(--warning);
+}
+
+.verification-success {
+    background: rgba(16, 185, 121, 0.1); /* Success green */
+    color: var(--success);
+    border: 1px solid var(--success);
+}
+
+.verification-failed {
+    background: rgba(220, 38, 38, 0.1); /* Danger red */
+    color: var(--danger);
+    border: 1px solid var(--danger);
+}
     </style>
 </head>
 <body>
@@ -1313,7 +1150,7 @@ body::before {
                         <span class="material-icons">casino</span>
                         Spin Wheel
                     </button>
-                    <button class="btn btn-success" id="dailyCheckinButton" onclick="dailyCheckin()">
+                    <button class="btn btn-success" onclick="dailyCheckin()">
                         <span class="material-icons">event_available</span>
                         Daily Check-in
                     </button>
@@ -1434,7 +1271,7 @@ body::before {
                     <div class="form-group">
                         <label class="form-label">Total Cost: <span id="totalCost">0</span> TON</label>
                         <div class="form-label" style="font-size: 12px; color: var(--text-light);">
-                            Rate: 0.5 TON per 1000 impressions
+                            Rate: 0.1 TON per 100 impressions
                         </div>
                     </div>
                     
@@ -1491,7 +1328,7 @@ body::before {
                     </p>
                     <button class="btn btn-primary pulse glow" id="watchAdButton" onclick="watchAd()">
                         <span class="material-icons">play_arrow</span>
-                        Watch Ad (+20 Diamond)
+                        Watch Ad (+10 Diamond)
                     </button>
                     <div id="adLoadingMessage" class="ad-loading" style="display: none;">
                         <div class="loading"></div>
@@ -1510,7 +1347,7 @@ body::before {
                     Referral System
                 </h2>
                 <div class="form-group">
-                    <label class="form-label">Your Referral Link (20% Bounes ) </label>
+                    <label class="form-label">Your Referral Link</label>
                     <div class="refer-link" id="referralLink">
                         https://t.me/adflareprobot/app?startapp=ref_<span id="userRefId">loading</span>
                     </div>
@@ -1520,7 +1357,7 @@ body::before {
                     </button>
                 </div>
 
-                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin: 20px 0;">
+                <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; margin: 20px 0;">
                     <div class="stat-card">
                         <div class="stat-number" id="totalReferrals">0</div>
                         <div class="stat-label">Total Referrals</div>
@@ -1531,15 +1368,10 @@ body::before {
                     </div>
                 </div>
 
-                <div class="card">
-                    <h3 class="card-title">
-                        <span class="material-icons">star</span>
-                        Pro Status
-                    </h3>
-                    <div id="proStatusInfo" style="text-align: center; padding: 15px; background-color: var(--surface-dark-alt); border-radius: 12px;">
-                        <p style="color: var(--text-muted);"><span class="material-icons" style="vertical-align: middle;">help_outline</span> Meet criteria to unlock Pro status!</p>
-                    </div>
-                </div>
+                <button class="btn btn-success" onclick="claimReferralRewards()">
+                    <span class="material-icons">redeem</span>
+                    Claim Rewards
+                </button>
 
                 <div style="margin-top: 20px;">
                     <h3 style="color: var(--primary); margin-bottom: 15px;">Referral List</h3>
@@ -1555,11 +1387,11 @@ body::before {
             <div class="card">
                 <h2 class="card-title">
                     <span class="material-icons">person</span>
-                    Profile
+                    Wallet
                 </h2>
                 <div style="text-align: center; margin-bottom: 20px;">
                     <img src="https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?auto=compress&cs=tinysrgb&w=100&h=100&dpr=1" alt="Profile" class="user-avatar" style="width: 100px; height: 100px;" id="profileAvatar">
-                    <h3 style="margin: 15px 0; color: var(--text-primary);" id="profileName">Loading...</h3>
+                    <h3 style="margin: 15px 0; color: var(--text);" id="profileName">Loading...</h3>
                 </div>
 
                 <!-- Balance Display -->
@@ -1594,19 +1426,19 @@ body::before {
                 <div class="swap-container">
                     <div class="swap-row">
                         <div class="swap-input-group">
-                            <label class="swap-label" id="swapFromLabel">From Points</label>
-                            <input type="number" class="swap-input" id="swapPointsInput" placeholder="0" min="5000" step="5000">
+                            <label class="swap-label">Points</label>
+                            <input type="number" class="swap-input" id="swapPointsInput" placeholder="0" min="0">
                         </div>
                         <button class="swap-icon" onclick="swapDirection()">
                             <span class="material-icons">swap_vert</span>
                         </button>
                         <div class="swap-input-group">
-                            <label class="swap-label" id="swapToLabel">To TON</label>
-                            <input type="number" class="swap-input" id="swapTonInput" placeholder="0.00000000" min="0.5" step="0.00000001" disabled>
+                            <label class="swap-label">TON</label>
+                            <input type="number" class="swap-input" id="swapTonInput" placeholder="0.00000000" min="0" step="0.00000001">
                         </div>
                     </div>
                     <div style="text-align: center; margin-bottom: 15px; color: var(--text-light); font-size: 12px;">
-                        Rate: <span id="swapRate"></span>
+                        Rate: <span id="swapRate">100 points = 0.00000078 TON</span>
                     </div>
                     <button class="btn btn-accent" style="width: 100%;" onclick="executeSwap()">
                         <span class="material-icons">swap_horiz</span>
@@ -1623,11 +1455,11 @@ body::before {
                 </div>
 
                 <div style="display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; margin-top: 20px;">
-                    <button class="btn btn-secondary" onclick="window.open('https://t.me/jhahidul52', '_blank')">
+                    <button class="btn btn-secondary" onclick="window.open('https://t.me/PixelfrogCommunity', '_blank')">
                         <span class="material-icons">support</span>
                         Support
                     </button>
-                    <button class="btn btn-secondary" onclick="window.open('https://t.me/Abstudioseo', '_blank')">
+                    <button class="btn btn-secondary" onclick="window.open('https://t.me/Pixelfrogchat', '_blank')">
                         <span class="material-icons">code</span>
                         Developer
                     </button>
@@ -1724,7 +1556,7 @@ body::before {
                     <label class="form-label">Amount (TON)</label>
                     <input type="number" class="form-input" id="withdrawAmount" min="0.01" step="0.00000001" required placeholder="Enter TON amount to withdraw">
                     <div style="font-size: 12px; color: var(--text-light); margin-top: 5px;">
-                        Minimum: <span id="minWithdrawAmount"></span> TON | Your TON Balance: <span id="withdrawModalTonBalance">0.00000000</span> TON
+                        Minimum: 0.01 TON | Your TON Balance: <span id="withdrawModalTonBalance">0.00000000</span> TON
                     </div>
                 </div>
                 <button type="submit" class="btn btn-primary" id="requestWithdrawButton">
@@ -1758,7 +1590,7 @@ body::before {
         const tonConnectUI = new TON_CONNECT_UI.TonConnectUI({
             manifestUrl: 'https://moneybuc-clone-clint-1.vercel.app/tonconnect-manifest.json',
             actionsConfiguration: {
-                twaReturnUrl: 'https://t.me/adflareprobot'
+                twaReturnUrl: 'https://t.me/EarnFluxBot'
             }
         });
 
@@ -1770,29 +1602,20 @@ body::before {
         let adsWatchedToday = 0;
         let lastAdCompletionTime = 0; // Timestamp when the last ad was successfully watched or failed
         let adCooldownEnd = 0; // Timestamp when the cooldown for the next ad ends
+        let dailyCheckinDone = false;
         let isWatchingAd = false; // Flag to prevent multiple ad plays
         let selectedTaskCategory = 'normal';
-        let swapMode = 'pointsToTon'; // 'pointsToTon' or 'tonToPoints'
-        let allReferrals = {}; // To store referral data for Pro status check
-        let referredUsersTasksCompleted = {}; // To track tasks completed by referred users
 
         // Constants
-        const REFERRAL_BONUS_PERCENTAGE = 0.20; // 20%
-        const MIN_WITHDRAW_TON = 0.1;
-        const POINTS_TO_TON_RATE = 0.00000078; // 0.00000078 TON per 1000 points (adjust as needed)
-        const IMPRESSIONS_TO_TON_RATE = 0.5 / 1000; // 0.5 TON per 1000 impressions
-        
-        const AD_REWARD_POINTS = 20;
+        const REFERRAL_BONUS_POINTS = 500;
+        const MIN_WITHDRAW_TON = 0.01;
+        const POINTS_TO_TON_RATE = 0.00000078 / 100; // 0.00000078 TON per 100 points
+        const IMPRESSIONS_TO_TON_RATE = 100 / 0.1; // 100 impressions for 0.1 TON
+        const AD_REWARD_POINTS = 10;
         const CHECKIN_REWARD_POINTS = 50;
         const TASK_SPIN_REWARD = 1;
         const TELEGRAM_BOT_TOKEN = '7829924006:AAFIOCnga8v6yOw08dCzvKDC8wS7Fuad_II';
         const MIN_AD_WATCH_TIME = 15000; // 15 seconds in milliseconds
-        const MIN_SWAP_POINTS = 5000; // Minimum points to swap
-        const MIN_SWAP_TON = 0.5; // Minimum TON to swap
-
-        // Criteria for "Pro" status
-        const PRO_REFERRAL_COUNT_THRESHOLD = 10; // Refer X users
-        const PRO_ACTIVE_REFERRAL_TASK_THRESHOLD = 5; // Who have completed Y tasks
 
         // Initialize Telegram Web App
         function initTelegramWebApp() {
@@ -1834,6 +1657,29 @@ body::before {
             }
         }
 
+        // Task category selection
+        function selectTaskCategory(category) {
+            selectedTaskCategory = category;
+            
+            // Update visual selection
+            document.querySelectorAll('.category-option').forEach(option => {
+                option.classList.remove('selected');
+            });
+            document.querySelector(`[data-category="${category}"]`).classList.add('selected');
+            
+            // Show/hide telegram specific fields
+            const telegramFields = document.getElementById('telegramFields');
+            const telegramChannelInput = document.getElementById('telegramChannel');
+            
+            if (category === 'telegram') {
+                telegramFields.classList.add('active');
+                telegramChannelInput.required = true;
+            } else {
+                telegramFields.classList.remove('active');
+                telegramChannelInput.required = false;
+            }
+        }
+
         // Check Telegram channel subscription
         async function checkTelegramSubscription(userId, channelUsername) {
             try {
@@ -1844,108 +1690,11 @@ body::before {
                     const member = data.result;
                     const validStatuses = ['member', 'administrator', 'creator'];
                     return validStatuses.includes(member.status);
-                } else {
-                    console.error('Telegram API Error:', data.description);
-                    return false;
                 }
+                return false;
             } catch (error) {
                 console.error('Error checking subscription:', error);
                 return false;
-            }
-        }
-
-        // Distribute referral bonus
-        async function distributeReferralBonus(referrerId, amountEarned) {
-            if (!referrerId || !amountEarned || amountEarned <= 0) return;
-
-            const referrerRef = database.ref('users/' + referrerId);
-            const referralEntryRef = database.ref(`referrals/${referrerId}/${currentUser.id}`);
-
-            const referralData = (await referralEntryRef.once('value')).val();
-            const earningPercentage = referralData ? (referralData.earningPercentage || REFERRAL_BONUS_PERCENTAGE) : REFERRAL_BONUS_PERCENTAGE;
-            const bonusAmount = Math.floor(amountEarned * earningPercentage);
-
-            if (bonusAmount > 0) {
-                await referrerRef.transaction((userData) => {
-                    if (userData) {
-                        userData.balance = (userData.balance || 0) + bonusAmount;
-                        userData.referralEarnings = (userData.referralEarnings || 0) + bonusAmount;
-                        userData.totalEarned = (userData.totalEarned || 0) + bonusAmount; // Also count referral earnings towards total earned
-                    }
-                    return userData;
-                });
-                console.log(`Awarded ${bonusAmount} points to referrer ${referrerId} for user ${currentUser.id}'s earning.`);
-            }
-        }
-
-        // Check and update Pro status
-        async function checkAndSetProStatus() {
-            if (!currentUser) return;
-
-            const userRef = database.ref('users/' + currentUser.id);
-            const snapshot = await userRef.once('value');
-            const userData = snapshot.val();
-
-            if (!userData) return;
-
-            const referrerId = userData.referrerId;
-            if (!referrerId) return; // User was not referred
-
-            let activeReferralsCount = 0;
-            const referrerRef = database.ref('users/' + referrerId);
-            const referredUsersRef = database.ref('users');
-
-            // Fetch all referral relationships for the current user to count active ones
-            const referralListSnapshot = await database.ref(`referrals/${currentUser.id}`).once('value');
-            const directReferrals = referralListSnapshot.val() || {};
-
-            const directReferralIds = Object.keys(directReferrals);
-
-            let tasksCompletedByDirectReferrals = 0;
-
-            // Fetch data for direct referrals to check their task completion
-            if (directReferralIds.length > 0) {
-                const referralUsersSnapshot = await referredUsersRef.once('value');
-                const allUsers = referralUsersSnapshot.val() || {};
-
-                directReferralIds.forEach(referredUserId => {
-                    const referredUser = allUsers[referredUserId];
-                    if (referredUser && referredUser.tasksCompleted > 0) { // Check if they have completed at least one task
-                        tasksCompletedByDirectReferrals++;
-                    }
-                });
-            }
-
-            const isPro = directReferralIds.length >= PRO_REFERRAL_COUNT_THRESHOLD && tasksCompletedByDirectReferrals >= PRO_ACTIVE_REFERRAL_TASK_THRESHOLD;
-
-            if (userData.isPro !== isPro) {
-                await userRef.update({ isPro: isPro });
-                showAlert(isPro ? 'Congratulations! You are now a Pro member!' : 'You no longer meet the Pro member criteria.', isPro ? 'success' : 'warning');
-                updateProStatusUI(isPro);
-            }
-        }
-        
-        // Update UI for Pro status
-        function updateProStatusUI(isPro) {
-            const proStatusInfo = document.getElementById('proStatusInfo');
-            if (isPro) {
-                proStatusInfo.innerHTML = `
-                    <div class="verification-status verification-success" style="margin: 0;">
-                        <span class="material-icons">star</span> You are a Pro Member!
-                    </div>
-                    <p style="color: var(--text-light); margin-top: 10px; font-size: 12px;">
-                        Enjoy exclusive benefits!
-                    </p>
-                `;
-            } else {
-                proStatusInfo.innerHTML = `
-                    <p style="color: var(--text-muted);">
-                        <span class="material-icons" style="vertical-align: middle;">help_outline</span> Meet criteria to unlock Pro status!
-                    </p>
-                    <p style="font-size: 12px; color: var(--text-light); margin-top: 5px;">
-                        Refer ${PRO_REFERRAL_COUNT_THRESHOLD} users who have completed at least ${PRO_ACTIVE_REFERRAL_TASK_THRESHOLD} tasks.
-                    </p>
-                `;
             }
         }
 
@@ -1969,13 +1718,10 @@ body::before {
                     tasksCompleted: 0,
                     referrals: 0,
                     referralEarnings: 0,
-                    isPro: false,
-                    referrerId: null, // Will be set if referred
-                    referredAt: null, // Will be set if referred
-                    lastCheckin: null,
                     adsWatched: 0,
-                    lastAdCompletionTime: 0,
-                    adCooldownEnd: 0,
+                    lastAdCompletionTime: 0, // Timestamp for ad completion
+                    adCooldownEnd: 0,       // Timestamp when ad cooldown ends
+                    lastCheckin: null,
                     createdAt: Date.now()
                 };
                 await userRef.set(userData);
@@ -1992,14 +1738,13 @@ body::before {
                     lastAdCompletionTime = userData.lastAdCompletionTime || 0;
                     adCooldownEnd = userData.adCooldownEnd || 0;
                     dailyCheckinDone = userData.lastCheckin === new Date().toDateString();
-                    allReferrals = {}; // Clear previous referral data for recalculation
 
                     // Reset daily ad count if 24 hours have passed since the last completion
                     if (Date.now() - lastAdCompletionTime > 24 * 60 * 60 * 1000) {
                         adsWatchedToday = 0;
                         userRef.update({
                             adsWatched: 0,
-                            lastAdCompletionTime: 0,
+                            lastAdCompletionTime: 0, // Reset completion time for the new day
                             adCooldownEnd: 0
                         });
                     }
@@ -2007,11 +1752,7 @@ body::before {
                     updateUI(userData);
                     updateWalletUI();
                     updateSwapInputs();
-                    updateAdButtonState();
-                    updateProStatusUI(userData.isPro); // Update Pro status UI
-                    
-                    // Trigger Pro status check if needed
-                    checkAndSetProStatus();
+                    updateAdButtonState(); // Ensure ad button is updated on load
                 }
             });
 
@@ -2020,29 +1761,6 @@ body::before {
             loadReferrals();
             loadWithdrawalHistory();
             loadSwapHistory();
-            
-            // Fetch initial referral data for Pro status check
-            database.ref('referrals/' + currentUser.id).once('value', (snapshot) => {
-                 if (snapshot.exists()) {
-                     allReferrals = snapshot.val();
-                     checkAndSetProStatus(); // Check pro status after fetching referrals
-                 }
-            });
-
-            // Set the minimum withdrawal amount in the modal
-            document.getElementById('minWithdrawAmount').textContent = MIN_WITHDRAW_TON.toFixed(2);
-
-            // Ensure daily check-in button state is correct on load
-            const checkinButton = document.getElementById('dailyCheckinButton');
-            if (checkinButton) {
-                const today = new Date().toDateString();
-                if (userData.lastCheckin === today) {
-                    checkinButton.textContent = 'Checked In!';
-                    checkinButton.disabled = true;
-                    checkinButton.classList.remove('btn-success');
-                    checkinButton.classList.add('btn-secondary');
-                }
-            }
         }
 
         // Update UI elements
@@ -2100,13 +1818,10 @@ body::before {
                 adCountdown.style.display = 'block';
                 adCountdown.textContent = `Wait ${timeLeft}s`;
 
-                // Clear any existing countdown interval to avoid duplicates
-                if (window.adCountdownInterval) clearInterval(window.adCountdownInterval);
-
-                window.adCountdownInterval = setInterval(() => {
+                const countdownInterval = setInterval(() => {
                     const remaining = Math.ceil((adCooldownEnd - Date.now()) / 1000);
                     if (remaining <= 0) {
-                        clearInterval(window.adCountdownInterval);
+                        clearInterval(countdownInterval);
                         updateAdButtonState(); // Re-evaluate button state
                     } else {
                         watchAdButton.innerHTML = `<span class="material-icons">timer</span> Wait ${remaining}s`;
@@ -2116,7 +1831,7 @@ body::before {
             } else {
                 // Ready to watch ad
                 watchAdButton.disabled = false;
-                watchAdButton.innerHTML = '<span class="material-icons">play_arrow</span> Watch Ad (+20 Diamond)';
+                watchAdButton.innerHTML = '<span class="material-icons">play_arrow</span> Watch Ad (+10 Diamond)';
                 watchAdButton.classList.add('pulse', 'glow');
                 adLoadingMessage.style.display = 'none';
                 adCountdown.style.display = 'none';
@@ -2216,48 +1931,58 @@ body::before {
 
         // Swap functionality
         function updateSwapInputs() {
-            const swapRateDisplay = document.getElementById('swapRate');
-            const pointsInput = document.getElementById('swapPointsInput');
-            const tonInput = document.getElementById('swapTonInput');
-            const swapFromLabel = document.getElementById('swapFromLabel');
-            const swapToLabel = document.getElementById('swapToLabel');
+            const swapRate = document.getElementById('swapRate');
+            swapRate.textContent = `100 points = ${(100 * POINTS_TO_TON_RATE).toFixed(8)} TON`;
+            
+            // Update swap input event listeners
+            document.getElementById('swapPointsInput').oninput = function() {
+                if (swapMode === 'pointsToTon') {
+                    const points = parseFloat(this.value) || 0;
+                    const tonAmount = points * POINTS_TO_TON_RATE;
+                    document.getElementById('swapTonInput').value = tonAmount.toFixed(8);
+                }
+            };
 
-            if (swapMode === 'pointsToTon') {
-                swapRateDisplay.textContent = `1000 points = ${(1000 * POINTS_TO_TON_RATE).toFixed(8)} TON`;
-                swapFromLabel.textContent = 'From Points';
-                swapToLabel.textContent = 'To TON';
-                pointsInput.disabled = false;
-                tonInput.disabled = true;
-                pointsInput.min = MIN_SWAP_POINTS;
-                pointsInput.step = MIN_SWAP_POINTS;
-            } else { // tonToPoints
-                swapRateDisplay.textContent = `1 TON = ${(1 / POINTS_TO_TON_RATE).toFixed(0)} points`;
-                swapFromLabel.textContent = 'From TON';
-                swapToLabel.textContent = 'To Points';
-                pointsInput.disabled = true;
-                tonInput.disabled = false;
-                tonInput.min = MIN_SWAP_TON;
-                tonInput.step = MIN_SWAP_TON;
-            }
+            document.getElementById('swapTonInput').oninput = function() {
+                if (swapMode === 'tonToPoints') {
+                    const ton = parseFloat(this.value) || 0;
+                    const pointsAmount = ton / POINTS_TO_TON_RATE;
+                    document.getElementById('swapPointsInput').value = Math.floor(pointsAmount);
+                }
+            };
         }
 
         function swapDirection() {
             swapMode = swapMode === 'pointsToTon' ? 'tonToPoints' : 'pointsToTon';
             
-            // Clear inputs and reset to default state
+            // Clear inputs
             document.getElementById('swapPointsInput').value = '';
             document.getElementById('swapTonInput').value = '';
             
-            updateSwapInputs(); // Update labels, disabled states, and min/step values
+            // Update labels and placeholders based on mode
+            const pointsLabel = document.querySelector('.swap-container .swap-input-group:first-child .swap-label');
+            const tonLabel = document.querySelector('.swap-container .swap-input-group:last-child .swap-label');
+            const pointsInput = document.getElementById('swapPointsInput');
+            const tonInput = document.getElementById('swapTonInput');
+            
+            if (swapMode === 'pointsToTon') {
+                pointsLabel.textContent = 'From Points';
+                tonLabel.textContent = 'To TON';
+                pointsInput.disabled = false;
+                tonInput.disabled = true;
+            } else {
+                pointsLabel.textContent = 'To Points';
+                tonLabel.textContent = 'From TON';
+                pointsInput.disabled = true;
+                tonInput.disabled = false;
+            }
             
             showAlert(`Swap direction changed to: ${swapMode === 'pointsToTon' ? 'Points → TON' : 'TON → Points'}`, 'success');
         }
 
         async function executeSwap() {
-            const pointsAmountInput = document.getElementById('swapPointsInput');
-            const tonAmountInput = document.getElementById('swapTonInput');
-            const pointsAmount = parseFloat(pointsAmountInput.value) || 0;
-            const tonAmount = parseFloat(tonAmountInput.value) || 0;
+            const pointsAmount = parseFloat(document.getElementById('swapPointsInput').value) || 0;
+            const tonAmount = parseFloat(document.getElementById('swapTonInput').value) || 0;
             
             if (pointsAmount <= 0 && tonAmount <= 0) {
                 showAlert('Please enter a valid amount to swap.', 'danger');
@@ -2267,24 +1992,21 @@ body::before {
             const userRef = database.ref('users/' + currentUser.id);
             
             if (swapMode === 'pointsToTon') {
-                if (pointsAmount < MIN_SWAP_POINTS) {
-                    showAlert(`Minimum swap amount is ${formatNumber(MIN_SWAP_POINTS)} points.`, 'danger');
-                    return;
-                }
                 if (pointsAmount > userBalance) {
                     showAlert('Insufficient points balance!', 'danger');
                     return;
                 }
                 
-                // Calculate TON amount based on the entered points
-                const calculatedTonAmount = pointsAmount * POINTS_TO_TON_RATE;
-                tonAmountInput.value = calculatedTonAmount.toFixed(8); // Update the TO TON input visually
-
+                if (pointsAmount < 100) {
+                    showAlert('Minimum swap amount is 100 points.', 'danger');
+                    return;
+                }
+                
                 // Execute points to TON swap
                 await userRef.transaction((userData) => {
                     if (userData) {
                         userData.balance = (userData.balance || 0) - pointsAmount;
-                        userData.tonBalance = (userData.tonBalance || 0) + calculatedTonAmount;
+                        userData.tonBalance = (userData.tonBalance || 0) + tonAmount;
                     }
                     return userData;
                 });
@@ -2295,32 +2017,29 @@ body::before {
                     username: currentUser.username,
                     type: 'pointsToTon',
                     pointsAmount: pointsAmount,
-                    tonAmount: calculatedTonAmount,
+                    tonAmount: tonAmount,
                     timestamp: Date.now()
                 });
                 
-                showAlert(`Successfully swapped ${formatNumber(pointsAmount)} points for ${calculatedTonAmount.toFixed(8)} TON!`, 'success');
+                showAlert(`Successfully swapped ${formatNumber(pointsAmount)} points for ${tonAmount.toFixed(8)} TON!`, 'success');
                 
-            } else { // tonToPoints
-                if (tonAmount < MIN_SWAP_TON) {
-                    showAlert(`Minimum swap amount is ${MIN_SWAP_TON.toFixed(8)} TON.`, 'danger');
-                    return;
-                }
+            } else {
                 if (tonAmount > userTonBalance) {
                     showAlert('Insufficient TON balance!', 'danger');
                     return;
                 }
                 
-                // Calculate Points amount based on the entered TON
-                const calculatedPointsAmount = tonAmount / POINTS_TO_TON_RATE;
-                pointsAmountInput.value = Math.floor(calculatedPointsAmount); // Update the TO Points input visually
-
+                if (tonAmount < 0.00000001) {
+                    showAlert('Minimum swap amount is 0.00000001 TON.', 'danger');
+                    return;
+                }
+                
                 // Execute TON to points swap
                 await userRef.transaction((userData) => {
                     if (userData) {
                         userData.tonBalance = Math.max(0, (userData.tonBalance || 0) - tonAmount);
-                        userData.balance = (userData.balance || 0) + Math.floor(calculatedPointsAmount);
-                        userData.totalEarned = (userData.totalEarned || 0) + Math.floor(calculatedPointsAmount);
+                        userData.balance = (userData.balance || 0) + pointsAmount;
+                        userData.totalEarned = (userData.totalEarned || 0) + pointsAmount;
                     }
                     return userData;
                 });
@@ -2330,17 +2049,17 @@ body::before {
                     userId: currentUser.id,
                     username: currentUser.username,
                     type: 'tonToPoints',
-                    pointsAmount: Math.floor(calculatedPointsAmount),
+                    pointsAmount: pointsAmount,
                     tonAmount: tonAmount,
                     timestamp: Date.now()
                 });
                 
-                showAlert(`Successfully swapped ${tonAmount.toFixed(8)} TON for ${formatNumber(Math.floor(calculatedPointsAmount))} points!`, 'success');
+                showAlert(`Successfully swapped ${tonAmount.toFixed(8)} TON for ${formatNumber(pointsAmount)} points!`, 'success');
             }
             
-            // Clear inputs after successful swap
-            pointsAmountInput.value = '';
-            tonAmountInput.value = '';
+            // Clear inputs
+            document.getElementById('swapPointsInput').value = '';
+            document.getElementById('swapTonInput').value = '';
         }
 
         // Load tasks from Firebase
@@ -2388,7 +2107,7 @@ body::before {
             });
         }
 
-        // Create task card for available tasks
+        // Create task card
         function createTaskCard(taskId, task, isCompleted) {
             const card = document.createElement('div');
             card.className = `task-card ${task.category === 'telegram' ? 'telegram-task' : ''}`;
@@ -2407,10 +2126,6 @@ body::before {
                     @${task.telegramChannel}
                 </div>` : '';
 
-            // Calculate reward based on impressions
-            const rewardPerImpression = IMPRESSIONS_TO_TON_RATE * 1000000000 / task.impressions; // TON per impression
-            const pointsReward = Math.floor(rewardPerImpression * 1000 / POINTS_TO_TON_RATE); // Convert TON reward to points
-
             card.innerHTML = `
                 <div class="task-header">
                     <div>
@@ -2420,11 +2135,11 @@ body::before {
                         </div>
                         ${channelInfo}
                     </div>
-                    <div class="task-reward">${pointsReward} pts</div>
+                    <div class="task-reward">${task.reward || 100} points</div>
                 </div>
                 <div class="task-description">${task.description}</div>
                 <div class="task-actions">
-                    <button class="btn ${statusClass}" ${isCompleted ? 'disabled' : `onclick="startTask('${taskId}', '${task.url}', ${pointsReward}, '${task.category || 'normal'}', '${task.telegramChannel || ''}')" `}>
+                    <button class="btn ${statusClass}" ${isCompleted ? 'disabled' : `onclick="startTask('${taskId}', '${task.url}', ${task.reward || 100}, '${task.category || 'normal'}', '${task.telegramChannel || ''}')" `}>
                         <span class="material-icons">${statusIcon}</span>
                         ${statusText}
                     </button>
@@ -2455,16 +2170,13 @@ body::before {
             progressElement.style.width = '0%';
             verificationStatus.innerHTML = '';
 
-            // Clear any existing countdown interval
-            if (window.taskCountdownInterval) clearInterval(window.taskCountdownInterval);
-
-            window.taskCountdownInterval = setInterval(async () => {
+            const timer = setInterval(async () => {
                 countdown--;
                 countdownElement.textContent = countdown;
                 progressElement.style.width = ((5 - countdown) / 5) * 100 + '%';
 
                 if (countdown <= 0) {
-                    clearInterval(window.taskCountdownInterval);
+                    clearInterval(timer);
                     
                     if (category === 'telegram') {
                         // Verify Telegram channel subscription
@@ -2475,7 +2187,7 @@ body::before {
                         if (isSubscribed) {
                             verificationStatus.innerHTML = '<div class="verification-status verification-success">✅ Subscription verified!</div>';
                             setTimeout(() => {
-                                completeTask(taskId, reward, category); // Pass category
+                                completeTask(taskId, reward);
                             }, 1000);
                         } else {
                             verificationStatus.innerHTML = '<div class="verification-status verification-failed">❌ Subscription not found. Please join the channel and try again.</div>';
@@ -2486,14 +2198,14 @@ body::before {
                         }
                     } else {
                         // Normal task completion
-                        completeTask(taskId, reward, category); // Pass category
+                        completeTask(taskId, reward);
                     }
                 }
             }, 1000);
         }
 
         // Complete task
-        async function completeTask(taskId, reward, category = 'normal') {
+        async function completeTask(taskId, reward) {
             try {
                 const userRef = database.ref('users/' + currentUser.id);
                 const userTaskRef = database.ref('userTasks/' + currentUser.id + '/' + taskId);
@@ -2505,7 +2217,6 @@ body::before {
                     return;
                 }
 
-                // Update user's balance and stats
                 await userRef.transaction((userData) => {
                     if (userData) {
                         userData.balance = (userData.balance || 0) + reward;
@@ -2516,25 +2227,11 @@ body::before {
                     return userData;
                 });
 
-                // Mark task as completed for the user
                 await userTaskRef.set({
                     completedAt: Date.now(),
                     reward: reward,
                     completed: true
                 });
-
-                // Distribute referral bonus if applicable
-                if (currentUser.referrerId) {
-                    await distributeReferralBonus(currentUser.referrerId, reward);
-                }
-                
-                // Check and update Pro status of the referrer (if any)
-                if (currentUser.referrerId) {
-                    checkAndSetProStatus();
-                }
-                
-                // Check Pro status for the current user as well (in case they completed a task and now qualify)
-                checkAndSetProStatus();
 
                 closeModal('taskModal');
                 showAlert(`Task completed! You earned ${reward} points and ${TASK_SPIN_REWARD} spin!`, 'success');
@@ -2591,13 +2288,6 @@ body::before {
 
                 document.getElementById('luckyCodeInput').value = '';
                 showAlert(`Lucky code applied! You earned ${foundCode.reward} points!`, 'success');
-                
-                // Distribute referral bonus for lucky code redemption
-                if (currentUser.referrerId) {
-                    await distributeReferralBonus(currentUser.referrerId, foundCode.reward);
-                }
-                // Check Pro status after earning
-                checkAndSetProStatus();
             } catch (error) {
                 console.error('Error applying lucky code:', error);
                 showAlert('Error applying lucky code. Please try again.', 'danger');
@@ -2618,20 +2308,19 @@ body::before {
             wheel.style.transform = '';
             wheel.style.transition = 'transform 3s cubic-bezier(0.23, 1, 0.32, 1)';
 
-            const randomRotation = Math.floor(Math.random() * 360) + 1800; // Spin multiple full rounds
+            const randomRotation = Math.floor(Math.random() * 360) + 1800;
             wheel.style.transform = `rotate(${randomRotation}deg)`;
 
             setTimeout(async () => {
                 const normalizedRotation = randomRotation % 360;
                 let reward;
 
-                // Define rewards based on segments (adjust values as needed)
-                if (normalizedRotation >= 0 && normalizedRotation < 60) reward = 10; // Blue
-                else if (normalizedRotation >= 60 && normalizedRotation < 120) reward = 12; // Light Blue
-                else if (normalizedRotation >= 120 && normalizedRotation < 180) reward = 14; // Yellow
-                else if (normalizedRotation >= 180 && normalizedRotation < 240) reward = 16; // Green
-                else if (normalizedRotation >= 240 && normalizedRotation < 300) reward = 18; // Dark Blue
-                else reward = 20; // Aqua
+                if (normalizedRotation < 60) reward = 100;
+                else if (normalizedRotation < 120) reward = 150;
+                else if (normalizedRotation < 180) reward = 200;
+                else if (normalizedRotation < 240) reward = 300;
+                else if (normalizedRotation < 300) reward = 400;
+                else reward = 500;
 
                 const userRef = database.ref('users/' + currentUser.id);
                 await userRef.transaction((userData) => {
@@ -2644,20 +2333,12 @@ body::before {
                 });
 
                 spinButton.disabled = false;
-                wheel.style.transition = ''; // Remove transition for next spin
+                wheel.style.transition = '';
                 showAlert(`Congratulations! You won ${reward} points!`, 'success');
-                
-                // Distribute referral bonus
-                if (currentUser.referrerId) {
-                    await distributeReferralBonus(currentUser.referrerId, reward);
-                }
-                // Check Pro status after earning
-                checkAndSetProStatus();
-
-            }, 3000); // Match the transition duration
+            }, 3000);
         }
 
-        // Watch ad
+        // Watch ad - Real ad integration
         async function watchAd() {
             if (adsWatchedToday >= 50) {
                 showAlert('Daily ad limit reached. Come back tomorrow!', 'danger');
@@ -2677,8 +2358,8 @@ body::before {
                 return;
             }
 
-            // Check if show_9828399 function is available
-            if (typeof show_9828399 !== 'function') {
+            // Check if show_9809601 function is available
+            if (typeof show_9809601 !== 'function') {
                 showAlert('Ad service is not available. Please try again later.', 'danger');
                 return;
             }
@@ -2687,10 +2368,15 @@ body::before {
                 isWatchingAd = true;
                 updateAdButtonState(); // Update button to "Watching Ad..."
 
+                // Start a timer to track minimum watch time
                 const adWatchStartTime = Date.now();
                 
                 console.log("Attempting to show rewarded ad...");
-                await show_9828399();
+                
+                // Call the real ad function
+                // The SDK's 'show_9809601' is expected to return a Promise that resolves when the ad is closed.
+                await show_9809601();
+                
                 console.log("Ad closed.");
 
                 const actualWatchDuration = Date.now() - adWatchStartTime;
@@ -2705,21 +2391,13 @@ body::before {
                             userData.totalEarned = (userData.totalEarned || 0) + AD_REWARD_POINTS;
                             userData.adsWatched = (userData.adsWatched || 0) + 1;
                             userData.lastAdCompletionTime = Date.now(); // Record completion time
-                            userData.adCooldownEnd = Date.now() + 30000; // Set cooldown for 30 seconds
+                            userData.adCooldownEnd = Date.now() + 3000; // Set cooldown for 30 seconds
                         }
                         return userData;
                     });
 
                     adsWatchedToday++;
                     showAlert(`Ad watched successfully! You earned ${AD_REWARD_POINTS} points!`, 'success');
-
-                    // Distribute referral bonus
-                    if (currentUser.referrerId) {
-                        await distributeReferralBonus(currentUser.referrerId, AD_REWARD_POINTS);
-                    }
-                    // Check Pro status after earning
-                    checkAndSetProStatus();
-
                 } else {
                     console.log("Ad closed too early.");
                     showAlert("You haven't watched the full ad. No reward given.", 'warning');
@@ -2761,21 +2439,13 @@ body::before {
 
             showAlert(`Daily check-in completed! You earned ${CHECKIN_REWARD_POINTS} points!`, 'success');
 
-            // Update button state
-            const dailyCheckinButton = document.getElementById('dailyCheckinButton');
+            const dailyCheckinButton = document.querySelector('.btn-success[onclick="dailyCheckin()"]');
             if (dailyCheckinButton) {
                 dailyCheckinButton.textContent = 'Checked In!';
                 dailyCheckinButton.disabled = true;
                 dailyCheckinButton.classList.remove('btn-success');
                 dailyCheckinButton.classList.add('btn-secondary');
             }
-            
-            // Distribute referral bonus
-            if (currentUser.referrerId) {
-                await distributeReferralBonus(currentUser.referrerId, CHECKIN_REWARD_POINTS);
-            }
-            // Check Pro status after earning
-            checkAndSetProStatus();
         }
 
         // Add task form submission
@@ -2793,8 +2463,8 @@ body::before {
             const url = document.getElementById('newTaskUrl').value;
             const impressions = parseInt(document.getElementById('taskImpressions').value);
             const telegramChannel = document.getElementById('telegramChannel').value;
-            // Calculate cost based on 0.5 TON per 1000 impressions
-            const cost = (impressions / 1000) * 0.5;
+            // Calculate cost based on 0.1 TON per 100 impressions
+            const cost = (impressions / 100) * 0.1;
 
             if (isNaN(impressions) || impressions < 100 || impressions > 5000) {
                 showAlert('Please enter a valid number of impressions between 100 and 5000.', 'danger');
@@ -2833,6 +2503,7 @@ body::before {
                         url,
                         category: selectedTaskCategory,
                         telegramChannel: selectedTaskCategory === 'telegram' ? telegramChannel : null,
+                        reward: 100, // Default reward per impression, can be adjusted or calculated
                         impressions: impressions,
                         remainingImpressions: impressions,
                         createdBy: currentUser.id,
@@ -2864,14 +2535,14 @@ body::before {
             }
         });
 
-        // Update total cost display for task creation
+        // Update total cost display
         document.getElementById('taskImpressions').addEventListener('input', (e) => {
             const impressions = parseInt(e.target.value) || 0;
-            const cost = (impressions / 1000) * 0.5;
+            const cost = (impressions / 100) * 0.1;
             document.getElementById('totalCost').textContent = cost.toFixed(3);
         });
 
-        // Load user's created tasks
+        // Load user tasks
         function loadUserTasks() {
             if (!currentUser) return;
 
@@ -2899,11 +2570,12 @@ body::before {
             });
         }
 
-        // Create task card for user's created tasks
+        // Create user task card
         function createUserTaskCard(taskId, task) {
             const card = document.createElement('div');
             card.className = `task-card ${task.category === 'telegram' ? 'telegram-task' : ''}`;
 
+            const isTaskCompleted = task.remainingImpressions <= 0;
             const progressPercentage = (task.impressions > 0) ? 
                 ((task.impressions - (task.remainingImpressions || task.impressions)) / task.impressions) * 100 : 0;
 
@@ -2916,10 +2588,6 @@ body::before {
                     <span class="material-icons">telegram</span>
                     @${task.telegramChannel}
                 </div>` : '';
-                
-            // Calculate reward in points
-            const rewardPerImpression = IMPRESSIONS_TO_TON_RATE * 1000000000 / task.impressions;
-            const pointsReward = Math.floor(rewardPerImpression * 1000 / POINTS_TO_TON_RATE);
 
             card.innerHTML = `
                 <div class="task-header">
@@ -2930,22 +2598,19 @@ body::before {
                         </div>
                         ${channelInfo}
                     </div>
-                    <div class="task-reward">${pointsReward} pts</div>
+                    <div class="task-reward">${task.remainingImpressions || 0}/${task.impressions}</div>
                 </div>
                 <div class="task-description">${task.description}</div>
                 <div class="progress-bar">
                     <div class="progress-fill" style="width: ${progressPercentage}%"></div>
                 </div>
                 <div class="task-actions">
-                    ${task.status === 'active' ? 
-                        `<span style="color: var(--text-light); font-size: 12px; margin-right: auto;">Active</span>` : ''
-                    }
-                    ${task.status === 'completed' || task.remainingImpressions <= 0 ? 
+                    ${isTaskCompleted ? 
                         `<button class="btn btn-danger" onclick="deleteUserTask('${taskId}')">
                             <span class="material-icons">delete</span>
                             Delete
                         </button>` : 
-                        ''
+                        `<span style="color: var(--text-light); font-size: 12px;">Active</span>`
                     }
                 </div>
             `;
@@ -2972,117 +2637,91 @@ body::before {
                 return;
             }
 
-            const newUserRef = database.ref('users/' + currentUser.id);
-            const newUserSnapshot = await newUserRef.once('value');
+            try {
+                const newUserRef = database.ref('users/' + currentUser.id);
+                const newUserSnapshot = await newUserRef.once('value');
 
-            // Only process if this is a new user and they haven't been referred before
-            if (!newUserSnapshot.exists() || !newUserSnapshot.val().referrerId) {
-                const referrerUserRef = database.ref('users/' + referrerId);
-                const referrerUserSnapshot = await referrerUserRef.once('value');
+                if (!newUserSnapshot.exists()) {
+                    const referrerUserRef = database.ref('users/' + referrerId);
+                    const referrerUserSnapshot = await referrerUserRef.once('value');
 
-                if (referrerUserSnapshot.exists()) {
-                    // Update the new user's details with referrer info
-                    await newUserRef.update({
-                        referrerId: referrerId,
-                        referredAt: Date.now()
-                    });
-                    
-                    // Update the referrer's stats and create referral entry
-                    await referrerUserRef.transaction((referrerData) => {
-                        if (referrerData) {
-                            referrerData.referrals = (referrerData.referrals || 0) + 1;
-                            // No points awarded here automatically, bonus given upon earning
-                        }
-                        return referrerData;
-                    });
+                    if (referrerUserSnapshot.exists()) {
+                        await referrerUserRef.transaction((referrerData) => {
+                            if (referrerData) {
+                                referrerData.referrals = (referrerData.referrals || 0) + 1;
+                                referrerData.balance = (referrerData.balance || 0) + REFERRAL_BONUS_POINTS;
+                                referrerData.totalEarned = (referrerData.totalEarned || 0) + REFERRAL_BONUS_POINTS;
+                            }
+                            return referrerData;
+                        });
 
-                    await database.ref(`referrals/${referrerId}/${currentUser.id}`).set({
-                        earningPercentage: REFERRAL_BONUS_PERCENTAGE,
-                        timestamp: Date.now()
-                    });
+                        await database.ref('referrals/' + referrerId + '/' + currentUser.id).set({
+                            userId: currentUser.id,
+                            username: currentUser.username,
+                            joinedAt: Date.now(),
+                            completed: true
+                        });
 
-                    showAlert(`Welcome! You've been referred by user ID: ${referrerId}.`, 'info');
-                    
-                    // Trigger Pro status check for the referrer
-                    checkAndSetProStatus();
+                        showAlert(`Welcome! You've been referred by user ID: ${referrerId}. Your referrer has been rewarded!`, 'success');
+                    }
                 }
+            } catch (error) {
+                console.error('Error handling referral:', error);
+                showAlert('Error processing referral link. Please try again.', 'danger');
             }
         }
 
-        // Load referrals and update UI
+        // Load referrals
         function loadReferrals() {
             if (!currentUser) return;
 
             const referralList = document.getElementById('referralList');
             let totalReferralEarnings = 0;
-            let activeReferralCount = 0;
 
-            const myReferralsRef = database.ref('referrals/' + currentUser.id);
-
-            myReferralsRef.on('value', (snapshot) => {
+            database.ref('referrals/' + currentUser.id).on('value', (snapshot) => {
                 referralList.innerHTML = '';
-                const referrals = snapshot.val() || {};
-                const directReferralIds = Object.keys(referrals);
-                allReferrals = referrals; // Update global for pro status check
+                const referrals = snapshot.val();
 
-                if (directReferralIds.length === 0) {
+                if (!referrals) {
                     referralList.innerHTML = '<p style="text-align: center; color: var(--text-light);">No referrals yet.</p>';
                     document.getElementById('totalReferrals').textContent = '0';
                     document.getElementById('referralEarnings').textContent = '0';
                     return;
                 }
 
-                document.getElementById('totalReferrals').textContent = formatNumber(directReferralIds.length);
+                const referralIds = Object.keys(referrals);
+                document.getElementById('totalReferrals').textContent = formatNumber(referralIds.length);
 
-                // Fetch user data for each referral to get their tasksCompleted count
-                const userPromises = directReferralIds.map(async (referredUserId) => {
-                    const referredUserData = (await database.ref('users/' + referredUserId).once('value')).val();
-                    if (referredUserData) {
-                        const referral = referrals[referredUserId];
-                        totalReferralEarnings += (referredUserData.referralEarnings || 0); // Sum up their *actual* referral earnings from our system
-                        if (referredUserData.tasksCompleted > 0) {
-                            activeReferralCount++;
-                        }
-                        return { referredUserId, referredUserData, referral };
-                    }
-                    return null;
-                });
+                referralIds.forEach(referredUserId => {
+                    const referral = referrals[referredUserId];
+                    totalReferralEarnings += REFERRAL_BONUS_POINTS;
 
-                Promise.all(userPromises).then((results) => {
-                    const validResults = results.filter(r => r !== null).sort((a, b) => b.referral.timestamp - a.referral.timestamp);
-
-                    validResults.forEach(({ referredUserId, referredUserData, referral }) => {
-                        const referralItem = document.createElement('div');
-                        referralItem.className = 'history-item';
-                        const isPro = referredUserData.isPro ? '<span style="color: var(--warning); font-weight: bold;"> (Pro)</span>' : '';
-                        const tasksCompleted = referredUserData.tasksCompleted || 0;
-
-                        referralItem.innerHTML = `
-                            <div>
-                                <strong>${referredUserData.first_name || 'User'}</strong>${isPro}
-                                <div style="font-size: 12px; color: var(--text-light);">
-                                    Joined: ${new Date(referral.timestamp).toLocaleDateString()} | Tasks: ${tasksCompleted}
-                                </div>
+                    const referralItem = document.createElement('div');
+                    referralItem.className = 'history-item';
+                    referralItem.innerHTML = `
+                        <div>
+                            <strong>${referral.username || 'User'}</strong>
+                            <div style="font-size: 12px; color: var(--text-light);">
+                                Joined: ${new Date(referral.joinedAt).toLocaleDateString()}
                             </div>
-                            <div class="history-status status-completed">Referred</div>
-                        `;
-                        referralList.appendChild(referralItem);
-                    });
-
-                    document.getElementById('referralEarnings').textContent = formatNumber(totalReferralEarnings);
-                    checkAndSetProStatus(); // Re-check Pro status after loading referral details
+                        </div>
+                        <div class="history-status status-completed">Referred</div>
+                    `;
+                    referralList.appendChild(referralItem);
                 });
+
+                document.getElementById('referralEarnings').textContent = formatNumber(totalReferralEarnings);
             });
         }
 
-        // Claim referral rewards - this is now automated
-        function claimReferralRewards() {
-            showAlert('Referral rewards are automatically credited as your referrals earn points!', 'success');
+        // Claim referral rewards
+        async function claimReferralRewards() {
+            showAlert('Referral rewards are automatically credited when a new user joins via your link!', 'success');
         }
 
         // Copy referral link
         function copyReferralLink() {
-            const botUsername = 'adflareprobot'; // Your Telegram Bot username
+            const botUsername = 'adflareprobot'; // Make sure this is your bot's username
             const link = `https://t.me/${botUsername}/app?startapp=ref_${currentUser.id}`;
             navigator.clipboard.writeText(link).then(() => {
                 showAlert('Referral link copied to clipboard!', 'success');
@@ -3131,7 +2770,7 @@ body::before {
                 return;
             }
 
-            if (tonAddress.toLowerCase() !== tonConnectUI.account.address.toLowerCase()) {
+            if (tonAddress !== tonConnectUI.account.address) {
                 showAlert('The displayed TON address does not match your connected wallet. Please reconnect if necessary.', 'danger');
                 return;
             }
@@ -3276,10 +2915,11 @@ body::before {
                 item.classList.remove('active');
             });
 
-            const activeNavItem = document.querySelector(`.nav-item[onclick*="showSection('${sectionName}')"]`);
-            if (activeNavItem) {
-                activeNavItem.classList.add('active');
-            }
+            document.querySelectorAll('.nav-item').forEach(item => {
+                if (item.getAttribute('onclick').includes(`showSection('${sectionName}')`)) {
+                    item.classList.add('active');
+                }
+            });
 
             // Special handling for section transitions
             if (sectionName === 'addTask' || sectionName === 'profile') {
@@ -3287,7 +2927,7 @@ body::before {
             }
 
             if (sectionName === 'profile') {
-                updateSwapInputs(); // Refresh swap UI when profile is shown
+                updateSwapInputs();
             }
             
             // Ensure ad button state is updated when entering ads section
@@ -3298,10 +2938,10 @@ body::before {
 
         // Show task tab
         function showTaskTab(event, tabName) {
-            document.querySelectorAll('#tasksSection .tab').forEach(tab => {
+            document.querySelectorAll('.tab').forEach(tab => {
                 tab.classList.remove('active');
             });
-            document.querySelectorAll('#tasksSection .tab-content').forEach(content => {
+            document.querySelectorAll('.tab-content').forEach(content => {
                 content.classList.remove('active');
             });
 
@@ -3330,12 +2970,7 @@ body::before {
                 
                 if (modalId === 'withdrawModal') {
                     document.getElementById('withdrawForm').reset();
-                    // Reset button state and inputs if necessary
                     document.getElementById('requestWithdrawButton').disabled = true;
-                }
-                if (modalId === 'taskModal') {
-                    // Clear countdown interval if modal is closed
-                    if (window.taskCountdownInterval) clearInterval(window.taskCountdownInterval);
                 }
             }
         }
@@ -3389,19 +3024,9 @@ body::before {
             tonConnectUI.buttonRootId = 'ton-connect-button-container';
 
             // Listen for wallet connection changes
-            tonConnectUI.onStatusChange(async (wallet) => {
+            tonConnectUI.onStatusChange(wallet => {
                 updateWalletUI();
-                // Re-initialize user data or re-fetch balance if needed, though current setup listens for changes.
-                // If TON balance needs immediate refresh after connection, you might need to explicitly fetch it.
-                if(wallet && wallet.account) {
-                    // Example: Explicitly fetch TON balance if not automatically updated
-                    // This might involve a TON API call or checking TON Connect's account object for balance
-                    // For now, assume the general listener covers it or needs manual update.
-                }
             });
-            
-            // Initial call to update Pro status UI
-            updateProStatusUI(false); // Assume not pro until data loads
         });
 
         // Close modals on outside click
