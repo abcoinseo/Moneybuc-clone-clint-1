@@ -38,796 +38,824 @@
 }
 
 body {
-    font-family: 'Inter', sans-serif;
-    background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%);
-    min-height: 100vh;
-    color: var(--text);
-    overflow-x: hidden;
-    position: relative;
+font-family: 'Inter', sans-serif;
+background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%);
+min-height: 100vh;
+color: var(--text);
+overflow-x: hidden;
+position: relative;
 }
 
 body::before {
-    content: '';
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background:
-        radial-gradient(circle at 20% 80%, rgba(220, 38, 38, 0.3) 0%, transparent 50%),
-        radial-gradient(circle at 80% 20%, rgba(239, 68, 68, 0.2) 0%, transparent 50%),
-        radial-gradient(circle at 40% 40%, rgba(185, 28, 28, 0.1) 0%, transparent 50%);
-    pointer-events: none;
-    z-index: -1;
+content: '';
+position: fixed;
+top: 0;
+left: 0;
+right: 0;
+bottom: 0;
+background:
+radial-gradient(circle at 20% 80%, rgba(220, 38, 38, 0.3) 0%, transparent 50%),
+radial-gradient(circle at 80% 20%, rgba(239, 68, 68, 0.2) 0%, transparent 50%),
+radial-gradient(circle at 40% 40%, rgba(185, 28, 28, 0.1) 0%, transparent 50%);
+pointer-events: none;
+z-index: -1;
 }
 
 .container {
-    max-width: 100%;
-    margin: 0 auto;
-    padding: 20px 15px 100px;
-    position: relative;
+max-width: 100%;
+margin: 0 auto;
+padding: 20px 15px 100px;
+position: relative;
 }
 
 .header {
-    background: rgba(15, 15, 35, 0.8);
-    backdrop-filter: blur(20px);
-    border: 1px solid var(--glass-border);
-    border-radius: 20px;
-    padding: 20px;
-    margin-bottom: 20px;
-    box-shadow: 0 8px 32px rgba(220, 38, 38, 0.2);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    position: relative;
-    overflow: hidden;
+background: rgba(15, 15, 35, 0.8);
+backdrop-filter: blur(20px);
+border: 1px solid var(--glass-border);
+border-radius: 20px;
+padding: 20px;
+margin-bottom: 20px;
+box-shadow: 0 8px 32px rgba(220, 38, 38, 0.2);
+display: flex;
+justify-content: space-between;
+align-items: center;
+position: relative;
+overflow: hidden;
 }
 
 .header::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(220, 38, 38, 0.1), transparent);
-    animation: shimmer 3s infinite;
+content: '';
+position: absolute;
+top: 0;
+left: -100%;
+width: 100%;
+height: 100%;
+background: linear-gradient(90deg, transparent, rgba(220, 38, 38, 0.1), transparent);
+animation: shimmer 3s infinite;
 }
 
 @keyframes shimmer {
-    0% { left: -100%; }
-    100% { left: 100%; }
+0% { left: -100%; }
+100% { left: 100%; }
 }
 
 .user-info {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    z-index: 1;
+display: flex;
+align-items: center;
+gap: 12px;
+z-index: 1;
 }
 
 .user-avatar {
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
-    border: 2px solid var(--primary);
-    object-fit: cover;
-    box-shadow: 0 0 20px rgba(220, 38, 38, 0.3);
+width: 50px;
+height: 50px;
+border-radius: 50%;
+border: 2px solid var(--primary);
+object-fit: cover;
+box-shadow: 0 0 20px rgba(220, 38, 38, 0.3);
 }
 
 .user-details h3 {
-    color: var(--text);
-    font-weight: 600;
-    margin-bottom: 4px;
+color: var(--text);
+font-weight: 600;
+margin-bottom: 4px;
 }
 
 .user-balance {
-    color: var(--primary);
-    font-weight: 700;
-    font-size: 18px;
-    display: flex;
-    align-items: center;
-    gap: 5px;
+color: var(--primary);
+font-weight: 700;
+font-size: 18px;
+display: flex;
+align-items: center;
+gap: 5px;
 }
 
 .theme-toggle {
-    background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-    color: white;
-    border: none;
-    border-radius: 50px;
-    padding: 10px 15px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    transition: all 0.3s ease;
-    z-index: 1;
+background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+color: white;
+border: none;
+border-radius: 50px;
+padding: 10px 15px;
+cursor: pointer;
+display: flex;
+align-items: center;
+gap: 8px;
+transition: all 0.3s ease;
+z-index: 1;
 }
 
 .theme-toggle:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 25px rgba(220, 38, 38, 0.4);
+transform: translateY(-2px);
+box-shadow: 0 8px 25px rgba(220, 38, 38, 0.4);
 }
 
 .card {
-    background: rgba(15, 15, 35, 0.8);
-    backdrop-filter: blur(20px);
-    border: 1px solid var(--glass-border);
-    border-radius: 20px;
-    padding: 24px;
-    margin-bottom: 20px;
-    box-shadow: 0 8px 32px rgba(220, 38, 38, 0.15);
-    transition: all 0.3s ease;
-    position: relative;
-    overflow: hidden;
+background: rgba(15, 15, 35, 0.8);
+backdrop-filter: blur(20px);
+border: 1px solid var(--glass-border);
+border-radius: 20px;
+padding: 24px;
+margin-bottom: 20px;
+box-shadow: 0 8px 32px rgba(220, 38, 38, 0.15);
+transition: all 0.3s ease;
+position: relative;
+overflow: hidden;
 }
 
 .card::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 2px;
-    background: linear-gradient(90deg, var(--primary), var(--primary-light), var(--primary));
-    opacity: 0.7;
+content: '';
+position: absolute;
+top: 0;
+left: 0;
+right: 0;
+height: 2px;
+background: linear-gradient(90deg, var(--primary), var(--primary-light), var(--primary));
+opacity: 0.7;
 }
 
 .card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 16px 48px rgba(220, 38, 38, 0.25);
+transform: translateY(-4px);
+box-shadow: 0 16px 48px rgba(220, 38, 38, 0.25);
 }
 
 .card-title {
-    font-size: 20px;
-    font-weight: 700;
-    margin-bottom: 16px;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    color: var(--primary);
+font-size: 20px;
+font-weight: 700;
+margin-bottom: 16px;
+display: flex;
+align-items: center;
+gap: 10px;
+color: var(--primary);
 }
 
 .stats-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-    gap: 15px;
-    margin-bottom: 20px;
+display: grid;
+grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+gap: 15px;
+margin-bottom: 20px;
 }
 
 .stat-card {
-    background: rgba(15, 15, 35, 0.9);
-    border: 1px solid var(--glass-border);
-    border-radius: 16px;
-    padding: 20px;
-    text-align: center;
-    transition: all 0.3s ease;
-    position: relative;
-    overflow: hidden;
+background: rgba(15, 15, 35, 0.9);
+border: 1px solid var(--glass-border);
+border-radius: 16px;
+padding: 20px;
+text-align: center;
+transition: all 0.3s ease;
+position: relative;
+overflow: hidden;
 }
 
 .stat-card::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: linear-gradient(135deg, rgba(220, 38, 38, 0.1), transparent);
-    opacity: 0;
-    transition: opacity 0.3s ease;
+content: '';
+position: absolute;
+top: 0;
+left: 0;
+right: 0;
+bottom: 0;
+background: linear-gradient(135deg, rgba(220, 38, 38, 0.1), transparent);
+opacity: 0;
+transition: opacity 0.3s ease;
 }
 
 .stat-card:hover::before {
-    opacity: 1;
+opacity: 1;
 }
 
 .stat-number {
-    font-size: 24px;
-    font-weight: 800;
-    color: var(--primary);
-    margin-bottom: 8px;
+font-size: 24px;
+font-weight: 800;
+color: var(--primary);
+margin-bottom: 8px;
 }
 
 .stat-label {
-    color: var(--text-light);
-    font-weight: 500;
-    font-size: 12px;
+color: var(--text-light);
+font-weight: 500;
+font-size: 12px;
 }
 
 .btn {
-    padding: 12px 24px;
-    border: none;
-    border-radius: 12px;
-    font-weight: 600;
-    cursor: pointer;
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    transition: all 0.3s ease;
-    text-decoration: none;
-    font-size: 14px;
-    position: relative;
-    overflow: hidden;
+padding: 12px 24px;
+border: none;
+border-radius: 12px;
+font-weight: 600;
+cursor: pointer;
+display: inline-flex;
+align-items: center;
+gap: 8px;
+transition: all 0.3s ease;
+text-decoration: none;
+font-size: 14px;
+position: relative;
+overflow: hidden;
 }
 
 .btn:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
+opacity: 0.6;
+cursor: not-allowed;
 }
 
 .btn::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-    transition: left 0.5s;
+content: '';
+position: absolute;
+top: 0;
+left: -100%;
+width: 100%;
+height: 100%;
+background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+transition: left 0.5s;
 }
 
 .btn:hover:not(:disabled)::before {
-    left: 100%;
+left: 100%;
 }
 
 .btn-primary {
-    background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-    color: white;
+background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+color: white;
 }
 
 .btn-primary:hover:not(:disabled) {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 25px rgba(220, 38, 38, 0.4);
+transform: translateY(-2px);
+box-shadow: 0 8px 25px rgba(220, 38, 38, 0.4);
 }
 
 .btn-success {
-    background: linear-gradient(135deg, var(--success), #047857);
-    color: white;
+background: linear-gradient(135deg, var(--success), #047857);
+color: white;
 }
 
 .btn-warning {
-    background: linear-gradient(135deg, var(--warning), #b45309);
-    color: white;
+background: linear-gradient(135deg, var(--warning), #b45309);
+color: white;
 }
 
 .btn-secondary {
-    background: rgba(15, 15, 35, 0.8);
-    color: var(--text);
-    border: 1px solid var(--glass-border);
+background: rgba(15, 15, 35, 0.8);
+color: var(--text);
+border: 1px solid var(--glass-border);
 }
 
 .btn-danger {
-    background: linear-gradient(135deg, var(--danger), #b91c1c);
-    color: white;
+background: linear-gradient(135deg, var(--danger), #b91c1c);
+color: white;
 }
 
 .form-group {
-    margin-bottom: 20px;
+margin-bottom: 20px;
 }
 
 .form-label {
-    display: block;
-    margin-bottom: 8px;
-    font-weight: 600;
-    color: var(--text);
+display: block;
+margin-bottom: 8px;
+font-weight: 600;
+color: var(--text);
 }
 
 .form-input {
-    width: 100%;
-    padding: 12px 16px;
-    border: 2px solid var(--border);
-    border-radius: 12px;
-    font-size: 16px;
-    transition: all 0.3s ease;
-    background: rgba(15, 15, 35, 0.8);
-    color: var(--text);
+width: 100%;
+padding: 12px 16px;
+border: 2px solid var(--border);
+border-radius: 12px;
+font-size: 16px;
+transition: all 0.3s ease;
+background: rgba(15, 15, 35, 0.8);
+color: var(--text);
 }
 
 .form-input:focus {
-    outline: none;
-    border-color: var(--primary);
-    box-shadow: 0 0 0 4px rgba(220, 38, 38, 0.1);
+outline: none;
+border-color: var(--primary);
+box-shadow: 0 0 0 4px rgba(220, 38, 38, 0.1);
 }
 
 .task-grid {
-    display: grid;
-    gap: 15px;
+display: grid;
+gap: 15px;
 }
 
 .task-card {
-    background: rgba(15, 15, 35, 0.9);
-    border: 1px solid var(--glass-border);
-    border-radius: 16px;
-    padding: 20px;
-    transition: all 0.3s ease;
-    position: relative;
-    overflow: hidden;
+background: rgba(15, 15, 35, 0.9);
+border: 1px solid var(--glass-border);
+border-radius: 16px;
+padding: 20px;
+transition: all 0.3s ease;
+position: relative;
+overflow: hidden;
 }
 
 .task-card::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 4px;
-    height: 100%;
-    background: linear-gradient(180deg, var(--primary), var(--primary-light));
+content: '';
+position: absolute;
+top: 0;
+left: 0;
+width: 4px;
+height: 100%;
+background: linear-gradient(180deg, var(--primary), var(--primary-light));
 }
 
 .task-card:hover {
-    transform: translateX(5px);
-    box-shadow: 0 8px 25px rgba(220, 38, 38, 0.2);
+transform: translateX(5px);
+box-shadow: 0 8px 25px rgba(220, 38, 38, 0.2);
 }
 
 .task-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    margin-bottom: 12px;
+display: flex;
+justify-content: space-between;
+align-items: flex-start;
+margin-bottom: 12px;
 }
 
 .task-title {
-    font-weight: 700;
-    color: var(--text);
-    margin-bottom: 8px;
+font-weight: 700;
+color: var(--text);
+margin-bottom: 8px;
 }
 
 .task-reward {
-    background: linear-gradient(135deg, var(--primary), var(--primary-light));
-    color: white;
-    padding: 6px 12px;
-    border-radius: 20px;
-    font-size: 12px;
-    font-weight: 700;
+background: linear-gradient(135deg, var(--primary), var(--primary-light));
+color: white;
+padding: 6px 12px;
+border-radius: 20px;
+font-size: 12px;
+font-weight: 700;
 }
 
 .task-description {
-    color: var(--text-light);
-    margin-bottom: 12px;
-    line-height: 1.5;
+color: var(--text-light);
+margin-bottom: 12px;
+line-height: 1.5;
 }
 
 .task-actions {
-    display: flex;
-    gap: 8px;
-    justify-content: flex-end;
+display: flex;
+gap: 8px;
+justify-content: flex-end;
 }
 
 .tabs {
-    display: flex;
-    background: rgba(15, 15, 35, 0.8);
-    border-radius: 12px;
-    padding: 4px;
-    margin-bottom: 20px;
-    border: 1px solid var(--glass-border);
+display: flex;
+background: rgba(15, 15, 35, 0.8);
+border-radius: 12px;
+padding: 4px;
+margin-bottom: 20px;
+border: 1px solid var(--glass-border);
 }
 
 .tab {
-    flex: 1;
-    padding: 12px;
-    text-align: center;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    font-weight: 600;
-    color: var(--text-light);
+flex: 1;
+padding: 12px;
+text-align: center;
+border-radius: 8px;
+cursor: pointer;
+transition: all 0.3s ease;
+font-weight: 600;
+color: var(--text-light);
 }
 
 .tab.active {
-    background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-    color: white;
-    box-shadow: 0 4px 15px rgba(220, 38, 38, 0.3);
+background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+color: white;
+box-shadow: 0 4px 15px rgba(220, 38, 38, 0.3);
 }
 
 .tab-content {
-    display: none;
+display: none;
 }
 
 .tab-content.active {
-    display: block;
+display: block;
 }
 
 .section {
-    display: none;
+display: none;
 }
 
 .section.active {
-    display: block;
+display: block;
 }
 
 .bottom-nav {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    background: rgba(15, 15, 35, 0.95);
-    backdrop-filter: blur(20px);
-    border-top: 1px solid var(--glass-border);
-    padding: 12px 0;
-    z-index: 1000;
+position: fixed;
+bottom: 0;
+left: 0;
+right: 0;
+background: rgba(15, 15, 35, 0.95);
+backdrop-filter: blur(20px);
+border-top: 1px solid var(--glass-border);
+padding: 12px 0;
+z-index: 1000;
 }
 
 .nav-container {
-    display: flex;
-    justify-content: space-around;
-    align-items: center;
-    max-width: 500px;
-    margin: 0 auto;
+display: flex;
+justify-content: space-around;
+align-items: center;
+max-width: 500px;
+margin: 0 auto;
 }
 
 .nav-item {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 4px;
-    text-decoration: none;
-    color: var(--text-muted);
-    transition: all 0.3s ease;
-    padding: 8px 12px;
-    border-radius: 12px;
-    position: relative;
+display: flex;
+flex-direction: column;
+align-items: center;
+gap: 4px;
+text-decoration: none;
+color: var(--text-muted);
+transition: all 0.3s ease;
+padding: 8px 12px; /* Increased padding for larger size */
+border-radius: 12px;
+position: relative;
 }
 
 .nav-item.active,
 .nav-item:hover {
-    color: var(--primary);
-    background: rgba(220, 38, 38, 0.1);
+color: var(--primary);
+background: rgba(220, 38, 38, 0.1);
 }
 
 .nav-item span {
-    font-size: 12px;
-    font-weight: 600;
+font-size: 12px;
+font-weight: 600;
 }
 
 .spin-wheel {
-    width: 250px;
-    height: 250px;
-    border-radius: 50%;
-    border: 8px solid var(--primary);
-    margin: 20px auto;
-    position: relative;
-    background: conic-gradient(
-        from 0deg,
-        var(--primary) 0deg 60deg,
-        var(--primary-light) 60deg 120deg,
-        var(--warning) 120deg 180deg,
-        var(--success) 180deg 240deg,
-        var(--primary-dark) 240deg 300deg,
-        var(--accent) 300deg 360deg
-    );
-    transition: transform 3s cubic-bezier(0.23, 1, 0.32, 1);
+width: 250px;
+height: 250px;
+border-radius: 50%;
+border: 8px solid var(--primary);
+margin: 20px auto;
+position: relative;
+background: conic-gradient(
+from 0deg,
+var(--primary) 0deg 60deg,
+var(--primary-light) 60deg 120deg,
+var(--warning) 120deg 180deg,
+var(--success) 180deg 240deg,
+var(--primary-dark) 240deg 300deg,
+var(--accent) 300deg 360deg
+);
+transition: transform 3s cubic-bezier(0.23, 1, 0.32, 1);
 }
 
 .spin-wheel::before {
-    content: '';
-    position: absolute;
-    top: -15px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 0;
-    height: 0;
-    border-left: 15px solid transparent;
-    border-right: 15px solid transparent;
-    border-top: 30px solid var(--text);
-    z-index: 10;
+content: '';
+position: absolute;
+top: -15px;
+left: 50%;
+transform: translateX(-50%);
+width: 0;
+height: 0;
+border-left: 15px solid transparent;
+border-right: 15px solid transparent;
+border-top: 30px solid var(--text);
+z-index: 10;
 }
 
 .spin-center {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 60px;
-    height: 60px;
-    background: var(--primary);
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: white;
-    font-weight: 700;
-    z-index: 5;
+position: absolute;
+top: 50%;
+left: 50%;
+transform: translate(-50%, -50%);
+width: 60px;
+height: 60px;
+background: var(--primary);
+border-radius: 50%;
+display: flex;
+align-items: center;
+justify-content: center;
+color: white;
+font-weight: 700;
+z-index: 5;
 }
 
 .modal {
-    display: none;
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(0, 0, 0, 0.8);
-    z-index: 2000;
-    backdrop-filter: blur(10px);
+display: none;
+position: fixed;
+top: 0;
+left: 0;
+right: 0;
+bottom: 0;
+background: rgba(0, 0, 0, 0.8);
+z-index: 2000;
+backdrop-filter: blur(10px);
 }
 
 .modal-content {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background: rgba(15, 15, 35, 0.95);
-    border: 1px solid var(--glass-border);
-    border-radius: 20px;
-    padding: 30px;
-    max-width: 400px;
-    width: 90%;
-    max-height: 80vh;
-    overflow-y: auto;
+position: absolute;
+top: 50%;
+left: 50%;
+transform: translate(-50%, -50%);
+background: rgba(15, 15, 35, 0.95);
+border: 1px solid var(--glass-border);
+border-radius: 20px;
+padding: 30px;
+max-width: 400px;
+width: 90%;
+max-height: 80vh;
+overflow-y: auto;
 }
 
 .modal-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 20px;
+display: flex;
+justify-content: space-between;
+align-items: center;
+margin-bottom: 20px;
 }
 
 .modal-title {
-    font-size: 24px;
-    font-weight: 700;
-    color: var(--primary);
+font-size: 24px;
+font-weight: 700;
+color: var(--primary);
 }
 
 .close-btn {
-    background: none;
-    border: none;
-    font-size: 24px;
-    cursor: pointer;
-    color: var(--text-light);
+background: none;
+border: none;
+font-size: 24px;
+cursor: pointer;
+color: var(--text-light);
 }
 
 .loading {
-    display: inline-block;
-    width: 20px;
-    height: 20px;
-    border: 3px solid rgba(255, 255, 255, .3);
-    border-radius: 50%;
-    border-top-color: #fff;
-    animation: spin 1s ease-in-out infinite;
+display: inline-block;
+width: 20px;
+height: 20px;
+border: 3px solid rgba(255, 255, 255, .3);
+border-radius: 50%;
+border-top-color: #fff;
+animation: spin 1s ease-in-out infinite;
 }
 
 @keyframes spin {
-    to { transform: rotate(360deg); }
+to { transform: rotate(360deg); }
 }
 
 .alert {
-    padding: 16px 20px;
-    border-radius: 12px;
-    margin-bottom: 20px;
-    border-left: 4px solid;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    animation: slideIn 0.3s ease;
+padding: 16px 20px;
+border-radius: 12px;
+margin-bottom: 20px;
+border-left: 4px solid;
+display: flex;
+align-items: center;
+gap: 12px;
+animation: slideIn 0.3s ease;
 }
 
 @keyframes slideIn {
-    from {
-        transform: translateX(-100%);
-        opacity: 0;
-    }
-    to {
-        transform: translateX(0);
-        opacity: 1;
-    }
+from {
+transform: translateX(-100%);
+opacity: 0;
+}
+to {
+transform: translateX(0);
+opacity: 1;
+}
 }
 
 .alert-success {
-    background: rgba(5, 150, 105, 0.1);
-    border-left-color: var(--success);
-    color: var(--success);
+background: rgba(5, 150, 105, 0.1);
+border-left-color: var(--success);
+color: var(--success);
 }
 
 .alert-danger {
-    background: rgba(220, 38, 38, 0.1);
-    border-left-color: var(--danger);
-    color: var(--danger);
+background: rgba(220, 38, 38, 0.1);
+border-left-color: var(--danger);
+color: var(--danger);
 }
 
 .alert-warning {
-    background: rgba(217, 119, 6, 0.1);
-    border-left-color: var(--warning);
-    color: var(--warning);
+background: rgba(217, 119, 6, 0.1);
+border-left-color: var(--warning);
+color: var(--warning);
 }
 
 .progress-bar {
-    width: 100%;
-    height: 8px;
-    background: rgba(15, 15, 35, 0.8);
-    border-radius: 4px;
-    overflow: hidden;
-    margin: 10px 0;
+width: 100%;
+height: 8px;
+background: rgba(15, 15, 35, 0.8);
+border-radius: 4px;
+overflow: hidden;
+margin: 10px 0;
 }
 
 .progress-fill {
-    height: 100%;
-    background: linear-gradient(90deg, var(--primary), var(--primary-light));
-    border-radius: 4px;
-    transition: width 0.3s ease;
+height: 100%;
+background: linear-gradient(90deg, var(--primary), var(--primary-light));
+border-radius: 4px;
+transition: width 0.3s ease;
 }
 
 .countdown {
-    font-size: 24px;
-    font-weight: 700;
-    color: var(--primary);
-    text-align: center;
-    margin: 20px 0;
+font-size: 24px;
+font-weight: 700;
+color: var(--primary);
+text-align: center;
+margin: 20px 0;
 }
 
 .refer-link {
-    background: rgba(15, 15, 35, 0.8);
-    border: 1px solid var(--glass-border);
-    border-radius: 12px;
-    padding: 12px;
-    color: var(--text);
-    font-family: monospace;
-    word-break: break-all;
-    margin: 10px 0;
+background: rgba(15, 15, 35, 0.8);
+border: 1px solid var(--glass-border);
+border-radius: 12px;
+padding: 12px;
+color: var(--text);
+font-family: monospace;
+word-break: break-all;
+margin: 10px 0;
 }
 
 .withdrawal-history {
-    max-height: 300px;
-    overflow-y: auto;
+max-height: 300px;
+overflow-y: auto;
 }
 
 .history-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 12px;
-    border-bottom: 1px solid var(--border);
-    margin-bottom: 8px;
+display: flex;
+justify-content: space-between;
+align-items: center;
+padding: 12px;
+border-bottom: 1px solid var(--border);
+margin-bottom: 8px;
 }
 
 .history-status {
-    padding: 4px 8px;
-    border-radius: 12px;
-    font-size: 12px;
-    font-weight: 600;
+padding: 4px 8px;
+border-radius: 12px;
+font-size: 12px;
+font-weight: 600;
 }
 
 .status-pending {
-    background: rgba(217, 119, 6, 0.2);
-    color: var(--warning);
+background: rgba(217, 119, 6, 0.2);
+color: var(--warning);
 }
 
 .status-completed {
-    background: rgba(5, 150, 105, 0.2);
-    color: var(--success);
+background: rgba(5, 150, 105, 0.2);
+color: var(--success);
 }
 
 .status-rejected {
-    background: rgba(220, 38, 38, 0.2);
-    color: var(--danger);
+background: rgba(220, 38, 38, 0.2);
+color: var(--danger);
 }
 
 .add-task-button {
-    margin-top: 15px;
-    text-align: center;
+margin-top: 15px;
+text-align: center;
+margin-bottom: 20px; /* Added margin for spacing */
 }
 
 .add-task-button .btn {
-    background: linear-gradient(135deg, var(--accent), var(--warning));
-    color: white;
+background: linear-gradient(135deg, var(--accent), var(--warning));
+color: white;
 }
 
 .add-task-button .btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 25px rgba(245, 158, 11, 0.4);
+transform: translateY(-2px);
+box-shadow: 0 8px 25px rgba(245, 158, 11, 0.4);
 }
 
 /* Modified for Add Task - Wallet Connect Button */
 .add-task-wallet-section {
-    text-align: center;
-    margin-bottom: 20px;
-    padding: 15px;
-    background-color: rgba(15, 15, 35, 0.8);
-    border: 1px solid var(--glass-border);
-    border-radius: 16px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 10px;
+text-align: center;
+margin-bottom: 20px;
+padding: 15px;
+background-color: rgba(15, 15, 35, 0.8);
+border: 1px solid var(--glass-border);
+border-radius: 16px;
+display: flex;
+flex-direction: column;
+align-items: center;
+gap: 10px;
 }
 
 #ton-connect-button-container {
-    /* This is where TON Connect UI might render a default button if not overridden */
-    /* For this specific implementation, we'll manage buttons manually in profile section */
-    display: none; /* Hide default TON Connect button container if not needed */
+/* This is where TON Connect UI might render a default button if not overridden /
+/ For this specific implementation, we'll manage buttons manually in profile section /
+display: none; / Hide default TON Connect button container if not needed */
 }
 
 .wallet-status-info {
-    margin-top: 15px;
-    padding: 10px;
-    border-radius: 8px;
-    text-align: center;
-    font-weight: 500;
-    width: 100%; /* Occupy full width of its container */
+margin-top: 15px;
+padding: 10px;
+border-radius: 8px;
+text-align: center;
+font-weight: 500;
+width: 100%; /* Occupy full width of its container */
 }
 
 .wallet-connected {
-    background: rgba(5, 150, 105, 0.1);
-    color: var(--success);
+background: rgba(5, 150, 105, 0.1);
+color: var(--success);
 }
 
 .wallet-disconnected {
-    background: rgba(220, 38, 38, 0.1);
-    color: var(--danger);
+background: rgba(220, 38, 38, 0.1);
+color: var(--danger);
 }
 
 .profile-wallet-controls {
-    display: flex;
-    justify-content: center;
-    gap: 15px;
-    flex-wrap: wrap;
-    margin-top: 20px;
+display: flex;
+justify-content: center;
+gap: 15px;
+flex-wrap: wrap;
+margin-top: 20px;
+}
+
+/* New section for Total Points to TON calculation in Profile */
+.profile-ton-conversion {
+margin-top: 20px;
+padding: 15px;
+background: rgba(15, 15, 35, 0.8);
+border: 1px solid var(--glass-border);
+border-radius: 16px;
+text-align: center;
+}
+
+.profile-ton-conversion h3 {
+color: var(--primary);
+margin-bottom: 15px;
+}
+
+.profile-ton-conversion p {
+color: var(--text-light);
+font-size: 14px;
+line-height: 1.6;
 }
 
 @media (max-width: 768px) {
-    .container {
-        padding: 15px 10px 100px;
-    }
+.container {
+padding: 15px 10px 100px;
+}
 
-    .header {
-        flex-direction: column;
-        gap: 15px;
-        text-align: center;
-    }
+.header {
+    flex-direction: column;
+    gap: 15px;
+    text-align: center;
+}
 
-    .stats-grid {
-        grid-template-columns: repeat(2, 1fr);
-    }
+.stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+}
 
-    .modal-content {
-        width: 95%;
-        padding: 20px;
-    }
+.modal-content {
+    width: 95%;
+    padding: 20px;
+}
 
-    .spin-wheel {
-        width: 200px;
-        height: 200px;
-    }
+.spin-wheel {
+    width: 200px;
+    height: 200px;
+}
 
-    .bottom-nav {
-        padding: 10px 0;
-    }
+.bottom-nav {
+    padding: 10px 0;
+}
 
-    .nav-item span {
-        font-size: 10px;
-    }
+.nav-item span {
+    font-size: 10px;
+}
 
-    .nav-item {
-        padding: 6px 8px;
-    }
+.nav-item {
+    padding: 6px 8px;
+}
 
-    .profile-wallet-controls {
-        flex-direction: column;
-        align-items: center;
-    }
+.profile-wallet-controls {
+    flex-direction: column;
+    align-items: center;
+}
+
+.add-task-button {
+    margin-bottom: 10px; /* Adjusted margin for mobile */
+}
+
 }
 
 .pulse {
-    animation: pulse 2s infinite;
+animation: pulse 2s infinite;
 }
 
 @keyframes pulse {
-    0% {
-        box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.7);
-    }
-    70% {
-        box-shadow: 0 0 0 10px rgba(220, 38, 38, 0);
-    }
-    100% {
-        box-shadow: 0 0 0 0 rgba(220, 38, 38, 0);
-    }
+0% {
+box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.7);
+}
+70% {
+box-shadow: 0 0 0 10px rgba(220, 38, 38, 0);
+}
+100% {
+box-shadow: 0 0 0 0 rgba(220, 38, 38, 0);
+}
 }
 
 .glow {
-    box-shadow: 0 0 20px rgba(220, 38, 38, 0.5);
+box-shadow: 0 0 20px rgba(220, 38, 38, 0.5);
 }
 </style>
+
 </head>
 <body>
     <div class="container">
@@ -848,7 +876,7 @@ body::before {
             </button>
         </div>
 
-        <div class="stats-grid">
+    <div class="stats-grid">
             <div class="stat-card">
                 <div class="stat-number" id="totalEarned">0</div>
                 <div class="stat-label">Total Earned</div>
@@ -918,6 +946,7 @@ body::before {
                     <span class="material-icons">assignment</span>
                     Tasks
                 </h2>
+                <!-- Add Task button moved to the top of the Task card -->
                 <div class="add-task-button">
                     <button class="btn btn-primary" onclick="showSection('addTask')">
                         <span class="material-icons">add</span>
@@ -1110,6 +1139,22 @@ body::before {
                     <!-- Connect/Disconnect buttons will appear here, managed by JS -->
                 </div>
 
+                <!-- New Section for Total Points to TON Conversion -->
+                <div class="profile-ton-conversion">
+                    <h3 class="card-title">
+                        <span class="material-icons">currency_exchange</span>
+                        Total Points to TON Conversion
+                    </h3>
+                    <p>
+                        Your current balance of <strong id="profileCurrentPoints">0</strong> points is approximately equal to <strong id="profileEstimatedTon">0.00000000</strong> TON.
+                        <br>
+                        <br>
+                        The conversion rate is: <strong id="conversionRateText">100 points = 0.000078 TON</strong>.
+                        <br>
+                        Minimum withdrawal: <strong id="minWithdrawPointsProfile">2000</strong> points.
+                    </p>
+                </div>
+
                 <div style="display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; margin-top: 20px;">
                     <button class="btn btn-primary" onclick="showWithdrawModal()">
                         <span class="material-icons">account_balance</span>
@@ -1259,6 +1304,10 @@ body::before {
         const MIN_WITHDRAW_POINTS = 2000;
         const POINTS_TO_TON_RATE = 100 / 0.000078; // 100 points for 0.000078 TON
         const IMPRESSIONS_TO_TON_RATE = 100 / 0.1; // 100 impressions for 0.1 TON
+        const AD_REWARD_POINTS = 10;
+        const CHECKIN_REWARD_POINTS = 50;
+        const TASK_SPIN_REWARD = 1;
+
 
         // Initialize Telegram Web App
         function initTelegramWebApp() {
@@ -1349,6 +1398,7 @@ body::before {
 
                     updateUI(userData); // Update general UI elements
                     updateWalletUI(); // Update wallet connection status and buttons
+                    updateProfileTonConversion(); // Update TON conversion info in profile
                 }
             });
 
@@ -1611,7 +1661,7 @@ body::before {
                         userData.balance = (userData.balance || 0) + reward;
                         userData.totalEarned = (userData.totalEarned || 0) + reward;
                         userData.tasksCompleted = (userData.tasksCompleted || 0) + 1;
-                        userData.spins = (userData.spins || 0) + 1; // Grant a spin for completing a task
+                        userData.spins = (userData.spins || 0) + TASK_SPIN_REWARD; // Grant a spin for completing a task
                     }
                     return userData;
                 });
@@ -1624,7 +1674,7 @@ body::before {
                 });
 
                 closeModal('taskModal');
-                showAlert(`Task completed! You earned ${reward} points and 1 spin!`, 'success');
+                showAlert(`Task completed! You earned ${reward} points and ${TASK_SPIN_REWARD} spin!`, 'success');
 
             } catch (error) {
                 console.error('Error completing task:', error);
@@ -1766,8 +1816,8 @@ body::before {
                 const userRef = database.ref('users/' + currentUser.id);
                 await userRef.transaction((userData) => {
                     if (userData) {
-                        userData.balance = (userData.balance || 0) + 10;
-                        userData.totalEarned = (userData.totalEarned || 0) + 10;
+                        userData.balance = (userData.balance || 0) + AD_REWARD_POINTS;
+                        userData.totalEarned = (userData.totalEarned || 0) + AD_REWARD_POINTS;
                         userData.adsWatched = (userData.adsWatched || 0) + 1;
                     }
                     return userData;
@@ -1775,7 +1825,7 @@ body::before {
 
                 adsWatchedToday++;
                 lastAdCompletionTime = Date.now();
-                showAlert('Ad watched! You earned 10 points!', 'success');
+                showAlert(`Ad watched! You earned ${AD_REWARD_POINTS} points!`, 'success');
 
             } catch (error) {
                 console.error('Error watching ad:', error);
@@ -1801,12 +1851,12 @@ body::before {
 
             // Update user balance and record check-in date
             await userRef.update({
-                balance: (userData.balance || 0) + 50,
-                totalEarned: (userData.totalEarned || 0) + 50,
+                balance: (userData.balance || 0) + CHECKIN_REWARD_POINTS,
+                totalEarned: (userData.totalEarned || 0) + CHECKIN_REWARD_POINTS,
                 lastCheckin: today
             });
 
-            showAlert('Daily check-in completed! You earned 50 points!', 'success');
+            showAlert(`Daily check-in completed! You earned ${CHECKIN_REWARD_POINTS} points!`, 'success');
 
             // Update the button state
             const dailyCheckinButton = document.querySelector('.btn-success[onclick="dailyCheckin()"]');
@@ -2109,7 +2159,7 @@ body::before {
             const amount = parseInt(document.getElementById('withdrawAmount').value);
 
             // Basic validation for TON address
-            if (!tonAddress || !tonAddress.startsWith('UQ')) {
+            if (!tonAddress || !tonAddress.startsWith('UQ') && !tonAddress.startsWith('EQ')) { // Allow EQ for newer addresses too
                 showAlert('Please enter a valid TON address.', 'danger');
                 return;
             }
@@ -2171,6 +2221,7 @@ body::before {
         // Update TON receive amount dynamically as user types in withdraw amount
         document.getElementById('withdrawAmount').addEventListener('input', updateWithdrawTonAmount);
         document.getElementById('minWithdrawPoints').textContent = MIN_WITHDRAW_POINTS; // Set min value dynamically
+        document.getElementById('minWithdrawPointsProfile').textContent = MIN_WITHDRAW_POINTS; // Set min value dynamically in profile
 
         function updateWithdrawTonAmount() {
             const amountInput = document.getElementById('withdrawAmount');
@@ -2184,6 +2235,22 @@ body::before {
 
             const tonAmount = (amount / POINTS_TO_TON_RATE);
             tonReceiveElement.textContent = tonAmount.toFixed(8); // Display with 8 decimal places for TON
+        }
+
+        // Update the TON conversion text in the profile section
+        function updateProfileTonConversion() {
+            const profileCurrentPoints = document.getElementById('profileCurrentPoints');
+            const profileEstimatedTon = document.getElementById('profileEstimatedTon');
+            const conversionRateText = document.getElementById('conversionRateText');
+
+            if (profileCurrentPoints) profileCurrentPoints.textContent = formatNumber(userBalance);
+            if (profileEstimatedTon) {
+                const estimatedTon = (userBalance / POINTS_TO_TON_RATE);
+                profileEstimatedTon.textContent = estimatedTon.toFixed(8);
+            }
+             if (conversionRateText) {
+                 conversionRateText.textContent = `100 points = ${ (100 / POINTS_TO_TON_RATE).toFixed(8) } TON`;
+             }
         }
 
         // Load the user's withdrawal history
@@ -2262,6 +2329,9 @@ body::before {
             // Special handling for section transitions if needed
             if (sectionName === 'addTask' || sectionName === 'profile') {
                 updateWalletUI(); // Ensure wallet status is correct when navigating to these sections
+            }
+             if (sectionName === 'profile') {
+                updateProfileTonConversion(); // Update TON conversion info when profile is shown
             }
         }
 
@@ -2356,6 +2426,5 @@ body::before {
             }
         });
     </script>
-
 </body>
 </html>
