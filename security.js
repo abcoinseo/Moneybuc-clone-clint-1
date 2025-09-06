@@ -1,98 +1,67 @@
-<script>
-document.addEventListener("DOMContentLoaded", async () => {
-  // ===================== TELEGRAM USER =====================
-  const tg = window.Telegram?.WebApp;
-  if (!tg) {
-    console.error("Telegram WebApp not found!");
-    return;
+// ========== Firebase Configuration ==========
+const firebaseConfig = {
+  apiKey: "AIzaSyA3SqCHzN3kLj7DC8Cyu9OzxPFtIlyyii4",
+  authDomain: "maneybux-clone.firebaseapp.com",
+  projectId: "maneybux-clone",
+  storageBucket: "maneybux-clone.firebasestorage.app",
+  messagingSenderId: "153207109623",
+  appId: "1:153207109623:web:4cd48633c49c2ba3c1a0f2"
+};
+
+try {
+  firebase.initializeApp(firebaseConfig);
+  firebase.app();
+} catch (error) {
+  console.error("Firebase initialization error:", error);
+  alert("Firebase initialization failed.");
+}
+const database = firebase.database();
+
+// ========== Ban System Logic ==========
+const ADMIN_USER_IDS = [123456789, 987654321];
+let currentUser = null;
+let currentUserIsBanned = false;
+
+function isAdmin() {
+  if (!currentUser || !currentUser.id) return false;
+  return ADMIN_USER_IDS.includes(currentUser.id);
+}
+
+async function checkUserBanStatus(userId) {
+  const userRef = database.ref('users/' + userId);
+  const snapshot = await userRef.once('value');
+  const userData = snapshot.val();
+  currentUserIsBanned = userData && userData.isBanned === true;
+  return currentUserIsBanned;
+}
+
+function displayBanMessage() {
+  const container = document.querySelector('.container');
+  if (!container) return;
+  container.innerHTML = `
+    <div style="text-align:center; padding:30px;">
+      <h2>🚫 Account Banned</h2>
+      <p>Your account has been banned. Contact support at
+      <a href="https://t.me/jhahidul52" target="_blank">Telegram</a></p>
+    </div>
+  `;
+  const bottomNav = document.querySelector('.bottom-nav');
+  if (bottomNav) bottomNav.style.display = 'none';
+}
+
+async function enforceBan() {
+  if (!currentUser || !currentUser.id) return false;
+  if (currentUserIsBanned) {
+    displayBanMessage();
+    return true;
   }
-  tg.expand();
-
-  const user = tg.initDataUnsafe?.user;
-  if (!user) {
-    console.error("Telegram user not found!");
-    return;
+  const banned = await checkUserBanStatus(currentUser.id);
+  if (banned) {
+    displayBanMessage();
+    return true;
   }
+  return false;
+}
 
-  // ===================== BAN POPUP =====================
-  function showBanPopup() {
-    document.body.innerHTML = `
-      <div style="color:red;font-weight:bold;font-size:22px;text-align:center;margin-top:50px">
-        🚫 You are permanently banned!<br>
-        Please contact support.
-      </div>
-    `;
-    setTimeout(() => tg.close && tg.close(), 4000);
-  }
-
-  // ===================== GET USER IP =====================
-  let userIp = null;
-  try {
-    const res = await fetch("https://api.ipify.org?format=json");
-    const data = await res.json();
-    userIp = data.ip;
-  } catch (err) {
-    console.error("Failed to fetch IP:", err);
-    userIp = "unknown_ip";
-  }
-
-  // ===================== CHECK USER =====================
-  async function checkUser() {
-    if (!firebase || !firebase.database) {
-      console.error("Firebase not initialized!");
-      return;
-    }
-
-    const db = firebase.database();
-    const userRef = db.ref("users/" + user.id);
-
-    userRef.once("value", async (snapshot) => {
-      const data = snapshot.val();
-
-      // আগেই Ban থাকলে সরাসরি popup
-      if (data?.ban === true) {
-        showBanPopup();
-        return;
-      }
-
-      // ইউজারকে Save/Update করো
-      await userRef.update({
-        id: user.id,
-        first_name: user.first_name,
-        username: user.username || ("user_" + user.id),
-        ip: userIp,
-        ban: false,
-        lastLogin: Date.now()
-      });
-
-      // সব ইউজার চেক করো
-      db.ref("users").once("value", (snap) => {
-        const users = snap.val() || {};
-        let count = 0;
-
-        for (let uid in users) {
-          if (users[uid].ip === userIp) count++;
-        }
-
-        if (count > 1) {
-          // এক IP তে একাধিক অ্যাকাউন্ট = BAN
-          for (let uid in users) {
-            if (users[uid].ip === userIp) {
-              db.ref("users/" + uid).update({ ban: true });
-            }
-          }
-          showBanPopup();
-        } else {
-          // Safe login
-          const statusEl = document.getElementById("status");
-          if (statusEl) {
-            statusEl.innerText = "✅ Safe login: " + user.first_name;
-          }
-        }
-      });
-    });
-  }
-
-  checkUser();
-});
-</script>
+// অন্যান্য functions (banUser, unbanUser, initializeUser, spinWheel, watchAd ইত্যাদি)
+// --- তোমার আগের কোড থেকে কপি করে এখানে রাখতে হবে ---
