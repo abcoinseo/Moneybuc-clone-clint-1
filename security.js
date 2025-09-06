@@ -43,7 +43,11 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   // ===================== BAN CHECK =====================
   if (bans.includes(user.id) || bans.includes(deviceId) || bans.includes(ipAddress)) {
-    document.body.innerHTML = "<h2 style='color:red;text-align:center;'>🚫 You are banned!</h2>";
+    document.body.innerHTML = `
+      <h2 style='color:red;text-align:center;margin-top:30px;'>
+        🚫 You are banned from this app!
+      </h2>
+    `;
     setTimeout(() => tg.close(), 3000);
     return;
   }
@@ -58,18 +62,16 @@ document.addEventListener("DOMContentLoaded", async () => {
     bans.push(ipAddress);
     localStorage.setItem("bannedUsers", JSON.stringify(bans));
 
-    document.body.innerHTML = "<h2 style='color:red;text-align:center;'>🚫 Multi-account detected, banned!</h2>";
+    document.body.innerHTML = `
+      <h2 style='color:red;text-align:center;margin-top:30px;'>
+        🚫 Multi-account detected, you are banned!
+      </h2>
+    `;
     setTimeout(() => tg.close(), 3000);
     return;
   }
 
-  // ===================== REGISTER ACCOUNT =====================
-  if (!found) {
-    accounts.push({ userId: user.id, deviceId, ip: ipAddress });
-    localStorage.setItem("accounts", JSON.stringify(accounts));
-  }
-
-  // ===================== SHOW DASHBOARD =====================
+  // ===================== SAFE USER → SHOW APP =====================
   document.body.innerHTML = `
     <div style="font-family:sans-serif;text-align:center;padding:20px;">
       <h2>👋 Welcome, ${user.first_name}</h2>
