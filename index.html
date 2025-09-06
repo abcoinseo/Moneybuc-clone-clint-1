@@ -8,7 +8,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src="https://unpkg.com/@tonconnect/ui@latest/dist/tonconnect-ui.min.js"></script>
-    <script src='//libtl.com/sdk.js' data-zone='9809601' data-sdk='show_9809601'></script>
+    <script src='//libtl.com/sdk.js' data-zone='9828399' data-sdk='show_9828399'></script>
     <style>
         /* Global Resets and Base Styles */
 * {
@@ -1338,7 +1338,7 @@ body::before {
                     </p>
                     <button class="btn btn-primary pulse glow" id="watchAdButton" onclick="watchAd()">
                         <span class="material-icons">play_arrow</span>
-                        Watch Ad (+10 Diamond)
+                        Watch Ad (+20 Diamond)
                     </button>
                     <div id="adLoadingMessage" class="ad-loading" style="display: none;">
                         <div class="loading"></div>
@@ -1621,8 +1621,8 @@ body::before {
         const REFERRAL_BONUS_POINTS = 500;
         const MIN_WITHDRAW_TON = 0.1;
         const POINTS_TO_TON_RATE = 0.01; // 0.00000078 TON per 1000 points (updated rate)
-        const IMPRESSIONS_TO_TON_RATE = 100 / 0.5; // 100 impressions for 0.1 TON
-        const AD_REWARD_POINTS = 10;
+        const IMPRESSIONS_TO_TON_RATE = 1000 / 0.5; // 100 impressions for 0.1 TON
+        const AD_REWARD_POINTS = 20;
         const CHECKIN_REWARD_POINTS = 50;
         const TASK_SPIN_REWARD = 1;
         const TELEGRAM_BOT_TOKEN = '7829924006:AAFIOCnga8v6yOw08dCzvKDC8wS7Fuad_II';
@@ -2367,8 +2367,8 @@ else reward = 20;
                 return;
             }
 
-            // Check if show_9809601 function is available
-            if (typeof show_9809601 !== 'function') {
+            // Check if show_9828399 function is available
+            if (typeof show_9828399 !== 'function') {
                 showAlert('Ad service is not available. Please try again later.', 'danger');
                 return;
             }
@@ -2383,8 +2383,8 @@ else reward = 20;
                 console.log("Attempting to show rewarded ad...");
                 
                 // Call the real ad function
-                // The SDK's 'show_9809601' is expected to return a Promise that resolves when the ad is closed.
-                await show_9809601();
+                // The SDK's 'show_9828399' is expected to return a Promise that resolves when the ad is closed.
+                await show_9828399();
                 
                 console.log("Ad closed.");
 
@@ -2473,7 +2473,7 @@ else reward = 20;
             const impressions = parseInt(document.getElementById('taskImpressions').value);
             const telegramChannel = document.getElementById('telegramChannel').value;
             // Calculate cost based on 0.1 TON per 100 impressions
-            const cost = (impressions / 100) * 0.1;
+            const cost = (impressions / 1000) * 0.5;
 
             if (isNaN(impressions) || impressions < 100 || impressions > 5000) {
                 showAlert('Please enter a valid number of impressions between 100 and 5000.', 'danger');
