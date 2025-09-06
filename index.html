@@ -2700,7 +2700,7 @@ else reward = 20;
         // Update total cost display
         document.getElementById('taskImpressions').addEventListener('input', (e) => {
             const impressions = parseInt(e.target.value) || 0;
-            const cost = (impressions / 100) * 0.05;
+            const cost = (impressions / 100) * 0.015;
             document.getElementById('totalCost').textContent = cost.toFixed(3);
         });
 
