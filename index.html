@@ -756,6 +756,8 @@
             align-items: center;
             gap: 12px;
             animation: slideIn 0.3s ease;
+            position: relative; /* Added for better z-index control if needed */
+            z-index: 1001; /* Ensure alerts appear above modals and nav */
         }
 
         @keyframes slideIn {
@@ -1319,10 +1321,6 @@
                         <p>Loading advertisement...</p>
                     </div>
                     <div id="adCountdown" class="countdown" style="display: none;"></div>
-                    <div id="adCloseMessage" class="alert alert-warning" style="display: none; margin-top: 15px;">
-                        <span class="material-icons">warning</span>
-                        You didn't watch the full ad. Points have not been awarded.
-                    </div>
                 </div>
             </div>
         </div>
@@ -1588,12 +1586,10 @@
         let userTonBalance = 0;
         let userSpins = 0;
         let adsWatchedToday = 0;
-        let lastAdTime = 0;
+        let lastAdCompletionTime = 0; // Timestamp when the last ad was successfully watched or failed
+        let adCooldownEnd = 0; // Timestamp when the cooldown for the next ad ends
         let dailyCheckinDone = false;
-        let lastAdCompletionTime = 0; // Timestamp of last ad completion
-        let adCountdownInterval = null; // To hold the interval ID for ad countdown
-        let swapMode = 'pointsToTon'; // 'pointsToTon' or 'tonToPoints'
-        let isWatchingAd = false;
+        let isWatchingAd = false; // Flag to prevent multiple ad plays
         let selectedTaskCategory = 'normal';
 
         // Constants
@@ -1605,7 +1601,7 @@
         const CHECKIN_REWARD_POINTS = 50;
         const TASK_SPIN_REWARD = 1;
         const TELEGRAM_BOT_TOKEN = '7829924006:AAFIOCnga8v6yOw08dCzvKDC8wS7Fuad_II';
-        const AD_DURATION = 15000; // 15 seconds in milliseconds
+        const MIN_AD_WATCH_TIME = 15000; // 15 seconds in milliseconds
 
         // Initialize Telegram Web App
         function initTelegramWebApp() {
@@ -1709,7 +1705,8 @@
                     referrals: 0,
                     referralEarnings: 0,
                     adsWatched: 0,
-                    lastAdReset: Date.now(),
+                    lastAdCompletionTime: 0, // Timestamp for ad completion
+                    adCooldownEnd: 0,       // Timestamp when ad cooldown ends
                     lastCheckin: null,
                     createdAt: Date.now()
                 };
@@ -1724,21 +1721,24 @@
                     userTonBalance = userData.tonBalance || 0;
                     userSpins = userData.spins || 0;
                     adsWatchedToday = userData.adsWatched || 0;
-                    lastAdTime = userData.lastAdReset || 0;
+                    lastAdCompletionTime = userData.lastAdCompletionTime || 0;
+                    adCooldownEnd = userData.adCooldownEnd || 0;
                     dailyCheckinDone = userData.lastCheckin === new Date().toDateString();
 
-                    // Reset daily ad count if 24 hours have passed
-                    if (Date.now() - lastAdTime > 24 * 60 * 60 * 1000) {
+                    // Reset daily ad count if 24 hours have passed since the last completion
+                    if (Date.now() - lastAdCompletionTime > 24 * 60 * 60 * 1000) {
                         adsWatchedToday = 0;
                         userRef.update({
                             adsWatched: 0,
-                            lastAdReset: Date.now()
+                            lastAdCompletionTime: 0, // Reset completion time for the new day
+                            adCooldownEnd: 0
                         });
                     }
 
                     updateUI(userData);
                     updateWalletUI();
                     updateSwapInputs();
+                    updateAdButtonState(); // Ensure ad button is updated on load
                 }
             });
 
@@ -1773,59 +1773,54 @@
 
             document.getElementById('profileName').textContent = userData.first_name || 'User';
 
-            // Update ad button state
+            // Update ad button state is now handled by updateAdButtonState()
+        }
+
+        // Update ad button state
+        function updateAdButtonState() {
             const watchAdButton = document.getElementById('watchAdButton');
-            const timeSinceLastAd = Date.now() - lastAdCompletionTime;
-            const canWatchNextAd = timeSinceLastAd >= AD_DURATION;
-            
+            const adLoadingMessage = document.getElementById('adLoadingMessage');
+            const adCountdown = document.getElementById('adCountdown');
+
             if (adsWatchedToday >= 50) {
                 watchAdButton.disabled = true;
                 watchAdButton.innerHTML = '<span class="material-icons">block</span> Daily Limit Reached';
                 watchAdButton.classList.remove('pulse', 'glow');
+                adLoadingMessage.style.display = 'none';
+                adCountdown.style.display = 'none';
             } else if (isWatchingAd) {
                 watchAdButton.disabled = true;
                 watchAdButton.innerHTML = '<div class="loading"></div> Watching Ad...';
                 watchAdButton.classList.remove('pulse', 'glow');
-            } else if (!canWatchNextAd) {
+                adLoadingMessage.style.display = 'block';
+                adCountdown.style.display = 'none';
+            } else if (Date.now() < adCooldownEnd) {
+                // Cooldown is active
                 watchAdButton.disabled = true;
-                const timeLeft = Math.ceil((AD_DURATION - timeSinceLastAd) / 1000);
+                const timeLeft = Math.ceil((adCooldownEnd - Date.now()) / 1000);
                 watchAdButton.innerHTML = `<span class="material-icons">timer</span> Wait ${timeLeft}s`;
                 watchAdButton.classList.remove('pulse', 'glow');
-                
-                // Start countdown timer
-                if (adCountdownInterval) clearInterval(adCountdownInterval);
-                adCountdownInterval = setInterval(() => {
-                    const remaining = Math.ceil((AD_DURATION - (Date.now() - lastAdCompletionTime)) / 1000);
+                adLoadingMessage.style.display = 'none';
+                adCountdown.style.display = 'block';
+                adCountdown.textContent = `Wait ${timeLeft}s`;
+
+                const countdownInterval = setInterval(() => {
+                    const remaining = Math.ceil((adCooldownEnd - Date.now()) / 1000);
                     if (remaining <= 0) {
-                        clearInterval(adCountdownInterval);
-                        adCountdownInterval = null;
-                        watchAdButton.disabled = false;
-                        watchAdButton.innerHTML = '<span class="material-icons">play_arrow</span> Watch Ad (+10 Diamond)';
-                        watchAdButton.classList.add('pulse', 'glow');
+                        clearInterval(countdownInterval);
+                        updateAdButtonState(); // Re-evaluate button state
                     } else {
                         watchAdButton.innerHTML = `<span class="material-icons">timer</span> Wait ${remaining}s`;
+                        adCountdown.textContent = `Wait ${remaining}s`;
                     }
                 }, 1000);
             } else {
+                // Ready to watch ad
                 watchAdButton.disabled = false;
                 watchAdButton.innerHTML = '<span class="material-icons">play_arrow</span> Watch Ad (+10 Diamond)';
                 watchAdButton.classList.add('pulse', 'glow');
-            }
-
-            // Update daily checkin button
-            const dailyCheckinButton = document.querySelector('.btn-success[onclick="dailyCheckin()"]');
-            if (dailyCheckinButton) {
-                if (dailyCheckinDone) {
-                    dailyCheckinButton.textContent = 'Checked In!';
-                    dailyCheckinButton.disabled = true;
-                    dailyCheckinButton.classList.remove('btn-success');
-                    dailyCheckinButton.classList.add('btn-secondary');
-                } else {
-                    dailyCheckinButton.innerHTML = '<span class="material-icons">event_available</span> Daily Check-in';
-                    dailyCheckinButton.disabled = false;
-                    dailyCheckinButton.classList.remove('btn-secondary');
-                    dailyCheckinButton.classList.add('btn-success');
-                }
+                adLoadingMessage.style.display = 'none';
+                adCountdown.style.display = 'none';
             }
         }
 
@@ -2154,7 +2149,7 @@
                 taskModalMessage.textContent = 'Please wait while we verify your task completion...';
             }
 
-            let countdown = 5;
+            let countdown = 5; // Standard countdown for verification
             const countdownElement = document.getElementById('taskCountdown');
             const progressElement = document.getElementById('taskProgress');
 
@@ -2336,10 +2331,11 @@
                 return;
             }
 
-            const timeSinceLastAd = Date.now() - lastAdCompletionTime;
-            if (timeSinceLastAd < AD_DURATION) {
-                const timeLeft = Math.ceil((AD_DURATION - timeSinceLastAd) / 1000);
+            // Check if the cooldown has ended
+            if (Date.now() < adCooldownEnd) {
+                const timeLeft = Math.ceil((adCooldownEnd - Date.now()) / 1000);
                 showAlert(`Please wait ${timeLeft} seconds before watching another ad.`, 'warning');
+                updateAdButtonState(); // Ensure button state is correct
                 return;
             }
 
@@ -2356,96 +2352,54 @@
 
             try {
                 isWatchingAd = true;
+                updateAdButtonState(); // Update button to "Watching Ad..."
+
+                // Start a timer to track minimum watch time
+                const adWatchStartTime = Date.now();
                 
-                // Show loading message
-                document.getElementById('adLoadingMessage').style.display = 'block';
-                
-                // Hide the watch ad button and show countdown
-                document.getElementById('watchAdButton').style.display = 'none';
-                document.getElementById('adCountdown').style.display = 'block';
-
-                let currentCountdown = AD_DURATION / 1000;
-                document.getElementById('adCountdown').textContent = currentCountdown;
-
-                // Clear previous interval if any
-                if (adCountdownInterval) clearInterval(adCountdownInterval);
-                adCountdownInterval = setInterval(() => {
-                    currentCountdown--;
-                    document.getElementById('adCountdown').textContent = currentCountdown;
-                    if (currentCountdown <= 0) {
-                        clearInterval(adCountdownInterval);
-                        adCountdownInterval = null;
-                    }
-                }, 1000);
-
                 console.log("Attempting to show rewarded ad...");
                 
                 // Call the real ad function
+                // The SDK's 'show_9809601' is expected to return a Promise that resolves when the ad is closed.
                 await show_9809601();
                 
-                console.log("Ad completed successfully!");
+                console.log("Ad closed.");
 
-                // Hide loading message and countdown
-                document.getElementById('adLoadingMessage').style.display = 'none';
-                document.getElementById('adCountdown').style.display = 'none';
-                document.getElementById('watchAdButton').style.display = 'inline-flex'; // Show the button again
+                const actualWatchDuration = Date.now() - adWatchStartTime;
 
-                // Reward the user only if the full duration passed
-                const timeWatched = Date.now() - lastAdCompletionTime; // Re-check time since last ad completion
-                if (timeWatched >= AD_DURATION) {
+                if (actualWatchDuration >= MIN_AD_WATCH_TIME) {
+                    console.log("Ad watched successfully for minimum duration.");
+                    // Reward the user
                     const userRef = database.ref('users/' + currentUser.id);
                     await userRef.transaction((userData) => {
                         if (userData) {
                             userData.balance = (userData.balance || 0) + AD_REWARD_POINTS;
                             userData.totalEarned = (userData.totalEarned || 0) + AD_REWARD_POINTS;
                             userData.adsWatched = (userData.adsWatched || 0) + 1;
+                            userData.lastAdCompletionTime = Date.now(); // Record completion time
+                            userData.adCooldownEnd = Date.now() + 30000; // Set cooldown for 30 seconds
                         }
                         return userData;
                     });
 
                     adsWatchedToday++;
-                    lastAdCompletionTime = Date.now(); // Update last completion time
                     showAlert(`Ad watched successfully! You earned ${AD_REWARD_POINTS} points!`, 'success');
                 } else {
-                    // Ad was closed early
-                    document.getElementById('adCloseMessage').style.display = 'flex';
-                    setTimeout(() => {
-                        document.getElementById('adCloseMessage').style.display = 'none';
-                    }, 5000);
-                    showAlert('You didn\'t watch the full ad. Points have not been awarded.', 'warning');
+                    console.log("Ad closed too early.");
+                    showAlert("You haven't watched the full ad. No reward given.", 'warning');
+                    // Even if not rewarded, set the cooldown to prevent abuse
+                    const userRef = database.ref('users/' + currentUser.id);
+                    await userRef.update({
+                        adCooldownEnd: Date.now() + 30000 // Set cooldown for 30 seconds
+                    });
                 }
-                
-                isWatchingAd = false;
 
             } catch (error) {
-                console.error('Error watching ad:', error);
+                console.error('Error during ad playback:', error);
+                showAlert('Error loading advertisement. Please check your internet connection and try again.', 'danger');
+            } finally {
                 isWatchingAd = false;
-                
-                // Hide loading message and countdown
-                document.getElementById('adLoadingMessage').style.display = 'none';
-                document.getElementById('adCountdown').style.display = 'none';
-                document.getElementById('watchAdButton').style.display = 'inline-flex'; // Show the button again
-                
-                // Check if error is due to user cancellation or ad not available
-                if (error.message && (error.message.includes('user') || error.message.includes('cancel') || error.message.includes('closed'))) {
-                    showAlert('Ad viewing was interrupted or cancelled. No reward given.', 'warning');
-                } else {
-                    showAlert('Error loading advertisement. Please check your internet connection and try again.', 'danger');
-                }
-                
-                // Update UI to reset button state
-                updateUI({ 
-                    balance: userBalance, 
-                    tonBalance: userTonBalance, 
-                    spins: userSpins, 
-                    totalEarned: 0, 
-                    tasksCompleted: 0, 
-                    referrals: 0, 
-                    adsWatched: adsWatchedToday,
-                    first_name: currentUser.first_name,
-                    photo_url: currentUser.photo_url,
-                    id: currentUser.id 
-                });
+                updateAdButtonState(); // Re-evaluate button state
             }
         }
 
@@ -2461,7 +2415,7 @@
                 return;
             }
 
-            await new Promise(resolve => setTimeout(resolve, 1000));
+            await new Promise(resolve => setTimeout(resolve, 1000)); // Simulate a slight delay
 
             await userRef.update({
                 balance: (userData.balance || 0) + CHECKIN_REWARD_POINTS,
@@ -2495,7 +2449,8 @@
             const url = document.getElementById('newTaskUrl').value;
             const impressions = parseInt(document.getElementById('taskImpressions').value);
             const telegramChannel = document.getElementById('telegramChannel').value;
-            const cost = (impressions / IMPRESSIONS_TO_TON_RATE) * 0.1;
+            // Calculate cost based on 0.1 TON per 100 impressions
+            const cost = (impressions / 100) * 0.1;
 
             if (isNaN(impressions) || impressions < 100 || impressions > 5000) {
                 showAlert('Please enter a valid number of impressions between 100 and 5000.', 'danger');
@@ -2518,10 +2473,10 @@
 
             try {
                 const transaction = {
-                    validUntil: Math.floor(Date.now() / 1000) + 60,
+                    validUntil: Math.floor(Date.now() / 1000) + 60, // Transaction valid for 60 seconds
                     messages: [{
-                        address: "UQDLsNfQBwWXD9aaNxNS3udGo-9o8ybrlKmmbI5gjjRfs17M",
-                        amount: Math.floor(cost * 1e9).toString()
+                        address: "UQDLsNfQBwWXD9aaNxNS3udGo-9o8ybrlKmmbI5gjjRfs17M", // Replace with your actual wallet address for task funding
+                        amount: Math.floor(cost * 1e9).toString() // Amount in nanoTON
                     }]
                 };
 
@@ -2534,8 +2489,8 @@
                         url,
                         category: selectedTaskCategory,
                         telegramChannel: selectedTaskCategory === 'telegram' ? telegramChannel : null,
-                        reward: 100,
-                        impressions,
+                        reward: 100, // Default reward per impression, can be adjusted or calculated
+                        impressions: impressions,
                         remainingImpressions: impressions,
                         createdBy: currentUser.id,
                         createdAt: Date.now(),
@@ -2555,7 +2510,7 @@
                 }
             } catch (error) {
                 console.error('Error creating task:', error);
-                if (error.message && (error.message.includes('User rejects') || error.message.includes('cancelled'))) {
+                if (error.message && error.message.includes('User rejects')) {
                     showAlert('Transaction was cancelled by user.', 'warning');
                 } else {
                     showAlert('Error creating task. Please check your wallet connection and try again.', 'danger');
@@ -2569,7 +2524,7 @@
         // Update total cost display
         document.getElementById('taskImpressions').addEventListener('input', (e) => {
             const impressions = parseInt(e.target.value) || 0;
-            const cost = (impressions / IMPRESSIONS_TO_TON_RATE) * 0.1;
+            const cost = (impressions / 100) * 0.1;
             document.getElementById('totalCost').textContent = cost.toFixed(3);
         });
 
@@ -2752,7 +2707,7 @@
 
         // Copy referral link
         function copyReferralLink() {
-            const botUsername = 'adflareprobot'; // Replace with your actual bot username if different
+            const botUsername = 'adflareprobot'; // Make sure this is your bot's username
             const link = `https://t.me/${botUsername}/app?startapp=ref_${currentUser.id}`;
             navigator.clipboard.writeText(link).then(() => {
                 showAlert('Referral link copied to clipboard!', 'success');
@@ -2780,6 +2735,7 @@
             const tonAddress = document.getElementById('tonAddress').value.trim();
             const amountTon = parseFloat(document.getElementById('withdrawAmount').value);
 
+            // Basic TON address validation (starts with UQ or EQ)
             if (!tonAddress || (!tonAddress.startsWith('UQ') && !tonAddress.startsWith('EQ'))) {
                 showAlert('Please enter a valid TON address.', 'danger');
                 return;
@@ -2843,7 +2799,7 @@
 
             database.ref('withdrawals')
                 .orderByChild('userId').equalTo(currentUser.id)
-                .limitToLast(10)
+                .limitToLast(10) // Limit to last 10 withdrawals for performance
                 .on('value', (snapshot) => {
                     withdrawalHistory.innerHTML = '';
                     const withdrawals = snapshot.val();
@@ -2853,6 +2809,7 @@
                         return;
                     }
 
+                    // Sort by creation date descending
                     const sortedWithdrawals = Object.entries(withdrawals)
                         .sort(([, a], [, b]) => b.createdAt - a.createdAt);
 
@@ -2885,7 +2842,7 @@
 
             database.ref('swapHistory')
                 .orderByChild('userId').equalTo(currentUser.id)
-                .limitToLast(10)
+                .limitToLast(10) // Limit to last 10 swaps
                 .on('value', (snapshot) => {
                     swapHistory.innerHTML = '';
                     const swaps = snapshot.val();
@@ -2895,6 +2852,7 @@
                         return;
                     }
 
+                    // Sort by timestamp descending
                     const sortedSwaps = Object.entries(swaps)
                         .sort(([, a], [, b]) => b.timestamp - a.timestamp);
 
@@ -2957,6 +2915,11 @@
             if (sectionName === 'profile') {
                 updateSwapInputs();
             }
+            
+            // Ensure ad button state is updated when entering ads section
+            if (sectionName === 'ads') {
+                updateAdButtonState();
+            }
         }
 
         // Show task tab
@@ -3007,14 +2970,17 @@
                 <span class="material-icons">${type === 'success' ? 'check_circle' : type === 'warning' ? 'warning' : type === 'info' ? 'info' : 'error'}</span>
                 ${message}
             `;
-            alertContainer.prepend(alert);
+            alertContainer.prepend(alert); // Add to the beginning
 
+            // Remove alert after 5 seconds
             setTimeout(() => {
-                alert.remove();
+                if (alert && alert.parentNode) { // Check if alert still exists
+                    alert.remove();
+                }
             }, 5000);
         }
 
-        // Format numbers
+        // Format numbers for display (e.g., 1.5K, 2.3M)
         function formatNumber(num) {
             if (num === null || num === undefined) return '0';
             num = Number(num);
@@ -3031,7 +2997,7 @@
             return num.toString();
         }
 
-        // Theme toggle
+        // Theme toggle (currently static)
         function toggleTheme() {
             showAlert('Red Moon theme is the current and only theme!', 'success');
         }
