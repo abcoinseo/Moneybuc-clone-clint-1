@@ -1,84 +1,60 @@
-document.addEventListener("DOMContentLoaded", async () => {
-  // ===================== TELEGRAM USER =====================
-  const tg = window.Telegram?.WebApp;
-  if (!tg) {
-    console.error("❌ Telegram WebApp not found!");
-    return;
-  }
-  tg.expand();
 
-  const user = tg.initDataUnsafe?.user;
-  if (!user) {
-    console.error("❌ User not detected!");
-    tg.close();
-    return;
-  }
+// =================== MULTI ACCOUNT DETECTION ===================
 
-  // ===================== DEVICE + BROWSER FINGERPRINT =====================
-  function getDeviceId() {
-    return btoa(
-      navigator.userAgent +
-      screen.width + "x" + screen.height +
-      navigator.language
-    );
-  }
-  const deviceId = getDeviceId();
-
-  // ===================== PUBLIC IP ADDRESS =====================
-  async function getIP() {
-    try {
-      let res = await fetch("https://api.ipify.org?format=json");
-      let data = await res.json();
-      return data.ip;
-    } catch (e) {
-      console.error("IP fetch failed", e);
-      return "unknown";
+// Function to generate a unique device fingerprint
+function getDeviceId() {
+    let deviceId = localStorage.getItem('device_id');
+    if (!deviceId) {
+        deviceId = 'device-' + Math.random().toString(36).substr(2, 16);
+        localStorage.setItem('device_id', deviceId);
     }
-  }
-  const ipAddress = await getIP();
+    return deviceId;
+}
 
-  // ===================== LOCAL STORAGE =====================
-  let bans = JSON.parse(localStorage.getItem("bannedUsers") || "[]");
-  let accounts = JSON.parse(localStorage.getItem("accounts") || "[]");
+// Simulate a database of banned accounts (replace with your real backend)
+let bannedAccounts = JSON.parse(localStorage.getItem('banned_accounts') || '[]');
 
-  // ===================== BAN CHECK =====================
-  if (bans.includes(user.id) || bans.includes(deviceId) || bans.includes(ipAddress)) {
-    document.body.innerHTML = `
-      <h2 style='color:red;text-align:center;margin-top:30px;'>
-        🚫 You are banned from this app!
-      </h2>
-    `;
-    return; // ❌ এখানে থেমে যাবে → অন্য কিছু show হবে না
-  }
+// Check if the current user is banned
+function checkBan(currentUserId) {
+    if (bannedAccounts.includes(currentUserId)) {
+        alert("⚠️ This account is banned for multi-account use on the same device!");
+        // Optional: redirect or hide app
+        document.body.innerHTML = "<h1>Account banned 🚫</h1>";
+        return true;
+    }
+    return false;
+}
 
-  // ===================== MULTI-ACCOUNT DETECT =====================
-  const found = accounts.find(acc => acc.deviceId === deviceId || acc.ip === ipAddress);
+// Main function to register account
+function registerAccount(currentUserId) {
+    const deviceId = getDeviceId();
 
-  if (found && found.userId !== user.id) {
-    // 🚨 Multi-account detected → Ban & Block
-    bans.push(user.id);
-    bans.push(deviceId);
-    bans.push(ipAddress);
-    localStorage.setItem("bannedUsers", JSON.stringify(bans));
+    // Track accounts per device
+    let deviceAccounts = JSON.parse(localStorage.getItem(deviceId) || '[]');
 
-    document.body.innerHTML = `
-      <h2 style='color:red;text-align:center;margin-top:30px;'>
-        🚫 Multi-account detected, you are banned!
-      </h2>
-    `;
-    return; // ❌ apps আর load হবে না
-  }
+    if (deviceAccounts.includes(currentUserId)) {
+        // Already registered, allow normal use
+        console.log("Welcome back! ✅");
+    } else {
+        deviceAccounts.push(currentUserId);
+        localStorage.setItem(deviceId, JSON.stringify(deviceAccounts));
 
-  // ===================== SAFE USER → SHOW APP =====================
-  document.body.innerHTML = `
-    <div style="font-family:sans-serif;text-align:center;padding:20px;">
-      <h2>👋 Welcome, ${user.first_name}</h2>
-      <p>✅ You are verified on this device.</p>
-      <p>UserID: ${user.id}</p>
-      <p>DeviceID: ${deviceId}</p>
-      <p>IP: ${ipAddress}</p>
-    </div>
-  `;
+        // If more than 1 account on the same device → ban the new account
+        if (deviceAccounts.length > 1) {
+            bannedAccounts.push(currentUserId);
+            localStorage.setItem('banned_accounts', JSON.stringify(bannedAccounts));
+            alert("⚠️ Multi-account detected! This account is now banned.");
+            document.body.innerHTML = "<h1>Account banned 🚫</h1>";
+        } else {
+            console.log("Account registered ✅");
+        }
+    }
+}
 
-  // এখানেই তোমার mini apps এর main content থাকবে
-});
+// =================== EXAMPLE USAGE ===================
+// Replace this with Telegram WebApp user ID
+const currentUserId = window.Telegram?.WebApp?.initData?.user?.id || prompt("Enter user ID");
+if (!checkBan(currentUserId)) {
+    registerAccount(currentUserId);
+}
+
