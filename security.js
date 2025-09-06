@@ -25,27 +25,21 @@ document.addEventListener("DOMContentLoaded", () => {
   const deviceId = getDeviceId();
 
   // ===================== LOCAL STORAGE =====================
-  let bans = JSON.parse(localStorage.getItem("bannedUsers") || "[]");
   let accounts = JSON.parse(localStorage.getItem("accounts") || "[]");
-
-  // ===================== BAN CHECK =====================
-  if (bans.includes(user.id) || bans.includes(deviceId)) {
-    document.body.innerHTML = "<h2 style='color:red;text-align:center;'>🚫 You are banned!</h2>";
-    setTimeout(() => tg.close(), 3000);
-    return;
-  }
 
   // ===================== MULTI-ACCOUNT DETECT =====================
   const found = accounts.find(acc => acc.deviceId === deviceId);
   if (found && found.userId !== user.id) {
-    // Multi account detected!
-    bans.push(user.id);
-    bans.push(deviceId);
-    localStorage.setItem("bannedUsers", JSON.stringify(bans));
-
-    document.body.innerHTML = "<h2 style='color:red;text-align:center;'>🚫 Multi-account detected, banned!</h2>";
-    setTimeout(() => tg.close(), 3000);
-    return;
+    // শুধু warning দেখাবে, apps বন্ধ করবে না
+    const warning = document.createElement("div");
+    warning.innerHTML = `
+      <div style="background:#ffcccc;color:#b91c1c;
+                  padding:10px;text-align:center;
+                  font-family:sans-serif;font-weight:bold;">
+        ⚠️ Warning: Multiple accounts detected on this device!
+      </div>
+    `;
+    document.body.prepend(warning);
   }
 
   // ===================== REGISTER ACCOUNT =====================
@@ -54,8 +48,9 @@ document.addEventListener("DOMContentLoaded", () => {
     localStorage.setItem("accounts", JSON.stringify(accounts));
   }
 
-  // ===================== SHOW DASHBOARD =====================
-  document.body.innerHTML = `
+  // ===================== তোমার Apps content আগের মতোই থাকবে =====================
+  const mainApp = document.createElement("div");
+  mainApp.innerHTML = `
     <div style="font-family:sans-serif;text-align:center;padding:20px;">
       <h2>👋 Welcome, ${user.first_name}</h2>
       <p>✅ You are verified on this device.</p>
@@ -63,4 +58,5 @@ document.addEventListener("DOMContentLoaded", () => {
       <p>DeviceID: ${deviceId}</p>
     </div>
   `;
+  document.body.appendChild(mainApp);
 });
