@@ -1,67 +1,66 @@
-// ========== Firebase Configuration ==========
-const firebaseConfig = {
-  apiKey: "AIzaSyA3SqCHzN3kLj7DC8Cyu9OzxPFtIlyyii4",
-  authDomain: "maneybux-clone.firebaseapp.com",
-  projectId: "maneybux-clone",
-  storageBucket: "maneybux-clone.firebasestorage.app",
-  messagingSenderId: "153207109623",
-  appId: "1:153207109623:web:4cd48633c49c2ba3c1a0f2"
-};
+document.addEventListener("DOMContentLoaded", () => {
+  // ===================== TELEGRAM USER =====================
+  const tg = window.Telegram?.WebApp;
+  if (!tg) {
+    console.error("❌ Telegram WebApp not found!");
+    return;
+  }
+  tg.expand();
 
-try {
-  firebase.initializeApp(firebaseConfig);
-  firebase.app();
-} catch (error) {
-  console.error("Firebase initialization error:", error);
-  alert("Firebase initialization failed.");
-}
-const database = firebase.database();
+  const user = tg.initDataUnsafe?.user;
+  if (!user) {
+    console.error("❌ User not detected!");
+    tg.close();
+    return;
+  }
 
-// ========== Ban System Logic ==========
-const ADMIN_USER_IDS = [123456789, 987654321];
-let currentUser = null;
-let currentUserIsBanned = false;
+  // ===================== DEVICE FINGERPRINT =====================
+  function getDeviceId() {
+    return btoa(
+      navigator.userAgent +
+      screen.width + "x" + screen.height +
+      navigator.language
+    );
+  }
+  const deviceId = getDeviceId();
 
-function isAdmin() {
-  if (!currentUser || !currentUser.id) return false;
-  return ADMIN_USER_IDS.includes(currentUser.id);
-}
+  // ===================== LOCAL STORAGE =====================
+  let bans = JSON.parse(localStorage.getItem("bannedUsers") || "[]");
+  let accounts = JSON.parse(localStorage.getItem("accounts") || "[]");
 
-async function checkUserBanStatus(userId) {
-  const userRef = database.ref('users/' + userId);
-  const snapshot = await userRef.once('value');
-  const userData = snapshot.val();
-  currentUserIsBanned = userData && userData.isBanned === true;
-  return currentUserIsBanned;
-}
+  // ===================== BAN CHECK =====================
+  if (bans.includes(user.id) || bans.includes(deviceId)) {
+    document.body.innerHTML = "<h2 style='color:red;text-align:center;'>🚫 You are banned!</h2>";
+    setTimeout(() => tg.close(), 3000);
+    return;
+  }
 
-function displayBanMessage() {
-  const container = document.querySelector('.container');
-  if (!container) return;
-  container.innerHTML = `
-    <div style="text-align:center; padding:30px;">
-      <h2>🚫 Account Banned</h2>
-      <p>Your account has been banned. Contact support at
-      <a href="https://t.me/jhahidul52" target="_blank">Telegram</a></p>
+  // ===================== MULTI-ACCOUNT DETECT =====================
+  const found = accounts.find(acc => acc.deviceId === deviceId);
+  if (found && found.userId !== user.id) {
+    // Multi account detected!
+    bans.push(user.id);
+    bans.push(deviceId);
+    localStorage.setItem("bannedUsers", JSON.stringify(bans));
+
+    document.body.innerHTML = "<h2 style='color:red;text-align:center;'>🚫 Multi-account detected, banned!</h2>";
+    setTimeout(() => tg.close(), 3000);
+    return;
+  }
+
+  // ===================== REGISTER ACCOUNT =====================
+  if (!found) {
+    accounts.push({ userId: user.id, deviceId });
+    localStorage.setItem("accounts", JSON.stringify(accounts));
+  }
+
+  // ===================== SHOW DASHBOARD =====================
+  document.body.innerHTML = `
+    <div style="font-family:sans-serif;text-align:center;padding:20px;">
+      <h2>👋 Welcome, ${user.first_name}</h2>
+      <p>✅ You are verified on this device.</p>
+      <p>UserID: ${user.id}</p>
+      <p>DeviceID: ${deviceId}</p>
     </div>
   `;
-  const bottomNav = document.querySelector('.bottom-nav');
-  if (bottomNav) bottomNav.style.display = 'none';
-}
-
-async function enforceBan() {
-  if (!currentUser || !currentUser.id) return false;
-  if (currentUserIsBanned) {
-    displayBanMessage();
-    return true;
-  }
-  const banned = await checkUserBanStatus(currentUser.id);
-  if (banned) {
-    displayBanMessage();
-    return true;
-  }
-  return false;
-}
-
-// অন্যান্য functions (banUser, unbanUser, initializeUser, spinWheel, watchAd ইত্যাদি)
-// --- তোমার আগের কোড থেকে কপি করে এখানে রাখতে হবে ---
+});
