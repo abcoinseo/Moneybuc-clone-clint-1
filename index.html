@@ -876,6 +876,101 @@ font-weight: 700;
     margin-top: 5px;
 }
 
+/* Swap Modal Styles */
+.swap-modal-content {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(15, 15, 35, 0.95);
+    border: 1px solid var(--glass-border);
+    border-radius: 20px;
+    padding: 30px;
+    max-width: 400px;
+    width: 90%;
+    box-shadow: 0 8px 32px rgba(220, 38, 38, 0.25);
+}
+
+.swap-popup-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.swap-popup-title {
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--primary);
+}
+
+.swap-popup-close-btn {
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    color: var(--text-light);
+}
+
+.swap-form-group {
+    margin-bottom: 15px;
+}
+
+.swap-form-label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: var(--text);
+}
+
+.swap-input-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.swap-input {
+    flex-grow: 1;
+    padding: 12px 16px;
+    border: 2px solid var(--border);
+    border-radius: 12px;
+    font-size: 16px;
+    background: rgba(15, 15, 35, 0.8);
+    color: var(--text);
+}
+
+.swap-input:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 4px rgba(220, 38, 38, 0.1);
+}
+
+.swap-currency {
+    font-weight: 700;
+    color: var(--primary);
+}
+
+.swap-switch-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--text-light);
+    margin: 0 10px;
+    transition: transform 0.3s ease;
+}
+
+.swap-switch-btn:hover {
+    transform: rotate(180deg);
+}
+
+.swap-info {
+    font-size: 12px;
+    color: var(--text-light);
+    text-align: center;
+    margin-top: 10px;
+}
+
 @media (max-width: 768px) {
 .container {
 padding: 15px 10px 100px;
@@ -925,6 +1020,14 @@ padding: 15px 10px 100px;
 .profile-ton-conversion {
     flex-direction: column;
     align-items: center;
+}
+
+.swap-input-wrapper {
+    flex-direction: column;
+}
+
+.swap-switch-btn {
+    margin: 10px 0;
 }
 
 }
@@ -1255,6 +1358,10 @@ box-shadow: 0 0 20px rgba(220, 38, 38, 0.5);
 
 
                 <div style="display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; margin-top: 20px;">
+                    <button class="btn btn-secondary" onclick="showSwapModal()">
+                        <span class="material-icons">swap_horiz</span>
+                        Swap Points to TON
+                    </button>
                     <button class="btn btn-secondary" onclick="window.open('https://t.me/PixelfrogCommunity', '_blank')">
                         <span class="material-icons">support</span>
                         Support
@@ -1339,7 +1446,7 @@ box-shadow: 0 0 20px rgba(220, 38, 38, 0.5);
                     <input type="text" class="withdraw-form-input" id="tonAddress" readonly placeholder="Connect wallet to populate">
                 </div>
                 <div class="withdraw-form-group">
-                    <label class="withdraw-form-label">Points to Convert & Withdraw</label>
+                    <label class="withdraw-form-label">Amount (Points)</label>
                     <input type="number" class="withdraw-form-input" id="withdrawAmount" min="1000" required placeholder="Enter points to withdraw">
                     <div class="withdraw-info-text">
                         Minimum: <span id="minWithdrawPoints">1000</span> points | Rate: <span id="pointToTonRate"></span>
@@ -1348,13 +1455,47 @@ box-shadow: 0 0 20px rgba(220, 38, 38, 0.5);
                 <div class="withdraw-form-group">
                     <label class="withdraw-form-label">You will receive: <span id="tonReceive">0</span> TON</label>
                 </div>
-                <button type="submit" class="btn btn-primary" id="requestWithdrawButton" disabled>
+                <button type="submit" class="btn btn-primary" id="requestWithdrawButton">
                     <span class="material-icons">send</span>
                     Request Withdrawal
                 </button>
             </form>
         </div>
     </div>
+
+    <!-- Swap Modal -->
+    <div id="swapModal" class="modal">
+        <div class="swap-modal-content">
+            <div class="swap-popup-header">
+                <h3 class="swap-popup-title">Swap Points to TON</h3>
+                <button class="swap-popup-close-btn" onclick="closeModal('swapModal')">&times;</button>
+            </div>
+            <div id="swapModalContent">
+                <div class="swap-form-group">
+                    <label class="swap-form-label">You have:</label>
+                    <div class="swap-input-wrapper">
+                        <input type="text" class="swap-input" id="pointsToSwap" readonly>
+                        <span class="swap-currency">Points</span>
+                    </div>
+                </div>
+                <div class="swap-form-group">
+                    <label class="swap-form-label">You get:</label>
+                    <div class="swap-input-wrapper">
+                        <input type="text" class="swap-input" id="tonFromSwap" readonly>
+                        <span class="swap-currency">TON</span>
+                    </div>
+                </div>
+                <div class="swap-info">
+                    Current conversion rate: 100 Points = 0.000078 TON
+                </div>
+                <button class="btn btn-primary" id="performSwapButton" onclick="performSwap()">
+                    <span class="material-icons">swap_horiz</span>
+                    Swap Now
+                </button>
+            </div>
+        </div>
+    </div>
+
 
     <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
@@ -2322,22 +2463,16 @@ box-shadow: 0 0 20px rgba(220, 38, 38, 0.5);
             const amountInput = document.getElementById('withdrawAmount');
             const amountPoints = parseInt(amountInput.value) || 0;
             const tonReceiveElement = document.getElementById('tonReceive');
-            const requestWithdrawButton = document.getElementById('requestWithdrawButton');
 
             const calculatedTonAmount = amountPoints * POINTS_TO_TON_RATE_PER_POINT;
             tonReceiveElement.textContent = calculatedTonAmount.toFixed(8); // Display with 8 decimal places for TON
 
-            // Enable/disable button based on minimum TON requirement and sufficient points
-            if (calculatedTonAmount < MIN_WITHDRAW_TON_REQUIRED || amountPoints === 0 || amountPoints > userBalance) {
+            // Enable/disable button based on minimum TON requirement
+            const requestWithdrawButton = document.getElementById('requestWithdrawButton');
+            if (calculatedTonAmount < MIN_WITHDRAW_TON_REQUIRED || amountPoints === 0) {
                 requestWithdrawButton.disabled = true;
-                if (amountPoints > userBalance) {
-                    amountInput.style.borderColor = 'var(--danger)'; // Indicate insufficient balance
-                } else {
-                    amountInput.style.borderColor = 'var(--border)';
-                }
             } else {
                 requestWithdrawButton.disabled = false;
-                amountInput.style.borderColor = 'var(--primary)'; // Indicate valid input
             }
         }
 
@@ -2398,6 +2533,69 @@ box-shadow: 0 0 20px rgba(220, 38, 38, 0.5);
                         withdrawalHistory.appendChild(historyItem);
                     });
                 });
+        }
+
+        // Show the swap modal
+        function showSwapModal() {
+            if (!currentUser) {
+                showAlert('Please log in to swap points.', 'danger');
+                return;
+            }
+            document.getElementById('swapModal').style.display = 'block';
+            updateSwapUI();
+        }
+
+        // Update swap UI elements
+        function updateSwapUI() {
+            document.getElementById('pointsToSwap').value = formatNumber(userBalance);
+            document.getElementById('tonFromSwap').value = (userBalance * POINTS_TO_TON_RATE_PER_POINT).toFixed(8);
+        }
+
+        // Perform the swap
+        async function performSwap() {
+            if (!currentUser) {
+                showAlert('Please log in to perform the swap.', 'danger');
+                return;
+            }
+
+            const pointsToSwap = parseInt(document.getElementById('pointsToSwap').value);
+            const tonAmount = parseFloat(document.getElementById('tonFromSwap').value);
+
+            if (pointsToSwap === 0 || isNaN(pointsToSwap)) {
+                showAlert('Please enter a valid amount of points to swap.', 'danger');
+                return;
+            }
+            if (pointsToSwap > userBalance) {
+                showAlert('Insufficient points balance!', 'danger');
+                return;
+            }
+
+            const performSwapButton = document.getElementById('performSwapButton');
+            performSwapButton.disabled = true;
+            performSwapButton.innerHTML = '<div class="loading"></div> Swapping...';
+
+            try {
+                const userRef = database.ref('users/' + currentUser.id);
+                await userRef.transaction((userData) => {
+                    if (userData) {
+                        userData.balance = Math.max(0, (userData.balance || 0) - pointsToSwap);
+                        // We don't add TON directly to the user's balance in this model,
+                        // as it's an exchange to TON, not earning more points.
+                        // The TON amount is calculated and shown.
+                    }
+                    return userData;
+                });
+
+                showAlert(`Successfully swapped ${pointsToSwap} points for ${tonAmount.toFixed(8)} TON!`, 'success');
+                closeModal('swapModal');
+
+            } catch (error) {
+                console.error('Error performing swap:', error);
+                showAlert('Error performing swap. Please try again.', 'danger');
+            } finally {
+                performSwapButton.disabled = false;
+                performSwapButton.innerHTML = '<span class="material-icons">swap_horiz</span> Swap Now';
+            }
         }
 
         // Function to open the TON Connect UI modal for wallet connection
@@ -2464,6 +2662,10 @@ box-shadow: 0 0 20px rgba(220, 38, 38, 0.5);
                     document.getElementById('withdrawForm').reset();
                     document.getElementById('tonReceive').textContent = '0'; // Reset TON amount display
                     document.getElementById('requestWithdrawButton').disabled = true; // Disable button on close
+                } else if (modalId === 'swapModal') {
+                    document.getElementById('pointsToSwap').value = '';
+                    document.getElementById('tonFromSwap').value = '';
+                    document.getElementById('performSwapButton').disabled = false; // Re-enable swap button
                 }
             }
         }
