@@ -10,6 +10,7 @@
     <script src="https://unpkg.com/@tonconnect/ui@latest/dist/tonconnect-ui.min.js"></script>
     <script src='//libtl.com/sdk.js' data-zone='9809601' data-sdk='show_9809601'></script>
     <style>
+        /* ... (Your existing CSS remains the same) ... */
         * {
             margin: 0;
             padding: 0;
@@ -21,7 +22,7 @@
             --primary-dark: #b91c1c;
             --primary-light: #ef4444;
             --secondary: #7c2d12;
-            --accent: #f5960b; /* Corrected accent color */
+            --accent: #f59e0b;
             --success: #059669;
             --danger: #dc2626;
             --warning: #d97706;
@@ -849,81 +850,6 @@
             margin: 0 auto 15px;
         }
 
-        /* Telegram Channel Verification Section */
-        .channel-verification-card {
-            background: rgba(15, 15, 35, 0.9);
-            border: 1px solid var(--glass-border);
-            border-radius: 16px;
-            padding: 20px;
-            margin-bottom: 20px;
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .channel-verification-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 4px;
-            height: 100%;
-            background: linear-gradient(180deg, var(--primary), var(--primary-light));
-        }
-
-        .channel-verification-card:hover {
-            transform: translateX(5px);
-            box-shadow: 0 8px 25px rgba(220, 38, 38, 0.2);
-        }
-
-        .channel-verification-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 12px;
-        }
-
-        .channel-verification-title {
-            font-weight: 700;
-            color: var(--primary);
-            margin-bottom: 8px;
-            font-size: 18px;
-        }
-
-        .channel-verification-reward {
-            background: linear-gradient(135deg, var(--success), #047857);
-            color: white;
-            padding: 6px 12px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 700;
-        }
-
-        .channel-verification-status {
-            margin-top: 12px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            justify-content: center;
-        }
-
-        .channel-verification-status p {
-            margin: 0;
-            font-weight: 500;
-            color: var(--text-muted);
-        }
-
-        .channel-verification-actions {
-            display: flex;
-            gap: 10px;
-            margin-top: 15px;
-            justify-content: center;
-        }
-
-        .channel-verification-actions .btn {
-            flex: 1;
-        }
-
         @media (max-width: 768px) {
             .container {
                 padding: 15px 10px 100px;
@@ -1017,7 +943,7 @@
                     <h3 id="userName">Loading...</h3>
                     <div class="user-balance">
                         <span class="material-icons">diamond</span>
-                        <span id="userBalance">0</span> Diamond
+                        <span id="userBalance">0</span>Diamond
                     </div>
                 </div>
             </div>
@@ -1025,6 +951,23 @@
                 <span class="material-icons">dark_mode</span>
                 Red Moon
             </button>
+        </div>
+
+        <!-- Verification Prompt Section (Initially hidden) -->
+        <div id="verificationSection" class="section">
+            <div class="card">
+                <h2 class="card-title">
+                    <span class="material-icons">verified_user</span>
+                    Channel Verification Required
+                </h2>
+                <p style="color: var(--text-light); margin-bottom: 20px;">
+                    To access EarnFlux, please join our official Telegram channel and then restart the app.
+                </p>
+                <button class="btn btn-primary" onclick="joinChannelAndRestart()">
+                    <span class="material-icons">login</span>
+                    Join Channel & Restart
+                </button>
+            </div>
         </div>
 
         <!-- Home Section Stats (Only visible on home page) -->
@@ -1048,7 +991,7 @@
         </div>
 
         <!-- Home Section -->
-        <div id="homeSection" class="section active">
+        <div id="homeSection" class="section">
             <div class="card">
                 <h2 class="card-title">
                     <span class="material-icons">home</span>
@@ -1219,37 +1162,6 @@
             </div>
         </div>
 
-        <!-- Telegram Channel Verification Task Section -->
-        <div id="telegramChannelTaskSection" class="section">
-            <div class="channel-verification-card">
-                <div class="channel-verification-header">
-                    <h2 class="channel-verification-title">
-                        <span class="material-icons" style="color: var(--primary);">campaign</span>
-                        Join Our Channel!
-                    </h2>
-                    <div class="channel-verification-reward">+ <span id="channelRewardAmount">0</span> Diamond</div>
-                </div>
-                <div class="channel-verification-status">
-                    <span class="material-icons" id="channelStatusIcon">campaign</span>
-                    <p id="channelStatusText">Checking subscription...</p>
-                </div>
-                <div class="channel-verification-actions">
-                    <a href="#" id="joinChannelLink" class="btn btn-primary" target="_blank" style="display: none;">
-                        <span class="material-icons">group_add</span>
-                        Join Channel
-                    </a>
-                    <button class="btn btn-success" id="verifyChannelButton" onclick="verifyChannelMembership()" disabled style="display: none;">
-                        <span class="material-icons">check_circle</span>
-                        Verify & Claim
-                    </button>
-                    <button class="btn btn-warning" id="channelRetryButton" onclick="checkTelegramChannelStatus()" style="display: none;">
-                        <span class="material-icons">refresh</span>
-                        Retry
-                    </button>
-                </div>
-            </div>
-        </div>
-
         <!-- Referral Section -->
         <div id="referralSection" class="section">
             <div class="card">
@@ -1337,14 +1249,14 @@
                 <div class="swap-container">
                     <div class="swap-row">
                         <div class="swap-input-group">
-                            <label class="swap-label">Points</label>
+                            <label class="swap-label" id="swapFromLabel">From Points</label>
                             <input type="number" class="swap-input" id="swapPointsInput" placeholder="0" min="0">
                         </div>
                         <button class="swap-icon" onclick="swapDirection()">
                             <span class="material-icons">swap_vert</span>
                         </button>
                         <div class="swap-input-group">
-                            <label class="swap-label">TON</label>
+                            <label class="swap-label" id="swapToLabel">To TON</label>
                             <input type="number" class="swap-input" id="swapTonInput" placeholder="0.00000000" min="0" step="0.00000001">
                         </div>
                     </div>
@@ -1416,10 +1328,6 @@
             <a href="#" class="nav-item" onclick="showSection('tasks'); return false;">
                 <span class="material-icons">assignment</span>
                 <span>Tasks</span>
-            </a>
-            <a href="#" class="nav-item" onclick="showSection('telegramChannelTask'); return false;">
-                <span class="material-icons">campaign</span>
-                <span>Channel</span>
             </a>
             <a href="#" class="nav-item" onclick="showSection('referral'); return false;">
                 <span class="material-icons">share</span>
@@ -1504,18 +1412,9 @@
         const tonConnectUI = new TON_CONNECT_UI.TonConnectUI({
             manifestUrl: 'https://moneybuc-clone-clint-1.vercel.app/tonconnect-manifest.json',
             actionsConfiguration: {
-                twaReturnUrl: 'https://t.me/EarnFluxBot' // Your bot username if using TWA
+                twaReturnUrl: 'https://t.me/EarnFluxBot' // This should ideally be the Bot Username
             }
         });
-
-        // --- TELEGRAM BOT CONFIGURATION ---
-        // IMPORTANT: Replace these with your actual values
-        const TELEGRAM_BOT_TOKEN = "7829924006:AAFIOCnga8v6yOw08dCzvKDC8wS7Fuad_II"; // Your Bot Token
-        const TELEGRAM_CHANNEL_ID = "-10018332933399"; // Your Channel ID (Must be negative)
-        const TELEGRAM_CHANNEL_INVITE_LINK = "https://t.me/+e4YdY1Wd01o0MWZl"; // Your Channel Invite Link
-        const TELEGRAM_CHANNEL_REWARD_POINTS = 200; // Reward for joining the channel
-        const TELEGRAM_CHANNEL_TASK_KEY = 'joinedTelegramChannel'; // Key to track task completion in user data
-        // --- END TELEGRAM BOT CONFIGURATION ---
 
         // Global variables
         let currentUser = null;
@@ -1528,6 +1427,7 @@
         let lastAdCompletionTime = 0;
         let swapMode = 'pointsToTon'; // 'pointsToTon' or 'tonToPoints'
         let isWatchingAd = false;
+        let isUserVerified = false; // NEW: Flag for verification status
 
         // Constants
         const REFERRAL_BONUS_POINTS = 500;
@@ -1538,26 +1438,33 @@
         const CHECKIN_REWARD_POINTS = 50;
         const TASK_SPIN_REWARD = 1;
 
-        // Initialize the application
-        document.addEventListener('DOMContentLoaded', () => {
-            initTelegramWebApp();
-            showSection('home'); // Default section
+        // Telegram Bot Configuration for Verification
+        const TELEGRAM_BOT_USERNAME_FOR_VERIFICATION = "EarnFluxBot"; // Replace with your bot's username
 
-            tonConnectUI.buttonRootId = 'ton-connect-button-container';
+        // Helper to join channel and prompt restart
+        function joinChannelAndRestart() {
+            const channelLink = `https://t.me/${TELEGRAM_BOT_USERNAME_FOR_VERIFICATION}/start`; // Links to bot's start command
+            window.open(channelLink, '_blank');
+            // After opening, user needs to join the channel and then restart the Mini App.
+            // We can't automatically detect they've joined.
+            // We can prompt them to refresh or restart.
+            setTimeout(() => {
+                showAlert("Please join the channel and then restart the EarnFlux app.", "info");
+                // Optionally, you could try to reload the page after a delay if Telegram API allows
+                // window.location.reload();
+            }, 5000); // Give time for the new tab to open
+        }
 
-            // Listen for wallet connection changes
-            tonConnectUI.onStatusChange(wallet => {
-                updateWalletUI();
-            });
-        });
 
-        // Initialize Telegram Web App and user data
+        // Initialize Telegram Web App
         function initTelegramWebApp() {
             if (window.Telegram && window.Telegram.WebApp) {
                 const tg = window.Telegram.WebApp;
-                tg.ready(); // Mark the app as ready
+                tg.ready();
 
                 const user = tg.initDataUnsafe?.user;
+                const startParam = tg.initDataUnsafe?.start_param;
+
                 if (user) {
                     currentUser = {
                         id: user.id,
@@ -1566,16 +1473,17 @@
                         photo_url: user.photo_url || 'https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?auto=compress&cs=tinysrgb&w=100&h=100&dpr=1'
                     };
 
-                    // Handle referral link if present
-                    const startParam = tg.initDataUnsafe?.start_param;
+                    // Handle referral if startParam indicates it
                     if (startParam && startParam.startsWith('ref_')) {
-                        const referrerId = startParam.replace('ref_', '');
-                        handleReferral(referrerId);
+                        handleReferral(startParam.replace('ref_', ''));
+                    } else if (!startParam) {
+                        // If no start param, this might be the first launch.
+                        // The verification check will happen in initializeUser.
                     }
 
                     initializeUser();
                 } else {
-                    // Fallback for testing without Telegram Web App
+                    // Fallback for testing or if running outside Telegram
                     const randomId = Math.floor(Math.random() * 1000000000);
                     currentUser = {
                         id: randomId,
@@ -1584,6 +1492,8 @@
                         photo_url: 'https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?auto=compress&cs=tinysrgb&w=100&h=100&dpr=1'
                     };
                     console.warn("Running without Telegram Web App user data. Using a random ID for testing:", currentUser.id);
+                    // For testing, we can bypass verification or assume it's met.
+                    isUserVerified = true; // Assume verified for testing
                     initializeUser();
                 }
             } else {
@@ -1592,15 +1502,15 @@
             }
         }
 
-        // Initialize user data from Firebase
+        // Initialize user data from Firebase and check verification status
         async function initializeUser() {
             if (!currentUser) return;
 
             const userRef = database.ref('users/' + currentUser.id);
             const snapshot = await userRef.once('value');
 
-            // If user doesn't exist, create a new entry
             if (!snapshot.exists()) {
+                // New user, set initial data including verification status
                 const userData = {
                     id: currentUser.id,
                     username: currentUser.username,
@@ -1617,48 +1527,95 @@
                     lastAdReset: Date.now(),
                     lastCheckin: null,
                     createdAt: Date.now(),
-                    // Add the property to track Telegram channel join status
-                    [TELEGRAM_CHANNEL_TASK_KEY]: false
+                    isVerified: false // Initialize as not verified
                 };
                 await userRef.set(userData);
+                isUserVerified = false; // Mark as not verified
+            } else {
+                // Existing user, load data and check verification status
+                const userData = snapshot.val();
+                userBalance = userData.balance || 0;
+                userTonBalance = userData.tonBalance || 0;
+                userSpins = userData.spins || 0;
+                adsWatchedToday = userData.adsWatched || 0;
+                lastAdTime = userData.lastAdReset || 0;
+                dailyCheckinDone = userData.lastCheckin === new Date().toDateString();
+                isUserVerified = userData.isVerified || false; // Load verification status
+
+                // Reset daily ad count if 24 hours have passed
+                if (Date.now() - lastAdTime > 24 * 60 * 60 * 1000) {
+                    adsWatchedToday = 0;
+                    userRef.update({
+                        adsWatched: 0,
+                        lastAdReset: Date.now()
+                    });
+                }
             }
 
-            // Set up real-time listener for user data changes
-            userRef.on('value', (snapshot) => {
-                const userData = snapshot.val();
-                if (userData) {
-                    userBalance = userData.balance || 0;
-                    userTonBalance = userData.tonBalance || 0;
-                    userSpins = userData.spins || 0;
-                    adsWatchedToday = userData.adsWatched || 0;
-                    lastAdTime = userData.lastAdReset || 0;
-                    dailyCheckinDone = userData.lastCheckin === new Date().toDateString();
+            // ** VERIFICATION CHECK **
+            if (!isUserVerified) {
+                showVerificationPrompt();
+                return; // Stop further initialization if not verified
+            }
 
-                    // Reset daily ad count if 24 hours have passed
-                    if (Date.now() - lastAdTime > 24 * 60 * 60 * 1000) {
-                        adsWatchedToday = 0;
-                        userRef.update({
-                            adsWatched: 0,
-                            lastAdReset: Date.now()
-                        });
-                    }
-
-                    updateUI(userData);
-                    updateWalletUI();
-                    updateSwapInputs();
-                    updateTelegramChannelTaskUI(); // Update the new task UI
-                }
+            // If verified, proceed with loading everything
+            updateUI({
+                balance: userBalance,
+                tonBalance: userTonBalance,
+                spins: userSpins,
+                totalEarned: 0, // These will be updated by initializeUser call after verification
+                tasksCompleted: 0,
+                referrals: 0,
+                adsWatched: adsWatchedToday,
+                first_name: currentUser.first_name,
+                photo_url: currentUser.photo_url,
+                id: currentUser.id
             });
-
+            updateWalletUI();
+            updateSwapInputs();
             loadTasks();
             loadUserTasks();
             loadReferrals();
             loadWithdrawalHistory();
             loadSwapHistory();
+            showSection('home'); // Show home section by default if verified
         }
 
-        // Update UI elements
+        // Function to show the verification prompt
+        function showVerificationPrompt() {
+            document.getElementById('verificationSection').classList.add('active');
+            document.getElementById('homeStatsGrid').style.display = 'none'; // Hide stats
+            document.querySelectorAll('.section:not(#verificationSection)').forEach(section => {
+                section.style.display = 'none'; // Hide all other sections
+            });
+            document.querySelectorAll('.bottom-nav .nav-item').forEach(item => {
+                item.classList.remove('active'); // Remove active class from nav
+                item.style.pointerEvents = 'none'; // Disable nav items
+            });
+             // Make sure the verification nav item is not needed, or handle it specifically
+            document.querySelector('.nav-item[onclick*="showSection(\'home\')"]').classList.add('active'); // Keep home nav active but disabled
+        }
+
+        // Function to hide the verification prompt and show the app
+        function hideVerificationPrompt() {
+            document.getElementById('verificationSection').classList.remove('active');
+            document.getElementById('verificationSection').style.display = 'none';
+            document.getElementById('homeStatsGrid').style.display = 'grid'; // Show stats
+            document.querySelectorAll('.section:not(#verificationSection)').forEach(section => {
+                 // Show the home section by default, it will be overridden if another is selected
+                section.style.display = 'none';
+            });
+            document.querySelectorAll('.bottom-nav .nav-item').forEach(item => {
+                item.style.pointerEvents = 'auto'; // Enable nav items
+            });
+             // Ensure home is active and shown
+            showSection('home');
+        }
+
+        // Update UI elements (this is called *after* verification is confirmed)
         function updateUI(userData) {
+            if (!isUserVerified) return; // Don't update if not verified
+
             document.getElementById('userName').textContent = userData.first_name || 'User';
             document.getElementById('userBalance').textContent = formatNumber(userData.balance || 0);
             document.getElementById('totalEarned').textContent = formatNumber(userData.totalEarned || 0);
@@ -1699,7 +1656,6 @@
                 watchAdButton.innerHTML = `<span class="material-icons">timer</span> Wait ${timeLeft}s`;
                 watchAdButton.classList.remove('pulse', 'glow');
                 
-                // Start countdown timer
                 const countdownInterval = setInterval(() => {
                     const remaining = Math.ceil((30000 - (Date.now() - lastAdCompletionTime)) / 1000);
                     if (remaining <= 0) {
@@ -1856,8 +1812,8 @@
             document.getElementById('swapTonInput').value = '';
             
             // Update labels and placeholders based on mode
-            const pointsLabel = document.querySelector('.swap-container .swap-input-group:first-child .swap-label');
-            const tonLabel = document.querySelector('.swap-container .swap-input-group:last-child .swap-label');
+            const pointsLabel = document.getElementById('swapFromLabel');
+            const tonLabel = document.getElementById('swapToLabel');
             const pointsInput = document.getElementById('swapPointsInput');
             const tonInput = document.getElementById('swapTonInput');
             
@@ -1877,6 +1833,11 @@
         }
 
         async function executeSwap() {
+            if (!isUserVerified) {
+                showAlert("Please verify your channel subscription to perform swaps.", "warning");
+                return;
+            }
+
             const pointsAmount = parseFloat(document.getElementById('swapPointsInput').value) || 0;
             const tonAmount = parseFloat(document.getElementById('swapTonInput').value) || 0;
             
@@ -1960,6 +1921,8 @@
 
         // Load tasks from Firebase
         function loadTasks() {
+            if (!isUserVerified) return; // Only load tasks if verified
+
             const availableTasksGrid = document.getElementById('availableTasksGrid');
             const completedTasksGrid = document.getElementById('completedTasksGrid');
 
@@ -2031,6 +1994,11 @@
 
         // Start task
         function startTask(taskId, url, reward) {
+            if (!isUserVerified) {
+                showAlert("Please verify your channel subscription to start tasks.", "warning");
+                return;
+            }
+
             window.open(url, '_blank');
             document.getElementById('taskModal').style.display = 'block';
 
@@ -2054,6 +2022,8 @@
 
         // Complete task
         async function completeTask(taskId, reward) {
+            if (!isUserVerified) return; // Should not happen if startTask checks, but safety first
+
             try {
                 const userRef = database.ref('users/' + currentUser.id);
                 const userTaskRef = database.ref('userTasks/' + currentUser.id + '/' + taskId);
@@ -2092,6 +2062,11 @@
 
         // Apply lucky code
         async function applyLuckyCode() {
+            if (!isUserVerified) {
+                showAlert("Please verify your channel subscription to use lucky codes.", "warning");
+                return;
+            }
+
             const code = document.getElementById('luckyCodeInput').value.trim().toUpperCase();
             if (!code) {
                 showAlert('Please enter a lucky code', 'danger');
@@ -2144,6 +2119,11 @@
 
         // Spin wheel
         function spinWheel() {
+            if (!isUserVerified) {
+                showAlert("Please verify your channel subscription to spin the wheel.", "warning");
+                return;
+            }
+
             if (userSpins <= 0) {
                 showAlert('No spins available! Complete tasks to earn spins.', 'danger');
                 return;
@@ -2188,6 +2168,11 @@
 
         // Watch ad - Real ad integration
         async function watchAd() {
+            if (!isUserVerified) {
+                showAlert("Please verify your channel subscription to watch ads.", "warning");
+                return;
+            }
+
             if (adsWatchedToday >= 50) {
                 showAlert('Daily ad limit reached. Come back tomorrow!', 'danger');
                 return;
@@ -2204,7 +2189,7 @@
                 return;
             }
 
-            // Check if show_9809601 function is available from libtl.com
+            // Check if show_9809601 function is available
             if (typeof show_9809601 !== 'function') {
                 showAlert('Ad service is not available. Please try again later.', 'danger');
                 return;
@@ -2263,14 +2248,12 @@
                 // Hide loading message
                 document.getElementById('adLoadingMessage').style.display = 'none';
                 
-                // Check if error is due to user cancellation or ad not available
                 if (error.message && (error.message.includes('user') || error.message.includes('cancel'))) {
                     showAlert('Ad was cancelled. No reward given.', 'warning');
                 } else {
                     showAlert('Error loading advertisement. Please check your internet connection and try again.', 'danger');
                 }
                 
-                // Update UI to reset button state
                 updateUI({ 
                     balance: userBalance, 
                     tonBalance: userTonBalance, 
@@ -2288,6 +2271,11 @@
 
         // Daily check-in
         async function dailyCheckin() {
+            if (!isUserVerified) {
+                showAlert("Please verify your channel subscription to check in.", "warning");
+                return;
+            }
+
             const today = new Date().toDateString();
             const userRef = database.ref('users/' + currentUser.id);
             const snapshot = await userRef.once('value');
@@ -2298,7 +2286,7 @@
                 return;
             }
 
-            await new Promise(resolve => setTimeout(resolve, 1000));
+            await new Promise(resolve => setTimeout(resolve, 1000)); // Simulate a small delay
 
             await userRef.update({
                 balance: (userData.balance || 0) + CHECKIN_REWARD_POINTS,
@@ -2320,6 +2308,11 @@
         // Add task form submission
         document.getElementById('addTaskForm').addEventListener('submit', async (e) => {
             e.preventDefault();
+
+            if (!isUserVerified) {
+                showAlert("Please verify your channel subscription to create tasks.", "warning");
+                return;
+            }
 
             if (!tonConnectUI.account) {
                 showAlert('Please connect your TON wallet first to create a task.', 'danger');
@@ -2348,29 +2341,28 @@
             createTaskButton.innerHTML = '<div class="loading"></div> Processing...';
 
             try {
-                // TON transaction structure
                 const transaction = {
-                    validUntil: Math.floor(Date.now() / 1000) + 60, // Transaction is valid for 60 seconds
+                    validUntil: Math.floor(Date.now() / 1000) + 60,
                     messages: [{
-                        address: "UQDLsNfQBwWXD9aaNxNS3udGo-9o8ybrlKmmbI5gjjRfs17M", // TON payment address for your service
-                        amount: Math.floor(cost * 1e9).toString() // Amount in nanoTON (1 TON = 1e9 nanoTON)
+                        address: "UQDLsNfQBwWXD9aaNxNS3udGo-9o8ybrlKmmbI5gjjRfs17M", // Replace with your TON wallet address to receive funds
+                        amount: Math.floor(cost * 1e9).toString() // Amount in nanoTONs
                     }]
                 };
 
                 const result = await tonConnectUI.sendTransaction(transaction);
 
-                if (result && result.boc) { // Check if transaction was confirmed
+                if (result && result.boc) {
                     const taskData = {
                         title,
                         description,
                         url,
-                        reward: 100, // Default reward for task completion
+                        reward: 100, // Default reward, you might want to make this dynamic
                         impressions,
                         remainingImpressions: impressions,
                         createdBy: currentUser.id,
                         createdAt: Date.now(),
                         status: 'active',
-                        transactionHash: result.boc // Store transaction hash
+                        transactionHash: result.boc
                     };
 
                     await database.ref('tasks').push(taskData);
@@ -2395,15 +2387,16 @@
             }
         });
 
-        // Update total cost display based on impressions
+        // Update total cost display
         document.getElementById('taskImpressions').addEventListener('input', (e) => {
             const impressions = parseInt(e.target.value) || 0;
             const cost = (impressions / IMPRESSIONS_TO_TON_RATE) * 0.1;
             document.getElementById('totalCost').textContent = cost.toFixed(3);
         });
 
-        // Load user's created tasks
+        // Load user tasks
         function loadUserTasks() {
+            if (!isUserVerified) return; // Only load if verified
             if (!currentUser) return;
 
             const myTasksGrid = document.getElementById('myTasksGrid');
@@ -2430,7 +2423,7 @@
             });
         }
 
-        // Create card for user's own tasks
+        // Create user task card
         function createUserTaskCard(taskId, task) {
             const card = document.createElement('div');
             card.className = 'task-card';
@@ -2464,6 +2457,10 @@
 
         // Delete user task
         async function deleteUserTask(taskId) {
+            if (!isUserVerified) {
+                showAlert("Please verify your channel subscription to manage tasks.", "warning");
+                return;
+            }
             if (confirm('Are you sure you want to delete this task? This action cannot be undone.')) {
                 try {
                     await database.ref('tasks/' + taskId).remove();
@@ -2475,23 +2472,21 @@
             }
         }
 
-        // Handle referral link
+        // Handle referral
         async function handleReferral(referrerId) {
             if (!currentUser || currentUser.id.toString() === referrerId) {
-                return; // Ignore if no user or if it's self-referral
+                return;
             }
 
             try {
                 const newUserRef = database.ref('users/' + currentUser.id);
                 const newUserSnapshot = await newUserRef.once('value');
 
-                // Only process if the current user is new and not already referred
-                if (!newUserSnapshot.exists() || !newUserSnapshot.val().referredBy) {
+                if (!newUserSnapshot.exists()) { // Only process if it's a brand new user
                     const referrerUserRef = database.ref('users/' + referrerId);
                     const referrerUserSnapshot = await referrerUserRef.once('value');
 
                     if (referrerUserSnapshot.exists()) {
-                        // Update referrer's stats
                         await referrerUserRef.transaction((referrerData) => {
                             if (referrerData) {
                                 referrerData.referrals = (referrerData.referrals || 0) + 1;
@@ -2501,22 +2496,24 @@
                             return referrerData;
                         });
 
-                        // Record the referral relationship
+                        // Also, update the new user's verification status to true if they joined via referral
+                        // This assumes referral implies verification or you want to grant access immediately
+                        await newUserRef.update({
+                            isVerified: true, // Automatically verify if joined via referral
+                            referralSource: referrerId // Track who referred them
+                        });
+                        isUserVerified = true; // Update client-side flag
+
                         await database.ref('referrals/' + referrerId + '/' + currentUser.id).set({
                             userId: currentUser.id,
                             username: currentUser.username,
                             joinedAt: Date.now(),
-                            completed: true // Mark as completed for referral bonus
+                            completed: true
                         });
 
-                        // Update the new user's data to link them to the referrer
-                        await newUserRef.update({
-                            referredBy: referrerId
-                        });
-
-                        showAlert(`Welcome! You've been referred by user ID: ${referrerId}. Your referrer has been rewarded!`, 'success');
-                    } else {
-                        console.warn(`Referrer with ID ${referrerId} not found.`);
+                        showAlert(`Welcome! You've been referred by user ID: ${referrerId}. Your channel subscription is automatically verified!`, 'success');
+                        // After successful referral and verification, hide the prompt
+                        hideVerificationPrompt();
                     }
                 }
             } catch (error) {
@@ -2527,9 +2524,11 @@
 
         // Load referrals
         function loadReferrals() {
+            if (!isUserVerified) return; // Only load if verified
             if (!currentUser) return;
 
             const referralList = document.getElementById('referralList');
+            let totalReferralEarnings = 0;
 
             database.ref('referrals/' + currentUser.id).on('value', (snapshot) => {
                 referralList.innerHTML = '';
@@ -2545,10 +2544,9 @@
                 const referralIds = Object.keys(referrals);
                 document.getElementById('totalReferrals').textContent = formatNumber(referralIds.length);
 
-                let totalReferralEarnings = 0;
                 referralIds.forEach(referredUserId => {
                     const referral = referrals[referredUserId];
-                    totalReferralEarnings += REFERRAL_BONUS_POINTS; // Assuming bonus is fixed per referral
+                    totalReferralEarnings += REFERRAL_BONUS_POINTS;
 
                     const referralItem = document.createElement('div');
                     referralItem.className = 'history-item';
@@ -2568,14 +2566,22 @@
             });
         }
 
-        // Claim referral rewards (automatic, but provides a button for UI confirmation)
+        // Claim referral rewards
         async function claimReferralRewards() {
+            if (!isUserVerified) {
+                showAlert("Please verify your channel subscription to claim rewards.", "warning");
+                return;
+            }
             showAlert('Referral rewards are automatically credited when a new user joins via your link!', 'success');
         }
 
         // Copy referral link
         function copyReferralLink() {
-            const botUsername = 'adflareprobot'; // Your Telegram bot username
+            if (!isUserVerified) {
+                showAlert("Please verify your channel subscription to copy your referral link.", "warning");
+                return;
+            }
+            const botUsername = TELEGRAM_BOT_USERNAME_FOR_VERIFICATION; // Use the constant
             const link = `https://t.me/${botUsername}/app?startapp=ref_${currentUser.id}`;
             navigator.clipboard.writeText(link).then(() => {
                 showAlert('Referral link copied to clipboard!', 'success');
@@ -2587,6 +2593,10 @@
 
         // Show withdraw modal
         function showWithdrawModal() {
+            if (!isUserVerified) {
+                showAlert('Please verify your channel subscription to withdraw TON.', 'warning');
+                return;
+            }
             if (!currentUser) {
                 showAlert('Please log in to withdraw TON.', 'danger');
                 return;
@@ -2599,6 +2609,11 @@
         // Withdraw form submission
         document.getElementById('withdrawForm').addEventListener('submit', async (e) => {
             e.preventDefault();
+
+            if (!isUserVerified) {
+                showAlert('Please verify your channel subscription to withdraw.', 'warning');
+                return;
+            }
 
             const tonAddress = document.getElementById('tonAddress').value.trim();
             const amountTon = parseFloat(document.getElementById('withdrawAmount').value);
@@ -2634,13 +2649,12 @@
                     username: currentUser.username,
                     tonAddress,
                     amountTon,
-                    status: 'pending', // Initial status
+                    status: 'pending',
                     createdAt: Date.now()
                 };
 
                 await database.ref('withdrawals').push(withdrawalData);
 
-                // Deduct TON from user's balance
                 const userRef = database.ref('users/' + currentUser.id);
                 await userRef.transaction((userData) => {
                     if (userData) {
@@ -2661,13 +2675,14 @@
 
         // Load withdrawal history
         function loadWithdrawalHistory() {
+            if (!isUserVerified) return; // Only load if verified
             if (!currentUser) return;
 
             const withdrawalHistory = document.getElementById('withdrawalHistoryContent');
 
             database.ref('withdrawals')
                 .orderByChild('userId').equalTo(currentUser.id)
-                .limitToLast(10) // Load last 10
+                .limitToLast(10)
                 .on('value', (snapshot) => {
                     withdrawalHistory.innerHTML = '';
                     const withdrawals = snapshot.val();
@@ -2677,7 +2692,6 @@
                         return;
                     }
 
-                    // Sort by timestamp (newest first)
                     const sortedWithdrawals = Object.entries(withdrawals)
                         .sort(([, a], [, b]) => b.createdAt - a.createdAt);
 
@@ -2704,13 +2718,14 @@
 
         // Load swap history
         function loadSwapHistory() {
+            if (!isUserVerified) return; // Only load if verified
             if (!currentUser) return;
 
             const swapHistory = document.getElementById('swapHistoryContent');
 
             database.ref('swapHistory')
                 .orderByChild('userId').equalTo(currentUser.id)
-                .limitToLast(10) // Load last 10
+                .limitToLast(10)
                 .on('value', (snapshot) => {
                     swapHistory.innerHTML = '';
                     const swaps = snapshot.val();
@@ -2720,7 +2735,6 @@
                         return;
                     }
 
-                    // Sort by timestamp (newest first)
                     const sortedSwaps = Object.entries(swaps)
                         .sort(([, a], [, b]) => b.timestamp - a.timestamp);
 
@@ -2748,22 +2762,26 @@
 
         // Show section
         function showSection(sectionName) {
+            if (!isUserVerified && sectionName !== 'home' && sectionName !== 'verification') { // Allow access to verification section
+                showAlert("Please verify your channel subscription to access this section.", "warning");
+                showVerificationPrompt(); // Ensure prompt is shown
+                return;
+            }
+
             // Hide all sections
             document.querySelectorAll('.section').forEach(section => {
                 section.style.display = 'none';
-                section.classList.remove('active');
             });
 
             // Show the requested section
             const targetSection = document.getElementById(sectionName + 'Section');
             if (targetSection) {
                 targetSection.style.display = 'block';
-                targetSection.classList.add('active');
             }
 
             // Show/hide stats grid based on section
             const statsGrid = document.getElementById('homeStatsGrid');
-            if (sectionName === 'home') {
+            if (sectionName === 'home' && isUserVerified) { // Only show stats if verified and on home
                 statsGrid.style.display = 'grid';
             } else {
                 statsGrid.style.display = 'none';
@@ -2788,15 +2806,12 @@
             if (sectionName === 'profile') {
                 updateSwapInputs();
             }
-            
-            // If navigating to Telegram Channel task, check its status
-            if (sectionName === 'telegramChannelTask') {
-                checkTelegramChannelStatus();
-            }
         }
 
         // Show task tab
         function showTaskTab(event, tabName) {
+            if (!isUserVerified) return; // Only allow if verified
+
             document.querySelectorAll('.tab').forEach(tab => {
                 tab.classList.remove('active');
             });
@@ -2810,6 +2825,8 @@
 
         // Show history tab
         function showHistoryTab(event, tabName) {
+            if (!isUserVerified) return; // Only allow if verified
+
             document.querySelectorAll('#profileSection .tab').forEach(tab => {
                 tab.classList.remove('active');
             });
@@ -2827,39 +2844,30 @@
             if (modal) {
                 modal.style.display = 'none';
                 
-                // Reset form or states if necessary when modal closes
                 if (modalId === 'withdrawModal') {
                     document.getElementById('withdrawForm').reset();
                     document.getElementById('requestWithdrawButton').disabled = true;
-                    document.getElementById('tonAddress').value = ''; // Clear address
-                } else if (modalId === 'taskModal') {
-                    // Clear countdown interval if it's still running
-                    const countdownElement = document.getElementById('taskCountdown');
-                    if (countdownElement && countdownElement.timer) {
-                        clearInterval(countdownElement.timer);
-                    }
                 }
             }
         }
 
-        // Show alert message
+        // Show alert
         function showAlert(message, type) {
             const alertContainer = document.querySelector('.container');
             const alert = document.createElement('div');
             alert.className = `alert alert-${type}`;
             alert.innerHTML = `
-                <span class="material-icons">${type === 'success' ? 'check_circle' : type === 'warning' ? 'warning' : 'error'}</span>
+                <span class="material-icons">${type === 'success' ? 'check_circle' : type === 'warning' ? 'warning' : type === 'info' ? 'info' : 'error'}</span>
                 ${message}
             `;
             alertContainer.prepend(alert); // Add alert at the top
 
-            // Auto-remove alert after 5 seconds
             setTimeout(() => {
                 alert.remove();
             }, 5000);
         }
 
-        // Format numbers for display (e.g., 1.2K, 3.4M)
+        // Format numbers
         function formatNumber(num) {
             if (num === null || num === undefined) return '0';
             num = Number(num);
@@ -2876,284 +2884,25 @@
             return num.toString();
         }
 
-        // Theme toggle (currently just a placeholder)
+        // Theme toggle
         function toggleTheme() {
             showAlert('Red Moon theme is the current and only theme!', 'success');
         }
 
-        // --- TELEGRAM CHANNEL VERIFICATION FUNCTIONS ---
+        // Initialize the application
+        document.addEventListener('DOMContentLoaded', () => {
+            initTelegramWebApp();
+            // showSection('home'); // This will be called after verification check
 
-        /**
-         * Updates the UI for the Telegram Channel Verification task.
-         */
-        function updateTelegramChannelTaskUI() {
-            const channelTaskSection = document.getElementById('telegramChannelTaskSection');
-            if (!channelTaskSection) return;
+            tonConnectUI.buttonRootId = 'ton-connect-button-container';
 
-            // Check if channel ID and token are configured
-            if (!TELEGRAM_CHANNEL_ID || TELEGRAM_CHANNEL_ID === "-10018332933399" || !TELEGRAM_BOT_TOKEN || TELEGRAM_BOT_TOKEN === "7829924006:AAFIOCnga8v6yOw08dCzvKDC8wS7Fuad_II") {
-                channelTaskSection.style.display = 'none'; // Hide if not configured
-                console.warn("Telegram channel verification task is hidden because bot token or channel ID is not properly configured.");
-                return;
-            } else {
-                channelTaskSection.style.display = 'block'; // Show if configured
-            }
-
-            const channelRewardAmount = document.getElementById('channelRewardAmount');
-            channelRewardAmount.textContent = TELEGRAM_CHANNEL_REWARD_POINTS;
-
-            const joinChannelLink = document.getElementById('joinChannelLink');
-            const verifyButton = document.getElementById('verifyChannelButton');
-            const retryButton = document.getElementById('channelRetryButton');
-            const statusIcon = document.getElementById('channelStatusIcon');
-            const statusText = document.getElementById('channelStatusText');
-
-            // Get user's completion status from Firebase
-            const userChannelTaskCompleted = currentUser && currentUser[TELEGRAM_CHANNEL_TASK_KEY];
-
-            if (userChannelTaskCompleted) {
-                // User has already completed and claimed the reward
-                statusIcon.className = 'material-icons text-success';
-                statusIcon.textContent = 'check_circle';
-                statusText.textContent = 'Reward Claimed!';
-                statusText.style.color = 'var(--success)';
-                verifyButton.style.display = 'none';
-                joinChannelLink.style.display = 'none';
-                retryButton.style.display = 'none';
-            } else {
-                // Task is available but not yet completed by the user
-                statusIcon.className = 'material-icons text-muted';
-                statusIcon.textContent = 'campaign';
-                statusText.textContent = 'Checking subscription...';
-                statusText.style.color = 'var(--text-muted)';
-                verifyButton.disabled = true;
-                verifyButton.style.display = 'block';
-                joinChannelLink.style.display = 'block';
-                joinChannelLink.href = TELEGRAM_CHANNEL_INVITE_LINK;
-                retryButton.style.display = 'none';
-            }
-        }
-
-        /**
-         * Checks the Telegram channel subscription status for the current user.
-         * This function makes a call to your backend (e.g., Firebase Cloud Function).
-         */
-        async function checkTelegramChannelStatus() {
-            const channelTaskSection = document.getElementById('telegramChannelTaskSection');
-            if (!channelTaskSection || channelTaskSection.style.display === 'none') return; // Skip if task is hidden
-
-            const verifyButton = document.getElementById('verifyChannelButton');
-            const retryButton = document.getElementById('channelRetryButton');
-            const statusIcon = document.getElementById('channelStatusIcon');
-            const statusText = document.getElementById('channelStatusText');
-
-            // Reset UI to loading state
-            statusIcon.className = 'material-icons text-warning loading'; // Use loading spinner
-            statusIcon.textContent = ''; // Remove icon content for spinner
-            statusText.textContent = 'Verifying subscription...';
-            statusText.style.color = 'var(--text-muted)';
-            verifyButton.disabled = true;
-            verifyButton.style.display = 'block';
-            retryButton.style.display = 'none';
-
-            try {
-                // --- Make the API call to your backend ---
-                // Replace 'verifyTelegramMembershipWithBackend' with your actual function call
-                const isMember = await verifyTelegramMembershipWithBackend(currentUser.id);
-
-                if (isMember) {
-                    // User is a member, enable verification button
-                    statusIcon.className = 'material-icons text-success';
-                    statusIcon.textContent = 'check_circle';
-                    statusText.textContent = 'Membership confirmed!';
-                    statusText.style.color = 'var(--success)';
-                    verifyButton.disabled = false;
-                    verifyButton.style.display = 'block';
-                    retryButton.style.display = 'none';
-                } else {
-                    // User is not a member
-                    statusIcon.className = 'material-icons text-danger';
-                    statusIcon.textContent = 'cancel';
-                    statusText.textContent = 'Not a member of the channel.';
-                    statusText.style.color = 'var(--danger)';
-                    verifyButton.disabled = true;
-                    verifyButton.style.display = 'block';
-                    retryButton.style.display = 'block';
-                }
-            } catch (error) {
-                console.error('Error checking Telegram channel status:', error);
-                statusIcon.className = 'material-icons text-warning';
-                statusIcon.textContent = 'warning';
-                statusText.textContent = 'Verification failed. Try again.';
-                statusText.style.color = 'var(--warning)';
-                verifyButton.disabled = true;
-                retryButton.style.display = 'block';
-            }
-        }
-
-        /**
-         * Calls the backend to verify Telegram channel membership.
-         * THIS IS WHERE YOU INTEGRATE WITH YOUR BACKEND.
-         * Example using Firebase Cloud Functions with 'https.onCall'.
-         */
-        async function verifyTelegramMembershipWithBackend(telegramUserId) {
-            try {
-                // --- Replace with your actual backend call ---
-                // Example: Fetch call to a deployed Firebase Cloud Function
-                // const response = await fetch('YOUR_FIREBASE_FUNCTION_URL', {
-                //     method: 'POST',
-                //     headers: { 'Content-Type': 'application/json' },
-                //     body: JSON.stringify({ userId: telegramUserId.toString(), botToken: TELEGRAM_BOT_TOKEN, channelId: TELEGRAM_CHANNEL_ID })
-                // });
-                // const data = await response.json();
-                // return data.isMember;
-
-                // SIMULATION: Replace this with your actual backend call!
-                console.log(`Simulating check for user ${telegramUserId} in channel ${TELEGRAM_CHANNEL_ID}`);
-                await new Promise(resolve => setTimeout(resolve, 1500)); // Simulate network delay
-
-                // Simulate a 70% chance of being a member for demo purposes
-                const simulatedIsMember = Math.random() < 0.7;
-                console.log(`Simulated result: ${simulatedIsMember}`);
-                return simulatedIsMember;
-                // --- END SIMULATION ---
-
-            } catch (error) {
-                console.error("Error calling backend for Telegram membership verification:", error);
-                return false; // Assume not a member if an error occurs
-            }
-        }
-
-        /**
-         * Verifies membership and claims the reward if successful.
-         */
-        async function verifyChannelMembership() {
-            const channelTaskSection = document.getElementById('telegramChannelTaskSection');
-            if (!channelTaskSection || channelTaskSection.style.display === 'none') return; // Skip if task is hidden
-
-            const verifyButton = document.getElementById('verifyChannelButton');
-            const retryButton = document.getElementById('channelRetryButton');
-            const joinChannelLink = document.getElementById('joinChannelLink');
-            const statusIcon = document.getElementById('channelStatusIcon');
-            const statusText = document.getElementById('channelStatusText');
-
-            // Disable buttons during verification
-            verifyButton.disabled = true;
-            verifyButton.innerHTML = '<div class="loading"></div> Verifying...';
-            verifyButton.style.display = 'block';
-            retryButton.style.display = 'none';
-            joinChannelLink.style.display = 'none'; // Hide join link during verification
-
-            try {
-                // Re-verify membership before awarding the reward
-                const isMember = await verifyTelegramMembershipWithBackend(currentUser.id);
-
-                if (isMember) {
-                    // User is confirmed as a member, grant reward
-                    const userRef = database.ref('users/' + currentUser.id);
-                    await userRef.transaction((userData) => {
-                        if (userData) {
-                            // Only grant reward if not already claimed
-                            if (!userData[TELEGRAM_CHANNEL_TASK_KEY]) {
-                                userData.balance = (userData.balance || 0) + TELEGRAM_CHANNEL_REWARD_POINTS;
-                                userData.totalEarned = (userData.totalEarned || 0) + TELEGRAM_CHANNEL_REWARD_POINTS;
-                                userData[TELEGRAM_CHANNEL_TASK_KEY] = true; // Mark as completed
-                            }
-                        }
-                        return userData;
-                    });
-
-                    statusIcon.className = 'material-icons text-success';
-                    statusIcon.textContent = 'check_circle';
-                    statusText.textContent = 'Reward Claimed!';
-                    statusText.style.color = 'var(--success)';
-                    verifyButton.style.display = 'none'; // Hide verify button after claiming
-
-                    showAlert(`Successfully joined the channel and received ${TELEGRAM_CHANNEL_REWARD_POINTS} points!`, 'success');
-                } else {
-                    // User is not a member (or verification failed)
-                    statusIcon.className = 'material-icons text-danger';
-                    statusIcon.textContent = 'cancel';
-                    statusText.textContent = 'Membership not confirmed. Please join the channel first.';
-                    statusText.style.color = 'var(--danger)';
-                    verifyButton.disabled = true; // Keep disabled
-                    verifyButton.style.display = 'block';
-                    retryButton.style.display = 'block';
-                    joinChannelLink.style.display = 'block'; // Show join link again
-                    joinChannelLink.href = TELEGRAM_CHANNEL_INVITE_LINK; // Ensure correct link
-                }
-            } catch (error) {
-                console.error('Error during Telegram channel verification:', error);
-                statusIcon.className = 'material-icons text-warning';
-                statusIcon.textContent = 'warning';
-                statusText.textContent = 'Verification error. Try again.';
-                statusText.style.color = 'var(--warning)';
-                verifyButton.disabled = false; // Re-enable to allow retrying
-                verifyButton.style.display = 'block';
-                retryButton.style.display = 'block';
-                joinChannelLink.style.display = 'block'; // Show join link
-                joinChannelLink.href = TELEGRAM_CHANNEL_INVITE_LINK;
-            }
-        }
-
-        // Function to manually check Telegram channel status (e.g., from retry button)
-        function checkTelegramChannelStatus() {
-            checkTelegramChannelStatus(); // This will re-run the check with the UI reset
-        }
-
-        // --- END TELEGRAM CHANNEL VERIFICATION FUNCTIONS ---
-
-        // Show section based on bottom nav click
-        function showSection(sectionName) {
-            // Hide all sections
-            document.querySelectorAll('.section').forEach(section => {
-                section.style.display = 'none';
-                section.classList.remove('active');
-            });
-
-            // Show the requested section
-            const targetSection = document.getElementById(sectionName + 'Section');
-            if (targetSection) {
-                targetSection.style.display = 'block';
-                targetSection.classList.add('active');
-            }
-
-            // Show/hide stats grid based on section
-            const statsGrid = document.getElementById('homeStatsGrid');
-            if (sectionName === 'home') {
-                statsGrid.style.display = 'grid';
-            } else {
-                statsGrid.style.display = 'none';
-            }
-
-            // Update active state in bottom navigation
-            document.querySelectorAll('.nav-item').forEach(item => {
-                item.classList.remove('active');
-            });
-
-            document.querySelectorAll('.nav-item').forEach(item => {
-                if (item.getAttribute('onclick').includes(`showSection('${sectionName}')`)) {
-                    item.classList.add('active');
-                }
-            });
-
-            // Special handling for section transitions
-            if (sectionName === 'addTask' || sectionName === 'profile') {
+            // Listen for wallet connection changes
+            tonConnectUI.onStatusChange(wallet => {
                 updateWalletUI();
-            }
+            });
+        });
 
-            if (sectionName === 'profile') {
-                updateSwapInputs();
-            }
-            
-            // If navigating to Telegram Channel task, check its status
-            if (sectionName === 'telegramChannelTask') {
-                updateTelegramChannelTaskUI(); // Ensure UI is up-to-date
-                checkTelegramChannelStatus(); // Trigger the check
-            }
-        }
-
-        // Close modals when clicking outside of them
+        // Close modals on outside click
         window.addEventListener('click', (e) => {
             if (e.target.classList.contains('modal')) {
                 closeModal(e.target.id);
@@ -3162,3 +2911,4 @@
     </script>
 </body>
 </html>
+
