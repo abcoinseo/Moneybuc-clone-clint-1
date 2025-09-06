@@ -1313,7 +1313,7 @@ body::before {
                         <span class="material-icons">casino</span>
                         Spin Wheel
                     </button>
-                    <button class="btn btn-success" onclick="dailyCheckin()">
+                    <button class="btn btn-success" id="dailyCheckinButton" onclick="dailyCheckin()">
                         <span class="material-icons">event_available</span>
                         Daily Check-in
                     </button>
@@ -1434,7 +1434,7 @@ body::before {
                     <div class="form-group">
                         <label class="form-label">Total Cost: <span id="totalCost">0</span> TON</label>
                         <div class="form-label" style="font-size: 12px; color: var(--text-light);">
-                            Rate: 0.1 TON per 100 impressions
+                            Rate: 0.5 TON per 1000 impressions
                         </div>
                     </div>
                     
@@ -1510,9 +1510,9 @@ body::before {
                     Referral System
                 </h2>
                 <div class="form-group">
-                    <label class="form-label">Your Referral Link</label>
+                    <label class="form-label">Your Referral Link </label>
                     <div class="refer-link" id="referralLink">
-                        https://t.me/adflareprobot/app?startapp=ref_<span id="userRefId">loading</span>
+                        https://t.me/EarnFluxBot/app?startapp=ref_<span id="userRefId">loading</span>
                     </div>
                     <button class="btn btn-secondary" onclick="copyReferralLink()">
                         <span class="material-icons">content_copy</span>
@@ -1520,7 +1520,7 @@ body::before {
                     </button>
                 </div>
 
-                <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; margin: 20px 0;">
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin: 20px 0;">
                     <div class="stat-card">
                         <div class="stat-number" id="totalReferrals">0</div>
                         <div class="stat-label">Total Referrals</div>
@@ -1531,10 +1531,15 @@ body::before {
                     </div>
                 </div>
 
-                <button class="btn btn-success" onclick="claimReferralRewards()">
-                    <span class="material-icons">redeem</span>
-                    Claim Rewards
-                </button>
+                <div class="card">
+                    <h3 class="card-title">
+                        <span class="material-icons">star</span>
+                        Pro Status
+                    </h3>
+                    <div id="proStatusInfo" style="text-align: center; padding: 15px; background-color: var(--surface-dark-alt); border-radius: 12px;">
+                        <p style="color: var(--text-muted);"><span class="material-icons" style="vertical-align: middle;">help_outline</span> Meet criteria to unlock Pro status!</p>
+                    </div>
+                </div>
 
                 <div style="margin-top: 20px;">
                     <h3 style="color: var(--primary); margin-bottom: 15px;">Referral List</h3>
@@ -1554,7 +1559,7 @@ body::before {
                 </h2>
                 <div style="text-align: center; margin-bottom: 20px;">
                     <img src="https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?auto=compress&cs=tinysrgb&w=100&h=100&dpr=1" alt="Profile" class="user-avatar" style="width: 100px; height: 100px;" id="profileAvatar">
-                    <h3 style="margin: 15px 0; color: var(--text);" id="profileName">Loading...</h3>
+                    <h3 style="margin: 15px 0; color: var(--text-primary);" id="profileName">Loading...</h3>
                 </div>
 
                 <!-- Balance Display -->
@@ -1590,14 +1595,14 @@ body::before {
                     <div class="swap-row">
                         <div class="swap-input-group">
                             <label class="swap-label" id="swapFromLabel">From Points</label>
-                            <input type="number" class="swap-input" id="swapPointsInput" placeholder="0" min="1000" step="1000">
+                            <input type="number" class="swap-input" id="swapPointsInput" placeholder="0" min="5000" step="5000">
                         </div>
                         <button class="swap-icon" onclick="swapDirection()">
                             <span class="material-icons">swap_vert</span>
                         </button>
                         <div class="swap-input-group">
                             <label class="swap-label" id="swapToLabel">To TON</label>
-                            <input type="number" class="swap-input" id="swapTonInput" placeholder="0.00000000" min="0" step="0.00000001" disabled>
+                            <input type="number" class="swap-input" id="swapTonInput" placeholder="0.00000000" min="0.5" step="0.00000001" disabled>
                         </div>
                     </div>
                     <div style="text-align: center; margin-bottom: 15px; color: var(--text-light); font-size: 12px;">
@@ -1618,11 +1623,11 @@ body::before {
                 </div>
 
                 <div style="display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; margin-top: 20px;">
-                    <button class="btn btn-secondary" onclick="window.open('https://t.me/PixelfrogCommunity', '_blank')">
+                    <button class="btn btn-secondary" onclick="window.open('https://t.me/EarnFluxSupport', '_blank')">
                         <span class="material-icons">support</span>
                         Support
                     </button>
-                    <button class="btn btn-secondary" onclick="window.open('https://t.me/Pixelfrogchat', '_blank')">
+                    <button class="btn btn-secondary" onclick="window.open('https://t.me/EarnFluxDev', '_blank')">
                         <span class="material-icons">code</span>
                         Developer
                     </button>
@@ -1719,7 +1724,7 @@ body::before {
                     <label class="form-label">Amount (TON)</label>
                     <input type="number" class="form-input" id="withdrawAmount" min="0.01" step="0.00000001" required placeholder="Enter TON amount to withdraw">
                     <div style="font-size: 12px; color: var(--text-light); margin-top: 5px;">
-                        Minimum: 0.01 TON | Your TON Balance: <span id="withdrawModalTonBalance">0.00000000</span> TON
+                        Minimum: <span id="minWithdrawAmount"></span> TON | Your TON Balance: <span id="withdrawModalTonBalance">0.00000000</span> TON
                     </div>
                 </div>
                 <button type="submit" class="btn btn-primary" id="requestWithdrawButton">
@@ -1765,17 +1770,18 @@ body::before {
         let adsWatchedToday = 0;
         let lastAdCompletionTime = 0; // Timestamp when the last ad was successfully watched or failed
         let adCooldownEnd = 0; // Timestamp when the cooldown for the next ad ends
-        let dailyCheckinDone = false;
         let isWatchingAd = false; // Flag to prevent multiple ad plays
         let selectedTaskCategory = 'normal';
         let swapMode = 'pointsToTon'; // 'pointsToTon' or 'tonToPoints'
+        let allReferrals = {}; // To store referral data for Pro status check
+        let referredUsersTasksCompleted = {}; // To track tasks completed by referred users
 
         // Constants
-        const REFERRAL_BONUS_POINTS = 50;
+        const REFERRAL_BONUS_PERCENTAGE = 0.20; // 20%
         const MIN_WITHDRAW_TON = 0.1;
-        const POINTS_TO_TON_RATE = 0.00001; // 0.00000078 TON per 1000 points (updated rate)
-       const IMPRESSIONS_TO_TON_RATE = 1000 / 0.5; // 100 impressions for 0.1 TON  per 1000 imprason  0.5 ton
-
+        const POINTS_TO_TON_RATE = 0.00000078; // 0.00000078 TON per 1000 points (adjust as needed)
+        const IMPRESSIONS_TO_TON_RATE = 0.5 / 1000; // 0.5 TON per 1000 impressions
+        
         const AD_REWARD_POINTS = 20;
         const CHECKIN_REWARD_POINTS = 50;
         const TASK_SPIN_REWARD = 1;
@@ -1783,6 +1789,10 @@ body::before {
         const MIN_AD_WATCH_TIME = 15000; // 15 seconds in milliseconds
         const MIN_SWAP_POINTS = 5000; // Minimum points to swap
         const MIN_SWAP_TON = 0.5; // Minimum TON to swap
+
+        // Criteria for "Pro" status
+        const PRO_REFERRAL_COUNT_THRESHOLD = 10; // Refer X users
+        const PRO_ACTIVE_REFERRAL_TASK_THRESHOLD = 5; // Who have completed Y tasks
 
         // Initialize Telegram Web App
         function initTelegramWebApp() {
@@ -1824,29 +1834,6 @@ body::before {
             }
         }
 
-        // Task category selection
-        function selectTaskCategory(category) {
-            selectedTaskCategory = category;
-            
-            // Update visual selection
-            document.querySelectorAll('.category-option').forEach(option => {
-                option.classList.remove('selected');
-            });
-            document.querySelector(`[data-category="${category}"]`).classList.add('selected');
-            
-            // Show/hide telegram specific fields
-            const telegramFields = document.getElementById('telegramFields');
-            const telegramChannelInput = document.getElementById('telegramChannel');
-            
-            if (category === 'telegram') {
-                telegramFields.classList.add('active');
-                telegramChannelInput.required = true;
-            } else {
-                telegramFields.classList.remove('active');
-                telegramChannelInput.required = false;
-            }
-        }
-
         // Check Telegram channel subscription
         async function checkTelegramSubscription(userId, channelUsername) {
             try {
@@ -1857,11 +1844,108 @@ body::before {
                     const member = data.result;
                     const validStatuses = ['member', 'administrator', 'creator'];
                     return validStatuses.includes(member.status);
+                } else {
+                    console.error('Telegram API Error:', data.description);
+                    return false;
                 }
-                return false;
             } catch (error) {
                 console.error('Error checking subscription:', error);
                 return false;
+            }
+        }
+
+        // Distribute referral bonus
+        async function distributeReferralBonus(referrerId, amountEarned) {
+            if (!referrerId || !amountEarned || amountEarned <= 0) return;
+
+            const referrerRef = database.ref('users/' + referrerId);
+            const referralEntryRef = database.ref(`referrals/${referrerId}/${currentUser.id}`);
+
+            const referralData = (await referralEntryRef.once('value')).val();
+            const earningPercentage = referralData ? (referralData.earningPercentage || REFERRAL_BONUS_PERCENTAGE) : REFERRAL_BONUS_PERCENTAGE;
+            const bonusAmount = Math.floor(amountEarned * earningPercentage);
+
+            if (bonusAmount > 0) {
+                await referrerRef.transaction((userData) => {
+                    if (userData) {
+                        userData.balance = (userData.balance || 0) + bonusAmount;
+                        userData.referralEarnings = (userData.referralEarnings || 0) + bonusAmount;
+                        userData.totalEarned = (userData.totalEarned || 0) + bonusAmount; // Also count referral earnings towards total earned
+                    }
+                    return userData;
+                });
+                console.log(`Awarded ${bonusAmount} points to referrer ${referrerId} for user ${currentUser.id}'s earning.`);
+            }
+        }
+
+        // Check and update Pro status
+        async function checkAndSetProStatus() {
+            if (!currentUser) return;
+
+            const userRef = database.ref('users/' + currentUser.id);
+            const snapshot = await userRef.once('value');
+            const userData = snapshot.val();
+
+            if (!userData) return;
+
+            const referrerId = userData.referrerId;
+            if (!referrerId) return; // User was not referred
+
+            let activeReferralsCount = 0;
+            const referrerRef = database.ref('users/' + referrerId);
+            const referredUsersRef = database.ref('users');
+
+            // Fetch all referral relationships for the current user to count active ones
+            const referralListSnapshot = await database.ref(`referrals/${currentUser.id}`).once('value');
+            const directReferrals = referralListSnapshot.val() || {};
+
+            const directReferralIds = Object.keys(directReferrals);
+
+            let tasksCompletedByDirectReferrals = 0;
+
+            // Fetch data for direct referrals to check their task completion
+            if (directReferralIds.length > 0) {
+                const referralUsersSnapshot = await referredUsersRef.once('value');
+                const allUsers = referralUsersSnapshot.val() || {};
+
+                directReferralIds.forEach(referredUserId => {
+                    const referredUser = allUsers[referredUserId];
+                    if (referredUser && referredUser.tasksCompleted > 0) { // Check if they have completed at least one task
+                        tasksCompletedByDirectReferrals++;
+                    }
+                });
+            }
+
+            const isPro = directReferralIds.length >= PRO_REFERRAL_COUNT_THRESHOLD && tasksCompletedByDirectReferrals >= PRO_ACTIVE_REFERRAL_TASK_THRESHOLD;
+
+            if (userData.isPro !== isPro) {
+                await userRef.update({ isPro: isPro });
+                showAlert(isPro ? 'Congratulations! You are now a Pro member!' : 'You no longer meet the Pro member criteria.', isPro ? 'success' : 'warning');
+                updateProStatusUI(isPro);
+            }
+        }
+        
+        // Update UI for Pro status
+        function updateProStatusUI(isPro) {
+            const proStatusInfo = document.getElementById('proStatusInfo');
+            if (isPro) {
+                proStatusInfo.innerHTML = `
+                    <div class="verification-status verification-success" style="margin: 0;">
+                        <span class="material-icons">star</span> You are a Pro Member!
+                    </div>
+                    <p style="color: var(--text-light); margin-top: 10px; font-size: 12px;">
+                        Enjoy exclusive benefits!
+                    </p>
+                `;
+            } else {
+                proStatusInfo.innerHTML = `
+                    <p style="color: var(--text-muted);">
+                        <span class="material-icons" style="vertical-align: middle;">help_outline</span> Meet criteria to unlock Pro status!
+                    </p>
+                    <p style="font-size: 12px; color: var(--text-light); margin-top: 5px;">
+                        Refer ${PRO_REFERRAL_COUNT_THRESHOLD} users who have completed at least ${PRO_ACTIVE_REFERRAL_TASK_THRESHOLD} tasks.
+                    </p>
+                `;
             }
         }
 
@@ -1885,10 +1969,13 @@ body::before {
                     tasksCompleted: 0,
                     referrals: 0,
                     referralEarnings: 0,
-                    adsWatched: 0,
-                    lastAdCompletionTime: 0, // Timestamp for ad completion
-                    adCooldownEnd: 0,       // Timestamp when ad cooldown ends
+                    isPro: false,
+                    referrerId: null, // Will be set if referred
+                    referredAt: null, // Will be set if referred
                     lastCheckin: null,
+                    adsWatched: 0,
+                    lastAdCompletionTime: 0,
+                    adCooldownEnd: 0,
                     createdAt: Date.now()
                 };
                 await userRef.set(userData);
@@ -1905,13 +1992,14 @@ body::before {
                     lastAdCompletionTime = userData.lastAdCompletionTime || 0;
                     adCooldownEnd = userData.adCooldownEnd || 0;
                     dailyCheckinDone = userData.lastCheckin === new Date().toDateString();
+                    allReferrals = {}; // Clear previous referral data for recalculation
 
                     // Reset daily ad count if 24 hours have passed since the last completion
                     if (Date.now() - lastAdCompletionTime > 24 * 60 * 60 * 1000) {
                         adsWatchedToday = 0;
                         userRef.update({
                             adsWatched: 0,
-                            lastAdCompletionTime: 0, // Reset completion time for the new day
+                            lastAdCompletionTime: 0,
                             adCooldownEnd: 0
                         });
                     }
@@ -1919,7 +2007,11 @@ body::before {
                     updateUI(userData);
                     updateWalletUI();
                     updateSwapInputs();
-                    updateAdButtonState(); // Ensure ad button is updated on load
+                    updateAdButtonState();
+                    updateProStatusUI(userData.isPro); // Update Pro status UI
+                    
+                    // Trigger Pro status check if needed
+                    checkAndSetProStatus();
                 }
             });
 
@@ -1928,6 +2020,29 @@ body::before {
             loadReferrals();
             loadWithdrawalHistory();
             loadSwapHistory();
+            
+            // Fetch initial referral data for Pro status check
+            database.ref('referrals/' + currentUser.id).once('value', (snapshot) => {
+                 if (snapshot.exists()) {
+                     allReferrals = snapshot.val();
+                     checkAndSetProStatus(); // Check pro status after fetching referrals
+                 }
+            });
+
+            // Set the minimum withdrawal amount in the modal
+            document.getElementById('minWithdrawAmount').textContent = MIN_WITHDRAW_TON.toFixed(2);
+
+            // Ensure daily check-in button state is correct on load
+            const checkinButton = document.getElementById('dailyCheckinButton');
+            if (checkinButton) {
+                const today = new Date().toDateString();
+                if (userData.lastCheckin === today) {
+                    checkinButton.textContent = 'Checked In!';
+                    checkinButton.disabled = true;
+                    checkinButton.classList.remove('btn-success');
+                    checkinButton.classList.add('btn-secondary');
+                }
+            }
         }
 
         // Update UI elements
@@ -1985,10 +2100,13 @@ body::before {
                 adCountdown.style.display = 'block';
                 adCountdown.textContent = `Wait ${timeLeft}s`;
 
-                const countdownInterval = setInterval(() => {
+                // Clear any existing countdown interval to avoid duplicates
+                if (window.adCountdownInterval) clearInterval(window.adCountdownInterval);
+
+                window.adCountdownInterval = setInterval(() => {
                     const remaining = Math.ceil((adCooldownEnd - Date.now()) / 1000);
                     if (remaining <= 0) {
-                        clearInterval(countdownInterval);
+                        clearInterval(window.adCountdownInterval);
                         updateAdButtonState(); // Re-evaluate button state
                     } else {
                         watchAdButton.innerHTML = `<span class="material-icons">timer</span> Wait ${remaining}s`;
@@ -1998,7 +2116,7 @@ body::before {
             } else {
                 // Ready to watch ad
                 watchAdButton.disabled = false;
-                watchAdButton.innerHTML = '<span class="material-icons">play_arrow</span> Watch Ad (+10 Diamond)';
+                watchAdButton.innerHTML = '<span class="material-icons">play_arrow</span> Watch Ad (+20 Diamond)';
                 watchAdButton.classList.add('pulse', 'glow');
                 adLoadingMessage.style.display = 'none';
                 adCountdown.style.display = 'none';
@@ -2270,7 +2388,7 @@ body::before {
             });
         }
 
-        // Create task card
+        // Create task card for available tasks
         function createTaskCard(taskId, task, isCompleted) {
             const card = document.createElement('div');
             card.className = `task-card ${task.category === 'telegram' ? 'telegram-task' : ''}`;
@@ -2289,6 +2407,10 @@ body::before {
                     @${task.telegramChannel}
                 </div>` : '';
 
+            // Calculate reward based on impressions
+            const rewardPerImpression = IMPRESSIONS_TO_TON_RATE * 1000000000 / task.impressions; // TON per impression
+            const pointsReward = Math.floor(rewardPerImpression * 1000 / POINTS_TO_TON_RATE); // Convert TON reward to points
+
             card.innerHTML = `
                 <div class="task-header">
                     <div>
@@ -2298,11 +2420,11 @@ body::before {
                         </div>
                         ${channelInfo}
                     </div>
-                    <div class="task-reward">${task.reward || 100} pts</div>
+                    <div class="task-reward">${pointsReward} pts</div>
                 </div>
                 <div class="task-description">${task.description}</div>
                 <div class="task-actions">
-                    <button class="btn ${statusClass}" ${isCompleted ? 'disabled' : `onclick="startTask('${taskId}', '${task.url}', ${task.reward || 100}, '${task.category || 'normal'}', '${task.telegramChannel || ''}')" `}>
+                    <button class="btn ${statusClass}" ${isCompleted ? 'disabled' : `onclick="startTask('${taskId}', '${task.url}', ${pointsReward}, '${task.category || 'normal'}', '${task.telegramChannel || ''}')" `}>
                         <span class="material-icons">${statusIcon}</span>
                         ${statusText}
                     </button>
@@ -2333,13 +2455,16 @@ body::before {
             progressElement.style.width = '0%';
             verificationStatus.innerHTML = '';
 
-            const timer = setInterval(async () => {
+            // Clear any existing countdown interval
+            if (window.taskCountdownInterval) clearInterval(window.taskCountdownInterval);
+
+            window.taskCountdownInterval = setInterval(async () => {
                 countdown--;
                 countdownElement.textContent = countdown;
                 progressElement.style.width = ((5 - countdown) / 5) * 100 + '%';
 
                 if (countdown <= 0) {
-                    clearInterval(timer);
+                    clearInterval(window.taskCountdownInterval);
                     
                     if (category === 'telegram') {
                         // Verify Telegram channel subscription
@@ -2350,7 +2475,7 @@ body::before {
                         if (isSubscribed) {
                             verificationStatus.innerHTML = '<div class="verification-status verification-success">✅ Subscription verified!</div>';
                             setTimeout(() => {
-                                completeTask(taskId, reward);
+                                completeTask(taskId, reward, category); // Pass category
                             }, 1000);
                         } else {
                             verificationStatus.innerHTML = '<div class="verification-status verification-failed">❌ Subscription not found. Please join the channel and try again.</div>';
@@ -2361,14 +2486,14 @@ body::before {
                         }
                     } else {
                         // Normal task completion
-                        completeTask(taskId, reward);
+                        completeTask(taskId, reward, category); // Pass category
                     }
                 }
             }, 1000);
         }
 
         // Complete task
-        async function completeTask(taskId, reward) {
+        async function completeTask(taskId, reward, category = 'normal') {
             try {
                 const userRef = database.ref('users/' + currentUser.id);
                 const userTaskRef = database.ref('userTasks/' + currentUser.id + '/' + taskId);
@@ -2380,6 +2505,7 @@ body::before {
                     return;
                 }
 
+                // Update user's balance and stats
                 await userRef.transaction((userData) => {
                     if (userData) {
                         userData.balance = (userData.balance || 0) + reward;
@@ -2390,11 +2516,25 @@ body::before {
                     return userData;
                 });
 
+                // Mark task as completed for the user
                 await userTaskRef.set({
                     completedAt: Date.now(),
                     reward: reward,
                     completed: true
                 });
+
+                // Distribute referral bonus if applicable
+                if (currentUser.referrerId) {
+                    await distributeReferralBonus(currentUser.referrerId, reward);
+                }
+                
+                // Check and update Pro status of the referrer (if any)
+                if (currentUser.referrerId) {
+                    checkAndSetProStatus();
+                }
+                
+                // Check Pro status for the current user as well (in case they completed a task and now qualify)
+                checkAndSetProStatus();
 
                 closeModal('taskModal');
                 showAlert(`Task completed! You earned ${reward} points and ${TASK_SPIN_REWARD} spin!`, 'success');
@@ -2451,6 +2591,13 @@ body::before {
 
                 document.getElementById('luckyCodeInput').value = '';
                 showAlert(`Lucky code applied! You earned ${foundCode.reward} points!`, 'success');
+                
+                // Distribute referral bonus for lucky code redemption
+                if (currentUser.referrerId) {
+                    await distributeReferralBonus(currentUser.referrerId, foundCode.reward);
+                }
+                // Check Pro status after earning
+                checkAndSetProStatus();
             } catch (error) {
                 console.error('Error applying lucky code:', error);
                 showAlert('Error applying lucky code. Please try again.', 'danger');
@@ -2471,19 +2618,20 @@ body::before {
             wheel.style.transform = '';
             wheel.style.transition = 'transform 3s cubic-bezier(0.23, 1, 0.32, 1)';
 
-            const randomRotation = Math.floor(Math.random() * 360) + 1800;
+            const randomRotation = Math.floor(Math.random() * 360) + 1800; // Spin multiple full rounds
             wheel.style.transform = `rotate(${randomRotation}deg)`;
 
             setTimeout(async () => {
                 const normalizedRotation = randomRotation % 360;
                 let reward;
 
-if (normalizedRotation < 60) reward = 10;
-else if (normalizedRotation < 120) reward = 12;
-else if (normalizedRotation < 180) reward = 14;
-else if (normalizedRotation < 240) reward = 16;
-else if (normalizedRotation < 300) reward = 18;
-else reward = 20;
+                // Define rewards based on segments (adjust values as needed)
+                if (normalizedRotation >= 0 && normalizedRotation < 60) reward = 10; // Blue
+                else if (normalizedRotation >= 60 && normalizedRotation < 120) reward = 12; // Light Blue
+                else if (normalizedRotation >= 120 && normalizedRotation < 180) reward = 14; // Yellow
+                else if (normalizedRotation >= 180 && normalizedRotation < 240) reward = 16; // Green
+                else if (normalizedRotation >= 240 && normalizedRotation < 300) reward = 18; // Dark Blue
+                else reward = 20; // Aqua
 
                 const userRef = database.ref('users/' + currentUser.id);
                 await userRef.transaction((userData) => {
@@ -2496,12 +2644,20 @@ else reward = 20;
                 });
 
                 spinButton.disabled = false;
-                wheel.style.transition = '';
+                wheel.style.transition = ''; // Remove transition for next spin
                 showAlert(`Congratulations! You won ${reward} points!`, 'success');
-            }, 3000);
+                
+                // Distribute referral bonus
+                if (currentUser.referrerId) {
+                    await distributeReferralBonus(currentUser.referrerId, reward);
+                }
+                // Check Pro status after earning
+                checkAndSetProStatus();
+
+            }, 3000); // Match the transition duration
         }
 
-        // Watch ad - Real ad integration
+        // Watch ad
         async function watchAd() {
             if (adsWatchedToday >= 50) {
                 showAlert('Daily ad limit reached. Come back tomorrow!', 'danger');
@@ -2531,15 +2687,10 @@ else reward = 20;
                 isWatchingAd = true;
                 updateAdButtonState(); // Update button to "Watching Ad..."
 
-                // Start a timer to track minimum watch time
                 const adWatchStartTime = Date.now();
                 
                 console.log("Attempting to show rewarded ad...");
-                
-                // Call the real ad function
-                // The SDK's 'show_9828399' is expected to return a Promise that resolves when the ad is closed.
                 await show_9828399();
-                
                 console.log("Ad closed.");
 
                 const actualWatchDuration = Date.now() - adWatchStartTime;
@@ -2554,13 +2705,21 @@ else reward = 20;
                             userData.totalEarned = (userData.totalEarned || 0) + AD_REWARD_POINTS;
                             userData.adsWatched = (userData.adsWatched || 0) + 1;
                             userData.lastAdCompletionTime = Date.now(); // Record completion time
-                            userData.adCooldownEnd = Date.now() + 3000; // Set cooldown for 30 seconds
+                            userData.adCooldownEnd = Date.now() + 30000; // Set cooldown for 30 seconds
                         }
                         return userData;
                     });
 
                     adsWatchedToday++;
                     showAlert(`Ad watched successfully! You earned ${AD_REWARD_POINTS} points!`, 'success');
+
+                    // Distribute referral bonus
+                    if (currentUser.referrerId) {
+                        await distributeReferralBonus(currentUser.referrerId, AD_REWARD_POINTS);
+                    }
+                    // Check Pro status after earning
+                    checkAndSetProStatus();
+
                 } else {
                     console.log("Ad closed too early.");
                     showAlert("You haven't watched the full ad. No reward given.", 'warning');
@@ -2602,13 +2761,21 @@ else reward = 20;
 
             showAlert(`Daily check-in completed! You earned ${CHECKIN_REWARD_POINTS} points!`, 'success');
 
-            const dailyCheckinButton = document.querySelector('.btn-success[onclick="dailyCheckin()"]');
+            // Update button state
+            const dailyCheckinButton = document.getElementById('dailyCheckinButton');
             if (dailyCheckinButton) {
                 dailyCheckinButton.textContent = 'Checked In!';
                 dailyCheckinButton.disabled = true;
                 dailyCheckinButton.classList.remove('btn-success');
                 dailyCheckinButton.classList.add('btn-secondary');
             }
+            
+            // Distribute referral bonus
+            if (currentUser.referrerId) {
+                await distributeReferralBonus(currentUser.referrerId, CHECKIN_REWARD_POINTS);
+            }
+            // Check Pro status after earning
+            checkAndSetProStatus();
         }
 
         // Add task form submission
@@ -2626,7 +2793,7 @@ else reward = 20;
             const url = document.getElementById('newTaskUrl').value;
             const impressions = parseInt(document.getElementById('taskImpressions').value);
             const telegramChannel = document.getElementById('telegramChannel').value;
-            // Calculate cost based on 0.1 TON per 100 impressions
+            // Calculate cost based on 0.5 TON per 1000 impressions
             const cost = (impressions / 1000) * 0.5;
 
             if (isNaN(impressions) || impressions < 100 || impressions > 5000) {
@@ -2666,7 +2833,6 @@ else reward = 20;
                         url,
                         category: selectedTaskCategory,
                         telegramChannel: selectedTaskCategory === 'telegram' ? telegramChannel : null,
-                        reward: 100, // Default reward per impression, can be adjusted or calculated
                         impressions: impressions,
                         remainingImpressions: impressions,
                         createdBy: currentUser.id,
@@ -2698,14 +2864,14 @@ else reward = 20;
             }
         });
 
-        // Update total cost display
+        // Update total cost display for task creation
         document.getElementById('taskImpressions').addEventListener('input', (e) => {
             const impressions = parseInt(e.target.value) || 0;
-            const cost = (impressions / 100) * 0.15;
+            const cost = (impressions / 1000) * 0.5;
             document.getElementById('totalCost').textContent = cost.toFixed(3);
         });
 
-        // Load user tasks
+        // Load user's created tasks
         function loadUserTasks() {
             if (!currentUser) return;
 
@@ -2733,12 +2899,11 @@ else reward = 20;
             });
         }
 
-        // Create user task card
+        // Create task card for user's created tasks
         function createUserTaskCard(taskId, task) {
             const card = document.createElement('div');
             card.className = `task-card ${task.category === 'telegram' ? 'telegram-task' : ''}`;
 
-            const isTaskCompleted = task.remainingImpressions <= 0;
             const progressPercentage = (task.impressions > 0) ? 
                 ((task.impressions - (task.remainingImpressions || task.impressions)) / task.impressions) * 100 : 0;
 
@@ -2751,6 +2916,10 @@ else reward = 20;
                     <span class="material-icons">telegram</span>
                     @${task.telegramChannel}
                 </div>` : '';
+                
+            // Calculate reward in points
+            const rewardPerImpression = IMPRESSIONS_TO_TON_RATE * 1000000000 / task.impressions;
+            const pointsReward = Math.floor(rewardPerImpression * 1000 / POINTS_TO_TON_RATE);
 
             card.innerHTML = `
                 <div class="task-header">
@@ -2761,19 +2930,22 @@ else reward = 20;
                         </div>
                         ${channelInfo}
                     </div>
-                    <div class="task-reward">${task.remainingImpressions || 0}/${task.impressions}</div>
+                    <div class="task-reward">${pointsReward} pts</div>
                 </div>
                 <div class="task-description">${task.description}</div>
                 <div class="progress-bar">
                     <div class="progress-fill" style="width: ${progressPercentage}%"></div>
                 </div>
                 <div class="task-actions">
-                    ${isTaskCompleted ? 
+                    ${task.status === 'active' ? 
+                        `<span style="color: var(--text-light); font-size: 12px; margin-right: auto;">Active</span>` : ''
+                    }
+                    ${task.status === 'completed' || task.remainingImpressions <= 0 ? 
                         `<button class="btn btn-danger" onclick="deleteUserTask('${taskId}')">
                             <span class="material-icons">delete</span>
                             Delete
                         </button>` : 
-                        `<span style="color: var(--text-light); font-size: 12px;">Active</span>`
+                        ''
                     }
                 </div>
             `;
@@ -2800,91 +2972,117 @@ else reward = 20;
                 return;
             }
 
-            try {
-                const newUserRef = database.ref('users/' + currentUser.id);
-                const newUserSnapshot = await newUserRef.once('value');
+            const newUserRef = database.ref('users/' + currentUser.id);
+            const newUserSnapshot = await newUserRef.once('value');
 
-                if (!newUserSnapshot.exists()) {
-                    const referrerUserRef = database.ref('users/' + referrerId);
-                    const referrerUserSnapshot = await referrerUserRef.once('value');
+            // Only process if this is a new user and they haven't been referred before
+            if (!newUserSnapshot.exists() || !newUserSnapshot.val().referrerId) {
+                const referrerUserRef = database.ref('users/' + referrerId);
+                const referrerUserSnapshot = await referrerUserRef.once('value');
 
-                    if (referrerUserSnapshot.exists()) {
-                        await referrerUserRef.transaction((referrerData) => {
-                            if (referrerData) {
-                                referrerData.referrals = (referrerData.referrals || 0) + 1;
-                                referrerData.balance = (referrerData.balance || 0) + REFERRAL_BONUS_POINTS;
-                                referrerData.totalEarned = (referrerData.totalEarned || 0) + REFERRAL_BONUS_POINTS;
-                            }
-                            return referrerData;
-                        });
+                if (referrerUserSnapshot.exists()) {
+                    // Update the new user's details with referrer info
+                    await newUserRef.update({
+                        referrerId: referrerId,
+                        referredAt: Date.now()
+                    });
+                    
+                    // Update the referrer's stats and create referral entry
+                    await referrerUserRef.transaction((referrerData) => {
+                        if (referrerData) {
+                            referrerData.referrals = (referrerData.referrals || 0) + 1;
+                            // No points awarded here automatically, bonus given upon earning
+                        }
+                        return referrerData;
+                    });
 
-                        await database.ref('referrals/' + referrerId + '/' + currentUser.id).set({
-                            userId: currentUser.id,
-                            username: currentUser.username,
-                            joinedAt: Date.now(),
-                            completed: true
-                        });
+                    await database.ref(`referrals/${referrerId}/${currentUser.id}`).set({
+                        earningPercentage: REFERRAL_BONUS_PERCENTAGE,
+                        timestamp: Date.now()
+                    });
 
-                        showAlert(`Welcome! You've been referred by user ID: ${referrerId}. Your referrer has been rewarded!`, 'success');
-                    }
+                    showAlert(`Welcome! You've been referred by user ID: ${referrerId}.`, 'info');
+                    
+                    // Trigger Pro status check for the referrer
+                    checkAndSetProStatus();
                 }
-            } catch (error) {
-                console.error('Error handling referral:', error);
-                showAlert('Error processing referral link. Please try again.', 'danger');
             }
         }
 
-        // Load referrals
+        // Load referrals and update UI
         function loadReferrals() {
             if (!currentUser) return;
 
             const referralList = document.getElementById('referralList');
             let totalReferralEarnings = 0;
+            let activeReferralCount = 0;
 
-            database.ref('referrals/' + currentUser.id).on('value', (snapshot) => {
+            const myReferralsRef = database.ref('referrals/' + currentUser.id);
+
+            myReferralsRef.on('value', (snapshot) => {
                 referralList.innerHTML = '';
-                const referrals = snapshot.val();
+                const referrals = snapshot.val() || {};
+                const directReferralIds = Object.keys(referrals);
+                allReferrals = referrals; // Update global for pro status check
 
-                if (!referrals) {
+                if (directReferralIds.length === 0) {
                     referralList.innerHTML = '<p style="text-align: center; color: var(--text-light);">No referrals yet.</p>';
                     document.getElementById('totalReferrals').textContent = '0';
                     document.getElementById('referralEarnings').textContent = '0';
                     return;
                 }
 
-                const referralIds = Object.keys(referrals);
-                document.getElementById('totalReferrals').textContent = formatNumber(referralIds.length);
+                document.getElementById('totalReferrals').textContent = formatNumber(directReferralIds.length);
 
-                referralIds.forEach(referredUserId => {
-                    const referral = referrals[referredUserId];
-                    totalReferralEarnings += REFERRAL_BONUS_POINTS;
-
-                    const referralItem = document.createElement('div');
-                    referralItem.className = 'history-item';
-                    referralItem.innerHTML = `
-                        <div>
-                            <strong>${referral.username || 'User'}</strong>
-                            <div style="font-size: 12px; color: var(--text-light);">
-                                Joined: ${new Date(referral.joinedAt).toLocaleDateString()}
-                            </div>
-                        </div>
-                        <div class="history-status status-completed">Referred</div>
-                    `;
-                    referralList.appendChild(referralItem);
+                // Fetch user data for each referral to get their tasksCompleted count
+                const userPromises = directReferralIds.map(async (referredUserId) => {
+                    const referredUserData = (await database.ref('users/' + referredUserId).once('value')).val();
+                    if (referredUserData) {
+                        const referral = referrals[referredUserId];
+                        totalReferralEarnings += (referredUserData.referralEarnings || 0); // Sum up their *actual* referral earnings from our system
+                        if (referredUserData.tasksCompleted > 0) {
+                            activeReferralCount++;
+                        }
+                        return { referredUserId, referredUserData, referral };
+                    }
+                    return null;
                 });
 
-                document.getElementById('referralEarnings').textContent = formatNumber(totalReferralEarnings);
+                Promise.all(userPromises).then((results) => {
+                    const validResults = results.filter(r => r !== null).sort((a, b) => b.referral.timestamp - a.referral.timestamp);
+
+                    validResults.forEach(({ referredUserId, referredUserData, referral }) => {
+                        const referralItem = document.createElement('div');
+                        referralItem.className = 'history-item';
+                        const isPro = referredUserData.isPro ? '<span style="color: var(--warning); font-weight: bold;"> (Pro)</span>' : '';
+                        const tasksCompleted = referredUserData.tasksCompleted || 0;
+
+                        referralItem.innerHTML = `
+                            <div>
+                                <strong>${referredUserData.first_name || 'User'}</strong>${isPro}
+                                <div style="font-size: 12px; color: var(--text-light);">
+                                    Joined: ${new Date(referral.timestamp).toLocaleDateString()} | Tasks: ${tasksCompleted}
+                                </div>
+                            </div>
+                            <div class="history-status status-completed">Referred</div>
+                        `;
+                        referralList.appendChild(referralItem);
+                    });
+
+                    document.getElementById('referralEarnings').textContent = formatNumber(totalReferralEarnings);
+                    checkAndSetProStatus(); // Re-check Pro status after loading referral details
+                });
             });
         }
 
-        // Claim referral rewards
-        async function claimReferralRewards() {
-            showAlert('Referral rewards are automatically credited when a new user joins via your link!', 'success');
+        // Claim referral rewards - this is now automated
+        function claimReferralRewards() {
+            showAlert('Referral rewards are automatically credited as your referrals earn points!', 'success');
         }
 
         // Copy referral link
         function copyReferralLink() {
-            const botUsername = 'adflareprobot'; // Make sure this is your bot's username
+            const botUsername = 'EarnFluxBot'; // Your Telegram Bot username
             const link = `https://t.me/${botUsername}/app?startapp=ref_${currentUser.id}`;
             navigator.clipboard.writeText(link).then(() => {
                 showAlert('Referral link copied to clipboard!', 'success');
@@ -2933,7 +3131,7 @@ else reward = 20;
                 return;
             }
 
-            if (tonAddress !== tonConnectUI.account.address) {
+            if (tonAddress.toLowerCase() !== tonConnectUI.account.address.toLowerCase()) {
                 showAlert('The displayed TON address does not match your connected wallet. Please reconnect if necessary.', 'danger');
                 return;
             }
@@ -3078,11 +3276,10 @@ else reward = 20;
                 item.classList.remove('active');
             });
 
-            document.querySelectorAll('.nav-item').forEach(item => {
-                if (item.getAttribute('onclick').includes(`showSection('${sectionName}')`)) {
-                    item.classList.add('active');
-                }
-            });
+            const activeNavItem = document.querySelector(`.nav-item[onclick*="showSection('${sectionName}')"]`);
+            if (activeNavItem) {
+                activeNavItem.classList.add('active');
+            }
 
             // Special handling for section transitions
             if (sectionName === 'addTask' || sectionName === 'profile') {
@@ -3101,10 +3298,10 @@ else reward = 20;
 
         // Show task tab
         function showTaskTab(event, tabName) {
-            document.querySelectorAll('.tab').forEach(tab => {
+            document.querySelectorAll('#tasksSection .tab').forEach(tab => {
                 tab.classList.remove('active');
             });
-            document.querySelectorAll('.tab-content').forEach(content => {
+            document.querySelectorAll('#tasksSection .tab-content').forEach(content => {
                 content.classList.remove('active');
             });
 
@@ -3135,6 +3332,10 @@ else reward = 20;
                     document.getElementById('withdrawForm').reset();
                     // Reset button state and inputs if necessary
                     document.getElementById('requestWithdrawButton').disabled = true;
+                }
+                if (modalId === 'taskModal') {
+                    // Clear countdown interval if modal is closed
+                    if (window.taskCountdownInterval) clearInterval(window.taskCountdownInterval);
                 }
             }
         }
@@ -3188,9 +3389,19 @@ else reward = 20;
             tonConnectUI.buttonRootId = 'ton-connect-button-container';
 
             // Listen for wallet connection changes
-            tonConnectUI.onStatusChange(wallet => {
+            tonConnectUI.onStatusChange(async (wallet) => {
                 updateWalletUI();
+                // Re-initialize user data or re-fetch balance if needed, though current setup listens for changes.
+                // If TON balance needs immediate refresh after connection, you might need to explicitly fetch it.
+                if(wallet && wallet.account) {
+                    // Example: Explicitly fetch TON balance if not automatically updated
+                    // This might involve a TON API call or checking TON Connect's account object for balance
+                    // For now, assume the general listener covers it or needs manual update.
+                }
             });
+            
+            // Initial call to update Pro status UI
+            updateProStatusUI(false); // Assume not pro until data loads
         });
 
         // Close modals on outside click
