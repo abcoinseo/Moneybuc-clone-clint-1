@@ -8,6 +8,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src="https://unpkg.com/@tonconnect/ui@latest/dist/tonconnect-ui.min.js"></script>
+    <script src='//libtl.com/sdk.js' data-zone='9809601' data-sdk='show_9809601'></script>
     <style>
         * {
             margin: 0;
@@ -835,6 +836,19 @@
             margin-top: 20px;
         }
 
+        .ad-loading {
+            text-align: center;
+            padding: 20px;
+            background: rgba(15, 15, 35, 0.9);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            margin: 15px 0;
+        }
+
+        .ad-loading .loading {
+            margin: 0 auto 15px;
+        }
+
         @media (max-width: 768px) {
             .container {
                 padding: 15px 10px 100px;
@@ -1117,10 +1131,14 @@
                     <p style="margin-bottom: 20px; color: var(--text-light);">
                         Daily Limit: <span id="adsWatched">0</span>/50
                     </p>
-                    <button class="btn btn-primary" id="watchAdButton" onclick="watchAd()">
+                    <button class="btn btn-primary pulse glow" id="watchAdButton" onclick="watchAd()">
                         <span class="material-icons">play_arrow</span>
                         Watch Ad (+10 Points)
                     </button>
+                    <div id="adLoadingMessage" class="ad-loading" style="display: none;">
+                        <div class="loading"></div>
+                        <p>Loading advertisement...</p>
+                    </div>
                     <div id="adCountdown" class="countdown" style="display: none;"></div>
                 </div>
             </div>
@@ -1390,6 +1408,7 @@
         let dailyCheckinDone = false;
         let lastAdCompletionTime = 0;
         let swapMode = 'pointsToTon'; // 'pointsToTon' or 'tonToPoints'
+        let isWatchingAd = false;
 
         // Constants
         const REFERRAL_BONUS_POINTS = 500;
@@ -1527,12 +1546,38 @@
 
             // Update ad button state
             const watchAdButton = document.getElementById('watchAdButton');
+            const canWatchNextAd = Date.now() - lastAdCompletionTime >= 30000;
+            
             if (adsWatchedToday >= 50) {
                 watchAdButton.disabled = true;
                 watchAdButton.innerHTML = '<span class="material-icons">block</span> Daily Limit Reached';
+                watchAdButton.classList.remove('pulse', 'glow');
+            } else if (isWatchingAd) {
+                watchAdButton.disabled = true;
+                watchAdButton.innerHTML = '<div class="loading"></div> Watching Ad...';
+                watchAdButton.classList.remove('pulse', 'glow');
+            } else if (!canWatchNextAd) {
+                watchAdButton.disabled = true;
+                const timeLeft = Math.ceil((30000 - (Date.now() - lastAdCompletionTime)) / 1000);
+                watchAdButton.innerHTML = `<span class="material-icons">timer</span> Wait ${timeLeft}s`;
+                watchAdButton.classList.remove('pulse', 'glow');
+                
+                // Start countdown timer
+                const countdownInterval = setInterval(() => {
+                    const remaining = Math.ceil((30000 - (Date.now() - lastAdCompletionTime)) / 1000);
+                    if (remaining <= 0) {
+                        clearInterval(countdownInterval);
+                        watchAdButton.disabled = false;
+                        watchAdButton.innerHTML = '<span class="material-icons">play_arrow</span> Watch Ad (+10 Points)';
+                        watchAdButton.classList.add('pulse', 'glow');
+                    } else {
+                        watchAdButton.innerHTML = `<span class="material-icons">timer</span> Wait ${remaining}s`;
+                    }
+                }, 1000);
             } else {
                 watchAdButton.disabled = false;
                 watchAdButton.innerHTML = '<span class="material-icons">play_arrow</span> Watch Ad (+10 Points)';
+                watchAdButton.classList.add('pulse', 'glow');
             }
 
             // Update daily checkin button
@@ -2004,7 +2049,7 @@
             }, 3000);
         }
 
-        // Watch ad
+        // Watch ad - Real ad integration
         async function watchAd() {
             if (adsWatchedToday >= 50) {
                 showAlert('Daily ad limit reached. Come back tomorrow!', 'danger');
@@ -2012,16 +2057,53 @@
             }
 
             if (Date.now() - lastAdCompletionTime < 30000) {
-                showAlert('Please wait a moment before watching another ad.', 'warning');
+                const timeLeft = Math.ceil((30000 - (Date.now() - lastAdCompletionTime)) / 1000);
+                showAlert(`Please wait ${timeLeft} seconds before watching another ad.`, 'warning');
+                return;
+            }
+
+            if (isWatchingAd) {
+                showAlert('Please wait for the current ad to complete.', 'warning');
+                return;
+            }
+
+            // Check if show_9809601 function is available
+            if (typeof show_9809601 !== 'function') {
+                showAlert('Ad service is not available. Please try again later.', 'danger');
                 return;
             }
 
             try {
-                // Simulate ad watching
-                console.log("Simulating ad watch...");
-                await new Promise(resolve => setTimeout(resolve, 3000));
-                console.log("Simulated ad finished.");
+                isWatchingAd = true;
+                
+                // Show loading message
+                document.getElementById('adLoadingMessage').style.display = 'block';
+                
+                // Update UI to reflect watching state
+                updateUI({ 
+                    balance: userBalance, 
+                    tonBalance: userTonBalance, 
+                    spins: userSpins, 
+                    totalEarned: 0, 
+                    tasksCompleted: 0, 
+                    referrals: 0, 
+                    adsWatched: adsWatchedToday,
+                    first_name: currentUser.first_name,
+                    photo_url: currentUser.photo_url,
+                    id: currentUser.id 
+                });
 
+                console.log("Attempting to show rewarded ad...");
+                
+                // Call the real ad function
+                await show_9809601();
+                
+                console.log("Ad completed successfully!");
+
+                // Hide loading message
+                document.getElementById('adLoadingMessage').style.display = 'none';
+
+                // Reward the user
                 const userRef = database.ref('users/' + currentUser.id);
                 await userRef.transaction((userData) => {
                     if (userData) {
@@ -2034,10 +2116,36 @@
 
                 adsWatchedToday++;
                 lastAdCompletionTime = Date.now();
-                showAlert(`Ad watched! You earned ${AD_REWARD_POINTS} points!`, 'success');
+                isWatchingAd = false;
+                
+                showAlert(`Ad watched successfully! You earned ${AD_REWARD_POINTS} points!`, 'success');
             } catch (error) {
                 console.error('Error watching ad:', error);
-                showAlert('Error loading ad. Please try again.', 'danger');
+                isWatchingAd = false;
+                
+                // Hide loading message
+                document.getElementById('adLoadingMessage').style.display = 'none';
+                
+                // Check if error is due to user cancellation or ad not available
+                if (error.message && (error.message.includes('user') || error.message.includes('cancel'))) {
+                    showAlert('Ad was cancelled. No reward given.', 'warning');
+                } else {
+                    showAlert('Error loading advertisement. Please check your internet connection and try again.', 'danger');
+                }
+                
+                // Update UI to reset button state
+                updateUI({ 
+                    balance: userBalance, 
+                    tonBalance: userTonBalance, 
+                    spins: userSpins, 
+                    totalEarned: 0, 
+                    tasksCompleted: 0, 
+                    referrals: 0, 
+                    adsWatched: adsWatchedToday,
+                    first_name: currentUser.first_name,
+                    photo_url: currentUser.photo_url,
+                    id: currentUser.id 
+                });
             }
         }
 
