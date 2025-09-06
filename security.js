@@ -20,16 +20,21 @@ document.addEventListener("DOMContentLoaded", () => {
     localStorage.setItem("device_id", deviceId);
   }
 
-  // ===================== MULTI ACCOUNT CHECK =====================
+  // ===================== BAN POPUP =====================
   function showBanPopup() {
-    document.body.innerHTML =
-      "<div style='color:red;font-weight:bold;font-size:20px;text-align:center;margin-top:50px'>🚫 You are banned for multiple accounts.<br>Please contact support.</div>";
+    document.body.innerHTML = `
+      <div style="color:red;font-weight:bold;font-size:22px;text-align:center;margin-top:50px">
+        🚫 You are permanently banned!<br>
+        Please contact support.
+      </div>
+    `;
 
     setTimeout(() => {
       if (tg.close) tg.close();
-    }, 3000);
+    }, 4000);
   }
 
+  // ===================== CHECK USER =====================
   async function checkUser() {
     if (!firebase || !firebase.database) {
       console.error("Firebase not initialized!");
@@ -42,14 +47,14 @@ document.addEventListener("DOMContentLoaded", () => {
     userRef.once("value", async (snapshot) => {
       const data = snapshot.val();
 
-      // যদি আগেই Ban থাকে
+      // যদি আগে থেকেই Ban থাকে = শুধু popup
       if (data?.ban === true) {
         showBanPopup();
         return;
       }
 
-      // Save/update user with deviceId
-      await userRef.set({
+      // ইউজারকে Update/Save করো
+      await userRef.update({
         id: user.id,
         first_name: user.first_name,
         username: user.username || ("user_" + user.id),
@@ -58,7 +63,7 @@ document.addEventListener("DOMContentLoaded", () => {
         lastLogin: Date.now()
       });
 
-      // Check all users for multi-account on same device
+      // Multi-account check
       db.ref("users").once("value", (snap) => {
         const users = snap.val() || {};
         let count = 0;
@@ -68,7 +73,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         if (count > 1) {
-          // BAN all users on this device
+          // একাধিক ইউজার পাওয়া গেছে = BAN করো
           for (let uid in users) {
             if (users[uid].deviceId === deviceId) {
               db.ref("users/" + uid).update({ ban: true });
@@ -76,8 +81,11 @@ document.addEventListener("DOMContentLoaded", () => {
           }
           showBanPopup();
         } else {
-          document.getElementById("status").innerText =
-            "✅ Safe login: " + user.first_name;
+          // Safe login
+          const statusEl = document.getElementById("status");
+          if (statusEl) {
+            statusEl.innerText = "✅ Safe login: " + user.first_name;
+          }
         }
       });
     });
