@@ -130,14 +130,6 @@ align-items: center;
 gap: 5px;
 }
 
-.theme-toggle-container { /* Wrapper for theme toggle */
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 5px;
-    text-align: center;
-}
-
 .theme-toggle {
 background: linear-gradient(135deg, var(--primary), var(--primary-dark));
 color: white;
@@ -472,7 +464,7 @@ gap: 4px;
 text-decoration: none;
 color: var(--text-muted);
 transition: all 0.3s ease;
-padding: 10px 15px; /* Increased padding */
+padding: 8px 12px; /* Increased padding for larger size */
 border-radius: 12px;
 position: relative;
 }
@@ -774,79 +766,114 @@ flex-wrap: wrap;
 margin-top: 20px;
 }
 
-/* New Section for Total Points to TON Conversion & Withdrawal */
+/* New section for Total Points to TON Conversion in Profile, made mini and cute */
 .profile-ton-conversion {
-    margin-top: 20px;
-    padding: 15px;
-    background: rgba(15, 15, 35, 0.8);
-    border: 1px solid var(--glass-border);
-    border-radius: 16px;
+margin-top: 20px;
+padding: 15px;
+background: rgba(15, 15, 35, 0.8);
+border: 1px solid var(--glass-border);
+border-radius: 16px;
+text-align: center;
+display: flex;
+align-items: center;
+justify-content: space-between; /* Distribute space */
+flex-wrap: wrap; /* Allow wrapping on smaller screens */
+gap: 10px;
+}
+
+.profile-ton-conversion .conversion-text {
+font-size: 14px;
+color: var(--text-light);
+}
+
+.profile-ton-conversion .conversion-rate strong {
+color: var(--primary);
+}
+
+.profile-ton-conversion .minimum-withdrawal strong {
+color: var(--warning);
+}
+
+.profile-ton-conversion .ton-amount strong {
+color: var(--success);
+font-weight: 700;
+}
+
+
+/* Style for Withdrawal Button */
+.withdraw-button-container {
     text-align: center;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 10px; /* Adjust gap for spacing */
+    margin-top: 20px;
 }
 
-.profile-ton-conversion h3 {
+/* Style for the withdrawal popup */
+.withdraw-popup-content {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(15, 15, 35, 0.95);
+    border: 1px solid var(--glass-border);
+    border-radius: 20px;
+    padding: 30px;
+    max-width: 400px;
+    width: 90%;
+    box-shadow: 0 8px 32px rgba(220, 38, 38, 0.25);
+}
+
+.withdraw-popup-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.withdraw-popup-title {
+    font-size: 24px;
+    font-weight: 700;
     color: var(--primary);
-    margin-bottom: 5px; /* Reduced margin */
-    font-size: 18px; /* Slightly smaller title */
 }
 
-.profile-ton-conversion p {
+.withdraw-popup-close-btn {
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
     color: var(--text-light);
-    font-size: 14px;
-    line-height: 1.6;
 }
 
-.ton-conversion-details {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 8px;
-    margin-top: 10px;
+.withdraw-form-group {
+    margin-bottom: 15px;
 }
 
-.ton-conversion-details strong {
+.withdraw-form-label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
     color: var(--text);
 }
 
-.withdrawal-form-container {
-    margin-top: 15px;
-    padding: 15px;
+.withdraw-form-input {
+    width: 100%;
+    padding: 12px 16px;
+    border: 2px solid var(--border);
+    border-radius: 12px;
+    font-size: 16px;
+    transition: all 0.3s ease;
     background: rgba(15, 15, 35, 0.8);
-    border: 1px solid var(--glass-border);
-    border-radius: 16px;
+    color: var(--text);
 }
 
-.withdrawal-form-container h3 {
-    color: var(--primary);
-    margin-bottom: 15px;
-    text-align: center;
+.withdraw-form-input:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 4px rgba(220, 38, 38, 0.1);
 }
 
-.withdrawal-input-group {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-bottom: 15px;
-}
-
-.withdrawal-input-group .form-input {
-    flex-grow: 1;
-}
-
-.withdrawal-input-group .form-label {
-    min-width: 120px; /* Fixed width for TON address label */
-    text-align: right;
-}
-
-.withdrawal-details {
+.withdraw-info-text {
     font-size: 12px;
     color: var(--text-light);
     margin-top: 5px;
-    text-align: center;
 }
 
 @media (max-width: 768px) {
@@ -895,15 +922,9 @@ padding: 15px 10px 100px;
     margin-bottom: 10px; /* Adjusted margin for mobile */
 }
 
-.withdrawal-input-group {
+.profile-ton-conversion {
     flex-direction: column;
-    align-items: flex-start;
-}
-
-.withdrawal-input-group .form-label {
-    min-width: auto;
-    text-align: left;
-    margin-bottom: 5px;
+    align-items: center;
 }
 
 }
@@ -943,12 +964,10 @@ box-shadow: 0 0 20px rgba(220, 38, 38, 0.5);
                     </div>
                 </div>
             </div>
-            <div class="theme-toggle-container">
-                <button class="theme-toggle" onclick="toggleTheme()">
-                    <span class="material-icons">dark_mode</span>
-                    Red Moon
-                </button>
-            </div>
+            <button class="theme-toggle" onclick="toggleTheme()">
+                <span class="material-icons">dark_mode</span>
+                Red Moon
+            </button>
         </div>
 
     <div class="stats-grid">
@@ -1214,48 +1233,26 @@ box-shadow: 0 0 20px rgba(220, 38, 38, 0.5);
                     <!-- Connect/Disconnect buttons will appear here, managed by JS -->
                 </div>
 
-                <!-- New Section for Total Points to TON Conversion & Withdrawal -->
+                <!-- Mini and Cute Total Points to TON Conversion -->
                 <div class="profile-ton-conversion">
-                    <h3 class="card-title">
-                        <span class="material-icons">currency_exchange</span>
-                        Your Balance
-                    </h3>
-                    <div class="ton-conversion-details">
-                        <p>
-                            Current Points: <strong id="profileCurrentPoints">0</strong>
-                        </p>
-                        <p>
-                            Approx. TON: <strong id="profileEstimatedTon">0.00000000</strong>
-                        </p>
-                        <p style="font-size: 12px; color: var(--text-light); margin-top: 8px;">
-                            Rate: <strong id="conversionRateText"></strong>
-                        </p>
+                    <div class="conversion-text">
+                        Your <strong id="profileCurrentPoints">0</strong> Points ≈ <strong id="profileEstimatedTon">0.00000000</strong> TON
+                    </div>
+                    <div class="conversion-text minimum-withdrawal">
+                        Min Withdrawal: <strong id="minWithdrawPointsProfile">0.1</strong> TON
+                    </div>
+                    <div class="conversion-text">
+                        Rate: <strong id="conversionRateText"></strong>
                     </div>
                 </div>
 
-                <div class="withdrawal-form-container">
-                    <h3 class="card-title">
-                        <span class="material-icons">send</span>
-                        Withdraw TON
-                    </h3>
-                    <form id="withdrawForm">
-                        <div class="form-group">
-                            <label class="form-label">TON Address</label>
-                            <input type="text" class="form-input" id="tonAddress" readonly placeholder="Connect wallet to populate">
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">Amount (TON)</label>
-                            <input type="number" class="form-input" id="withdrawAmount" step="0.00000001" min="0.1" required placeholder="Enter TON amount">
-                            <div class="withdrawal-details">
-                                Minimum withdrawal: <span id="minWithdrawTon">0.1</span> TON
-                            </div>
-                        </div>
-                        <button type="submit" class="btn btn-primary" id="requestWithdrawButton">
-                            <span class="material-icons">payment</span>
-                            Request Withdrawal
-                        </button>
-                    </form>
+                <div class="withdraw-button-container">
+                    <button class="btn btn-primary" onclick="showWithdrawModal()">
+                        <span class="material-icons">account_balance_wallet</span>
+                        Withdraw
+                    </button>
                 </div>
+
 
                 <div style="display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; margin-top: 20px;">
                     <button class="btn btn-secondary" onclick="window.open('https://t.me/PixelfrogCommunity', '_blank')">
@@ -1326,7 +1323,38 @@ box-shadow: 0 0 20px rgba(220, 38, 38, 0.5);
         </div>
     </div>
 
-    <!-- Withdraw Modal (Removed as withdrawal is now directly in Profile) -->
+    <!-- Withdraw Modal -->
+    <div id="withdrawModal" class="modal">
+        <div class="withdraw-popup-content">
+            <div class="withdraw-popup-header">
+                <h3 class="withdraw-popup-title">Withdraw to TON Wallet</h3>
+                <button class="withdraw-popup-close-btn" onclick="closeModal('withdrawModal')">&times;</button>
+            </div>
+            <div id="withdrawModalWalletInfo">
+                <!-- Wallet connection status and buttons will be displayed here -->
+            </div>
+            <form id="withdrawForm">
+                <div class="withdraw-form-group">
+                    <label class="withdraw-form-label">TON Address</label>
+                    <input type="text" class="withdraw-form-input" id="tonAddress" readonly placeholder="Connect wallet to populate">
+                </div>
+                <div class="withdraw-form-group">
+                    <label class="withdraw-form-label">Amount (Points)</label>
+                    <input type="number" class="withdraw-form-input" id="withdrawAmount" min="1000" required placeholder="Enter points to withdraw">
+                    <div class="withdraw-info-text">
+                        Minimum: <span id="minWithdrawPoints">1000</span> points | Rate: <span id="pointToTonRate"></span>
+                    </div>
+                </div>
+                <div class="withdraw-form-group">
+                    <label class="withdraw-form-label">You will receive: <span id="tonReceive">0</span> TON</label>
+                </div>
+                <button type="submit" class="btn btn-primary" id="requestWithdrawButton">
+                    <span class="material-icons">send</span>
+                    Request Withdrawal
+                </button>
+            </form>
+        </div>
+    </div>
 
     <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
@@ -1361,20 +1389,21 @@ box-shadow: 0 0 20px rgba(220, 38, 38, 0.5);
 
         // Global variables
         let currentUser = null;
-        let userBalance = 0; // Points balance
+        let userBalance = 0;
         let userSpins = 0;
         let adsWatchedToday = 0;
         let lastAdTime = 0;
         let dailyCheckinDone = false;
         let lastAdCompletionTime = 0;
-
         const REFERRAL_BONUS_POINTS = 500;
-        const MIN_WITHDRAW_TON = 0.1; // Minimum withdrawal in TON
-        const POINTS_TO_TON_RATE = 100 / 0.000078; // Conversion rate for points to TON (100 points = 0.000078 TON)
-        const IMPRESSIONS_TO_TON_RATE = 100 / 0.1; // Cost for task impressions (0.1 TON per 100 impressions)
+        const MIN_WITHDRAW_POINTS_INTERNAL = 1000; // Internal minimum for the input field
+        const MIN_WITHDRAW_TON_REQUIRED = 0.1; // Minimum TON to withdraw
+        const POINTS_TO_TON_RATE_PER_POINT = 0.000078 / 100; // 0.000078 TON per 100 points
+        const IMPRESSIONS_TO_TON_RATE = 100 / 0.1; // 100 impressions for 0.1 TON
         const AD_REWARD_POINTS = 10;
         const CHECKIN_REWARD_POINTS = 50;
         const TASK_SPIN_REWARD = 1;
+
 
         // Initialize Telegram Web App
         function initTelegramWebApp() {
@@ -1430,7 +1459,7 @@ box-shadow: 0 0 20px rgba(220, 38, 38, 0.5);
                     username: currentUser.username,
                     first_name: currentUser.first_name,
                     photo_url: currentUser.photo_url,
-                    balance: 0, // Points balance
+                    balance: 0,
                     spins: 0,
                     totalEarned: 0,
                     tasksCompleted: 0,
@@ -1448,7 +1477,7 @@ box-shadow: 0 0 20px rgba(220, 38, 38, 0.5);
             userRef.on('value', (snapshot) => {
                 const userData = snapshot.val();
                 if (userData) {
-                    userBalance = userData.balance || 0; // Points balance
+                    userBalance = userData.balance || 0;
                     userSpins = userData.spins || 0;
                     adsWatchedToday = userData.adsWatched || 0;
                     lastAdTime = userData.lastAdReset || 0;
@@ -1478,7 +1507,7 @@ box-shadow: 0 0 20px rgba(220, 38, 38, 0.5);
         // Update general UI elements with user data
         function updateUI(userData) {
             document.getElementById('userName').textContent = userData.first_name || 'User';
-            document.getElementById('userBalance').textContent = formatNumber(userData.balance || 0); // Points balance
+            document.getElementById('userBalance').textContent = formatNumber(userData.balance || 0);
             document.getElementById('totalEarned').textContent = formatNumber(userData.totalEarned || 0);
             document.getElementById('tasksCompleted').textContent = formatNumber(userData.tasksCompleted || 0);
             document.getElementById('referrals').textContent = formatNumber(userData.referrals || 0);
@@ -1500,7 +1529,7 @@ box-shadow: 0 0 20px rgba(220, 38, 38, 0.5);
                 watchAdButton.innerHTML = '<span class="material-icons">block</span> Daily Limit Reached';
             } else {
                 watchAdButton.disabled = false;
-                watchAdButton.innerHTML = `<span class="material-icons">play_arrow</span> Watch Ad (+${AD_REWARD_POINTS} Points)`;
+                watchAdButton.innerHTML = '<span class="material-icons">play_arrow</span> Watch Ad (+10 Points)';
             }
 
             const dailyCheckinButton = document.querySelector('.btn-success[onclick="dailyCheckin()"]');
@@ -1511,7 +1540,7 @@ box-shadow: 0 0 20px rgba(220, 38, 38, 0.5);
                     dailyCheckinButton.classList.remove('btn-success');
                     dailyCheckinButton.classList.add('btn-secondary');
                 } else {
-                    dailyCheckinButton.innerHTML = `<span class="material-icons">event_available</span> Daily Check-in (+${CHECKIN_REWARD_POINTS} Points)`;
+                    dailyCheckinButton.innerHTML = '<span class="material-icons">event_available</span> Daily Check-in';
                     dailyCheckinButton.disabled = false;
                     dailyCheckinButton.classList.remove('btn-secondary');
                     dailyCheckinButton.classList.add('btn-success');
@@ -1524,7 +1553,7 @@ box-shadow: 0 0 20px rgba(220, 38, 38, 0.5);
             const connectedWallet = tonConnectUI.account;
             const walletStatusWrapper = document.getElementById('walletStatusWrapper');
             const profileWalletControls = document.getElementById('profileWalletControls');
-            const withdrawModalWalletInfo = document.getElementById('withdrawModalWalletInfo'); // This element is no longer used for the modal
+            const withdrawModalWalletInfo = document.getElementById('withdrawModalWalletInfo');
             const requestWithdrawButton = document.getElementById('requestWithdrawButton');
             const withdrawAmountInput = document.getElementById('withdrawAmount');
             const tonAddressInput = document.getElementById('tonAddress');
@@ -1548,7 +1577,7 @@ box-shadow: 0 0 20px rgba(220, 38, 38, 0.5);
                 `;
             }
             if (walletStatusWrapper) walletStatusWrapper.innerHTML = walletStatusHtml;
-            // if (withdrawModalWalletInfo) withdrawModalWalletInfo.innerHTML = walletStatusHtml; // No longer used
+            if (withdrawModalWalletInfo) withdrawModalWalletInfo.innerHTML = walletStatusHtml;
 
             // --- Handle Wallet Buttons in Profile Section ---
             profileWalletControls.innerHTML = ''; // Clear previous buttons
@@ -1587,7 +1616,8 @@ box-shadow: 0 0 20px rgba(220, 38, 38, 0.5);
                 }
             }
 
-            // --- Withdrawal Form Logic ---
+
+            // --- Withdrawal Modal Specific Logic ---
             if (connectedWallet) {
                 tonAddressInput.value = connectedWallet.address;
                 requestWithdrawButton.disabled = false;
@@ -1596,7 +1626,17 @@ box-shadow: 0 0 20px rgba(220, 38, 38, 0.5);
                 tonAddressInput.value = '';
                 requestWithdrawButton.disabled = true;
                 withdrawAmountInput.disabled = true;
-                // No need to re-add connect button here, it's managed by profileWalletControls
+                // Ensure the connect button is visible in the withdrawal modal if not connected
+                if (!withdrawModalWalletInfo.querySelector('.btn-primary')) { // Check if connect button already exists
+                    const connectButton = document.createElement('button');
+                    connectButton.className = 'btn btn-primary';
+                    connectButton.innerHTML = '<span class="material-icons">account_balance_wallet</span> Connect Wallet to Withdraw';
+                    connectButton.style.width = '100%';
+                    connectButton.onclick = async () => {
+                        await tonConnectUI.openModal();
+                    };
+                    withdrawModalWalletInfo.appendChild(connectButton);
+                }
             }
         }
 
@@ -2192,13 +2232,14 @@ box-shadow: 0 0 20px rgba(220, 38, 38, 0.5);
             });
         }
 
-        // Show the withdrawal form in the profile section
-        function showWithdrawForm() {
+        // Show the withdrawal modal
+        function showWithdrawModal() {
             if (!currentUser) {
-                showAlert('Please log in to withdraw TON.', 'danger');
+                showAlert('Please log in to withdraw points.', 'danger');
                 return;
             }
-            updateWalletUI(); // Ensure wallet status is correct before showing form
+            document.getElementById('withdrawModal').style.display = 'block';
+            updateWalletUI(); // Ensure wallet status is correctly displayed inside modal
             updateWithdrawTonAmount(); // Calculate initial TON amount if input has value
         }
 
@@ -2207,16 +2248,22 @@ box-shadow: 0 0 20px rgba(220, 38, 38, 0.5);
             e.preventDefault();
 
             const tonAddress = document.getElementById('tonAddress').value.trim();
-            const amount = parseFloat(document.getElementById('withdrawAmount').value); // Use parseFloat for TON amounts
+            const amountPoints = parseInt(document.getElementById('withdrawAmount').value);
+            const amountTon = parseFloat(document.getElementById('tonReceive').textContent); // Get the calculated TON amount
 
             // Basic validation for TON address
             if (!tonAddress || (!tonAddress.startsWith('UQ') && !tonAddress.startsWith('EQ'))) {
                 showAlert('Please enter a valid TON address.', 'danger');
                 return;
             }
-            // Validate amount against minimum
-            if (amount < MIN_WITHDRAW_TON) {
-                showAlert(`Minimum withdrawal amount is ${MIN_WITHDRAW_TON} TON!`, 'danger');
+
+            // Validate amount against minimum TON and user's balance
+            if (amountTon < MIN_WITHDRAW_TON_REQUIRED) {
+                showAlert(`Minimum withdrawal amount is ${MIN_WITHDRAW_TON_REQUIRED} TON!`, 'danger');
+                return;
+            }
+            if (amountPoints > userBalance) {
+                showAlert('Insufficient balance!', 'danger');
                 return;
             }
 
@@ -2236,7 +2283,8 @@ box-shadow: 0 0 20px rgba(220, 38, 38, 0.5);
                     userId: currentUser.id,
                     username: currentUser.username,
                     tonAddress,
-                    amount, // Amount in TON
+                    amountPoints, // Store points amount
+                    tonAmount: amountTon, // Store calculated TON amount
                     status: 'pending',
                     createdAt: Date.now()
                 };
@@ -2244,7 +2292,16 @@ box-shadow: 0 0 20px rgba(220, 38, 38, 0.5);
                 // Save withdrawal request to Firebase
                 await database.ref('withdrawals').push(withdrawalData);
 
-                closeModal('withdrawModal'); // Close the modal (though it's not used anymore, keeping for consistency)
+                // Deduct points from user balance atomically
+                const userRef = database.ref('users/' + currentUser.id);
+                await userRef.transaction((userData) => {
+                    if (userData) {
+                        userData.balance = Math.max(0, (userData.balance || 0) - amountPoints);
+                    }
+                    return userData;
+                });
+
+                closeModal('withdrawModal'); // Close the modal
                 document.getElementById('withdrawForm').reset(); // Reset form fields
                 showAlert('Withdrawal request submitted successfully! It will be processed shortly.', 'success');
                 loadWithdrawalHistory(); // Refresh the withdrawal history display
@@ -2257,49 +2314,41 @@ box-shadow: 0 0 20px rgba(220, 38, 38, 0.5);
 
         // Update TON receive amount dynamically as user types in withdraw amount
         document.getElementById('withdrawAmount').addEventListener('input', updateWithdrawTonAmount);
-        document.getElementById('minWithdrawTon').textContent = MIN_WITHDRAW_TON.toFixed(1); // Set min value dynamically
+        document.getElementById('minWithdrawPoints').textContent = MIN_WITHDRAW_POINTS_INTERNAL; // Set min points value
+        document.getElementById('minWithdrawPointsProfile').textContent = MIN_WITHDRAW_TON_REQUIRED; // Set min TON value in profile
+        document.getElementById('pointToTonRate').textContent = ` ${ (100 / (1 / POINTS_TO_TON_RATE_PER_POINT)) .toFixed(4)} points = ${MIN_WITHDRAW_TON_REQUIRED} TON`; // Update rate text
 
         function updateWithdrawTonAmount() {
             const amountInput = document.getElementById('withdrawAmount');
-            const amount = parseFloat(amountInput.value) || 0;
-            const tonReceiveElement = document.getElementById('profileEstimatedTon'); // Reuse this for the withdrawal estimate
+            const amountPoints = parseInt(amountInput.value) || 0;
+            const tonReceiveElement = document.getElementById('tonReceive');
 
-            if (amount < MIN_WITHDRAW_TON) {
-                // Displaying 0.00000000 for consistency
-                tonReceiveElement.textContent = '0.00000000';
-                return;
+            const calculatedTonAmount = amountPoints * POINTS_TO_TON_RATE_PER_POINT;
+            tonReceiveElement.textContent = calculatedTonAmount.toFixed(8); // Display with 8 decimal places for TON
+
+            // Enable/disable button based on minimum TON requirement
+            const requestWithdrawButton = document.getElementById('requestWithdrawButton');
+            if (calculatedTonAmount < MIN_WITHDRAW_TON_REQUIRED || amountPoints === 0) {
+                requestWithdrawButton.disabled = true;
+            } else {
+                requestWithdrawButton.disabled = false;
             }
-
-            // Since it's direct TON withdrawal, the amount entered is the amount to receive
-            tonReceiveElement.textContent = amount.toFixed(8);
         }
 
-        // Update the TON conversion text and profile balance display
+        // Update the TON conversion text in the profile section
         function updateProfileTonConversion() {
             const profileCurrentPoints = document.getElementById('profileCurrentPoints');
             const profileEstimatedTon = document.getElementById('profileEstimatedTon');
             const conversionRateText = document.getElementById('conversionRateText');
-            const minWithdrawTonDisplay = document.getElementById('minWithdrawTon');
 
-            // Display points balance
             if (profileCurrentPoints) profileCurrentPoints.textContent = formatNumber(userBalance);
-
-            // Calculate and display estimated TON value of points
             if (profileEstimatedTon) {
-                const estimatedTonFromPoints = (userBalance / POINTS_TO_TON_RATE);
-                profileEstimatedTon.textContent = estimatedTonFromPoints.toFixed(8);
+                const estimatedTon = userBalance * POINTS_TO_TON_RATE_PER_POINT;
+                profileEstimatedTon.textContent = estimatedTon.toFixed(8);
             }
-
-            // Display conversion rate
-            if (conversionRateText) {
-                const pointsForMinWithdraw = MIN_WITHDRAW_TON * (POINTS_TO_TON_RATE / 100);
-                conversionRateText.textContent = `Rate: 100 Points = ${(100 / POINTS_TO_TON_RATE).toFixed(8)} TON`;
-            }
-
-            // Ensure minimum withdrawal is displayed correctly
-            if (minWithdrawTonDisplay) {
-                minWithdrawTonDisplay.textContent = MIN_WITHDRAW_TON.toFixed(1);
-            }
+             if (conversionRateText) {
+                 conversionRateText.textContent = `100 points = ${ (100 * POINTS_TO_TON_RATE_PER_POINT).toFixed(8) } TON`;
+             }
         }
 
         // Load the user's withdrawal history
@@ -2333,9 +2382,9 @@ box-shadow: 0 0 20px rgba(220, 38, 38, 0.5);
 
                         historyItem.innerHTML = `
                             <div>
-                                <strong>${withdrawal.amount.toFixed(8)} TON</strong>
+                                <strong>${withdrawal.amountPoints} points</strong>
                                 <div style="font-size: 12px; color: var(--text-light);">
-                                    Sent to: ${withdrawal.tonAddress.slice(0, 6)}...${withdrawal.tonAddress.slice(-6)} • ${new Date(withdrawal.createdAt).toLocaleDateString()}
+                                    ${withdrawal.tonAmount.toFixed(8)} TON • ${new Date(withdrawal.createdAt).toLocaleDateString()}
                                 </div>
                             </div>
                             <div class="history-status ${statusClass}">${statusText}</div>
@@ -2381,7 +2430,6 @@ box-shadow: 0 0 20px rgba(220, 38, 38, 0.5);
             }
              if (sectionName === 'profile') {
                 updateProfileTonConversion(); // Update TON conversion info when profile is shown
-                showWithdrawForm(); // Initialize withdrawal form state in profile
             }
         }
 
@@ -2406,9 +2454,10 @@ box-shadow: 0 0 20px rgba(220, 38, 38, 0.5);
             if (modal) {
                 modal.style.display = 'none';
                 // Reset form fields in modal if necessary upon closing
-                if (modalId === 'withdrawModal') { // This modal is no longer used directly
+                if (modalId === 'withdrawModal') {
                     document.getElementById('withdrawForm').reset();
                     document.getElementById('tonReceive').textContent = '0'; // Reset TON amount display
+                    document.getElementById('requestWithdrawButton').disabled = true; // Disable button on close
                 }
             }
         }
@@ -2465,9 +2514,8 @@ box-shadow: 0 0 20px rgba(220, 38, 38, 0.5);
                 updateWalletUI();
             });
 
-            // Initialize the profile section on load
-            updateProfileTonConversion();
-            showWithdrawForm(); // Initialize withdrawal form state
+            // Set the minimum withdrawal points display
+            document.getElementById('minWithdrawPoints').textContent = MIN_WITHDRAW_POINTS_INTERNAL;
         });
 
         // Close modals if the user clicks outside the modal content area
