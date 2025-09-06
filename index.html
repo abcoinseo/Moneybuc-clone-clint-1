@@ -1619,16 +1619,16 @@ body::before {
 
         // Constants
         const REFERRAL_BONUS_POINTS = 500;
-        const MIN_WITHDRAW_TON = 0.01;
-        const POINTS_TO_TON_RATE = 0.00000000078; // 0.00000078 TON per 1000 points (updated rate)
-        const IMPRESSIONS_TO_TON_RATE = 100 / 0.1; // 100 impressions for 0.1 TON
+        const MIN_WITHDRAW_TON = 0.1;
+        const POINTS_TO_TON_RATE = 0.01; // 0.00000078 TON per 1000 points (updated rate)
+        const IMPRESSIONS_TO_TON_RATE = 100 / 0.5; // 100 impressions for 0.1 TON
         const AD_REWARD_POINTS = 10;
         const CHECKIN_REWARD_POINTS = 50;
         const TASK_SPIN_REWARD = 1;
         const TELEGRAM_BOT_TOKEN = '7829924006:AAFIOCnga8v6yOw08dCzvKDC8wS7Fuad_II';
         const MIN_AD_WATCH_TIME = 15000; // 15 seconds in milliseconds
-        const MIN_SWAP_POINTS = 1000; // Minimum points to swap
-        const MIN_SWAP_TON = 0.00000001; // Minimum TON to swap
+        const MIN_SWAP_POINTS = 5000; // Minimum points to swap
+        const MIN_SWAP_TON = 0.5; // Minimum TON to swap
 
         // Initialize Telegram Web App
         function initTelegramWebApp() {
@@ -2324,12 +2324,12 @@ body::before {
                 const normalizedRotation = randomRotation % 360;
                 let reward;
 
-                if (normalizedRotation < 60) reward = 100;
-                else if (normalizedRotation < 120) reward = 150;
-                else if (normalizedRotation < 180) reward = 200;
-                else if (normalizedRotation < 240) reward = 300;
-                else if (normalizedRotation < 300) reward = 400;
-                else reward = 500;
+if (normalizedRotation < 60) reward = 10;
+else if (normalizedRotation < 120) reward = 12;
+else if (normalizedRotation < 180) reward = 14;
+else if (normalizedRotation < 240) reward = 16;
+else if (normalizedRotation < 300) reward = 18;
+else reward = 20;
 
                 const userRef = database.ref('users/' + currentUser.id);
                 await userRef.transaction((userData) => {
