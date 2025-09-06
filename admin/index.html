@@ -6,7 +6,7 @@
     <title>EarnFlux Admin Panel</title>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    <!-- TON Connect UI -->
+    <!-- TON Connect UI (Optional for Admin Panel itself, but included if needed) -->
     <script src="https://unpkg.com/@tonconnect/ui@latest/dist/tonconnect-ui.min.js"></script>
 
     <style>
@@ -427,8 +427,8 @@
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-functions-compat.js"></script>
-    <!-- Your custom admin JS (assuming it's in js/admin.js) -->
-    <!-- If you keep JS inline, make sure to uncomment and place it here -->
+    <!-- Firebase Auth SDK is required for authentication -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
 
     <script>
         // --- Firebase Configuration ---
@@ -452,6 +452,7 @@
         }
         const database = firebase.database();
         const functions = firebase.functions();
+        const auth = firebase.auth(); // Get Auth instance
 
         // --- TON Connect UI ---
         const tonConnectUI = new TON_CONNECT_UI.TonConnectUI({
@@ -467,18 +468,37 @@
 
         // --- Initialization ---
         document.addEventListener('DOMContentLoaded', async () => {
-            // *** IMPORTANT: Implement Proper Firebase Authentication Here ***
-            // This is a placeholder. You MUST integrate Firebase Authentication.
-            console.warn("Admin Authentication is NOT fully implemented. Please implement Firebase Authentication and role checks.");
+            // --- ADMIN AUTHENTICATION CHECK ---
+            // This is the CRUCIAL part for security.
+            // We must verify that the user is logged into Firebase Auth AND has the 'admin' role.
 
-            // Simulate a logged-in admin user for testing purposes.
-            // Replace 'simulated-admin-uid-12345' with a UID from your Firebase Auth
-            // that has 'admin' role in the 'users' node.
-            const simulatedAdminUid = 'simulated-admin-uid-12345';
-            currentFirebaseUser = { uid: simulatedAdminUid };
+            auth.onAuthStateChanged(async (user) => {
+                if (user) {
+                    // User is signed in, now verify their role from the database.
+                    currentFirebaseUser = user;
+                    console.log("Firebase user signed in:", user.uid);
+                    const isAdmin = await checkAdminRole();
+                    if (isAdmin) {
+                        loadAdminData(); // Load data only if admin
+                    }
+                    // If not admin, handleNoAdminAccess() is called within checkAdminRole()
+                } else {
+                    // No user is signed in. Deny access.
+                    console.log("No Firebase user signed in.");
+                    handleNoAdminAccess();
+                }
+            });
 
-            await checkAdminRole();
-            loadAdminData();
+            // If a user is already logged in when the page loads (e.g., via emulator or cached session)
+            if (auth.currentUser) {
+                currentFirebaseUser = auth.currentUser;
+                await checkAdminRole();
+            } else {
+                // If no user is logged in, the onAuthStateChanged listener will handle redirection.
+                console.log("No initial Firebase user found. Awaiting auth state change or prompt for login.");
+                // Optionally, immediately prompt for login if no user is found on load
+                // handleNoAdminAccess(); // This would immediately deny access if no user logged in
+            }
         });
 
         async function checkAdminRole() {
@@ -486,41 +506,30 @@
                 handleNoAdminAccess();
                 return false;
             }
+
             try {
                 const userRef = database.ref(`users/${currentFirebaseUser.uid}`);
                 const snapshot = await userRef.once('value');
                 const userData = snapshot.val();
+
                 if (userData && userData.role === ADMIN_ROLE) {
                     console.log(`User ${currentFirebaseUser.uid} authenticated as admin.`);
-                    return true;
+                    return true; // User is an admin
                 } else {
                     console.log(`User ${currentFirebaseUser.uid} is not an admin.`);
-                    handleNoAdminAccess();
+                    handleNoAdminAccess(); // Not an admin, deny access
                     return false;
                 }
             } catch (error) {
                 console.error("Error checking admin role:", error);
-                handleNoAdminAccess();
+                handleNoAdminAccess(); // Error checking role also denies access
                 return false;
             }
         }
 
         function handleNoAdminAccess() {
             alert("Access Denied: You are not authorized to view the admin panel. Please log in as an administrator.");
-            window.location.href = 'index.html';
-        }
-
-        function loadAdminData() {
-            loadUsersTable();
-            loadTasksTable();
-            loadLuckyCodesTable();
-            loadWithdrawalsTable();
-            loadSwapHistoryTable();
-        }
-
-        function showAdminView(viewName) {
-            document.querySelectorAll('.admin-view').forEach(view => { view.style.display = 'none'; });
-            document.getElementById(`admin${viewName.charAt(0).toUpperCase() + viewName.slice(1)}View`).style.display = 'block';
+            window.location.href = 'index.html'; // Redirect back to the user app or a login page
         }
 
         // --- Utility Functions ---
@@ -549,6 +558,12 @@
         function getFormattedDate(timestamp) {
             if (!timestamp) return 'N/A';
             return new Date(timestamp).toLocaleString();
+        }
+
+        // --- Admin Navigation ---
+        function showAdminView(viewName) {
+            document.querySelectorAll('.admin-view').forEach(view => { view.style.display = 'none'; });
+            document.getElementById(`admin${viewName.charAt(0).toUpperCase() + viewName.slice(1)}View`).style.display = 'block';
         }
 
         // --- Task Management ---
@@ -1031,7 +1046,7 @@
 
         // --- Initial View Setup ---
         window.onload = () => {
-            showAdminView('users');
+            showAdminView('users'); // Start with the Users view visible
         };
     </script>
 </body>
