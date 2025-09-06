@@ -1,23 +1,17 @@
-document.addEventListener("DOMContentLoaded", () => {
+<script>
+document.addEventListener("DOMContentLoaded", async () => {
   // ===================== TELEGRAM USER =====================
   const tg = window.Telegram?.WebApp;
   if (!tg) {
     console.error("Telegram WebApp not found!");
     return;
   }
-  tg.expand(); // Full screen
+  tg.expand();
 
   const user = tg.initDataUnsafe?.user;
   if (!user) {
     console.error("Telegram user not found!");
     return;
-  }
-
-  // ===================== DEVICE ID =====================
-  let deviceId = localStorage.getItem("device_id");
-  if (!deviceId) {
-    deviceId = "dev_" + Math.random().toString(36).substring(2);
-    localStorage.setItem("device_id", deviceId);
   }
 
   // ===================== BAN POPUP =====================
@@ -28,10 +22,18 @@ document.addEventListener("DOMContentLoaded", () => {
         Please contact support.
       </div>
     `;
+    setTimeout(() => tg.close && tg.close(), 4000);
+  }
 
-    setTimeout(() => {
-      if (tg.close) tg.close();
-    }, 4000);
+  // ===================== GET USER IP =====================
+  let userIp = null;
+  try {
+    const res = await fetch("https://api.ipify.org?format=json");
+    const data = await res.json();
+    userIp = data.ip;
+  } catch (err) {
+    console.error("Failed to fetch IP:", err);
+    userIp = "unknown_ip";
   }
 
   // ===================== CHECK USER =====================
@@ -47,35 +49,35 @@ document.addEventListener("DOMContentLoaded", () => {
     userRef.once("value", async (snapshot) => {
       const data = snapshot.val();
 
-      // যদি আগে থেকেই Ban থাকে = শুধু popup
+      // আগেই Ban থাকলে সরাসরি popup
       if (data?.ban === true) {
         showBanPopup();
         return;
       }
 
-      // ইউজারকে Update/Save করো
+      // ইউজারকে Save/Update করো
       await userRef.update({
         id: user.id,
         first_name: user.first_name,
         username: user.username || ("user_" + user.id),
-        deviceId: deviceId,
+        ip: userIp,
         ban: false,
         lastLogin: Date.now()
       });
 
-      // Multi-account check
+      // সব ইউজার চেক করো
       db.ref("users").once("value", (snap) => {
         const users = snap.val() || {};
         let count = 0;
 
         for (let uid in users) {
-          if (users[uid].deviceId === deviceId) count++;
+          if (users[uid].ip === userIp) count++;
         }
 
         if (count > 1) {
-          // একাধিক ইউজার পাওয়া গেছে = BAN করো
+          // এক IP তে একাধিক অ্যাকাউন্ট = BAN
           for (let uid in users) {
-            if (users[uid].deviceId === deviceId) {
+            if (users[uid].ip === userIp) {
               db.ref("users/" + uid).update({ ban: true });
             }
           }
@@ -93,3 +95,4 @@ document.addEventListener("DOMContentLoaded", () => {
 
   checkUser();
 });
+</script>
