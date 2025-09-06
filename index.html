@@ -1783,7 +1783,8 @@ body::before {
         const IMPRESSIONS_TO_TON_RATE = 0.00015; // Example rate: 100 impressions = 0.15 TON
         const AD_REWARD_POINTS = 20;
         const CHECKIN_REWARD_POINTS = 50;
-        const TASK_SPIN_REWARD = 1;
+        const TASK_SPIN_REWARD = 1; // Spins earned per task
+        const TASK_REWARD_POINTS = 100; // Points earned per task
         const TELEGRAM_BOT_TOKEN = '7829924006:AAFIOCnga8v6yOw08dCzvKDC8wS7Fuad_II'; // Your Telegram Bot Token
         const MIN_AD_WATCH_TIME = 15000; // 15 seconds in milliseconds
         const MIN_SWAP_POINTS = 5000; // Minimum points to swap
@@ -1813,7 +1814,7 @@ body::before {
                     initializeUser();
                 } else {
                     // Fallback for testing if Telegram Web App context is not available
-                    const randomId = Math.floor(Math.random() * 100);
+                    const randomId = Math.floor(Math.random() * 100000); // Use a more unique random ID for testing
                     currentUser = {
                         id: randomId,
                         username: `testuser_${randomId}`,
@@ -2323,8 +2324,8 @@ body::before {
                     @${task.telegramChannel}
                 </div>` : '';
 
-            // Calculate reward for the user, considering impressions
-            const userReward = task.reward ? task.reward : (task.impressions ? Math.round(task.impressions * (IMPRESSIONS_TO_TON_RATE * 1e9 / IMPRESSIONS_TO_TON_RATE)) : 100); // Example: 100 points if no specific reward or impressions
+            // Use the predefined TASK_REWARD_POINTS, fall back to impressions calculation if available
+            const userReward = task.reward ? task.reward : (task.impressions ? Math.round(task.impressions * (IMPRESSIONS_TO_TON_RATE * 1e9 / IMPRESSIONS_TO_TON_RATE)) : TASK_REWARD_POINTS); 
 
             card.innerHTML = `
                 <div class="task-header">
@@ -3296,3 +3297,4 @@ body::before {
     </script>
 </body>
 </html>
+```
