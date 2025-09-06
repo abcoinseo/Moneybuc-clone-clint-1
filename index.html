@@ -10,6 +10,7 @@
     <script src="https://unpkg.com/@tonconnect/ui@latest/dist/tonconnect-ui.min.js"></script>
     <script src='//libtl.com/sdk.js' data-zone='9809601' data-sdk='show_9809601'></script>
     <style>
+        /* ... (Your existing CSS remains here) ... */
         /* Global Resets and Base Styles */
 * {
     margin: 0;
@@ -380,6 +381,9 @@ body::before {
 
 .swap-input-group {
     flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 .swap-input {
@@ -421,6 +425,7 @@ body::before {
     justify-content: center;
     cursor: pointer;
     transition: all 0.3s ease;
+    flex-shrink: 0; /* Prevent shrinking */
 }
 
 .swap-icon:hover {
@@ -1426,23 +1431,23 @@ body::before {
                 <div class="swap-container">
                     <div class="swap-row">
                         <div class="swap-input-group">
-                            <label class="swap-label">Points</label>
-                            <input type="number" class="swap-input" id="swapPointsInput" placeholder="0" min="0">
+                            <label class="swap-label" id="swapFromLabel">From Points</label>
+                            <input type="number" class="swap-input" id="swapPointsInput" placeholder="0" min="0" disabled>
                         </div>
-                        <button class="swap-icon" onclick="swapDirection()">
+                        <button class="swap-icon" onclick="swapDirection()" aria-label="Swap direction">
                             <span class="material-icons">swap_vert</span>
                         </button>
                         <div class="swap-input-group">
-                            <label class="swap-label">TON</label>
-                            <input type="number" class="swap-input" id="swapTonInput" placeholder="0.00000000" min="0" step="0.00000001">
+                            <label class="swap-label" id="swapToLabel">To TON</label>
+                            <input type="number" class="swap-input" id="swapTonInput" placeholder="0.00000000" min="0" step="0.00000001" disabled>
                         </div>
                     </div>
                     <div style="text-align: center; margin-bottom: 15px; color: var(--text-light); font-size: 12px;">
                         Rate: <span id="swapRate">100 points = 0.00000078 TON</span>
                     </div>
-                    <button class="btn btn-accent" style="width: 100%;" onclick="executeSwap()">
+                    <button class="btn btn-accent" style="width: 100%;" onclick="executeSwap()" id="executeSwapButton">
                         <span class="material-icons">swap_horiz</span>
-                        Execute Swap
+                        Swap Now
                     </button>
                 </div>
 
@@ -1605,11 +1610,12 @@ body::before {
         let dailyCheckinDone = false;
         let isWatchingAd = false; // Flag to prevent multiple ad plays
         let selectedTaskCategory = 'normal';
+        let swapMode = 'pointsToTon'; // Default swap direction
 
         // Constants
         const REFERRAL_BONUS_POINTS = 500;
         const MIN_WITHDRAW_TON = 0.01;
-        const POINTS_TO_TON_RATE = 0.0001 / 100; // 0.00000078 TON per 100 points
+        const POINTS_TO_TON_RATE = 0.00000078 / 100; // 0.00000078 TON per 100 points
         const IMPRESSIONS_TO_TON_RATE = 100 / 0.1; // 100 impressions for 0.1 TON
         const AD_REWARD_POINTS = 10;
         const CHECKIN_REWARD_POINTS = 50;
@@ -1751,7 +1757,7 @@ body::before {
 
                     updateUI(userData);
                     updateWalletUI();
-                    updateSwapInputs();
+                    updateSwapInputs(); // Update swap inputs and labels
                     updateAdButtonState(); // Ensure ad button is updated on load
                 }
             });
@@ -1855,7 +1861,7 @@ body::before {
                 walletStatusHtml = `
                     <div class="wallet-status-info wallet-connected">
                         <span class="material-icons">account_balance_wallet</span>
-                        Connected: ${connectedWallet.address.slice(0, 6)}...${connectedWallet.address.slice(-6)}
+                        Connected: ${connectedWallet.address} 
                     </div>
                 `;
             } else {
@@ -1931,58 +1937,83 @@ body::before {
 
         // Swap functionality
         function updateSwapInputs() {
-            const swapRate = document.getElementById('swapRate');
-            swapRate.textContent = `100 points = ${(100 * POINTS_TO_TON_RATE).toFixed(8)} TON`;
+            const swapRateDisplay = document.getElementById('swapRate');
+            const swapPointsInput = document.getElementById('swapPointsInput');
+            const swapTonInput = document.getElementById('swapTonInput');
+            const swapFromLabel = document.getElementById('swapFromLabel');
+            const swapToLabel = document.getElementById('swapToLabel');
+            const executeSwapButton = document.getElementById('executeSwapButton');
+
+            // Update rate display
+            swapRateDisplay.textContent = `100 points = ${(100 * POINTS_TO_TON_RATE).toFixed(8)} TON`;
             
-            // Update swap input event listeners
-            document.getElementById('swapPointsInput').oninput = function() {
+            // Update input states and labels based on swapMode
+            if (swapMode === 'pointsToTon') {
+                swapFromLabel.textContent = 'From Points';
+                swapToLabel.textContent = 'To TON';
+                swapPointsInput.disabled = false;
+                swapTonInput.disabled = true;
+                swapPointsInput.value = ''; // Clear value on mode change
+                swapTonInput.value = '';
+                swapPointsInput.placeholder = '0';
+                swapTonInput.placeholder = '0.00000000';
+            } else { // tonToPoints
+                swapFromLabel.textContent = 'From TON';
+                swapToLabel.textContent = 'To Points';
+                swapPointsInput.disabled = true;
+                tonInput.disabled = false;
+                swapPointsInput.value = ''; // Clear value on mode change
+                swapTonInput.value = '';
+                swapPointsInput.placeholder = '0';
+                swapTonInput.placeholder = '0.00000000';
+            }
+            
+            // Add event listeners for input changes
+            swapPointsInput.oninput = function() {
                 if (swapMode === 'pointsToTon') {
                     const points = parseFloat(this.value) || 0;
                     const tonAmount = points * POINTS_TO_TON_RATE;
-                    document.getElementById('swapTonInput').value = tonAmount.toFixed(8);
+                    swapTonInput.value = tonAmount.toFixed(8);
                 }
             };
 
-            document.getElementById('swapTonInput').oninput = function() {
+            swapTonInput.oninput = function() {
                 if (swapMode === 'tonToPoints') {
                     const ton = parseFloat(this.value) || 0;
                     const pointsAmount = ton / POINTS_TO_TON_RATE;
-                    document.getElementById('swapPointsInput').value = Math.floor(pointsAmount);
+                    swapPointsInput.value = Math.floor(pointsAmount); // Points are typically whole numbers
                 }
             };
+
+            // Enable/disable swap button based on input
+            const pointsValue = parseFloat(swapPointsInput.value) || 0;
+            const tonValue = parseFloat(swapTonInput.value) || 0;
+
+            if (swapMode === 'pointsToTon') {
+                executeSwapButton.disabled = pointsValue <= 0 || !tonConnectUI.account;
+            } else { // tonToPoints
+                executeSwapButton.disabled = tonValue <= 0 || !tonConnectUI.account;
+            }
         }
 
         function swapDirection() {
             swapMode = swapMode === 'pointsToTon' ? 'tonToPoints' : 'pointsToTon';
-            
-            // Clear inputs
-            document.getElementById('swapPointsInput').value = '';
-            document.getElementById('swapTonInput').value = '';
-            
-            // Update labels and placeholders based on mode
-            const pointsLabel = document.querySelector('.swap-container .swap-input-group:first-child .swap-label');
-            const tonLabel = document.querySelector('.swap-container .swap-input-group:last-child .swap-label');
-            const pointsInput = document.getElementById('swapPointsInput');
-            const tonInput = document.getElementById('swapTonInput');
-            
-            if (swapMode === 'pointsToTon') {
-                pointsLabel.textContent = 'From Points';
-                tonLabel.textContent = 'To TON';
-                pointsInput.disabled = false;
-                tonInput.disabled = true;
-            } else {
-                pointsLabel.textContent = 'To Points';
-                tonLabel.textContent = 'From TON';
-                pointsInput.disabled = true;
-                tonInput.disabled = false;
-            }
-            
+            updateSwapInputs(); // Re-render inputs and labels
             showAlert(`Swap direction changed to: ${swapMode === 'pointsToTon' ? 'Points → TON' : 'TON → Points'}`, 'success');
         }
 
         async function executeSwap() {
-            const pointsAmount = parseFloat(document.getElementById('swapPointsInput').value) || 0;
-            const tonAmount = parseFloat(document.getElementById('swapTonInput').value) || 0;
+            const pointsInput = document.getElementById('swapPointsInput');
+            const tonInput = document.getElementById('swapTonInput');
+            const executeSwapButton = document.getElementById('executeSwapButton');
+
+            if (!tonConnectUI.account) {
+                showAlert('Please connect your TON wallet to execute the swap.', 'danger');
+                return;
+            }
+
+            const pointsAmount = parseFloat(pointsInput.value) || 0;
+            const tonAmount = parseFloat(tonInput.value) || 0;
             
             if (pointsAmount <= 0 && tonAmount <= 0) {
                 showAlert('Please enter a valid amount to swap.', 'danger');
@@ -1991,76 +2022,89 @@ body::before {
             
             const userRef = database.ref('users/' + currentUser.id);
             
-            if (swapMode === 'pointsToTon') {
-                if (pointsAmount > userBalance) {
-                    showAlert('Insufficient points balance!', 'danger');
-                    return;
-                }
-                
-                if (pointsAmount < 100) {
-                    showAlert('Minimum swap amount is 100 points.', 'danger');
-                    return;
-                }
-                
-                // Execute points to TON swap
-                await userRef.transaction((userData) => {
-                    if (userData) {
-                        userData.balance = (userData.balance || 0) - pointsAmount;
-                        userData.tonBalance = (userData.tonBalance || 0) + tonAmount;
+            executeSwapButton.disabled = true; // Disable button during transaction
+            executeSwapButton.innerHTML = '<div class="loading"></div> Swapping...';
+
+            try {
+                if (swapMode === 'pointsToTon') {
+                    if (pointsAmount > userBalance) {
+                        showAlert('Insufficient points balance!', 'danger');
+                        return;
                     }
-                    return userData;
-                });
-                
-                // Record swap history
-                await database.ref('swapHistory').push({
-                    userId: currentUser.id,
-                    username: currentUser.username,
-                    type: 'pointsToTon',
-                    pointsAmount: pointsAmount,
-                    tonAmount: tonAmount,
-                    timestamp: Date.now()
-                });
-                
-                showAlert(`Successfully swapped ${formatNumber(pointsAmount)} points for ${tonAmount.toFixed(8)} TON!`, 'success');
-                
-            } else {
-                if (tonAmount > userTonBalance) {
-                    showAlert('Insufficient TON balance!', 'danger');
-                    return;
-                }
-                
-                if (tonAmount < 0.00000001) {
-                    showAlert('Minimum swap amount is 0.00000001 TON.', 'danger');
-                    return;
-                }
-                
-                // Execute TON to points swap
-                await userRef.transaction((userData) => {
-                    if (userData) {
-                        userData.tonBalance = Math.max(0, (userData.tonBalance || 0) - tonAmount);
-                        userData.balance = (userData.balance || 0) + pointsAmount;
-                        userData.totalEarned = (userData.totalEarned || 0) + pointsAmount;
+                    
+                    if (pointsAmount < 100) {
+                        showAlert('Minimum swap amount is 100 points.', 'danger');
+                        return;
                     }
-                    return userData;
-                });
+                    
+                    // Execute points to TON swap
+                    await userRef.transaction((userData) => {
+                        if (userData) {
+                            userData.balance = (userData.balance || 0) - pointsAmount;
+                            userData.tonBalance = (userData.tonBalance || 0) + tonAmount;
+                        }
+                        return userData;
+                    });
+                    
+                    // Record swap history
+                    await database.ref('swapHistory').push({
+                        userId: currentUser.id,
+                        username: currentUser.username,
+                        type: 'pointsToTon',
+                        pointsAmount: pointsAmount,
+                        tonAmount: tonAmount,
+                        timestamp: Date.now()
+                    });
+                    
+                    showAlert(`Successfully swapped ${formatNumber(pointsAmount)} points for ${tonAmount.toFixed(8)} TON!`, 'success');
+                    
+                } else { // tonToPoints
+                    if (tonAmount > userTonBalance) {
+                        showAlert('Insufficient TON balance!', 'danger');
+                        return;
+                    }
+                    
+                    if (tonAmount < 0.00000001) {
+                        showAlert('Minimum swap amount is 0.00000001 TON.', 'danger');
+                        return;
+                    }
+                    
+                    // Execute TON to points swap
+                    await userRef.transaction((userData) => {
+                        if (userData) {
+                            userData.tonBalance = Math.max(0, (userData.tonBalance || 0) - tonAmount);
+                            userData.balance = (userData.balance || 0) + pointsAmount;
+                            userData.totalEarned = (userData.totalEarned || 0) + pointsAmount; // Add to total earned as well
+                        }
+                        return userData;
+                    });
+                    
+                    // Record swap history
+                    await database.ref('swapHistory').push({
+                        userId: currentUser.id,
+                        username: currentUser.username,
+                        type: 'tonToPoints',
+                        pointsAmount: pointsAmount,
+                        tonAmount: tonAmount,
+                        timestamp: Date.now()
+                    });
+                    
+                    showAlert(`Successfully swapped ${tonAmount.toFixed(8)} TON for ${formatNumber(pointsAmount)} points!`, 'success');
+                }
                 
-                // Record swap history
-                await database.ref('swapHistory').push({
-                    userId: currentUser.id,
-                    username: currentUser.username,
-                    type: 'tonToPoints',
-                    pointsAmount: pointsAmount,
-                    tonAmount: tonAmount,
-                    timestamp: Date.now()
-                });
-                
-                showAlert(`Successfully swapped ${tonAmount.toFixed(8)} TON for ${formatNumber(pointsAmount)} points!`, 'success');
+                // Clear inputs after successful swap
+                pointsInput.value = '';
+                tonInput.value = '';
+                updateSwapInputs(); // Refresh button state and placeholders
+            } catch (error) {
+                console.error('Error executing swap:', error);
+                showAlert('Error executing swap. Please try again.', 'danger');
+            } finally {
+                executeSwapButton.disabled = false;
+                executeSwapButton.innerHTML = '<span class="material-icons">swap_horiz</span> Swap Now';
             }
-            
-            // Clear inputs
-            document.getElementById('swapPointsInput').value = '';
-            document.getElementById('swapTonInput').value = '';
         }
+
 
         // Load tasks from Firebase
         function loadTasks() {
@@ -2315,12 +2359,13 @@ body::before {
                 const normalizedRotation = randomRotation % 360;
                 let reward;
 
-                if (normalizedRotation < 60) reward = 100;
-                else if (normalizedRotation < 120) reward = 150;
-                else if (normalizedRotation < 180) reward = 200;
-                else if (normalizedRotation < 240) reward = 300;
-                else if (normalizedRotation < 300) reward = 400;
-                else reward = 500;
+                // Determine reward based on the final rotation position
+                if (normalizedRotation < 60) reward = 100; // 0-60
+                else if (normalizedRotation < 120) reward = 150; // 60-120
+                else if (normalizedRotation < 180) reward = 200; // 120-180
+                else if (normalizedRotation < 240) reward = 300; // 180-240
+                else if (normalizedRotation < 300) reward = 400; // 240-300
+                else reward = 500; // 300-360
 
                 const userRef = database.ref('users/' + currentUser.id);
                 await userRef.transaction((userData) => {
@@ -2391,7 +2436,7 @@ body::before {
                             userData.totalEarned = (userData.totalEarned || 0) + AD_REWARD_POINTS;
                             userData.adsWatched = (userData.adsWatched || 0) + 1;
                             userData.lastAdCompletionTime = Date.now(); // Record completion time
-                            userData.adCooldownEnd = Date.now() + 3000; // Set cooldown for 30 seconds
+                            userData.adCooldownEnd = Date.now() + 30000; // Set cooldown for 30 seconds
                         }
                         return userData;
                     });
@@ -2739,7 +2784,7 @@ body::before {
             }
 
             document.getElementById('withdrawModal').style.display = 'block';
-            updateWalletUI();
+            updateWalletUI(); // Ensure wallet status and address are updated when modal opens
         }
 
         // Withdraw form submission
@@ -2749,8 +2794,10 @@ body::before {
             const tonAddress = document.getElementById('tonAddress').value.trim();
             const amountTon = parseFloat(document.getElementById('withdrawAmount').value);
 
-            // Basic TON address validation (starts with UQ or EQ)
-            if (!tonAddress || (!tonAddress.startsWith('UQ') && !tonAddress.startsWith('0:'))) {
+            // Basic TON address validation (starts with UQ or EQ for older addresses, or 0: for newer ones)
+            const isValidTonAddress = tonAddress && (tonAddress.startsWith('UQ') || tonAddress.startsWith('EQ') || tonAddress.startsWith('0:'));
+
+            if (!isValidTonAddress) {
                 showAlert('Please enter a valid TON address.', 'danger');
                 return;
             }
@@ -2770,8 +2817,9 @@ body::before {
                 return;
             }
 
+            // Re-check if the address matches the connected wallet. This is crucial.
             if (tonAddress !== tonConnectUI.account.address) {
-                showAlert('The displayed TON address does not match your connected wallet. Please reconnect if necessary.', 'danger');
+                showAlert('The displayed TON address does not match your connected wallet. Please disconnect and reconnect your wallet.', 'danger');
                 return;
             }
 
@@ -2927,7 +2975,7 @@ body::before {
             }
 
             if (sectionName === 'profile') {
-                updateSwapInputs();
+                updateSwapInputs(); // Refresh swap UI when profile is shown
             }
             
             // Ensure ad button state is updated when entering ads section
@@ -2970,7 +3018,10 @@ body::before {
                 
                 if (modalId === 'withdrawModal') {
                     document.getElementById('withdrawForm').reset();
+                    // Reset disabled states and placeholders for withdrawal form inputs
                     document.getElementById('requestWithdrawButton').disabled = true;
+                    document.getElementById('withdrawAmount').disabled = true;
+                    document.getElementById('tonAddress').placeholder = "Connect wallet to populate";
                 }
             }
         }
