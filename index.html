@@ -34,8 +34,6 @@
             --text-muted: #94a3b8;
             --glass: rgba(220, 38, 38, 0.1);
             --glass-border: rgba(220, 38, 38, 0.2);
-            --ton-color: #0088cc;
-            --swap-gradient: linear-gradient(135deg, #f59e0b, #d97706);
         }
 
         body {
@@ -125,21 +123,10 @@
         .user-balance {
             color: var(--primary);
             font-weight: 700;
-            font-size: 16px;
+            font-size: 18px;
             display: flex;
             align-items: center;
             gap: 5px;
-        }
-
-        .balance-item {
-            display: flex;
-            align-items: center;
-            gap: 4px;
-            margin-right: 10px;
-        }
-
-        .ton-balance {
-            color: var(--ton-color);
         }
 
         .theme-toggle {
@@ -247,6 +234,41 @@
             font-size: 12px;
         }
 
+        .balance-card {
+            background: rgba(15, 15, 35, 0.9);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 20px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+
+        .balance-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(5, 150, 105, 0.1), transparent);
+            opacity: 1;
+        }
+
+        .balance-amount {
+            font-size: 28px;
+            font-weight: 800;
+            color: var(--success);
+            margin-bottom: 8px;
+        }
+
+        .balance-label {
+            color: var(--text-light);
+            font-weight: 500;
+            font-size: 14px;
+        }
+
         .btn {
             padding: 12px 24px;
             border: none;
@@ -314,14 +336,75 @@
             color: white;
         }
 
-        .btn-swap {
-            background: var(--swap-gradient);
+        .btn-accent {
+            background: linear-gradient(135deg, var(--accent), var(--warning));
             color: white;
         }
 
-        .btn-ton {
-            background: linear-gradient(135deg, var(--ton-color), #0077bb);
+        .swap-container {
+            background: rgba(15, 15, 35, 0.9);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        .swap-row {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .swap-input-group {
+            flex: 1;
+        }
+
+        .swap-input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            font-size: 18px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            background: rgba(15, 15, 35, 0.8);
+            color: var(--text);
+            text-align: center;
+        }
+
+        .swap-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(220, 38, 38, 0.1);
+        }
+
+        .swap-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--text);
+            text-align: center;
+        }
+
+        .swap-icon {
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
             color: white;
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .swap-icon:hover {
+            transform: rotate(180deg);
+            box-shadow: 0 4px 15px rgba(220, 38, 38, 0.3);
         }
 
         .form-group {
@@ -352,105 +435,102 @@
             box-shadow: 0 0 0 4px rgba(220, 38, 38, 0.1);
         }
 
-        .swap-container {
-            background: rgba(15, 15, 35, 0.9);
-            border: 1px solid var(--glass-border);
-            border-radius: 20px;
-            padding: 25px;
-            margin-bottom: 20px;
+        .task-grid {
+            display: grid;
+            gap: 15px;
         }
 
-        .swap-section {
-            background: rgba(245, 158, 11, 0.1);
-            border: 1px solid rgba(245, 158, 11, 0.2);
+        .task-card {
+            background: rgba(15, 15, 35, 0.9);
+            border: 1px solid var(--glass-border);
             border-radius: 16px;
             padding: 20px;
-            margin-bottom: 15px;
-        }
-
-        .swap-input-group {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin-bottom: 15px;
-        }
-
-        .swap-input {
-            flex: 1;
-            padding: 15px;
-            border: 2px solid var(--border);
-            border-radius: 12px;
-            font-size: 18px;
-            background: rgba(15, 15, 35, 0.8);
-            color: var(--text);
-        }
-
-        .currency-label {
-            font-weight: 700;
-            color: var(--accent);
-            min-width: 60px;
-            text-align: center;
-        }
-
-        .swap-arrow {
-            display: flex;
-            justify-content: center;
-            margin: 15px 0;
-        }
-
-        .swap-arrow button {
-            background: var(--swap-gradient);
-            border: none;
-            border-radius: 50%;
-            width: 50px;
-            height: 50px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
             transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
         }
 
-        .swap-arrow button:hover {
-            transform: rotate(180deg) scale(1.1);
+        .task-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: linear-gradient(180deg, var(--primary), var(--primary-light));
         }
 
-        .balance-display {
-            background: rgba(15, 15, 35, 0.9);
-            border: 1px solid var(--glass-border);
-            border-radius: 12px;
-            padding: 15px;
-            margin-bottom: 20px;
+        .task-card:hover {
+            transform: translateX(5px);
+            box-shadow: 0 8px 25px rgba(220, 38, 38, 0.2);
         }
 
-        .balance-item-large {
+        .task-header {
             display: flex;
             justify-content: space-between;
-            align-items: center;
-            padding: 10px 0;
-            border-bottom: 1px solid var(--border);
+            align-items: flex-start;
+            margin-bottom: 12px;
         }
 
-        .balance-item-large:last-child {
-            border-bottom: none;
+        .task-title {
+            font-weight: 700;
+            color: var(--text);
+            margin-bottom: 8px;
         }
 
-        .balance-label {
+        .task-reward {
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            color: white;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .task-description {
+            color: var(--text-light);
+            margin-bottom: 12px;
+            line-height: 1.5;
+        }
+
+        .task-actions {
+            display: flex;
+            gap: 8px;
+            justify-content: flex-end;
+        }
+
+        .tabs {
+            display: flex;
+            background: rgba(15, 15, 35, 0.8);
+            border-radius: 12px;
+            padding: 4px;
+            margin-bottom: 20px;
+            border: 1px solid var(--glass-border);
+        }
+
+        .tab {
+            flex: 1;
+            padding: 12px;
+            text-align: center;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
             font-weight: 600;
             color: var(--text-light);
         }
 
-        .balance-amount {
-            font-weight: 700;
-            font-size: 18px;
+        .tab.active {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            box-shadow: 0 4px 15px rgba(220, 38, 38, 0.3);
         }
 
-        .points-amount {
-            color: var(--primary);
+        .tab-content {
+            display: none;
         }
 
-        .ton-amount {
-            color: var(--ton-color);
+        .tab-content.active {
+            display: block;
         }
 
         .section {
@@ -505,6 +585,56 @@
             font-weight: 600;
         }
 
+        .spin-wheel {
+            width: 250px;
+            height: 250px;
+            border-radius: 50%;
+            border: 8px solid var(--primary);
+            margin: 20px auto;
+            position: relative;
+            background: conic-gradient(
+                from 0deg,
+                var(--primary) 0deg 60deg,
+                var(--primary-light) 60deg 120deg,
+                var(--warning) 120deg 180deg,
+                var(--success) 180deg 240deg,
+                var(--primary-dark) 240deg 300deg,
+                var(--accent) 300deg 360deg
+            );
+            transition: transform 3s cubic-bezier(0.23, 1, 0.32, 1);
+        }
+
+        .spin-wheel::before {
+            content: '';
+            position: absolute;
+            top: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 0;
+            border-left: 15px solid transparent;
+            border-right: 15px solid transparent;
+            border-top: 30px solid var(--text);
+            z-index: 10;
+        }
+
+        .spin-center {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 60px;
+            height: 60px;
+            background: var(--primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+            z-index: 5;
+        }
+
         .modal {
             display: none;
             position: fixed;
@@ -553,6 +683,20 @@
             color: var(--text-light);
         }
 
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, .3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
         .alert {
             padding: 16px 20px;
             border-radius: 12px;
@@ -593,29 +737,102 @@
             color: var(--warning);
         }
 
-        .loading {
-            display: inline-block;
-            width: 20px;
-            height: 20px;
-            border: 3px solid rgba(255, 255, 255, .3);
-            border-radius: 50%;
-            border-top-color: #fff;
-            animation: spin 1s ease-in-out infinite;
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: rgba(15, 15, 35, 0.8);
+            border-radius: 4px;
+            overflow: hidden;
+            margin: 10px 0;
         }
 
-        @keyframes spin {
-            to { transform: rotate(360deg); }
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--primary-light));
+            border-radius: 4px;
+            transition: width 0.3s ease;
         }
 
-        .conversion-rate {
-            background: rgba(245, 158, 11, 0.1);
-            border: 1px solid rgba(245, 158, 11, 0.2);
-            border-radius: 12px;
-            padding: 15px;
+        .countdown {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--primary);
             text-align: center;
-            margin: 15px 0;
-            color: var(--accent);
+            margin: 20px 0;
+        }
+
+        .refer-link {
+            background: rgba(15, 15, 35, 0.8);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 12px;
+            color: var(--text);
+            font-family: monospace;
+            word-break: break-all;
+            margin: 10px 0;
+        }
+
+        .withdrawal-history {
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .history-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 8px;
+        }
+
+        .history-status {
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 12px;
             font-weight: 600;
+        }
+
+        .status-pending {
+            background: rgba(217, 119, 6, 0.2);
+            color: var(--warning);
+        }
+
+        .status-completed {
+            background: rgba(5, 150, 105, 0.2);
+            color: var(--success);
+        }
+
+        .status-rejected {
+            background: rgba(220, 38, 38, 0.2);
+            color: var(--danger);
+        }
+
+        .wallet-status-info {
+            margin-top: 15px;
+            padding: 10px;
+            border-radius: 8px;
+            text-align: center;
+            font-weight: 500;
+            width: 100%;
+        }
+
+        .wallet-connected {
+            background: rgba(5, 150, 105, 0.1);
+            color: var(--success);
+        }
+
+        .wallet-disconnected {
+            background: rgba(220, 38, 38, 0.1);
+            color: var(--danger);
+        }
+
+        .profile-wallet-controls {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-top: 20px;
         }
 
         @media (max-width: 768px) {
@@ -638,21 +855,67 @@
                 padding: 20px;
             }
 
-            .user-balance {
+            .spin-wheel {
+                width: 200px;
+                height: 200px;
+            }
+
+            .bottom-nav {
+                padding: 10px 0;
+            }
+
+            .nav-item span {
+                font-size: 10px;
+            }
+
+            .nav-item {
+                padding: 6px 8px;
+            }
+
+            .profile-wallet-controls {
                 flex-direction: column;
                 align-items: center;
-                gap: 8px;
             }
 
-            .swap-input-group {
+            .swap-row {
                 flex-direction: column;
-                align-items: stretch;
+                gap: 10px;
             }
 
-            .currency-label {
-                text-align: left;
-                margin-bottom: 5px;
+            .swap-icon {
+                transform: rotate(90deg);
             }
+
+            .swap-icon:hover {
+                transform: rotate(270deg);
+            }
+        }
+
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% {
+                box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.7);
+            }
+            70% {
+                box-shadow: 0 0 0 10px rgba(220, 38, 38, 0);
+            }
+            100% {
+                box-shadow: 0 0 0 0 rgba(220, 38, 38, 0);
+            }
+        }
+
+        .glow {
+            box-shadow: 0 0 20px rgba(220, 38, 38, 0.5);
+        }
+
+        .balance-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
         }
     </style>
 </head>
@@ -664,14 +927,8 @@
                 <div class="user-details">
                     <h3 id="userName">Loading...</h3>
                     <div class="user-balance">
-                        <div class="balance-item">
-                            <span class="material-icons">stars</span>
-                            <span id="userPointBalance">0</span> Points
-                        </div>
-                        <div class="balance-item ton-balance">
-                            <span class="material-icons">account_balance_wallet</span>
-                            <span id="userTonBalance">0.00000000</span> TON
-                        </div>
+                        <span class="material-icons">account_balance_wallet</span>
+                        <span id="userBalance">0</span> Points
                     </div>
                 </div>
             </div>
@@ -681,8 +938,8 @@
             </button>
         </div>
 
-        <!-- Statistics Grid - Only visible on Home -->
-        <div class="stats-grid" id="statsGrid" style="display: none;">
+        <!-- Home Section Stats (Only visible on home page) -->
+        <div id="homeStatsGrid" class="stats-grid">
             <div class="stat-card">
                 <div class="stat-number" id="totalEarned">0</div>
                 <div class="stat-label">Total Earned</div>
@@ -713,10 +970,6 @@
                         <span class="material-icons">assignment</span>
                         Start Tasks
                     </button>
-                    <button class="btn btn-swap" onclick="showSection('swap')">
-                        <span class="material-icons">swap_horiz</span>
-                        Swap Points
-                    </button>
                     <button class="btn btn-warning" onclick="showSection('spin')">
                         <span class="material-icons">casino</span>
                         Spin Wheel
@@ -741,75 +994,8 @@
                     Apply Code
                 </button>
             </div>
-        </div>
 
-        <!-- Swap Section -->
-        <div id="swapSection" class="section">
-            <div class="card">
-                <h2 class="card-title">
-                    <span class="material-icons">swap_horiz</span>
-                    Swap Center
-                </h2>
-                
-                <div class="balance-display">
-                    <div class="balance-item-large">
-                        <span class="balance-label">Available Points:</span>
-                        <span class="balance-amount points-amount" id="swapPointBalance">0</span>
-                    </div>
-                    <div class="balance-item-large">
-                        <span class="balance-label">Available TON:</span>
-                        <span class="balance-amount ton-amount" id="swapTonBalance">0.00000000</span>
-                    </div>
-                </div>
-
-                <div class="conversion-rate" id="conversionRate">
-                    1,000 Points = 0.01 TON
-                </div>
-
-                <div class="swap-container">
-                    <div class="swap-section">
-                        <h3 style="color: var(--accent); margin-bottom: 15px;">Points to TON</h3>
-                        <div class="swap-input-group">
-                            <div class="currency-label">Points</div>
-                            <input type="number" class="swap-input" id="pointsToTon" placeholder="Enter points" min="1000" step="100">
-                        </div>
-                        <div class="swap-arrow">
-                            <button onclick="calculatePointsToTon()">
-                                <span class="material-icons">arrow_downward</span>
-                            </button>
-                        </div>
-                        <div class="swap-input-group">
-                            <div class="currency-label">TON</div>
-                            <input type="number" class="swap-input" id="tonFromPoints" placeholder="TON amount" readonly>
-                        </div>
-                        <button class="btn btn-swap" onclick="swapPointsToTon()" id="swapPointsBtn" disabled>
-                            <span class="material-icons">swap_horiz</span>
-                            Swap Points to TON
-                        </button>
-                    </div>
-
-                    <div class="swap-section">
-                        <h3 style="color: var(--ton-color); margin-bottom: 15px;">TON to Points</h3>
-                        <div class="swap-input-group">
-                            <div class="currency-label">TON</div>
-                            <input type="number" class="swap-input" id="tonToPoints" placeholder="Enter TON" min="0.01" step="0.01">
-                        </div>
-                        <div class="swap-arrow">
-                            <button onclick="calculateTonToPoints()">
-                                <span class="material-icons">arrow_downward</span>
-                            </button>
-                        </div>
-                        <div class="swap-input-group">
-                            <div class="currency-label">Points</div>
-                            <input type="number" class="swap-input" id="pointsFromTon" placeholder="Points amount" readonly>
-                        </div>
-                        <button class="btn btn-ton" onclick="swapTonToPoints()" id="swapTonBtn" disabled>
-                            <span class="material-icons">swap_horiz</span>
-                            Swap TON to Points
-                        </button>
-                    </div>
-                </div>
-            </div>
+            <div id="ton-connect-button-container"></div>
         </div>
 
         <!-- Tasks Section -->
@@ -825,8 +1011,21 @@
                         Create New Task
                     </button>
                 </div>
-                <div style="display: grid; gap: 15px;" id="availableTasksGrid">
-                    <!-- Tasks will be loaded here -->
+                <div class="tabs">
+                    <div class="tab active" onclick="showTaskTab(event, 'available')">Available</div>
+                    <div class="tab" onclick="showTaskTab(event, 'completed')">Completed</div>
+                </div>
+
+                <div id="availableTasks" class="tab-content active">
+                    <div class="task-grid" id="availableTasksGrid">
+                        <!-- Available tasks will be loaded here -->
+                    </div>
+                </div>
+
+                <div id="completedTasks" class="tab-content">
+                    <div class="task-grid" id="completedTasksGrid">
+                        <!-- Completed tasks will be loaded here -->
+                    </div>
                 </div>
             </div>
         </div>
@@ -838,10 +1037,12 @@
                     <span class="material-icons">add_task</span>
                     Create Task
                 </h2>
+
                 <div style="text-align: center; margin-bottom: 20px; padding: 15px; background-color: rgba(15, 15, 35, 0.8); border: 1px solid var(--glass-border); border-radius: 16px;">
                     <p style="color: var(--text-light);">Connect your wallet to create and fund tasks.</p>
-                    <div id="connectWalletButton" style="margin-top: 10px;"></div>
+                    <div id="connectWalletButtonAddTaskWrapper"></div>
                 </div>
+
                 <form id="addTaskForm">
                     <div class="form-group">
                         <label class="form-label">Task Title</label>
@@ -871,6 +1072,16 @@
                     </button>
                 </form>
             </div>
+
+            <div class="card">
+                <h2 class="card-title">
+                    <span class="material-icons">list</span>
+                    My Created Tasks
+                </h2>
+                <div id="myTasksGrid" class="task-grid">
+                    <!-- User's created tasks will be loaded here -->
+                </div>
+            </div>
         </div>
 
         <!-- Spin Section -->
@@ -881,8 +1092,8 @@
                     Spin Wheel
                 </h2>
                 <div style="text-align: center;">
-                    <div style="width: 250px; height: 250px; border-radius: 50%; border: 8px solid var(--primary); margin: 20px auto; position: relative; background: conic-gradient(from 0deg, var(--primary) 0deg 60deg, var(--primary-light) 60deg 120deg, var(--warning) 120deg 180deg, var(--success) 180deg 240deg, var(--primary-dark) 240deg 300deg, var(--accent) 300deg 360deg); transition: transform 3s cubic-bezier(0.23, 1, 0.32, 1);" id="spinWheel">
-                        <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 60px; height: 60px; background: var(--primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: 700;">SPIN</div>
+                    <div class="spin-wheel" id="spinWheel">
+                        <div class="spin-center">SPIN</div>
                     </div>
                     <button class="btn btn-primary" id="spinButton" onclick="spinWheel()">
                         <span class="material-icons">casino</span>
@@ -910,7 +1121,7 @@
                         <span class="material-icons">play_arrow</span>
                         Watch Ad (+10 Points)
                     </button>
-                    <div id="adCountdown" style="display: none;"></div>
+                    <div id="adCountdown" class="countdown" style="display: none;"></div>
                 </div>
             </div>
         </div>
@@ -924,8 +1135,8 @@
                 </h2>
                 <div class="form-group">
                     <label class="form-label">Your Referral Link</label>
-                    <div style="background: rgba(15, 15, 35, 0.8); border: 1px solid var(--glass-border); border-radius: 12px; padding: 12px; color: var(--text); font-family: monospace; word-break: break-all; margin: 10px 0;" id="referralLink">
-                        https://t.me/earnfluxbot/app?startapp=ref_<span id="userRefId">loading</span>
+                    <div class="refer-link" id="referralLink">
+                        https://t.me/adflareprobot/app?startapp=ref_<span id="userRefId">loading</span>
                     </div>
                     <button class="btn btn-secondary" onclick="copyReferralLink()">
                         <span class="material-icons">content_copy</span>
@@ -943,6 +1154,11 @@
                         <div class="stat-label">Referral Earnings</div>
                     </div>
                 </div>
+
+                <button class="btn btn-success" onclick="claimReferralRewards()">
+                    <span class="material-icons">redeem</span>
+                    Claim Rewards
+                </button>
 
                 <div style="margin-top: 20px;">
                     <h3 style="color: var(--primary); margin-bottom: 15px;">Referral List</h3>
@@ -965,29 +1181,61 @@
                     <h3 style="margin: 15px 0; color: var(--text);" id="profileName">Loading...</h3>
                 </div>
 
-                <div class="balance-display">
-                    <div class="balance-item-large">
-                        <span class="balance-label">Points Balance:</span>
-                        <span class="balance-amount points-amount" id="profilePointBalance">0</span>
+                <!-- Balance Display -->
+                <div class="balance-grid">
+                    <div class="balance-card">
+                        <div class="balance-amount" id="profilePointsBalance">0</div>
+                        <div class="balance-label">Points Balance</div>
                     </div>
-                    <div class="balance-item-large">
-                        <span class="balance-label">TON Balance:</span>
-                        <span class="balance-amount ton-amount" id="profileTonBalance">0.00000000</span>
-                    </div>
-                </div>
-
-                <div style="text-align: center; margin: 20px 0;">
-                    <div style="margin-bottom: 10px;">
-                        <span style="color: var(--text-light);">Wallet Status:</span>
-                        <span id="walletStatus" style="margin-left: 10px;">Not Connected</span>
-                    </div>
-                    <div id="walletControls" style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
-                        <!-- Wallet buttons will be added here -->
+                    <div class="balance-card">
+                        <div class="balance-amount" id="profileTonBalance">0.00000000</div>
+                        <div class="balance-label">TON Balance</div>
                     </div>
                 </div>
 
-                <div style="text-align: center; margin: 20px 0;">
-                    <button class="btn btn-ton" onclick="showWithdrawModal()" id="withdrawButton">
+                <!-- Wallet Connection Section -->
+                <div class="card-title">
+                    <span class="material-icons">account_balance_wallet</span>
+                    Wallet Connection
+                </div>
+                <div id="walletStatusWrapper">
+                    <!-- Wallet connection status will be displayed here -->
+                </div>
+                <div class="profile-wallet-controls" id="profileWalletControls">
+                    <!-- Connect/Disconnect buttons will appear here, managed by JS -->
+                </div>
+
+                <!-- Swap Section -->
+                <div class="card-title" style="margin-top: 20px;">
+                    <span class="material-icons">swap_horiz</span>
+                    Swap
+                </div>
+                <div class="swap-container">
+                    <div class="swap-row">
+                        <div class="swap-input-group">
+                            <label class="swap-label">Points</label>
+                            <input type="number" class="swap-input" id="swapPointsInput" placeholder="0" min="0">
+                        </div>
+                        <button class="swap-icon" onclick="swapDirection()">
+                            <span class="material-icons">swap_vert</span>
+                        </button>
+                        <div class="swap-input-group">
+                            <label class="swap-label">TON</label>
+                            <input type="number" class="swap-input" id="swapTonInput" placeholder="0.00000000" min="0" step="0.00000001">
+                        </div>
+                    </div>
+                    <div style="text-align: center; margin-bottom: 15px; color: var(--text-light); font-size: 12px;">
+                        Rate: <span id="swapRate">100 points = 0.00000078 TON</span>
+                    </div>
+                    <button class="btn btn-accent" style="width: 100%;" onclick="executeSwap()">
+                        <span class="material-icons">swap_horiz</span>
+                        Execute Swap
+                    </button>
+                </div>
+
+                <!-- Withdraw Section -->
+                <div style="text-align: center; margin-top: 20px;">
+                    <button class="btn btn-primary" onclick="showWithdrawModal()">
                         <span class="material-icons">account_balance_wallet</span>
                         Withdraw TON
                     </button>
@@ -1004,6 +1252,29 @@
                     </button>
                 </div>
             </div>
+
+            <div class="card">
+                <h2 class="card-title">
+                    <span class="material-icons">history</span>
+                    Transaction History
+                </h2>
+                <div class="tabs">
+                    <div class="tab active" onclick="showHistoryTab(event, 'withdrawal')">Withdrawals</div>
+                    <div class="tab" onclick="showHistoryTab(event, 'swap')">Swaps</div>
+                </div>
+                
+                <div id="withdrawalHistory" class="tab-content active">
+                    <div class="withdrawal-history" id="withdrawalHistoryContent">
+                        <!-- Withdrawal history will be loaded here -->
+                    </div>
+                </div>
+                
+                <div id="swapHistory" class="tab-content">
+                    <div class="withdrawal-history" id="swapHistoryContent">
+                        <!-- Swap history will be loaded here -->
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -1014,9 +1285,9 @@
                 <span class="material-icons">home</span>
                 <span>Home</span>
             </a>
-            <a href="#" class="nav-item" onclick="showSection('swap'); return false;">
-                <span class="material-icons">swap_horiz</span>
-                <span>Swap</span>
+            <a href="#" class="nav-item" onclick="showSection('ads'); return false;">
+                <span class="material-icons">play_circle</span>
+                <span>Ads</span>
             </a>
             <a href="#" class="nav-item" onclick="showSection('tasks'); return false;">
                 <span class="material-icons">assignment</span>
@@ -1033,6 +1304,25 @@
         </div>
     </div>
 
+    <!-- Task Verification Modal -->
+    <div id="taskModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Task Verification</h3>
+                <button class="close-btn" onclick="closeModal('taskModal')">&times;</button>
+            </div>
+            <div id="taskModalContent">
+                <div class="countdown" id="taskCountdown">5</div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="taskProgress"></div>
+                </div>
+                <p style="text-align: center; color: var(--text-light);">
+                    Please wait while we verify your task completion...
+                </p>
+            </div>
+        </div>
+    </div>
+
     <!-- Withdraw Modal -->
     <div id="withdrawModal" class="modal">
         <div class="modal-content">
@@ -1040,25 +1330,22 @@
                 <h3 class="modal-title">Withdraw TON</h3>
                 <button class="close-btn" onclick="closeModal('withdrawModal')">&times;</button>
             </div>
-            <div style="margin-bottom: 20px;">
-                <div style="background: rgba(0, 136, 204, 0.1); border: 1px solid rgba(0, 136, 204, 0.2); border-radius: 12px; padding: 15px; text-align: center;">
-                    <div style="color: var(--ton-color); font-weight: 600;">Available TON Balance</div>
-                    <div style="font-size: 24px; font-weight: 700; color: var(--ton-color);" id="withdrawAvailableTon">0.00000000</div>
-                </div>
+            <div id="withdrawModalWalletInfo">
+                <!-- Wallet connection status and buttons will be displayed here -->
             </div>
             <form id="withdrawForm">
                 <div class="form-group">
                     <label class="form-label">TON Address</label>
-                    <input type="text" class="form-input" id="withdrawTonAddress" readonly placeholder="Connect wallet">
+                    <input type="text" class="form-input" id="tonAddress" readonly placeholder="Connect wallet to populate">
                 </div>
                 <div class="form-group">
                     <label class="form-label">Amount (TON)</label>
-                    <input type="number" class="form-input" id="withdrawTonAmount" min="0.01" step="0.01" placeholder="Minimum: 0.01 TON">
+                    <input type="number" class="form-input" id="withdrawAmount" min="0.01" step="0.00000001" required placeholder="Enter TON amount to withdraw">
                     <div style="font-size: 12px; color: var(--text-light); margin-top: 5px;">
-                        Minimum withdrawal: 0.01 TON
+                        Minimum: 0.01 TON | Your TON Balance: <span id="withdrawModalTonBalance">0.00000000</span> TON
                     </div>
                 </div>
-                <button type="submit" class="btn btn-ton" id="withdrawSubmitButton" disabled>
+                <button type="submit" class="btn btn-primary" id="requestWithdrawButton">
                     <span class="material-icons">send</span>
                     Request Withdrawal
                 </button>
@@ -1095,22 +1382,23 @@
 
         // Global variables
         let currentUser = null;
-        let userPointBalance = 0;
+        let userBalance = 0;
         let userTonBalance = 0;
         let userSpins = 0;
         let adsWatchedToday = 0;
         let lastAdTime = 0;
         let dailyCheckinDone = false;
+        let lastAdCompletionTime = 0;
+        let swapMode = 'pointsToTon'; // 'pointsToTon' or 'tonToPoints'
 
         // Constants
-        const POINTS_TO_TON_RATE = 1000; // 1000 points = 0.01 TON
-        const TON_TO_POINTS_RATE = 100000; // 1 TON = 100,000 points
+        const REFERRAL_BONUS_POINTS = 500;
         const MIN_WITHDRAW_TON = 0.01;
-        const REFERRAL_BONUS = 500;
-        const AD_REWARD = 10;
-        const CHECKIN_REWARD = 50;
-        const TASK_REWARD = 100;
-        const SPIN_REWARD = 1;
+        const POINTS_TO_TON_RATE = 0.00000078 / 100; // 0.00000078 TON per 100 points
+        const IMPRESSIONS_TO_TON_RATE = 100 / 0.1; // 100 impressions for 0.1 TON
+        const AD_REWARD_POINTS = 10;
+        const CHECKIN_REWARD_POINTS = 50;
+        const TASK_SPIN_REWARD = 1;
 
         // Initialize Telegram Web App
         function initTelegramWebApp() {
@@ -1143,12 +1431,16 @@
                         first_name: 'Test User',
                         photo_url: 'https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?auto=compress&cs=tinysrgb&w=100&h=100&dpr=1'
                     };
+                    console.warn("Running without Telegram Web App user data. Using a random ID for testing:", currentUser.id);
                     initializeUser();
                 }
+            } else {
+                console.error("Telegram Web App is not available.");
+                showAlert("Error: Telegram Web App not detected. Please open this in Telegram.", "danger");
             }
         }
 
-        // Initialize user data
+        // Initialize user data from Firebase
         async function initializeUser() {
             if (!currentUser) return;
 
@@ -1161,7 +1453,7 @@
                     username: currentUser.username,
                     first_name: currentUser.first_name,
                     photo_url: currentUser.photo_url,
-                    pointBalance: 0,
+                    balance: 0,
                     tonBalance: 0,
                     spins: 0,
                     totalEarned: 0,
@@ -1176,16 +1468,18 @@
                 await userRef.set(userData);
             }
 
+            // Set up real-time listener
             userRef.on('value', (snapshot) => {
                 const userData = snapshot.val();
                 if (userData) {
-                    userPointBalance = userData.pointBalance || 0;
+                    userBalance = userData.balance || 0;
                     userTonBalance = userData.tonBalance || 0;
                     userSpins = userData.spins || 0;
                     adsWatchedToday = userData.adsWatched || 0;
                     lastAdTime = userData.lastAdReset || 0;
                     dailyCheckinDone = userData.lastCheckin === new Date().toDateString();
 
+                    // Reset daily ad count if 24 hours have passed
                     if (Date.now() - lastAdTime > 24 * 60 * 60 * 1000) {
                         adsWatchedToday = 0;
                         userRef.update({
@@ -1195,211 +1489,303 @@
                     }
 
                     updateUI(userData);
+                    updateWalletUI();
+                    updateSwapInputs();
                 }
             });
 
             loadTasks();
+            loadUserTasks();
             loadReferrals();
+            loadWithdrawalHistory();
+            loadSwapHistory();
         }
 
-        // Update UI with user data
+        // Update UI elements
         function updateUI(userData) {
-            // Header
             document.getElementById('userName').textContent = userData.first_name || 'User';
-            document.getElementById('userPointBalance').textContent = formatNumber(userData.pointBalance || 0);
-            document.getElementById('userTonBalance').textContent = formatTon(userData.tonBalance || 0);
-
-            // Statistics (only visible on home)
+            document.getElementById('userBalance').textContent = formatNumber(userData.balance || 0);
             document.getElementById('totalEarned').textContent = formatNumber(userData.totalEarned || 0);
             document.getElementById('tasksCompleted').textContent = formatNumber(userData.tasksCompleted || 0);
             document.getElementById('referrals').textContent = formatNumber(userData.referrals || 0);
             document.getElementById('spinsAvailable').textContent = userData.spins || 0;
             document.getElementById('spinsCount').textContent = userData.spins || 0;
-
-            // Swap section
-            document.getElementById('swapPointBalance').textContent = formatNumber(userData.pointBalance || 0);
-            document.getElementById('swapTonBalance').textContent = formatTon(userData.tonBalance || 0);
-
-            // Profile section
-            document.getElementById('profilePointBalance').textContent = formatNumber(userData.pointBalance || 0);
-            document.getElementById('profileTonBalance').textContent = formatTon(userData.tonBalance || 0);
-            document.getElementById('profileName').textContent = userData.first_name || 'User';
-
-            // Withdraw modal
-            document.getElementById('withdrawAvailableTon').textContent = formatTon(userData.tonBalance || 0);
-
-            // Ads
             document.getElementById('adsWatched').textContent = adsWatchedToday;
-            const watchAdButton = document.getElementById('watchAdButton');
-            if (adsWatchedToday >= 50) {
-                watchAdButton.disabled = true;
-                watchAdButton.innerHTML = '<span class="material-icons">block</span> Daily Limit Reached';
-            }
+            document.getElementById('userRefId').textContent = userData.id;
+            
+            // Profile specific updates
+            document.getElementById('profilePointsBalance').textContent = formatNumber(userData.balance || 0);
+            document.getElementById('profileTonBalance').textContent = (userData.tonBalance || 0).toFixed(8);
+            document.getElementById('withdrawModalTonBalance').textContent = (userData.tonBalance || 0).toFixed(8);
 
-            // Update avatars
             if (userData.photo_url) {
                 document.getElementById('userAvatar').src = userData.photo_url;
                 document.getElementById('profileAvatar').src = userData.photo_url;
             }
 
-            document.getElementById('userRefId').textContent = userData.id;
+            document.getElementById('profileName').textContent = userData.first_name || 'User';
 
-            updateWalletUI();
+            // Update ad button state
+            const watchAdButton = document.getElementById('watchAdButton');
+            if (adsWatchedToday >= 50) {
+                watchAdButton.disabled = true;
+                watchAdButton.innerHTML = '<span class="material-icons">block</span> Daily Limit Reached';
+            } else {
+                watchAdButton.disabled = false;
+                watchAdButton.innerHTML = '<span class="material-icons">play_arrow</span> Watch Ad (+10 Points)';
+            }
+
+            // Update daily checkin button
+            const dailyCheckinButton = document.querySelector('.btn-success[onclick="dailyCheckin()"]');
+            if (dailyCheckinButton) {
+                if (dailyCheckinDone) {
+                    dailyCheckinButton.textContent = 'Checked In!';
+                    dailyCheckinButton.disabled = true;
+                    dailyCheckinButton.classList.remove('btn-success');
+                    dailyCheckinButton.classList.add('btn-secondary');
+                } else {
+                    dailyCheckinButton.innerHTML = '<span class="material-icons">event_available</span> Daily Check-in';
+                    dailyCheckinButton.disabled = false;
+                    dailyCheckinButton.classList.remove('btn-secondary');
+                    dailyCheckinButton.classList.add('btn-success');
+                }
+            }
         }
 
-        // Update wallet connection UI
+        // Update wallet UI elements
         function updateWalletUI() {
             const connectedWallet = tonConnectUI.account;
-            const walletStatus = document.getElementById('walletStatus');
-            const walletControls = document.getElementById('walletControls');
-            const connectWalletButton = document.getElementById('connectWalletButton');
-            const withdrawButton = document.getElementById('withdrawButton');
-            const withdrawTonAddress = document.getElementById('withdrawTonAddress');
-            const withdrawSubmitButton = document.getElementById('withdrawSubmitButton');
+            const walletStatusWrapper = document.getElementById('walletStatusWrapper');
+            const profileWalletControls = document.getElementById('profileWalletControls');
+            const withdrawModalWalletInfo = document.getElementById('withdrawModalWalletInfo');
+            const requestWithdrawButton = document.getElementById('requestWithdrawButton');
+            const withdrawAmountInput = document.getElementById('withdrawAmount');
+            const tonAddressInput = document.getElementById('tonAddress');
+            const connectWalletAddTaskWrapper = document.getElementById('connectWalletButtonAddTaskWrapper');
 
+            // Update status display
+            let walletStatusHtml = '';
             if (connectedWallet) {
-                walletStatus.innerHTML = '<span style="color: var(--success);">Connected: ' + 
-                    connectedWallet.address.slice(0, 6) + '...' + connectedWallet.address.slice(-6) + '</span>';
-                
-                walletControls.innerHTML = `
-                    <button class="btn btn-danger" onclick="disconnectWallet()">
-                        <span class="material-icons">power_settings_new</span>
-                        Disconnect
-                    </button>
+                walletStatusHtml = `
+                    <div class="wallet-status-info wallet-connected">
+                        <span class="material-icons">account_balance_wallet</span>
+                        Connected: ${connectedWallet.address.slice(0, 6)}...${connectedWallet.address.slice(-6)}
+                    </div>
                 `;
-
-                connectWalletButton.innerHTML = `
-                    <span style="color: var(--success);">✓ Wallet Connected</span>
-                `;
-
-                withdrawButton.disabled = false;
-                withdrawTonAddress.value = connectedWallet.address;
-                withdrawSubmitButton.disabled = userTonBalance < MIN_WITHDRAW_TON;
-
             } else {
-                walletStatus.innerHTML = '<span style="color: var(--danger);">Not Connected</span>';
+                walletStatusHtml = `
+                    <div class="wallet-status-info wallet-disconnected">
+                        <span class="material-icons">account_balance_wallet</span>
+                        Wallet not connected.
+                    </div>
+                `;
+            }
+
+            if (walletStatusWrapper) walletStatusWrapper.innerHTML = walletStatusHtml;
+            if (withdrawModalWalletInfo) withdrawModalWalletInfo.innerHTML = walletStatusHtml;
+
+            // Handle wallet buttons in profile section
+            profileWalletControls.innerHTML = '';
+            if (connectedWallet) {
+                const disconnectButton = document.createElement('button');
+                disconnectButton.className = 'btn btn-danger';
+                disconnectButton.innerHTML = '<span class="material-icons">power_settings_new</span> Disconnect Wallet';
+                disconnectButton.onclick = async () => {
+                    await tonConnectUI.disconnect();
+                    showAlert('Wallet disconnected successfully!', 'success');
+                };
+                profileWalletControls.appendChild(disconnectButton);
+            } else {
+                const connectButton = document.createElement('button');
+                connectButton.className = 'btn btn-primary';
+                connectButton.innerHTML = '<span class="material-icons">account_balance_wallet</span> Connect Wallet';
+                connectButton.onclick = async () => {
+                    await tonConnectUI.openModal();
+                };
+                profileWalletControls.appendChild(connectButton);
+            }
+
+            // Handle wallet button in add task section
+            if (connectWalletAddTaskWrapper) {
+                connectWalletAddTaskWrapper.innerHTML = '';
+                if (!connectedWallet) {
+                    const connectButton = document.createElement('button');
+                    connectButton.className = 'btn btn-primary';
+                    connectButton.innerHTML = '<span class="material-icons">account_balance_wallet</span> Connect Wallet to Create Task';
+                    connectButton.style.width = '100%';
+                    connectButton.onclick = async () => {
+                        await tonConnectUI.openModal();
+                    };
+                    connectWalletAddTaskWrapper.appendChild(connectButton);
+                }
+            }
+
+            // Withdrawal modal specific logic
+            if (connectedWallet) {
+                tonAddressInput.value = connectedWallet.address;
+                requestWithdrawButton.disabled = false;
+                withdrawAmountInput.disabled = false;
+            } else {
+                tonAddressInput.value = '';
+                requestWithdrawButton.disabled = true;
+                withdrawAmountInput.disabled = true;
+
+                if (!withdrawModalWalletInfo.querySelector('.btn-primary')) {
+                    const connectButton = document.createElement('button');
+                    connectButton.className = 'btn btn-primary';
+                    connectButton.innerHTML = '<span class="material-icons">account_balance_wallet</span> Connect Wallet to Withdraw';
+                    connectButton.style.width = '100%';
+                    connectButton.onclick = async () => {
+                        await tonConnectUI.openModal();
+                    };
+                    withdrawModalWalletInfo.appendChild(connectButton);
+                }
+            }
+        }
+
+        // Swap functionality
+        function updateSwapInputs() {
+            const swapRate = document.getElementById('swapRate');
+            swapRate.textContent = `100 points = ${(100 * POINTS_TO_TON_RATE).toFixed(8)} TON`;
+            
+            // Update swap input event listeners
+            document.getElementById('swapPointsInput').oninput = function() {
+                if (swapMode === 'pointsToTon') {
+                    const points = parseFloat(this.value) || 0;
+                    const tonAmount = points * POINTS_TO_TON_RATE;
+                    document.getElementById('swapTonInput').value = tonAmount.toFixed(8);
+                }
+            };
+
+            document.getElementById('swapTonInput').oninput = function() {
+                if (swapMode === 'tonToPoints') {
+                    const ton = parseFloat(this.value) || 0;
+                    const pointsAmount = ton / POINTS_TO_TON_RATE;
+                    document.getElementById('swapPointsInput').value = Math.floor(pointsAmount);
+                }
+            };
+        }
+
+        function swapDirection() {
+            swapMode = swapMode === 'pointsToTon' ? 'tonToPoints' : 'pointsToTon';
+            
+            // Clear inputs
+            document.getElementById('swapPointsInput').value = '';
+            document.getElementById('swapTonInput').value = '';
+            
+            // Update labels and placeholders based on mode
+            const pointsLabel = document.querySelector('.swap-container .swap-input-group:first-child .swap-label');
+            const tonLabel = document.querySelector('.swap-container .swap-input-group:last-child .swap-label');
+            const pointsInput = document.getElementById('swapPointsInput');
+            const tonInput = document.getElementById('swapTonInput');
+            
+            if (swapMode === 'pointsToTon') {
+                pointsLabel.textContent = 'From Points';
+                tonLabel.textContent = 'To TON';
+                pointsInput.disabled = false;
+                tonInput.disabled = true;
+            } else {
+                pointsLabel.textContent = 'To Points';
+                tonLabel.textContent = 'From TON';
+                pointsInput.disabled = true;
+                tonInput.disabled = false;
+            }
+            
+            showAlert(`Swap direction changed to: ${swapMode === 'pointsToTon' ? 'Points → TON' : 'TON → Points'}`, 'success');
+        }
+
+        async function executeSwap() {
+            const pointsAmount = parseFloat(document.getElementById('swapPointsInput').value) || 0;
+            const tonAmount = parseFloat(document.getElementById('swapTonInput').value) || 0;
+            
+            if (pointsAmount <= 0 && tonAmount <= 0) {
+                showAlert('Please enter a valid amount to swap.', 'danger');
+                return;
+            }
+            
+            const userRef = database.ref('users/' + currentUser.id);
+            
+            if (swapMode === 'pointsToTon') {
+                if (pointsAmount > userBalance) {
+                    showAlert('Insufficient points balance!', 'danger');
+                    return;
+                }
                 
-                walletControls.innerHTML = `
-                    <button class="btn btn-primary" onclick="connectWallet()">
-                        <span class="material-icons">account_balance_wallet</span>
-                        Connect Wallet
-                    </button>
-                `;
-
-                connectWalletButton.innerHTML = `
-                    <button class="btn btn-primary" onclick="connectWallet()">
-                        <span class="material-icons">account_balance_wallet</span>
-                        Connect Wallet
-                    </button>
-                `;
-
-                withdrawButton.disabled = true;
-                withdrawTonAddress.value = '';
-                withdrawSubmitButton.disabled = true;
-            }
-        }
-
-        // Wallet connection functions
-        async function connectWallet() {
-            try {
-                await tonConnectUI.openModal();
-            } catch (error) {
-                showAlert('Error connecting wallet: ' + error.message, 'danger');
-            }
-        }
-
-        async function disconnectWallet() {
-            try {
-                await tonConnectUI.disconnect();
-                showAlert('Wallet disconnected successfully!', 'success');
-            } catch (error) {
-                showAlert('Error disconnecting wallet: ' + error.message, 'danger');
-            }
-        }
-
-        // Swap functions
-        function calculatePointsToTon() {
-            const points = parseInt(document.getElementById('pointsToTon').value) || 0;
-            const ton = points / POINTS_TO_TON_RATE * 0.01;
-            document.getElementById('tonFromPoints').value = ton.toFixed(8);
-            
-            const swapBtn = document.getElementById('swapPointsBtn');
-            swapBtn.disabled = points < 1000 || points > userPointBalance;
-        }
-
-        function calculateTonToPoints() {
-            const ton = parseFloat(document.getElementById('tonToPoints').value) || 0;
-            const points = ton * TON_TO_POINTS_RATE;
-            document.getElementById('pointsFromTon').value = Math.floor(points);
-            
-            const swapBtn = document.getElementById('swapTonBtn');
-            swapBtn.disabled = ton < 0.01 || ton > userTonBalance;
-        }
-
-        async function swapPointsToTon() {
-            const points = parseInt(document.getElementById('pointsToTon').value);
-            const ton = points / POINTS_TO_TON_RATE * 0.01;
-
-            if (points < 1000 || points > userPointBalance) {
-                showAlert('Invalid points amount!', 'danger');
-                return;
-            }
-
-            try {
-                const userRef = database.ref('users/' + currentUser.id);
+                if (pointsAmount < 100) {
+                    showAlert('Minimum swap amount is 100 points.', 'danger');
+                    return;
+                }
+                
+                // Execute points to TON swap
                 await userRef.transaction((userData) => {
                     if (userData) {
-                        userData.pointBalance = (userData.pointBalance || 0) - points;
-                        userData.tonBalance = (userData.tonBalance || 0) + ton;
+                        userData.balance = (userData.balance || 0) - pointsAmount;
+                        userData.tonBalance = (userData.tonBalance || 0) + tonAmount;
                     }
                     return userData;
                 });
-
-                document.getElementById('pointsToTon').value = '';
-                document.getElementById('tonFromPoints').value = '';
-                showAlert(`Successfully swapped ${points} points for ${ton.toFixed(8)} TON!`, 'success');
-
-            } catch (error) {
-                showAlert('Error during swap: ' + error.message, 'danger');
-            }
-        }
-
-        async function swapTonToPoints() {
-            const ton = parseFloat(document.getElementById('tonToPoints').value);
-            const points = Math.floor(ton * TON_TO_POINTS_RATE);
-
-            if (ton < 0.01 || ton > userTonBalance) {
-                showAlert('Invalid TON amount!', 'danger');
-                return;
-            }
-
-            try {
-                const userRef = database.ref('users/' + currentUser.id);
+                
+                // Record swap history
+                await database.ref('swapHistory').push({
+                    userId: currentUser.id,
+                    username: currentUser.username,
+                    type: 'pointsToTon',
+                    pointsAmount: pointsAmount,
+                    tonAmount: tonAmount,
+                    timestamp: Date.now()
+                });
+                
+                showAlert(`Successfully swapped ${formatNumber(pointsAmount)} points for ${tonAmount.toFixed(8)} TON!`, 'success');
+                
+            } else {
+                if (tonAmount > userTonBalance) {
+                    showAlert('Insufficient TON balance!', 'danger');
+                    return;
+                }
+                
+                if (tonAmount < 0.00000001) {
+                    showAlert('Minimum swap amount is 0.00000001 TON.', 'danger');
+                    return;
+                }
+                
+                // Execute TON to points swap
                 await userRef.transaction((userData) => {
                     if (userData) {
-                        userData.tonBalance = (userData.tonBalance || 0) - ton;
-                        userData.pointBalance = (userData.pointBalance || 0) + points;
+                        userData.tonBalance = Math.max(0, (userData.tonBalance || 0) - tonAmount);
+                        userData.balance = (userData.balance || 0) + pointsAmount;
+                        userData.totalEarned = (userData.totalEarned || 0) + pointsAmount;
                     }
                     return userData;
                 });
-
-                document.getElementById('tonToPoints').value = '';
-                document.getElementById('pointsFromTon').value = '';
-                showAlert(`Successfully swapped ${ton.toFixed(8)} TON for ${points} points!`, 'success');
-
-            } catch (error) {
-                showAlert('Error during swap: ' + error.message, 'danger');
+                
+                // Record swap history
+                await database.ref('swapHistory').push({
+                    userId: currentUser.id,
+                    username: currentUser.username,
+                    type: 'tonToPoints',
+                    pointsAmount: pointsAmount,
+                    tonAmount: tonAmount,
+                    timestamp: Date.now()
+                });
+                
+                showAlert(`Successfully swapped ${tonAmount.toFixed(8)} TON for ${formatNumber(pointsAmount)} points!`, 'success');
             }
+            
+            // Clear inputs
+            document.getElementById('swapPointsInput').value = '';
+            document.getElementById('swapTonInput').value = '';
         }
 
-        // Load available tasks
+        // Load tasks from Firebase
         function loadTasks() {
             const availableTasksGrid = document.getElementById('availableTasksGrid');
+            const completedTasksGrid = document.getElementById('completedTasksGrid');
 
             database.ref('tasks').on('value', (snapshot) => {
                 availableTasksGrid.innerHTML = '';
-                const tasks = snapshot.val();
+                completedTasksGrid.innerHTML = '';
 
+                const tasks = snapshot.val();
                 if (!tasks) {
                     availableTasksGrid.innerHTML = '<p style="text-align: center; color: var(--text-light);">No tasks available</p>';
                     return;
@@ -1410,11 +1796,17 @@
 
                     Object.keys(tasks).forEach(taskId => {
                         const task = tasks[taskId];
-                        if (!task || !task.title || task.status !== 'active') return;
+
+                        if (!task || !task.title || !task.description || !task.url || task.status !== 'active') {
+                            return;
+                        }
 
                         const isCompleted = userTasksData[taskId] && userTasksData[taskId].completed === true;
-                        if (!isCompleted) {
-                            const taskCard = createTaskCard(taskId, task);
+                        const taskCard = createTaskCard(taskId, task, isCompleted);
+
+                        if (isCompleted) {
+                            completedTasksGrid.appendChild(taskCard);
+                        } else {
                             availableTasksGrid.appendChild(taskCard);
                         }
                     });
@@ -1422,26 +1814,32 @@
                     if (availableTasksGrid.children.length === 0) {
                         availableTasksGrid.innerHTML = '<p style="text-align: center; color: var(--text-light);">No available tasks</p>';
                     }
+                    if (completedTasksGrid.children.length === 0) {
+                        completedTasksGrid.innerHTML = '<p style="text-align: center; color: var(--text-light);">No completed tasks</p>';
+                    }
                 });
             });
         }
 
         // Create task card
-        function createTaskCard(taskId, task) {
+        function createTaskCard(taskId, task, isCompleted) {
             const card = document.createElement('div');
-            card.className = 'card';
-            card.style.margin = '0 0 15px 0';
+            card.className = 'task-card';
+
+            const statusClass = isCompleted ? 'btn-success' : 'btn-primary';
+            const statusText = isCompleted ? 'Completed' : 'Start Task';
+            const statusIcon = isCompleted ? 'check_circle' : 'play_arrow';
 
             card.innerHTML = `
-                <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px;">
-                    <div style="font-weight: 700; color: var(--text);">${task.title}</div>
-                    <div style="background: linear-gradient(135deg, var(--primary), var(--primary-light)); color: white; padding: 6px 12px; border-radius: 20px; font-size: 12px; font-weight: 700;">${task.reward || 100} points</div>
+                <div class="task-header">
+                    <div class="task-title">${task.title}</div>
+                    <div class="task-reward">${task.reward || 100} points</div>
                 </div>
-                <div style="color: var(--text-light); margin-bottom: 12px; line-height: 1.5;">${task.description}</div>
-                <div style="text-align: right;">
-                    <button class="btn btn-primary" onclick="startTask('${taskId}', '${task.url}', ${task.reward || 100})">
-                        <span class="material-icons">play_arrow</span>
-                        Start Task
+                <div class="task-description">${task.description}</div>
+                <div class="task-actions">
+                    <button class="btn ${statusClass}" ${isCompleted ? 'disabled' : `onclick="startTask('${taskId}', '${task.url}', ${task.reward || 100})"`}>
+                        <span class="material-icons">${statusIcon}</span>
+                        ${statusText}
                     </button>
                 </div>
             `;
@@ -1452,40 +1850,114 @@
         // Start task
         function startTask(taskId, url, reward) {
             window.open(url, '_blank');
-            
-            setTimeout(async () => {
-                try {
-                    const userRef = database.ref('users/' + currentUser.id);
-                    const userTaskRef = database.ref('userTasks/' + currentUser.id + '/' + taskId);
+            document.getElementById('taskModal').style.display = 'block';
 
-                    const existingUserTaskSnapshot = await userTaskRef.once('value');
-                    if (existingUserTaskSnapshot.exists() && existingUserTaskSnapshot.val().completed === true) {
-                        showAlert('This task has already been completed.', 'warning');
-                        return;
-                    }
+            let countdown = 5;
+            const countdownElement = document.getElementById('taskCountdown');
+            const progressElement = document.getElementById('taskProgress');
 
-                    await userRef.transaction((userData) => {
-                        if (userData) {
-                            userData.pointBalance = (userData.pointBalance || 0) + reward;
-                            userData.totalEarned = (userData.totalEarned || 0) + reward;
-                            userData.tasksCompleted = (userData.tasksCompleted || 0) + 1;
-                            userData.spins = (userData.spins || 0) + SPIN_REWARD;
-                        }
-                        return userData;
-                    });
+            progressElement.style.width = '0%';
 
-                    await userTaskRef.set({
-                        completedAt: Date.now(),
-                        reward: reward,
-                        completed: true
-                    });
+            const timer = setInterval(() => {
+                countdown--;
+                countdownElement.textContent = countdown;
+                progressElement.style.width = ((5 - countdown) / 5) * 100 + '%';
 
-                    showAlert(`Task completed! You earned ${reward} points and ${SPIN_REWARD} spin!`, 'success');
-
-                } catch (error) {
-                    showAlert('Error completing task: ' + error.message, 'danger');
+                if (countdown <= 0) {
+                    clearInterval(timer);
+                    completeTask(taskId, reward);
                 }
-            }, 5000);
+            }, 1000);
+        }
+
+        // Complete task
+        async function completeTask(taskId, reward) {
+            try {
+                const userRef = database.ref('users/' + currentUser.id);
+                const userTaskRef = database.ref('userTasks/' + currentUser.id + '/' + taskId);
+
+                const existingUserTaskSnapshot = await userTaskRef.once('value');
+                if (existingUserTaskSnapshot.exists() && existingUserTaskSnapshot.val().completed === true) {
+                    closeModal('taskModal');
+                    showAlert('This task has already been completed.', 'warning');
+                    return;
+                }
+
+                await userRef.transaction((userData) => {
+                    if (userData) {
+                        userData.balance = (userData.balance || 0) + reward;
+                        userData.totalEarned = (userData.totalEarned || 0) + reward;
+                        userData.tasksCompleted = (userData.tasksCompleted || 0) + 1;
+                        userData.spins = (userData.spins || 0) + TASK_SPIN_REWARD;
+                    }
+                    return userData;
+                });
+
+                await userTaskRef.set({
+                    completedAt: Date.now(),
+                    reward: reward,
+                    completed: true
+                });
+
+                closeModal('taskModal');
+                showAlert(`Task completed! You earned ${reward} points and ${TASK_SPIN_REWARD} spin!`, 'success');
+            } catch (error) {
+                console.error('Error completing task:', error);
+                showAlert('Error completing task. Please try again.', 'danger');
+                closeModal('taskModal');
+            }
+        }
+
+        // Apply lucky code
+        async function applyLuckyCode() {
+            const code = document.getElementById('luckyCodeInput').value.trim().toUpperCase();
+            if (!code) {
+                showAlert('Please enter a lucky code', 'danger');
+                return;
+            }
+
+            try {
+                const codesRef = database.ref('luckyCodes');
+                const snapshot = await codesRef.once('value');
+                const codes = snapshot.val();
+
+                if (!codes) {
+                    showAlert('No lucky codes available.', 'danger');
+                    return;
+                }
+
+                let foundCode = null;
+                let codeKey = null;
+
+                Object.keys(codes).forEach(key => {
+                    if (codes[key].code === code && !codes[key].used && codes[key].expiresAt > Date.now()) {
+                        foundCode = codes[key];
+                        codeKey = key;
+                    }
+                });
+
+                if (!foundCode) {
+                    showAlert('Invalid, expired, or already used lucky code', 'danger');
+                    return;
+                }
+
+                const userRef = database.ref('users/' + currentUser.id);
+                await userRef.transaction((userData) => {
+                    if (userData) {
+                        userData.balance = (userData.balance || 0) + foundCode.reward;
+                        userData.totalEarned = (userData.totalEarned || 0) + foundCode.reward;
+                    }
+                    return userData;
+                });
+
+                await database.ref('luckyCodes/' + codeKey).update({ used: true });
+
+                document.getElementById('luckyCodeInput').value = '';
+                showAlert(`Lucky code applied! You earned ${foundCode.reward} points!`, 'success');
+            } catch (error) {
+                console.error('Error applying lucky code:', error);
+                showAlert('Error applying lucky code. Please try again.', 'danger');
+            }
         }
 
         // Spin wheel
@@ -1519,7 +1991,7 @@
                 const userRef = database.ref('users/' + currentUser.id);
                 await userRef.transaction((userData) => {
                     if (userData) {
-                        userData.pointBalance = (userData.pointBalance || 0) + reward;
+                        userData.balance = (userData.balance || 0) + reward;
                         userData.totalEarned = (userData.totalEarned || 0) + reward;
                         userData.spins = Math.max(0, (userData.spins || 0) - 1);
                     }
@@ -1529,7 +2001,6 @@
                 spinButton.disabled = false;
                 wheel.style.transition = '';
                 showAlert(`Congratulations! You won ${reward} points!`, 'success');
-
             }, 3000);
         }
 
@@ -1540,26 +2011,37 @@
                 return;
             }
 
+            if (Date.now() - lastAdCompletionTime < 30000) {
+                showAlert('Please wait a moment before watching another ad.', 'warning');
+                return;
+            }
+
             try {
+                // Simulate ad watching
+                console.log("Simulating ad watch...");
+                await new Promise(resolve => setTimeout(resolve, 3000));
+                console.log("Simulated ad finished.");
+
                 const userRef = database.ref('users/' + currentUser.id);
                 await userRef.transaction((userData) => {
                     if (userData) {
-                        userData.pointBalance = (userData.pointBalance || 0) + AD_REWARD;
-                        userData.totalEarned = (userData.totalEarned || 0) + AD_REWARD;
+                        userData.balance = (userData.balance || 0) + AD_REWARD_POINTS;
+                        userData.totalEarned = (userData.totalEarned || 0) + AD_REWARD_POINTS;
                         userData.adsWatched = (userData.adsWatched || 0) + 1;
                     }
                     return userData;
                 });
 
                 adsWatchedToday++;
-                showAlert(`Ad watched! You earned ${AD_REWARD} points!`, 'success');
-
+                lastAdCompletionTime = Date.now();
+                showAlert(`Ad watched! You earned ${AD_REWARD_POINTS} points!`, 'success');
             } catch (error) {
-                showAlert('Error watching ad: ' + error.message, 'danger');
+                console.error('Error watching ad:', error);
+                showAlert('Error loading ad. Please try again.', 'danger');
             }
         }
 
-        // Daily checkin
+        // Daily check-in
         async function dailyCheckin() {
             const today = new Date().toDateString();
             const userRef = database.ref('users/' + currentUser.id);
@@ -1571,52 +2053,187 @@
                 return;
             }
 
+            await new Promise(resolve => setTimeout(resolve, 1000));
+
             await userRef.update({
-                pointBalance: (userData.pointBalance || 0) + CHECKIN_REWARD,
-                totalEarned: (userData.totalEarned || 0) + CHECKIN_REWARD,
+                balance: (userData.balance || 0) + CHECKIN_REWARD_POINTS,
+                totalEarned: (userData.totalEarned || 0) + CHECKIN_REWARD_POINTS,
                 lastCheckin: today
             });
 
-            showAlert(`Daily check-in completed! You earned ${CHECKIN_REWARD} points!`, 'success');
+            showAlert(`Daily check-in completed! You earned ${CHECKIN_REWARD_POINTS} points!`, 'success');
+
+            const dailyCheckinButton = document.querySelector('.btn-success[onclick="dailyCheckin()"]');
+            if (dailyCheckinButton) {
+                dailyCheckinButton.textContent = 'Checked In!';
+                dailyCheckinButton.disabled = true;
+                dailyCheckinButton.classList.remove('btn-success');
+                dailyCheckinButton.classList.add('btn-secondary');
+            }
         }
 
-        // Apply lucky code
-        async function applyLuckyCode() {
-            const code = document.getElementById('luckyCodeInput').value.trim().toUpperCase();
-            if (!code) {
-                showAlert('Please enter a lucky code', 'danger');
+        // Add task form submission
+        document.getElementById('addTaskForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            if (!tonConnectUI.account) {
+                showAlert('Please connect your TON wallet first to create a task.', 'danger');
+                document.getElementById('connectWalletButtonAddTaskWrapper').scrollIntoView({ behavior: 'smooth' });
                 return;
             }
 
-            // Simulate lucky code check
-            const codeRewards = {
-                'WELCOME100': 100,
-                'BONUS500': 500,
-                'MEGA1000': 1000
-            };
+            const title = document.getElementById('newTaskTitle').value;
+            const description = document.getElementById('newTaskDescription').value;
+            const url = document.getElementById('newTaskUrl').value;
+            const impressions = parseInt(document.getElementById('taskImpressions').value);
+            const cost = (impressions / IMPRESSIONS_TO_TON_RATE) * 0.1;
 
-            if (codeRewards[code]) {
-                const reward = codeRewards[code];
-                const userRef = database.ref('users/' + currentUser.id);
-                
-                await userRef.transaction((userData) => {
-                    if (userData) {
-                        userData.pointBalance = (userData.pointBalance || 0) + reward;
-                        userData.totalEarned = (userData.totalEarned || 0) + reward;
+            if (isNaN(impressions) || impressions < 100 || impressions > 5000) {
+                showAlert('Please enter a valid number of impressions between 100 and 5000.', 'danger');
+                return;
+            }
+
+            if (!title || !description || !url) {
+                showAlert('Please fill in all task details.', 'danger');
+                return;
+            }
+
+            const createTaskButton = document.getElementById('createTaskButton');
+            createTaskButton.disabled = true;
+            createTaskButton.innerHTML = '<div class="loading"></div> Processing...';
+
+            try {
+                const transaction = {
+                    validUntil: Math.floor(Date.now() / 1000) + 60,
+                    messages: [{
+                        address: "UQDLsNfQBwWXD9aaNxNS3udGo-9o8ybrlKmmbI5gjjRfs17M",
+                        amount: Math.floor(cost * 1e9).toString()
+                    }]
+                };
+
+                const result = await tonConnectUI.sendTransaction(transaction);
+
+                if (result && result.boc) {
+                    const taskData = {
+                        title,
+                        description,
+                        url,
+                        reward: 100,
+                        impressions,
+                        remainingImpressions: impressions,
+                        createdBy: currentUser.id,
+                        createdAt: Date.now(),
+                        status: 'active',
+                        transactionHash: result.boc
+                    };
+
+                    await database.ref('tasks').push(taskData);
+
+                    document.getElementById('addTaskForm').reset();
+                    document.getElementById('totalCost').textContent = '0';
+                    showAlert('Task created successfully! Transaction confirmed.', 'success');
+                    loadUserTasks();
+                } else {
+                    showAlert('Transaction failed or was cancelled. Task not created.', 'danger');
+                }
+            } catch (error) {
+                console.error('Error creating task:', error);
+                if (error.message && error.message.includes('User rejects')) {
+                    showAlert('Transaction was cancelled by user.', 'warning');
+                } else {
+                    showAlert('Error creating task. Please check your wallet connection and try again.', 'danger');
+                }
+            } finally {
+                createTaskButton.disabled = false;
+                createTaskButton.innerHTML = '<span class="material-icons">payment</span> Create & Pay';
+            }
+        });
+
+        // Update total cost display
+        document.getElementById('taskImpressions').addEventListener('input', (e) => {
+            const impressions = parseInt(e.target.value) || 0;
+            const cost = (impressions / IMPRESSIONS_TO_TON_RATE) * 0.1;
+            document.getElementById('totalCost').textContent = cost.toFixed(3);
+        });
+
+        // Load user tasks
+        function loadUserTasks() {
+            if (!currentUser) return;
+
+            const myTasksGrid = document.getElementById('myTasksGrid');
+
+            database.ref('tasks').orderByChild('createdBy').equalTo(currentUser.id).on('value', (snapshot) => {
+                myTasksGrid.innerHTML = '';
+                const tasks = snapshot.val();
+
+                if (!tasks) {
+                    myTasksGrid.innerHTML = '<p style="text-align: center; color: var(--text-light);">No tasks created by you yet.</p>';
+                    return;
+                }
+
+                Object.keys(tasks).forEach(taskId => {
+                    const task = tasks[taskId];
+
+                    if (!task || !task.title || !task.description || !task.url) {
+                        return;
                     }
-                    return userData;
-                });
 
-                document.getElementById('luckyCodeInput').value = '';
-                showAlert(`Lucky code applied! You earned ${reward} points!`, 'success');
-            } else {
-                showAlert('Invalid lucky code', 'danger');
+                    const taskCard = createUserTaskCard(taskId, task);
+                    myTasksGrid.appendChild(taskCard);
+                });
+            });
+        }
+
+        // Create user task card
+        function createUserTaskCard(taskId, task) {
+            const card = document.createElement('div');
+            card.className = 'task-card';
+
+            const isTaskCompleted = task.remainingImpressions <= 0;
+            const progressPercentage = (task.impressions > 0) ? 
+                ((task.impressions - (task.remainingImpressions || task.impressions)) / task.impressions) * 100 : 0;
+
+            card.innerHTML = `
+                <div class="task-header">
+                    <div class="task-title">${task.title}</div>
+                    <div class="task-reward">${task.remainingImpressions || 0}/${task.impressions}</div>
+                </div>
+                <div class="task-description">${task.description}</div>
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: ${progressPercentage}%"></div>
+                </div>
+                <div class="task-actions">
+                    ${isTaskCompleted ? 
+                        `<button class="btn btn-danger" onclick="deleteUserTask('${taskId}')">
+                            <span class="material-icons">delete</span>
+                            Delete
+                        </button>` : 
+                        `<span style="color: var(--text-light); font-size: 12px;">Active</span>`
+                    }
+                </div>
+            `;
+
+            return card;
+        }
+
+        // Delete user task
+        async function deleteUserTask(taskId) {
+            if (confirm('Are you sure you want to delete this task? This action cannot be undone.')) {
+                try {
+                    await database.ref('tasks/' + taskId).remove();
+                    showAlert('Task deleted successfully!', 'success');
+                } catch (error) {
+                    console.error('Error deleting task:', error);
+                    showAlert('Error deleting task. Please try again.', 'danger');
+                }
             }
         }
 
         // Handle referral
         async function handleReferral(referrerId) {
-            if (!currentUser || currentUser.id.toString() === referrerId) return;
+            if (!currentUser || currentUser.id.toString() === referrerId) {
+                return;
+            }
 
             try {
                 const newUserRef = database.ref('users/' + currentUser.id);
@@ -1630,8 +2247,8 @@
                         await referrerUserRef.transaction((referrerData) => {
                             if (referrerData) {
                                 referrerData.referrals = (referrerData.referrals || 0) + 1;
-                                referrerData.pointBalance = (referrerData.pointBalance || 0) + REFERRAL_BONUS;
-                                referrerData.totalEarned = (referrerData.totalEarned || 0) + REFERRAL_BONUS;
+                                referrerData.balance = (referrerData.balance || 0) + REFERRAL_BONUS_POINTS;
+                                referrerData.totalEarned = (referrerData.totalEarned || 0) + REFERRAL_BONUS_POINTS;
                             }
                             return referrerData;
                         });
@@ -1648,6 +2265,7 @@
                 }
             } catch (error) {
                 console.error('Error handling referral:', error);
+                showAlert('Error processing referral link. Please try again.', 'danger');
             }
         }
 
@@ -1674,10 +2292,10 @@
 
                 referralIds.forEach(referredUserId => {
                     const referral = referrals[referredUserId];
-                    totalReferralEarnings += REFERRAL_BONUS;
+                    totalReferralEarnings += REFERRAL_BONUS_POINTS;
 
                     const referralItem = document.createElement('div');
-                    referralItem.style.cssText = 'display: flex; justify-content: space-between; align-items: center; padding: 12px; border-bottom: 1px solid var(--border); margin-bottom: 8px;';
+                    referralItem.className = 'history-item';
                     referralItem.innerHTML = `
                         <div>
                             <strong>${referral.username || 'User'}</strong>
@@ -1685,7 +2303,7 @@
                                 Joined: ${new Date(referral.joinedAt).toLocaleDateString()}
                             </div>
                         </div>
-                        <div style="padding: 4px 8px; border-radius: 12px; font-size: 12px; font-weight: 600; background: rgba(5, 150, 105, 0.2); color: var(--success);">Referred</div>
+                        <div class="history-status status-completed">Referred</div>
                     `;
                     referralList.appendChild(referralItem);
                 });
@@ -1694,45 +2312,63 @@
             });
         }
 
+        // Claim referral rewards
+        async function claimReferralRewards() {
+            showAlert('Referral rewards are automatically credited when a new user joins via your link!', 'success');
+        }
+
         // Copy referral link
         function copyReferralLink() {
-            const link = `https://t.me/earnfluxbot/app?startapp=ref_${currentUser.id}`;
+            const botUsername = 'adflareprobot';
+            const link = `https://t.me/${botUsername}/app?startapp=ref_${currentUser.id}`;
             navigator.clipboard.writeText(link).then(() => {
                 showAlert('Referral link copied to clipboard!', 'success');
-            }).catch(() => {
-                showAlert('Failed to copy link', 'danger');
+            }).catch(err => {
+                console.error('Failed to copy referral link: ', err);
+                showAlert('Failed to copy link. Please copy it manually.', 'danger');
             });
         }
 
         // Show withdraw modal
         function showWithdrawModal() {
-            if (!tonConnectUI.account) {
-                showAlert('Please connect your wallet first!', 'danger');
-                return;
-            }
-
-            if (userTonBalance < MIN_WITHDRAW_TON) {
-                showAlert(`Minimum withdrawal is ${MIN_WITHDRAW_TON} TON. Current balance: ${formatTon(userTonBalance)} TON`, 'warning');
+            if (!currentUser) {
+                showAlert('Please log in to withdraw TON.', 'danger');
                 return;
             }
 
             document.getElementById('withdrawModal').style.display = 'block';
+            updateWalletUI();
         }
 
-        // Handle withdrawal form
+        // Withdraw form submission
         document.getElementById('withdrawForm').addEventListener('submit', async (e) => {
             e.preventDefault();
 
-            const amount = parseFloat(document.getElementById('withdrawTonAmount').value);
-            const address = document.getElementById('withdrawTonAddress').value;
+            const tonAddress = document.getElementById('tonAddress').value.trim();
+            const amountTon = parseFloat(document.getElementById('withdrawAmount').value);
 
-            if (!address || !tonConnectUI.account) {
-                showAlert('Please connect your wallet first!', 'danger');
+            if (!tonAddress || (!tonAddress.startsWith('UQ') && !tonAddress.startsWith('EQ'))) {
+                showAlert('Please enter a valid TON address.', 'danger');
                 return;
             }
 
-            if (amount < MIN_WITHDRAW_TON || amount > userTonBalance) {
-                showAlert('Invalid withdrawal amount!', 'danger');
+            if (amountTon < MIN_WITHDRAW_TON) {
+                showAlert(`Minimum withdrawal amount is ${MIN_WITHDRAW_TON} TON!`, 'danger');
+                return;
+            }
+
+            if (amountTon > userTonBalance) {
+                showAlert('Insufficient TON balance!', 'danger');
+                return;
+            }
+
+            if (!tonConnectUI.account) {
+                showAlert('Please connect your TON wallet to proceed with withdrawal.', 'danger');
+                return;
+            }
+
+            if (tonAddress !== tonConnectUI.account.address) {
+                showAlert('The displayed TON address does not match your connected wallet. Please reconnect if necessary.', 'danger');
                 return;
             }
 
@@ -1740,8 +2376,8 @@
                 const withdrawalData = {
                     userId: currentUser.id,
                     username: currentUser.username,
-                    tonAddress: address,
-                    tonAmount: amount,
+                    tonAddress,
+                    amountTon,
                     status: 'pending',
                     createdAt: Date.now()
                 };
@@ -1751,36 +2387,125 @@
                 const userRef = database.ref('users/' + currentUser.id);
                 await userRef.transaction((userData) => {
                     if (userData) {
-                        userData.tonBalance = Math.max(0, (userData.tonBalance || 0) - amount);
+                        userData.tonBalance = Math.max(0, (userData.tonBalance || 0) - amountTon);
                     }
                     return userData;
                 });
 
                 closeModal('withdrawModal');
                 document.getElementById('withdrawForm').reset();
-                showAlert('Withdrawal request submitted successfully!', 'success');
-
+                showAlert('Withdrawal request submitted successfully! It will be processed shortly.', 'success');
+                loadWithdrawalHistory();
             } catch (error) {
-                showAlert('Error submitting withdrawal: ' + error.message, 'danger');
+                console.error('Error submitting withdrawal:', error);
+                showAlert('Error submitting withdrawal. Please try again.', 'danger');
             }
         });
 
-        // Navigation functions
+        // Load withdrawal history
+        function loadWithdrawalHistory() {
+            if (!currentUser) return;
+
+            const withdrawalHistory = document.getElementById('withdrawalHistoryContent');
+
+            database.ref('withdrawals')
+                .orderByChild('userId').equalTo(currentUser.id)
+                .limitToLast(10)
+                .on('value', (snapshot) => {
+                    withdrawalHistory.innerHTML = '';
+                    const withdrawals = snapshot.val();
+
+                    if (!withdrawals) {
+                        withdrawalHistory.innerHTML = '<p style="text-align: center; color: var(--text-light);">No withdrawal history yet.</p>';
+                        return;
+                    }
+
+                    const sortedWithdrawals = Object.entries(withdrawals)
+                        .sort(([, a], [, b]) => b.createdAt - a.createdAt);
+
+                    sortedWithdrawals.forEach(([key, withdrawal]) => {
+                        const historyItem = document.createElement('div');
+                        historyItem.className = 'history-item';
+
+                        const statusClass = `status-${withdrawal.status}`;
+                        const statusText = withdrawal.status.charAt(0).toUpperCase() + withdrawal.status.slice(1);
+
+                        historyItem.innerHTML = `
+                            <div>
+                                <strong>${withdrawal.amountTon.toFixed(8)} TON</strong>
+                                <div style="font-size: 12px; color: var(--text-light);">
+                                    ${new Date(withdrawal.createdAt).toLocaleDateString()}
+                                </div>
+                            </div>
+                            <div class="history-status ${statusClass}">${statusText}</div>
+                        `;
+                        withdrawalHistory.appendChild(historyItem);
+                    });
+                });
+        }
+
+        // Load swap history
+        function loadSwapHistory() {
+            if (!currentUser) return;
+
+            const swapHistory = document.getElementById('swapHistoryContent');
+
+            database.ref('swapHistory')
+                .orderByChild('userId').equalTo(currentUser.id)
+                .limitToLast(10)
+                .on('value', (snapshot) => {
+                    swapHistory.innerHTML = '';
+                    const swaps = snapshot.val();
+
+                    if (!swaps) {
+                        swapHistory.innerHTML = '<p style="text-align: center; color: var(--text-light);">No swap history yet.</p>';
+                        return;
+                    }
+
+                    const sortedSwaps = Object.entries(swaps)
+                        .sort(([, a], [, b]) => b.timestamp - a.timestamp);
+
+                    sortedSwaps.forEach(([key, swap]) => {
+                        const historyItem = document.createElement('div');
+                        historyItem.className = 'history-item';
+
+                        const swapText = swap.type === 'pointsToTon' ? 
+                            `${formatNumber(swap.pointsAmount)} Points → ${swap.tonAmount.toFixed(8)} TON` :
+                            `${swap.tonAmount.toFixed(8)} TON → ${formatNumber(swap.pointsAmount)} Points`;
+
+                        historyItem.innerHTML = `
+                            <div>
+                                <strong>${swapText}</strong>
+                                <div style="font-size: 12px; color: var(--text-light);">
+                                    ${new Date(swap.timestamp).toLocaleDateString()}
+                                </div>
+                            </div>
+                            <div class="history-status status-completed">Completed</div>
+                        `;
+                        swapHistory.appendChild(historyItem);
+                    });
+                });
+        }
+
+        // Show section
         function showSection(sectionName) {
+            // Hide all sections
             document.querySelectorAll('.section').forEach(section => {
                 section.style.display = 'none';
             });
 
+            // Show the requested section
             document.getElementById(sectionName + 'Section').style.display = 'block';
 
-            // Show/hide stats grid - only visible on home
-            const statsGrid = document.getElementById('statsGrid');
+            // Show/hide stats grid based on section
+            const statsGrid = document.getElementById('homeStatsGrid');
             if (sectionName === 'home') {
                 statsGrid.style.display = 'grid';
             } else {
                 statsGrid.style.display = 'none';
             }
 
+            // Update active state in bottom navigation
             document.querySelectorAll('.nav-item').forEach(item => {
                 item.classList.remove('active');
             });
@@ -1790,13 +2515,57 @@
                     item.classList.add('active');
                 }
             });
+
+            // Special handling for section transitions
+            if (sectionName === 'addTask' || sectionName === 'profile') {
+                updateWalletUI();
+            }
+
+            if (sectionName === 'profile') {
+                updateSwapInputs();
+            }
         }
 
-        // Utility functions
+        // Show task tab
+        function showTaskTab(event, tabName) {
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+
+            event.target.classList.add('active');
+            document.getElementById(tabName + 'Tasks').classList.add('active');
+        }
+
+        // Show history tab
+        function showHistoryTab(event, tabName) {
+            document.querySelectorAll('#profileSection .tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelectorAll('#profileSection .tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+
+            event.target.classList.add('active');
+            document.getElementById(tabName + 'History').classList.add('active');
+        }
+
+        // Close modal
         function closeModal(modalId) {
-            document.getElementById(modalId).style.display = 'none';
+            const modal = document.getElementById(modalId);
+            if (modal) {
+                modal.style.display = 'none';
+                
+                if (modalId === 'withdrawModal') {
+                    document.getElementById('withdrawForm').reset();
+                    document.getElementById('requestWithdrawButton').disabled = true;
+                }
+            }
         }
 
+        // Show alert
         function showAlert(message, type) {
             const alertContainer = document.querySelector('.container');
             const alert = document.createElement('div');
@@ -1805,7 +2574,6 @@
                 <span class="material-icons">${type === 'success' ? 'check_circle' : type === 'warning' ? 'warning' : 'error'}</span>
                 ${message}
             `;
-
             alertContainer.prepend(alert);
 
             setTimeout(() => {
@@ -1813,38 +2581,36 @@
             }, 5000);
         }
 
+        // Format numbers
         function formatNumber(num) {
-            if (num >= 1e12) return (num / 1e12).toFixed(1) + 'T';
-            if (num >= 1e9) return (num / 1e9).toFixed(1) + 'B';
-            if (num >= 1e6) return (num / 1e6).toFixed(1) + 'M';
-            if (num >= 1e3) return (num / 1e3).toFixed(1) + 'K';
+            if (num === null || num === undefined) return '0';
+            num = Number(num);
+            
+            if (num >= 1e12) {
+                return (num / 1e12).toFixed(1).replace(/\.0$/, '') + 'T';
+            } else if (num >= 1e9) {
+                return (num / 1e9).toFixed(1).replace(/\.0$/, '') + 'B';
+            } else if (num >= 1e6) {
+                return (num / 1e6).toFixed(1).replace(/\.0$/, '') + 'M';
+            } else if (num >= 1e3) {
+                return (num / 1e3).toFixed(1).replace(/\.0$/, '') + 'K';
+            }
             return num.toString();
         }
 
-        function formatTon(num) {
-            return parseFloat(num).toFixed(8);
-        }
-
+        // Theme toggle
         function toggleTheme() {
-            showAlert('Red Moon theme is active!', 'success');
+            showAlert('Red Moon theme is the current and only theme!', 'success');
         }
 
-        // Event listeners for swap inputs
-        document.getElementById('pointsToTon').addEventListener('input', calculatePointsToTon);
-        document.getElementById('tonToPoints').addEventListener('input', calculateTonToPoints);
-        
-        // Event listener for withdraw amount
-        document.getElementById('withdrawTonAmount').addEventListener('input', (e) => {
-            const amount = parseFloat(e.target.value) || 0;
-            const submitBtn = document.getElementById('withdrawSubmitButton');
-            submitBtn.disabled = amount < MIN_WITHDRAW_TON || amount > userTonBalance;
-        });
-
-        // Initialize app
+        // Initialize the application
         document.addEventListener('DOMContentLoaded', () => {
             initTelegramWebApp();
             showSection('home');
 
+            tonConnectUI.buttonRootId = 'ton-connect-button-container';
+
+            // Listen for wallet connection changes
             tonConnectUI.onStatusChange(wallet => {
                 updateWalletUI();
             });
@@ -1855,18 +2621,6 @@
             if (e.target.classList.contains('modal')) {
                 closeModal(e.target.id);
             }
-        });
-
-        // Task creation form
-        document.getElementById('addTaskForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            showAlert('Task creation feature coming soon!', 'warning');
-        });
-
-        document.getElementById('taskImpressions').addEventListener('input', (e) => {
-            const impressions = parseInt(e.target.value) || 0;
-            const cost = (impressions / 100) * 0.1;
-            document.getElementById('totalCost').textContent = cost.toFixed(3);
         });
     </script>
 </body>
