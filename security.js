@@ -48,15 +48,14 @@ document.addEventListener("DOMContentLoaded", async () => {
         🚫 You are banned from this app!
       </h2>
     `;
-    setTimeout(() => tg.close(), 3000);
-    return;
+    return; // ❌ এখানে থেমে যাবে → অন্য কিছু show হবে না
   }
 
   // ===================== MULTI-ACCOUNT DETECT =====================
   const found = accounts.find(acc => acc.deviceId === deviceId || acc.ip === ipAddress);
 
   if (found && found.userId !== user.id) {
-    // 🚨 Multi-account detected → Ban
+    // 🚨 Multi-account detected → Ban & Block
     bans.push(user.id);
     bans.push(deviceId);
     bans.push(ipAddress);
@@ -67,8 +66,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         🚫 Multi-account detected, you are banned!
       </h2>
     `;
-    setTimeout(() => tg.close(), 3000);
-    return;
+    return; // ❌ apps আর load হবে না
   }
 
   // ===================== SAFE USER → SHOW APP =====================
@@ -81,4 +79,6 @@ document.addEventListener("DOMContentLoaded", async () => {
       <p>IP: ${ipAddress}</p>
     </div>
   `;
+
+  // এখানেই তোমার mini apps এর main content থাকবে
 });
