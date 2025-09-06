@@ -1339,7 +1339,7 @@ box-shadow: 0 0 20px rgba(220, 38, 38, 0.5);
                     <input type="text" class="withdraw-form-input" id="tonAddress" readonly placeholder="Connect wallet to populate">
                 </div>
                 <div class="withdraw-form-group">
-                    <label class="withdraw-form-label">Amount (Points)</label>
+                    <label class="withdraw-form-label">Points to Convert & Withdraw</label>
                     <input type="number" class="withdraw-form-input" id="withdrawAmount" min="1000" required placeholder="Enter points to withdraw">
                     <div class="withdraw-info-text">
                         Minimum: <span id="minWithdrawPoints">1000</span> points | Rate: <span id="pointToTonRate"></span>
@@ -1348,7 +1348,7 @@ box-shadow: 0 0 20px rgba(220, 38, 38, 0.5);
                 <div class="withdraw-form-group">
                     <label class="withdraw-form-label">You will receive: <span id="tonReceive">0</span> TON</label>
                 </div>
-                <button type="submit" class="btn btn-primary" id="requestWithdrawButton">
+                <button type="submit" class="btn btn-primary" id="requestWithdrawButton" disabled>
                     <span class="material-icons">send</span>
                     Request Withdrawal
                 </button>
@@ -2322,16 +2322,22 @@ box-shadow: 0 0 20px rgba(220, 38, 38, 0.5);
             const amountInput = document.getElementById('withdrawAmount');
             const amountPoints = parseInt(amountInput.value) || 0;
             const tonReceiveElement = document.getElementById('tonReceive');
+            const requestWithdrawButton = document.getElementById('requestWithdrawButton');
 
             const calculatedTonAmount = amountPoints * POINTS_TO_TON_RATE_PER_POINT;
             tonReceiveElement.textContent = calculatedTonAmount.toFixed(8); // Display with 8 decimal places for TON
 
-            // Enable/disable button based on minimum TON requirement
-            const requestWithdrawButton = document.getElementById('requestWithdrawButton');
-            if (calculatedTonAmount < MIN_WITHDRAW_TON_REQUIRED || amountPoints === 0) {
+            // Enable/disable button based on minimum TON requirement and sufficient points
+            if (calculatedTonAmount < MIN_WITHDRAW_TON_REQUIRED || amountPoints === 0 || amountPoints > userBalance) {
                 requestWithdrawButton.disabled = true;
+                if (amountPoints > userBalance) {
+                    amountInput.style.borderColor = 'var(--danger)'; // Indicate insufficient balance
+                } else {
+                    amountInput.style.borderColor = 'var(--border)';
+                }
             } else {
                 requestWithdrawButton.disabled = false;
+                amountInput.style.borderColor = 'var(--primary)'; // Indicate valid input
             }
         }
 
