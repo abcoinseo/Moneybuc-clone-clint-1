@@ -28,7 +28,7 @@
 
             /* Neutrals */
             --background-dark: #0a0a0a; /* True Black for main backgrounds */
-            --surface-dark: #18181b;    /* Very Dark Gray (for cards, panels) */
+            --surface-dark: #181818;    /* Very Dark Gray (for cards, panels) */
             --surface-dark-alt: #27272a; /* Slightly Lighter Dark Gray (for borders, secondary elements) */
             --border-color: #3f3f46;    /* Muted Dark Gray (for subtle borders) */
 
@@ -1479,7 +1479,7 @@
                 </h2>
                 <div style="text-align: center;">
                     <p style="margin-bottom: 20px; color: var(--text-light);">
-                        Daily Limit: <span id="adsWatched">0</span>/50
+                        Daily Limit: <span id="adsWatched">0</span>/<span id="maxDailyAds">50</span>
                     </p>
                     <button class="btn btn-primary pulse glow" id="watchAdButton" onclick="watchAd()">
                         <span class="material-icons">play_arrow</span>
@@ -1489,8 +1489,11 @@
                         <div class="loading"></div>
                         <p>Loading advertisement...</p>
                     </div>
-                    <div id="adCountdown" class="countdown" style="display: none;"></div>
+                    <div class="countdown" id="adCountdown" style="display: none;"></div>
                     <p id="adCooldownMessage" style="margin-top: 15px; color: var(--text-light); font-size: 0.9rem;"></p>
+                    <p id="adNotWatchedMessage" style="margin-top: 15px; color: var(--warning); font-size: 0.9rem; display: none;">
+                        You must watch the full ad to receive a reward.
+                    </p>
                 </div>
             </div>
         </div>
@@ -1765,43 +1768,51 @@
         let adsWatchedToday = 0;
         let dailyCheckinDone = false;
         let lastAdCompletionTime = 0; // Timestamp when the last ad was *successfully completed*
-        let lastAdClaimAttemptTime = 0; // Timestamp when the "Watch Ad" button was last clicked to start an ad/claim
+        let lastAdInteractionStartTime = 0; // Timestamp when the "Watch Ad" button was clicked to start an ad interaction
         let swapMode = 'pointsToTon'; // 'pointsToTon' or 'tonToPoints'
         let isAdInteractionInProgress = false; // Controls if an ad is currently being processed (watched, cooldown, etc.)
         let selectedTaskCategory = 'normal';
         let currentReferralBonusRate = 0.20; // 20% referral bonus
         let adSessionTimer = null; // For countdown during ad claiming
         let postAdCooldownTimer = null; // For delay between ad claims
+        let adWatchTimer = null; // Timer for the ad watch duration
+        let adClaimCooldownTimer = null; // Timer for cooldown after ad watch
+        let adPostCooldownTimer = null; // Timer for cooldown before next ad can be started
 
         // Constants
         const REFERRAL_BONUS_POINTS_PER_EARNING = 0.20; // 20% of user's earning from tasks
         const MIN_WITHDRAW_TON = 0.1;
-        const POINTS_TO_TON_RATE = 0.00001; // Assuming 100 points = 0.00078 TON, so 1 point = 0.0000000078 TON
+        const POINTS_TO_TON_RATE = 0.0000078; // Adjusted rate for better exchange value: 100 points = 0.00078 TON
         const IMPRESSIONS_TO_TON_RATE = 0.0015; // 1.5 TON per 1000 impressions = 0.0015 TON per impression
         const AD_REWARD_POINTS = 10;
         const CHECKIN_REWARD_POINTS = 20;
         const TASK_SPIN_REWARD = 1;
         const TELEGRAM_BOT_TOKEN = '7829924006:AAFIOCnga8v6yOw08dCzvKDC8wS7Fuad_II'; // Replace with your actual bot token
         const AD_WATCH_DURATION = 15000; // 15 seconds for ad watch time
-        const AD_CLAIM_COOLDOWN = 300; // 3 seconds cooldown after ad completion before reward is claimable/button active
-        const POST_AD_COOLDOWN = 300;  // 3 seconds delay between claiming reward and being able to start the *next* ad
+        const AD_CLAIM_COOLDOWN = 3000;  // 3 seconds cooldown after ad completion before reward is claimable/button active
+        const POST_AD_COOLDOWN = 3000;   // 3 seconds delay between claiming reward and being able to start the *next* ad
         const MAX_DAILY_ADS = 50;
 
         // --- User Status Management ---
         async function checkAndApplyUserStatus() {
-            if (!currentUser) return;
+            if (!currentUser) return true; // Assume not banned if no user is logged in yet
 
             const userRef = database.ref('users/' + currentUser.id);
-            const snapshot = await userRef.once('value');
-            const userData = snapshot.val();
+            try {
+                const snapshot = await userRef.once('value');
+                const userData = snapshot.val();
 
-            if (userData && userData.status === 'banned') {
-                // User is banned, prevent all interactions
-                showAlert('You have been banned. Please contact support.', 'danger');
-                document.body.innerHTML = '<div class="container" style="text-align: center; padding-top: 100px;"><h1>Banned</h1><p>Your account has been banned. Please contact support for more information.</p></div>';
-                return false; // Indicate that user is banned
+                if (userData && userData.status === 'banned') {
+                    // User is banned, prevent all interactions
+                    showAlert('You have been banned. Please contact support.', 'danger');
+                    document.body.innerHTML = '<div class="container" style="text-align: center; padding-top: 100px;"><h1>Banned</h1><p>Your account has been banned. Please contact support for more information.</p></div>';
+                    return false; // Indicate that user is banned
+                }
+            } catch (error) {
+                console.error("Error checking user status:", error);
+                showAlert("Could not verify user status. Please check your connection.", "warning");
             }
-            return true; // User is not banned
+            return true; // User is not banned or status could not be verified (assume active for now)
         }
 
         // Initialize Telegram Web App
@@ -1894,21 +1905,31 @@
         async function initializeUser() {
             if (!currentUser) return;
 
-            // Basic IP detection (Client-side IP detection is unreliable, server-side is needed for robust multi-account detection)
-            // This is a placeholder for demonstration. A real implementation would involve sending IP to a server.
-            if (!currentUser.ipAddress) { // Assume IP is fetched or set elsewhere if available
-                // In a real app, you'd use a service or backend to get the IP
-                // For now, we'll simulate a random IP for demonstration purposes
-                // IMPORTANT: This is NOT a secure or reliable way to get IPs for banning
-                currentUser.ipAddress = `192.168.1.${Math.floor(Math.random() * 254) + 1}`; // Example dummy IP
-                console.warn("Simulated IP address:", currentUser.ipAddress);
+            // IP Address Detection - IMPORTANT CONSIDERATIONS
+            // Client-side IP detection is NOT reliable for security purposes (e.g., banning duplicate accounts).
+            // Proxies, VPNs, and NAT can mask the true IP.
+            // For robust IP-based detection, you MUST use a server-side solution.
+            // This code includes a placeholder for IP address but relies on a hypothetical server-side fetch or Telegram's initData.
+            // In a real scenario, you would get the IP from your backend after the user interacts or through a dedicated API.
+            
+            let userIpAddress = null;
+            try {
+                const ipResponse = await fetch('https://api.ipify.org?format=json');
+                const ipData = await ipResponse.json();
+                userIpAddress = ipData.ip;
+            } catch (error) {
+                console.warn("Could not fetch IP address client-side. Using a placeholder.");
+                userIpAddress = 'unknown'; // Fallback
             }
+            
+            currentUser.ipAddress = userIpAddress; // Store the detected IP
 
             const userRef = database.ref('users/' + currentUser.id);
             try {
                 const snapshot = await userRef.once('value');
 
                 if (!snapshot.exists()) {
+                    // New user creation
                     const userData = {
                         id: currentUser.id,
                         username: currentUser.username || '',
@@ -1924,11 +1945,27 @@
                         adsWatched: 0,
                         lastAdReset: Date.now(),
                         lastCheckin: null,
+                        lastAdCompletionTime: 0, // Store last ad completion time for cooldown
+                        lastAdInteractionStartTime: 0, // Store last ad interaction start time
                         createdAt: Date.now(),
                         status: 'active', // 'active', 'banned'
-                        ipAddress: currentUser.ipAddress // Store IP address
+                        ipAddress: currentUser.ipAddress, // Store IP address
+                        bannedReason: null
                     };
                     await userRef.set(userData);
+                } else {
+                    // Existing user: update IP if changed and check for ban
+                    const existingUserData = snapshot.val();
+                    if (existingUserData.ipAddress !== currentUser.ipAddress) {
+                        await userRef.update({ ipAddress: currentUser.ipAddress });
+                    }
+                    
+                    // Double-check ban status immediately after loading
+                    if (existingUserData.status === 'banned') {
+                        showAlert('Your account has been banned. Please contact support.', 'danger');
+                        document.body.innerHTML = '<div class="container" style="text-align: center; padding-top: 100px;"><h1>Banned</h1><p>Your account has been banned. Please contact support for more information.</p></div>';
+                        return;
+                    }
                 }
 
                 // Set up real-time listener
@@ -1947,8 +1984,10 @@
                         userSpins = userData.spins || 0;
                         adsWatchedToday = userData.adsWatched || 0;
                         dailyCheckinDone = userData.lastCheckin === new Date().toDateString();
+                        lastAdCompletionTime = userData.lastAdCompletionTime || 0;
+                        lastAdInteractionStartTime = userData.lastAdInteractionStartTime || 0;
 
-                        // Reset daily ad count if 24 hours have passed
+                        // Reset daily ad count if 24 hours have passed since last reset
                         if (Date.now() - (userData.lastAdReset || 0) > 24 * 60 * 60 * 1000) {
                             adsWatchedToday = 0;
                             userRef.update({
@@ -1990,6 +2029,7 @@
             document.getElementById('spinsAvailable').textContent = userData.spins || 0;
             document.getElementById('spinsCount').textContent = userData.spins || 0;
             document.getElementById('adsWatched').textContent = adsWatchedToday;
+            document.getElementById('maxDailyAds').textContent = MAX_DAILY_ADS;
             document.getElementById('userRefId').textContent = userData.id;
             
             document.getElementById('profilePointsBalance').textContent = formatNumber(userData.balance || 0);
@@ -2631,20 +2671,26 @@
             const adLoadingMessage = document.getElementById('adLoadingMessage');
             const adCountdown = document.getElementById('adCountdown');
             const adCooldownMessage = document.getElementById('adCooldownMessage');
+            const adNotWatchedMessage = document.getElementById('adNotWatchedMessage');
 
-            if (!watchAdButton || !adLoadingMessage || !adCountdown || !adCooldownMessage) return;
+            if (!watchAdButton || !adLoadingMessage || !adCountdown || !adCooldownMessage || !adNotWatchedMessage) return;
 
             const now = Date.now();
             const timeSinceLastAdCompletion = now - lastAdCompletionTime;
-            const timeSinceLastClaimAttempt = now - lastAdClaimAttemptTime;
+            const timeSinceLastAdInteractionStart = now - lastAdInteractionStartTime;
+            const timeSinceLastClaimStart = now - lastAdCompletionTime; // Assuming lastAdCompletionTime is when reward became claimable
 
-            if (window.adClaimTimer) clearInterval(window.adClaimTimer);
-            if (window.postAdCooldownTimer) clearInterval(window.postAdCooldownTimer);
+            // Clear existing timers to prevent multiple intervals
+            if (adWatchTimer) clearInterval(adWatchTimer);
+            if (adClaimCooldownTimer) clearInterval(adClaimCooldownTimer);
+            if (adPostCooldownTimer) clearInterval(adPostCooldownTimer);
 
+            // Reset UI states
             adLoadingMessage.style.display = 'none';
             adCountdown.style.display = 'none';
             adCooldownMessage.textContent = '';
             adCooldownMessage.style.display = 'none';
+            adNotWatchedMessage.style.display = 'none';
             watchAdButton.style.display = 'flex';
             watchAdButton.innerHTML = '<span class="material-icons">play_arrow</span> Watch Ad (+10 Diamond)';
             watchAdButton.disabled = false;
@@ -2659,69 +2705,111 @@
                 watchAdButton.disabled = true;
                 watchAdButton.classList.remove('pulse', 'glow');
 
-                if (adCountdown.style.display === 'block') {
-                    // Countdown logic is handled in watchAd when claim timer starts
-                } else { 
-                     watchAdButton.innerHTML = '<div class="loading"></div> Processing Ad...';
+                // If an ad is actively playing or in a very short post-ad state
+                if (timeSinceLastAdInteractionStart < AD_WATCH_DURATION + AD_CLAIM_COOLDOWN) { 
+                    if (timeSinceLastAdInteractionStart < AD_WATCH_DURATION) {
+                        // Ad is still playing or expected to play
+                        watchAdButton.innerHTML = '<div class="loading"></div> Watching Ad...';
+                        adLoadingMessage.style.display = 'block';
+                        adLoadingMessage.innerHTML = '<div class="loading"></div> Loading advertisement...';
+                    } else if (timeSinceLastAdCompletion > 0 && timeSinceLastAdCompletion < AD_CLAIM_COOLDOWN) {
+                        // Ad finished, reward is in cooldown
+                        watchAdButton.style.display = 'none'; // Hide button
+                        adCountdown.style.display = 'block'; // Show countdown
+                        const remainingTime = AD_CLAIM_COOLDOWN - timeSinceLastAdCompletion;
+                        adCountdown.textContent = `Reward in ${Math.ceil(remainingTime / 1000)}s`;
+                        
+                        adClaimCooldownTimer = setInterval(() => {
+                            const now = Date.now();
+                            const elapsed = now - lastAdCompletionTime;
+                            const remaining = AD_CLAIM_COOLDOWN - elapsed;
+
+                            if (remaining <= 0) {
+                                clearInterval(adClaimCooldownTimer);
+                                isAdInteractionInProgress = false; // Ready for next step
+                                updateAdButtonState(); // Re-evaluate state (should now go to claim reward)
+                            } else {
+                                adCountdown.textContent = `Reward in ${Math.ceil(remaining / 1000)}s`;
+                            }
+                        }, 1000);
+                    } else {
+                         // Waiting for the next ad to be available after claiming
+                         watchAdButton.style.display = 'none'; // Hide button
+                         adCooldownMessage.style.display = 'block';
+                         const remainingTime = POST_AD_COOLDOWN - timeSinceLastAdInteractionStart;
+                         adCooldownMessage.textContent = `Next ad in ${Math.ceil(remainingTime / 1000)}s`;
+
+                         adPostCooldownTimer = setInterval(() => {
+                            const now = Date.now();
+                            const elapsed = now - lastAdInteractionStartTime;
+                            const remaining = POST_AD_COOLDOWN - elapsed;
+
+                            if (remaining <= 0) {
+                                clearInterval(adPostCooldownTimer);
+                                isAdInteractionInProgress = false; 
+                                updateAdButtonState(); 
+                            } else {
+                                adCooldownMessage.textContent = `Next ad in ${Math.ceil(remaining / 1000)}s`;
+                            }
+                         }, 1000);
+                    }
+                } else {
+                    // Ad interaction started but something went wrong or it finished too quickly
+                    // This block might need refinement based on how show_9809601 behaves
+                    isAdInteractionInProgress = false;
+                    updateAdButtonState(); // Reset state
                 }
-
-            } else if (timeSinceLastAdCompletion < AD_CLAIM_COOLDOWN) {
-                watchAdButton.disabled = true;
-                watchAdButton.classList.remove('pulse', 'glow');
-                watchAdButton.style.display = 'none'; 
-                adCountdown.style.display = 'block';
-                adCooldownMessage.style.display = 'block';
-                adCooldownMessage.textContent = `Reward available in: ${Math.ceil((AD_CLAIM_COOLDOWN - timeSinceLastAdCompletion) / 1000)}s`;
-
+            } else if (timeSinceLastAdCompletion > 0 && timeSinceLastAdCompletion < AD_CLAIM_COOLDOWN) {
+                // Reward is available to claim after this cooldown
+                watchAdButton.style.display = 'none'; // Hide button
+                adCountdown.style.display = 'block'; // Show countdown
                 const remainingTime = AD_CLAIM_COOLDOWN - timeSinceLastAdCompletion;
-                adCooldownMessage.textContent = `Reward available in: ${Math.ceil(remainingTime / 1000)}s`;
+                adCountdown.textContent = `Reward in ${Math.ceil(remainingTime / 1000)}s`;
                 
-                window.adClaimTimer = setInterval(() => {
+                adClaimCooldownTimer = setInterval(() => {
                     const now = Date.now();
                     const elapsed = now - lastAdCompletionTime;
                     const remaining = AD_CLAIM_COOLDOWN - elapsed;
 
                     if (remaining <= 0) {
-                        clearInterval(window.adClaimTimer);
-                        isAdInteractionInProgress = false; 
-                        updateAdButtonState(); 
-                        claimAdReward(); // Claim reward AFTER the cooldown timer finishes
+                        clearInterval(adClaimCooldownTimer);
+                        isAdInteractionInProgress = false; // Ready for next step
+                        updateAdButtonState(); // Re-evaluate state (should now go to claim reward)
                     } else {
-                        const adCooldownMessage = document.getElementById('adCooldownMessage');
-                        if (adCooldownMessage) {
-                            adCooldownMessage.style.display = 'block';
-                            adCooldownMessage.textContent = `Reward available in: ${Math.ceil(remaining / 1000)}s`;
-                        }
+                        adCountdown.textContent = `Reward in ${Math.ceil(remaining / 1000)}s`;
                     }
                 }, 1000);
-            } else if (timeSinceLastClaimAttempt < POST_AD_COOLDOWN) {
-                 watchAdButton.disabled = true;
-                 watchAdButton.classList.remove('pulse', 'glow');
-                 adCooldownMessage.style.display = 'block';
-                 adCooldownMessage.textContent = `Next ad in: ${Math.ceil((POST_AD_COOLDOWN - timeSinceLastClaimAttempt) / 1000)}s`;
 
-                 const remainingTime = POST_AD_COOLDOWN - timeSinceLastClaimAttempt;
-                 adCooldownMessage.textContent = `Next ad in: ${Math.ceil(remainingTime / 1000)}s`;
-
-                 window.postAdCooldownTimer = setInterval(() => {
+            } else if (timeSinceLastAdInteractionStart > 0 && timeSinceLastAdInteractionStart < (AD_WATCH_DURATION + POST_AD_COOLDOWN)) {
+                // Recently interacted but not yet ready for next ad
+                watchAdButton.disabled = true;
+                watchAdButton.classList.remove('pulse', 'glow');
+                adCooldownMessage.style.display = 'block';
+                const remainingTime = POST_AD_COOLDOWN - (now - lastAdInteractionStartTime);
+                adCooldownMessage.textContent = `Next ad in ${Math.ceil(remainingTime / 1000)}s`;
+                
+                adPostCooldownTimer = setInterval(() => {
                     const now = Date.now();
-                    const elapsed = now - lastAdClaimAttemptTime;
+                    const elapsed = now - lastAdInteractionStartTime;
                     const remaining = POST_AD_COOLDOWN - elapsed;
 
                     if (remaining <= 0) {
-                        clearInterval(window.postAdCooldownTimer);
+                        clearInterval(adPostCooldownTimer);
                         isAdInteractionInProgress = false; 
                         updateAdButtonState(); 
                     } else {
-                        adCooldownMessage.textContent = `Next ad in: ${Math.ceil(remaining / 1000)}s`;
+                        adCooldownMessage.textContent = `Next ad in ${Math.ceil(remaining / 1000)}s`;
                     }
                  }, 1000);
+
             } else {
+                // Ready to watch a new ad
                 watchAdButton.disabled = false;
                 watchAdButton.classList.add('pulse', 'glow');
                 watchAdButton.innerHTML = '<span class="material-icons">play_arrow</span> Watch Ad (+10 Diamond)';
             }
         }
+
 
         // Watch ad - Real ad integration with watch time
         async function watchAd() {
@@ -2741,71 +2829,47 @@
             }
 
             isAdInteractionInProgress = true;
-            lastAdClaimAttemptTime = Date.now(); 
+            lastAdInteractionStartTime = Date.now(); // Record when interaction began
             updateAdButtonState(); 
 
             try {
                 console.log("Attempting to show rewarded ad...");
                 
                 // Show the ad. The `show_9809601` function is expected to handle the ad display.
+                // It's crucial that show_9809601 resolves ONLY after the user has watched the ad for the required duration
+                // OR if the user closes it prematurely (in which case it should reject or resolve with a "closed" status).
                 await show_9809601(); 
                 
-                console.log("Ad interaction initiated or completed.");
-                // `lastAdCompletionTime` is set *after* the ad is verified to be watched for the required duration.
-                // The actual reward is claimed in `claimAdReward` after `AD_CLAIM_COOLDOWN`.
+                console.log("Ad interaction initiated or completed successfully by SDK.");
 
-                // Start a timer for the required watch duration
-                const watchTimer = setTimeout(async () => {
-                    console.log("Ad watch duration met. Marking as completed.");
-                    lastAdCompletionTime = Date.now(); // Mark the time the watch duration was met
-                    isAdInteractionInProgress = true; // Keep in interaction state for claim cooldown
-                    updateAdButtonState(); // Update UI to show claim cooldown timer
-
-                    // Start the cooldown timer for claiming the reward
-                    if (window.adClaimTimer) clearInterval(window.adClaimTimer);
-                    window.adClaimTimer = setInterval(() => {
-                        const now = Date.now();
-                        const elapsed = now - lastAdCompletionTime;
-                        const remaining = AD_CLAIM_COOLDOWN - elapsed;
-
-                        if (remaining <= 0) {
-                            clearInterval(window.adClaimTimer);
-                            isAdInteractionInProgress = false; 
-                            updateAdButtonState(); 
-                            claimAdReward(); // Claim reward AFTER the cooldown timer finishes
-                        } else {
-                            const adCooldownMessage = document.getElementById('adCooldownMessage');
-                            if (adCooldownMessage) {
-                                adCooldownMessage.style.display = 'block';
-                                adCooldownMessage.textContent = `Reward available in: ${Math.ceil(remaining / 1000)}s`;
-                            }
-                        }
-                    }, 1000);
-
-                }, AD_WATCH_DURATION); // Wait for the ad watch duration
-
-                // Handle cases where the user might close the ad prematurely
-                // This part requires `show_9809601` to provide a way to detect closure.
-                // If `show_9809601` rejects on closure, the catch block below will handle it.
-                // If `show_9809601` simply returns without resolving and the user closes it,
-                // the `watchTimer` will eventually timeout, and `claimAdReward` will be called
-                // if the user didn't close it within the watch duration. This could be improved
-                // if `show_9809601` offers better feedback on user action.
+                // If show_9809601 resolves without error, it means the ad was shown.
+                // We now set the completion time and trigger the claim cooldown.
+                lastAdCompletionTime = Date.now(); // Mark the time the ad was successfully shown/watched
+                updateAdButtonState(); // Update UI to show claim cooldown timer
 
             } catch (error) {
                 console.error('Ad interaction failed:', error);
-                isAdInteractionInProgress = false; 
-                updateAdButtonState(); 
+                isAdInteractionInProgress = false; // Reset interaction state
+                lastAdInteractionStartTime = 0; // Reset start time
+                lastAdCompletionTime = 0; // Reset completion time
 
-                if (error.message && (error.message.includes('user') || error.message.includes('cancel') || error.message.includes('closed'))) {
+                if (error && error.message && (error.message.includes('user') || error.message.includes('cancel') || error.message.includes('closed') || error.message.includes('declined'))) {
                     showAlert('Ad was cancelled or closed. No reward given.', 'warning');
+                    const adNotWatchedMessage = document.getElementById('adNotWatchedMessage');
+                    if (adNotWatchedMessage) {
+                        adNotWatchedMessage.style.display = 'block';
+                        adNotWatchedMessage.textContent = 'You did not watch the full ad. No reward earned.';
+                        setTimeout(() => { adNotWatchedMessage.style.display = 'none'; }, 5000);
+                    }
                 } else {
                     showAlert('Error loading or playing advertisement. Please check your internet connection and try again.', 'danger');
                 }
+                updateAdButtonState(); // Update UI to reflect the error state
             }
         }
 
         async function claimAdReward() {
+            // This function is called when the AD_CLAIM_COOLDOWN has passed AFTER the ad was successfully shown.
             try {
                 const userRef = database.ref('users/' + currentUser.id);
                 await userRef.transaction((userData) => {
@@ -2824,6 +2888,8 @@
                 console.error("Error claiming ad reward:", error);
                 showAlert('Failed to grant ad reward. Please try again.', 'danger');
             } finally {
+                // After claiming, we are ready for the next interaction (either starting a new ad or a brief post-ad cooldown)
+                lastAdCompletionTime = 0; // Reset for next ad cycle
                 updateAdButtonState(); 
             }
         }
@@ -2930,7 +2996,7 @@
                         url,
                         category: selectedTaskCategory,
                         telegramChannel: selectedTaskCategory === 'telegram' ? telegramChannel : null,
-                        reward: 100, 
+                        reward: 100, // This is a fixed reward for now, could be dynamic
                         impressions, 
                         remainingImpressions: impressions, 
                         createdBy: currentUser.id,
@@ -3407,6 +3473,10 @@
             if (sectionName === 'referral') {
                 loadReferrals(); 
             }
+            
+            if (sectionName === 'ads') {
+                updateAdButtonState(); // Ensure button state is correct when entering ads section
+            }
         }
 
         // Show task tab
@@ -3456,6 +3526,10 @@
                     if (withdrawForm) withdrawForm.reset();
                     const requestWithdrawButton = document.getElementById('requestWithdrawButton');
                     if (requestWithdrawButton) requestWithdrawButton.disabled = true; 
+                }
+                if (modalId === 'taskModal') {
+                    // Clear any running timers for task verification
+                    if (window.taskVerificationTimer) clearInterval(window.taskVerificationTimer);
                 }
             }
         }
@@ -3532,3 +3606,4 @@
     </script>
 </body>
 </html>
+
