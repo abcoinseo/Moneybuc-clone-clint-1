@@ -1783,8 +1783,8 @@
         const TASK_SPIN_REWARD = 1;
         const TELEGRAM_BOT_TOKEN = '7829924006:AAFIOCnga8v6yOw08dCzvKDC8wS7Fuad_II'; // Replace with your actual bot token
         const AD_WATCH_DURATION = 15000; // 15 seconds for ad watch time
-        const AD_CLAIM_COOLDOWN = 3000; // 3 seconds cooldown after ad completion before reward is claimable/button active
-        const POST_AD_COOLDOWN = 3000;  // 3 seconds delay between claiming reward and being able to start the *next* ad
+        const AD_CLAIM_COOLDOWN = 300; // 3 seconds cooldown after ad completion before reward is claimable/button active
+        const POST_AD_COOLDOWN = 300;  // 3 seconds delay between claiming reward and being able to start the *next* ad
         const MAX_DAILY_ADS = 50;
 
         // --- User Status Management ---
@@ -2596,11 +2596,11 @@
 
                 let reward;
                 if (finalRotation < 60) reward = 100;       
-                else if (finalRotation < 120) reward = 150; 
-                else if (finalRotation < 180) reward = 200; 
-                else if (finalRotation < 240) reward = 300; 
-                else if (finalRotation < 300) reward = 400; 
-                else reward = 500;                         
+                else if (finalRotation < 120) reward = 4; 
+                else if (finalRotation < 180) reward = 8; 
+                else if (finalRotation < 240) reward = 16; 
+                else if (finalRotation < 300) reward = 18; 
+                else reward = 20;                         
 
                 try {
                     const userRef = database.ref('users/' + currentUser.id);
