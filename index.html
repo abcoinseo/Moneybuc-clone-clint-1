@@ -7,1249 +7,1247 @@
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <script src="https://unpkg.com/@tonconnect-ui@latest/dist/tonconnect-ui.min.js"></script>
+    <script src="https://unpkg.com/@tonconnect/ui@latest/dist/tonconnect-ui.min.js"></script>
     <!-- Ensure this script is loaded and the show_9809601 function is available globally -->
     <script src='//libtl.com/sdk.js' data-zone='9809601' data-sdk='show_9809601'></script>
     <style>
-        /* Global Resets and Base Styles */
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-
-:root {
-    /* --- Professional Dark & White Theme Colors --- */
-
-    /* Primary Blues */
-    --primary: #3b82f6;         /* Vivid Blue (good for CTAs, highlights) */
-    --primary-dark: #2563eb;    /* Deep Blue (secondary accents) */
-    --primary-light: #60a5fa;   /* Lighter Blue (subtle highlights) */
-    --accent-blue: #0ea5e9;     /* Bright Aqua (for emphasis) */
-
-    /* Neutrals */
-    --background-dark: #0a0a0a; /* True Black for main backgrounds */
-    --surface-dark: #18181b;    /* Very Dark Gray (for cards, panels) */
-    --surface-dark-alt: #27272a; /* Slightly Lighter Dark Gray (for borders, secondary elements) */
-    --border-color: #3f3f46;    /* Muted Dark Gray (for subtle borders) */
-
-    --text-primary: #ffffff;    /* Pure White (main text) */
-    --text-secondary: #d4d4d8;  /* Light Gray (secondary text, labels) */
-    --text-muted: #71717a;      /* Muted Gray (less emphasis) */
-
-    /* Status Colors (Standard) */
-    --success: #10b981;
-    --danger: #dc2626;
-    --warning: #f59e0b;
-    --info: #0284c7;
-
-    /* --- Glass/Blur Effects --- */
-    --glass-backdrop-filter: blur(25px);
-    --glass-overlay-dark: rgba(24, 24, 27, 0.7); /* Semi-transparent dark for glass effect */
-    --glass-border: rgba(63, 63, 70, 0.5);       /* Subtle border for glass elements */
-}
-
-body {
-    font-family: 'Inter', 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
-    background-color: var(--background-dark); /* Solid black background */
-    color: var(--text-primary);
-    overflow-x: hidden;
-    position: relative;
-    line-height: 1.6;
-}
-
-/* Subtle animated background gradient */
-body::before {
-    content: '';
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background:
-        radial-gradient(circle at 20% 80%, rgba(59, 130, 246, 0.2) 0%, transparent 50%),
-        radial-gradient(circle at 80% 20%, rgba(96, 165, 250, 0.15) 0%, transparent 50%),
-        radial-gradient(circle at 40% 40%, rgba(37, 99, 235, 0.1) 0%, transparent 50%);
-    pointer-events: none;
-    z-index: -1;
-    animation: subtleGradients 15s ease infinite alternate;
-}
-
-@keyframes subtleGradients {
-    0% { opacity: 0.8; }
-    50% { opacity: 1; }
-    100% { opacity: 0.8; }
-}
-
-.container {
-    max-width: 1200px; /* Slightly wider container */
-    margin: 0 auto;
-    padding: 20px 20px 100px;
-    position: relative;
-}
-
-/* --- Header Styles --- */
-.header {
-    background: var(--glass-overlay-dark);
-    backdrop-filter: var(--glass-backdrop-filter);
-    border: 1px solid var(--glass-border);
-    border-radius: 24px; /* More rounded corners */
-    padding: 25px 30px;
-    margin-bottom: 30px;
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4); /* Subtle dark shadow */
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    position: relative;
-    overflow: hidden;
-    transition: all 0.3s ease;
-}
-
-.header:hover {
-    box-shadow: 0 15px 50px rgba(0, 0, 0, 0.5);
-}
-
-.header::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.03), transparent);
-    animation: shimmer 4s infinite;
-}
-
-@keyframes shimmer {
-    0% { left: -100%; }
-    100% { left: 100%; }
-}
-
-.user-info {
-    display: flex;
-    align-items: center;
-    gap: 16px;
-    z-index: 1;
-}
-
-.user-avatar {
-    width: 56px;
-    height: 56px;
-    border-radius: 50%;
-    border: 2px solid var(--primary);
-    object-fit: cover;
-    box-shadow: 0 0 25px rgba(59, 130, 246, 0.3); /* Primary blue glow */
-}
-
-.user-details h3 {
-    color: var(--text-primary);
-    font-weight: 600;
-    font-size: 1.15rem;
-    margin-bottom: 5px;
-}
-
-.user-balance {
-    color: var(--primary);
-    font-weight: 700;
-    font-size: 1.2rem;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-}
-
-/* --- Buttons and Theme Toggle --- */
-.theme-toggle {
-    background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-    color: white;
-    border: none;
-    border-radius: 50px;
-    padding: 12px 20px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    font-weight: 600;
-    transition: all 0.3s ease;
-    z-index: 1;
-    box-shadow: 0 5px 15px rgba(59, 130, 246, 0.3);
-}
-
-.theme-toggle:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 8px 25px rgba(59, 130, 246, 0.4);
-}
-
-/* --- Card Styles --- */
-.card {
-    background: var(--surface-dark);
-    backdrop-filter: var(--glass-backdrop-filter);
-    border: 1px solid var(--glass-border);
-    border-radius: 20px;
-    padding: 30px;
-    margin-bottom: 25px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3); /* Darker shadow */
-    transition: all 0.3s ease;
-    position: relative;
-    overflow: hidden;
-}
-
-.card::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 2px;
-    background: linear-gradient(90deg, var(--primary), var(--primary-light), var(--primary));
-    opacity: 0.8;
-}
-
-.card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
-}
-
-.card-title {
-    font-size: 1.4rem;
-    font-weight: 700;
-    margin-bottom: 20px;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    color: var(--text-primary); /* White title */
-}
-
-/* --- Stat Cards --- */
-.stats-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); /* Slightly larger min-width */
-    gap: 20px;
-    margin-bottom: 30px;
-}
-
-.stat-card {
-    background: var(--surface-dark-alt); /* Slightly lighter for contrast */
-    border: 1px solid var(--border-color);
-    border-radius: 16px;
-    padding: 25px;
-    text-align: center;
-    transition: all 0.3s ease;
-    position: relative;
-    overflow: hidden;
-    box-shadow: inset 0 0 10px rgba(0,0,0,0.2); /* Inner shadow for depth */
-}
-
-.stat-card::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), transparent);
-    opacity: 0;
-    transition: opacity 0.3s ease;
-}
-
-.stat-card:hover::before {
-    opacity: 1;
-}
-
-.stat-card:hover {
-    transform: translateY(-4px);
-    box-shadow: inset 0 0 10px rgba(0,0,0,0.2), 0 8px 25px rgba(0, 0, 0, 0.3);
-}
-
-.stat-number {
-    font-size: 2.2rem;
-    font-weight: 900; /* Heavier weight for numbers */
-    color: var(--primary);
-    margin-bottom: 10px;
-    letter-spacing: -1px;
-}
-
-.stat-label {
-    color: var(--text-secondary);
-    font-weight: 500;
-    font-size: 0.9rem;
-}
-
-/* --- Balance Card --- */
-.balance-card {
-    background: var(--surface-dark-alt);
-    border: 1px solid var(--border-color);
-    border-radius: 16px;
-    padding: 25px;
-    text-align: center;
-    position: relative;
-    overflow: hidden;
-    margin-bottom: 25px;
-    box-shadow: inset 0 0 10px rgba(0,0,0,0.2);
-}
-
-.balance-card::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: linear-gradient(135deg, rgba(16, 185, 121, 0.1), transparent);
-    opacity: 1;
-}
-
-.balance-amount {
-    font-size: 2.8rem;
-    font-weight: 900;
-    color: var(--success);
-    margin-bottom: 10px;
-    letter-spacing: -1.5px;
-}
-
-.balance-label {
-    color: var(--text-secondary);
-    font-weight: 500;
-    font-size: 1rem;
-}
-
-/* --- Buttons --- */
-.btn {
-    padding: 14px 28px;
-    border: none;
-    border-radius: 14px; /* More rounded */
-    font-weight: 600;
-    cursor: pointer;
-    display: inline-flex;
-    align-items: center;
-    gap: 10px;
-    transition: all 0.3s ease;
-    text-decoration: none;
-    font-size: 1rem;
-    position: relative;
-    overflow: hidden;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-}
-
-.btn:disabled {
-    opacity: 0.7;
-    cursor: not-allowed;
-    box-shadow: none;
-}
-
-.btn::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
-    transition: left 0.6s;
-}
-
-.btn:hover:not(:disabled)::before {
-    left: 100%;
-}
-
-.btn-primary {
-    background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-    color: var(--text-primary);
-}
-
-.btn-primary:hover:not(:disabled) {
-    transform: translateY(-3px);
-    box-shadow: 0 10px 25px rgba(59, 130, 246, 0.4);
-}
-
-.btn-success {
-    background: linear-gradient(135deg, var(--success), #047857);
-    color: var(--text-primary);
-}
-
-.btn-success:hover:not(:disabled) {
-    transform: translateY(-3px);
-    box-shadow: 0 10px 25px rgba(16, 185, 121, 0.4);
-}
-
-.btn-warning {
-    background: linear-gradient(135deg, var(--warning), #b45309);
-    color: var(--text-primary);
-}
-
-.btn-warning:hover:not(:disabled) {
-    transform: translateY(-3px);
-    box-shadow: 0 10px 25px rgba(245, 158, 11, 0.4);
-}
-
-.btn-info {
-    background: linear-gradient(135deg, var(--info), #0369a1);
-    color: var(--text-primary);
-}
-
-.btn-info:hover:not(:disabled) {
-    transform: translateY(-3px);
-    box-shadow: 0 10px 25px rgba(2, 132, 199, 0.4);
-}
-
-.btn-secondary {
-    background: var(--surface-dark);
-    color: var(--text-secondary);
-    border: 1px solid var(--border-color);
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-}
-
-.btn-secondary:hover:not(:disabled) {
-    transform: translateY(-3px);
-    background: var(--surface-dark-alt);
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
-}
-
-.btn-danger {
-    background: linear-gradient(135deg, var(--danger), #b91c1c);
-    color: var(--text-primary);
-}
-
-.btn-danger:hover:not(:disabled) {
-    transform: translateY(-3px);
-    box-shadow: 0 10px 25px rgba(220, 38, 38, 0.4);
-}
-
-.btn-accent {
-    background: linear-gradient(135deg, var(--accent-blue), var(--primary-light));
-    color: var(--text-primary);
-}
-
-.btn-accent:hover:not(:disabled) {
-    transform: translateY(-3px);
-    box-shadow: 0 10px 25px rgba(14, 165, 229, 0.4);
-}
-
-/* --- Swap Container --- */
-.swap-container {
-    background: var(--surface-dark);
-    border: 1px solid var(--glass-border);
-    border-radius: 16px;
-    padding: 25px;
-    margin-bottom: 25px;
-    position: relative;
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
-}
-
-.swap-row {
-    display: flex;
-    align-items: center;
-    gap: 15px;
-    margin-bottom: 15px;
-}
-
-.swap-input-group {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
-
-.swap-input {
-    width: 100%;
-    padding: 14px 18px;
-    border: 2px solid var(--border-color);
-    border-radius: 12px;
-    font-size: 1.1rem;
-    font-weight: 600;
-    transition: all 0.3s ease;
-    background: var(--surface-dark-alt);
-    color: var(--text-primary);
-    text-align: center;
-    outline: none;
-}
-
-.swap-input:focus {
-    border-color: var(--primary);
-    box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.15);
-}
-
-.swap-input[disabled] {
-    background: rgba(39, 39, 42, 0.6); /* Slightly darker disabled */
-    cursor: not-allowed;
-    opacity: 0.7;
-}
-
-.swap-label {
-    display: block;
-    margin-bottom: 10px;
-    font-weight: 600;
-    color: var(--text-secondary);
-    text-align: center;
-}
-
-.swap-icon {
-    background: linear-gradient(135deg, var(--accent-blue), var(--primary-light));
-    color: white;
-    border: none;
-    border-radius: 50%;
-    width: 48px;
-    height: 48px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    flex-shrink: 0;
-    box-shadow: 0 5px 15px rgba(14, 165, 229, 0.3);
-}
-
-.swap-icon:hover {
-    transform: rotate(180deg);
-    box-shadow: 0 8px 25px rgba(14, 165, 229, 0.4);
-}
-
-/* --- Form Styles --- */
-.form-group {
-    margin-bottom: 25px;
-}
-
-.form-label {
-    display: block;
-    margin-bottom: 10px;
-    font-weight: 600;
-    color: var(--text-secondary);
-}
-
-.form-input, .form-select {
-    width: 100%;
-    padding: 14px 18px;
-    border: 2px solid var(--border-color);
-    border-radius: 12px;
-    font-size: 1rem;
-    transition: all 0.3s ease;
-    background: var(--surface-dark-alt);
-    color: var(--text-primary);
-    outline: none;
-}
-
-.form-input:focus, .form-select:focus {
-    border-color: var(--primary);
-    box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.15);
-}
-
-.form-select {
-    cursor: pointer;
-    appearance: none; /* Remove default arrow */
-    background-image: url('data:image/svg+xml;charset=UTF-8,%3Csvg xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22 width%3D%2210%22 height%3D%225%22 viewBox%3D%220 0 10 5%22%3E%3Cpath d%3D%22M0 0l5 5 5-5%22 fill%3D%22%2394a6be%22%2F%3E%3C%2Fsvg%3E'); /* Custom arrow */
-    background-repeat: no-repeat;
-    background-position: calc(100% - 18px) center;
-    background-size: 10px;
-}
-
-.form-select option {
-    background: var(--surface-dark);
-    color: var(--text-primary);
-    padding: 10px;
-}
-
-/* --- Task Styles --- */
-.task-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); /* Responsive task cards */
-    gap: 20px;
-}
-
-.task-card {
-    background: var(--surface-dark);
-    border: 1px solid var(--glass-border);
-    border-radius: 16px;
-    padding: 25px;
-    transition: all 0.3s ease;
-    position: relative;
-    overflow: hidden;
-    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
-}
-
-.task-card::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 4px;
-    height: 100%;
-    background: linear-gradient(180deg, var(--primary), var(--primary-light));
-    border-radius: 0 4px 4px 0; /* Rounded right side */
-}
-
-.task-card.telegram-task::before {
-    background: linear-gradient(180deg, var(--info), #0369a1);
-}
-
-.task-card:hover {
-    transform: translateX(7px);
-    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.35);
-}
-
-.task-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    margin-bottom: 15px;
-}
-
-.task-title {
-    font-weight: 700;
-    color: var(--text-primary);
-    margin-bottom: 8px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-size: 1.1rem;
-}
-
-.task-type-badge {
-    padding: 5px 10px;
-    border-radius: 12px;
-    font-size: 0.8rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-}
-
-.task-type-normal {
-    background: rgba(59, 130, 246, 0.2);
-    color: var(--primary);
-}
-
-.task-type-telegram {
-    background: rgba(2, 132, 199, 0.2);
-    color: var(--info);
-}
-
-.task-reward {
-    background: linear-gradient(135deg, var(--primary), var(--primary-light));
-    color: white;
-    padding: 8px 15px;
-    border-radius: 25px; /* More rounded */
-    font-size: 0.85rem;
-    font-weight: 700;
-    box-shadow: 0 3px 10px rgba(59, 130, 246, 0.3);
-}
-
-.task-description {
-    color: var(--text-secondary);
-    margin-bottom: 15px;
-    line-height: 1.7;
-    font-size: 0.95rem;
-}
-
-.task-channel {
-    color: var(--info);
-    font-weight: 600;
-    margin-bottom: 10px;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    font-size: 0.9rem;
-}
-
-.task-actions {
-    display: flex;
-    gap: 10px;
-    justify-content: flex-end;
-}
-
-/* --- Tabs --- */
-.tabs {
-    display: flex;
-    background: var(--surface-dark);
-    border-radius: 12px;
-    padding: 5px;
-    margin-bottom: 25px;
-    border: 1px solid var(--border-color);
-    box-shadow: inset 0 0 10px rgba(0,0,0,0.2);
-}
-
-.tab {
-    flex: 1;
-    padding: 14px;
-    text-align: center;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    font-weight: 600;
-    color: var(--text-muted);
-}
-
-.tab.active {
-    background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-    color: white;
-    box-shadow: 0 5px 15px rgba(59, 130, 246, 0.3);
-}
-
-.tab-content, .section {
-    display: none;
-}
-
-.tab-content.active, .section.active {
-    display: block;
-}
-
-/* --- Bottom Navigation --- */
-.bottom-nav {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    background: var(--surface-dark);
-    backdrop-filter: blur(20px);
-    border-top: 1px solid var(--border-color);
-    padding: 15px 0;
-    z-index: 1000;
-    box-shadow: 0 -5px 20px rgba(0, 0, 0, 0.3);
-}
-
-.nav-container {
-    display: flex;
-    justify-content: space-around;
-    align-items: center;
-    max-width: 500px;
-    margin: 0 auto;
-}
-
-.nav-item {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 5px;
-    text-decoration: none;
-    color: var(--text-muted);
-    transition: all 0.3s ease;
-    padding: 8px 12px;
-    border-radius: 12px;
-    position: relative;
-}
-
-.nav-item.active, .nav-item:hover {
-    color: var(--primary);
-    background: rgba(59, 130, 246, 0.1);
-}
-
-.nav-item span {
-    font-size: 0.8rem;
-    font-weight: 600;
-}
-
-/* --- Spin Wheel --- */
-.spin-wheel {
-    width: 260px; /* Slightly larger */
-    height: 260px;
-    border-radius: 50%;
-    border: 10px solid var(--primary); /* Thicker primary border */
-    margin: 30px auto;
-    position: relative;
-    background: conic-gradient(
-        from 0deg,
-        var(--primary) 0deg 60deg,
-        var(--primary-light) 60deg 120deg,
-        var(--warning) 120deg 180deg,
-        var(--success) 180deg 240deg,
-        var(--primary-dark) 240deg 300deg,
-        var(--accent-blue) 300deg 360deg
-    );
-    transition: transform 3s cubic-bezier(0.23, 1, 0.32, 1);
-    box-shadow: 0 0 50px rgba(59, 130, 246, 0.3);
-}
-
-.spin-wheel::before {
-    content: '';
-    position: absolute;
-    top: -18px; /* Adjusted arrow position */
-    left: 50%;
-    transform: translateX(-50%);
-    width: 0;
-    height: 0;
-    border-left: 16px solid transparent;
-    border-right: 16px solid transparent;
-    border-top: 32px solid var(--text-primary); /* White arrow */
-    z-index: 10;
-}
-
-.spin-center {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 70px; /* Larger center */
-    height: 70px;
-    background: var(--primary);
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: white;
-    font-weight: 700;
-    font-size: 1.3rem;
-    z-index: 5;
-    box-shadow: 0 0 25px rgba(59, 130, 246, 0.5);
-}
-
-/* --- Modal --- */
-.modal {
-    display: none;
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(0, 0, 0, 0.85); /* Darker overlay */
-    z-index: 2000;
-    backdrop-filter: blur(15px);
-    justify-content: center;
-    align-items: center;
-    padding: 20px; /* Add padding for smaller screens */
-}
-
-.modal-content {
-    background: var(--surface-dark);
-    border: 1px solid var(--glass-border);
-    border-radius: 24px;
-    padding: 35px;
-    max-width: 450px; /* Wider modal */
-    width: 100%;
-    max-height: 85vh;
-    overflow-y: auto;
-    box-shadow: 0 15px 50px rgba(0, 0, 0, 0.5);
-}
-
-.modal-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 25px;
-}
-
-.modal-title {
-    font-size: 1.8rem;
-    font-weight: 700;
-    color: var(--primary);
-}
-
-.close-btn {
-    background: none;
-    border: none;
-    font-size: 28px;
-    cursor: pointer;
-    color: var(--text-muted);
-    transition: all 0.3s ease;
-}
-
-.close-btn:hover {
-    color: var(--text-secondary);
-    transform: scale(1.1);
-}
-
-/* --- Loading Indicator --- */
-.loading {
-    display: inline-block;
-    width: 24px;
-    height: 24px;
-    border: 4px solid rgba(255, 255, 255, .3);
-    border-radius: 50%;
-    border-top-color: var(--text-primary);
-    animation: spin 1s ease-in-out infinite;
-}
-
-@keyframes spin {
-    to { transform: rotate(360deg); }
-}
-
-/* --- Alerts --- */
-.alert {
-    padding: 18px 25px;
-    border-radius: 14px;
-    margin-bottom: 25px;
-    border-left: 5px solid; /* Thicker border */
-    display: flex;
-    align-items: center;
-    gap: 15px;
-    animation: slideIn 0.4s ease-out;
-    position: relative;
-    z-index: 1001;
-    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15);
-}
-
-@keyframes slideIn {
-    from {
-        transform: translateX(-100%);
-        opacity: 0;
-    }
-    to {
-        transform: translateX(0);
-        opacity: 1;
-    }
-}
-
-.alert-success { background: rgba(16, 185, 121, 0.1); border-left-color: var(--success); color: var(--success); }
-.alert-danger { background: rgba(220, 38, 38, 0.1); border-left-color: var(--danger); color: var(--danger); }
-.alert-warning { background: rgba(217, 119, 6, 0.1); border-left-color: var(--warning); color: var(--warning); }
-.alert-info { background: rgba(2, 132, 199, 0.1); border-left-color: var(--info); color: var(--info); }
-
-/* --- Progress Bar --- */
-.progress-bar {
-    width: 100%;
-    height: 10px;
-    background: var(--surface-dark-alt);
-    border-radius: 5px;
-    overflow: hidden;
-    margin: 15px 0;
-    border: 1px solid var(--border-color);
-}
-
-.progress-fill {
-    height: 100%;
-    background: linear-gradient(90deg, var(--primary), var(--accent-blue)); /* Blue to Aqua */
-    border-radius: 5px;
-    transition: width 0.4s ease-out;
-}
-
-/* --- Countdown --- */
-.countdown {
-    font-size: 28px;
-    font-weight: 800;
-    color: var(--primary);
-    text-align: center;
-    margin: 25px 0;
-    letter-spacing: -0.5px;
-}
-
-/* --- Refer Link --- */
-.refer-link {
-    background: var(--surface-dark-alt);
-    border: 1px solid var(--border-color);
-    border-radius: 12px;
-    padding: 15px;
-    color: var(--text-primary);
-    font-family: 'Courier New', Courier, monospace; /* Monospace for code */
-    word-break: break-all;
-    margin: 15px 0;
-    font-size: 0.9rem;
-    transition: all 0.3s ease;
-}
-
-.refer-link:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-}
-
-/* --- Withdrawal History --- */
-.withdrawal-history {
-    max-height: 320px;
-    overflow-y: auto;
-    padding-right: 5px; /* For scrollbar visibility */
-}
-
-.history-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 15px 10px;
-    border-bottom: 1px solid var(--border-color);
-    margin-bottom: 10px;
-    font-size: 0.95rem;
-}
-
-.history-item:last-child {
-    border-bottom: none;
-    margin-bottom: 0;
-}
-
-.history-status {
-    padding: 6px 12px;
-    border-radius: 12px;
-    font-size: 0.8rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-}
-
-.status-pending { background: rgba(217, 119, 6, 0.2); color: var(--warning); }
-.status-completed { background: rgba(16, 185, 121, 0.2); color: var(--success); }
-.status-rejected { background: rgba(220, 38, 38, 0.2); color: var(--danger); }
-
-/* --- Wallet Status --- */
-.wallet-status-info {
-    margin-top: 20px;
-    padding: 12px;
-    border-radius: 8px;
-    text-align: center;
-    font-weight: 600;
-    width: 100%;
-    font-size: 0.95rem;
-}
-
-.wallet-connected { background: rgba(16, 185, 121, 0.1); color: var(--success); }
-.wallet-disconnected { background: rgba(220, 38, 38, 0.1); color: var(--danger); }
-
-.profile-wallet-controls {
-    display: flex;
-    justify-content: center;
-    gap: 15px;
-    flex-wrap: wrap;
-    margin-top: 25px;
-}
-
-/* --- Ad Loading --- */
-.ad-loading {
-    text-align: center;
-    padding: 25px;
-    background: var(--surface-dark);
-    border: 1px solid var(--glass-border);
-    border-radius: 16px;
-    margin: 20px 0;
-    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
-}
-
-.ad-loading .loading {
-    margin: 0 auto 15px;
-}
-
-/* --- Task Category Selector --- */
-.task-category-selector {
-    display: flex;
-    gap: 15px;
-    margin-bottom: 25px;
-}
-
-.category-option {
-    flex: 1;
-    padding: 20px;
-    border: 2px solid var(--border-color);
-    border-radius: 12px;
-    background: var(--surface-dark-alt);
-    cursor: pointer;
-    transition: all 0.3s ease;
-    text-align: center;
-    box-shadow: inset 0 0 10px rgba(0,0,0,0.1);
-}
-
-.category-option.selected {
-    border-color: var(--primary);
-    background: rgba(59, 130, 246, 0.1);
-}
-
-.category-option.telegram.selected {
-    border-color: var(--info);
-    background: rgba(2, 132, 199, 0.1);
-}
-
-.category-icon {
-    font-size: 28px;
-    margin-bottom: 10px;
-    color: var(--text-secondary);
-}
-
-.category-option.selected .category-icon {
-    color: var(--primary);
-}
-
-.category-option.telegram.selected .category-icon {
-    color: var(--info);
-}
-
-.category-title {
-    font-weight: 600;
-    color: var(--text-primary);
-    margin-bottom: 5px;
-    font-size: 1.05rem;
-}
-
-.category-description {
-    font-size: 0.8rem;
-    color: var(--text-muted);
-}
-
-.telegram-fields {
-    display: none;
-}
-
-.telegram-fields.active {
-    display: block;
-}
-
-/* --- Media Queries --- */
-@media (max-width: 992px) {
-    .container {
-        padding: 15px 15px 100px;
-    }
-    .header {
-        padding: 20px 25px;
-    }
-    .stats-grid {
-        grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-    }
-    .spin-wheel {
-        width: 220px;
-        height: 220px;
-    }
-    .spin-center {
-        width: 60px;
-        height: 60px;
-        font-size: 1.1rem;
-    }
-}
-
-@media (max-width: 768px) {
-    .container {
-        padding: 15px 10px 100px;
-    }
-
-    .header {
-        flex-direction: column;
-        gap: 15px;
-        text-align: center;
-        border-radius: 16px;
-        padding: 20px;
-    }
-
-    .user-info {
-        flex-direction: column;
-        gap: 8px;
-    }
-
-    .user-avatar {
-        width: 48px;
-        height: 48px;
-    }
-
-    .user-details h3 {
-        font-size: 1rem;
-    }
-
-    .user-balance {
-        font-size: 1.1rem;
-    }
-
-    .stats-grid {
-        grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
-        gap: 15px;
-    }
-
-    .stat-number {
-        font-size: 1.8rem;
-    }
-
-    .balance-amount {
-        font-size: 2.4rem;
-    }
-
-    .modal-content {
-        width: 95%;
-        padding: 25px;
-    }
-
-    .spin-wheel {
-        width: 200px;
-        height: 200px;
-    }
-
-    .spin-wheel::before {
-        border-left-width: 12px;
-        border-right-width: 12px;
-        border-top-width: 24px;
-    }
-
-    .bottom-nav {
-        padding: 12px 0;
-    }
-
-    .nav-item span {
-        font-size: 0.75rem;
-    }
-
-    .nav-item {
-        padding: 7px 10px;
-    }
-
-    .profile-wallet-controls {
-        flex-direction: column;
-        align-items: center;
-    }
-
-    .swap-row {
-        flex-direction: column;
-        gap: 10px;
-    }
-
-    .swap-icon {
-        transform: rotate(90deg);
-    }
-
-    .swap-icon:hover {
-        transform: rotate(270deg);
-    }
-
-    .task-grid {
-        grid-template-columns: 1fr; /* Stack tasks vertically */
-    }
-
-    .task-card {
-        padding: 20px;
-    }
-
-    .task-actions {
-        justify-content: center;
-        margin-top: 10px;
-    }
-
-    .task-category-selector {
-        flex-direction: column;
-        gap: 15px;
-    }
-
-    .category-option {
-        padding: 15px;
-    }
-}
-
-/* --- Animation for Pulse --- */
-.pulse {
-    animation: pulse 2s infinite;
-}
-
-@keyframes pulse {
-    0% {
-        box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.7); /* Primary blue pulse */
-    }
-    70% {
-        box-shadow: 0 0 0 12px rgba(59, 130, 246, 0);
-    }
-    100% {
-        box-shadow: 0 0 0 0 rgba(59, 130, 246, 0);
-    }
-}
-
-/* --- Generic Glow --- */
-.glow {
-    box-shadow: 0 0 25px rgba(59, 130, 246, 0.5); /* Primary blue glow */
-}
-
-/* --- Balance Grid --- */
-.balance-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-    gap: 20px;
-    margin-bottom: 25px;
-}
-
-/* --- Verification Status --- */
-.verification-status {
-    padding: 12px;
-    border-radius: 8px;
-    margin: 15px 0;
-    text-align: center;
-    font-weight: 600;
-    font-size: 0.95rem;
-}
-
-.verification-pending { background: rgba(217, 119, 6, 0.1); color: var(--warning); border: 1px solid var(--warning); }
-.verification-success { background: rgba(16, 185, 121, 0.1); color: var(--success); border: 1px solid var(--success); }
-.verification-failed { background: rgba(220, 38, 38, 0.1); color: var(--danger); border: 1px solid var(--danger); }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        :root {
+            /* --- Professional Dark & White Theme Colors --- */
+
+            /* Primary Blues */
+            --primary: #3b82f6;         /* Vivid Blue (good for CTAs, highlights) */
+            --primary-dark: #2563eb;    /* Deep Blue (secondary accents) */
+            --primary-light: #60a5fa;   /* Lighter Blue (subtle highlights) */
+            --accent-blue: #0ea5e9;     /* Bright Aqua (for emphasis) */
+
+            /* Neutrals */
+            --background-dark: #0a0a0a; /* True Black for main backgrounds */
+            --surface-dark: #18181b;    /* Very Dark Gray (for cards, panels) */
+            --surface-dark-alt: #27272a; /* Slightly Lighter Dark Gray (for borders, secondary elements) */
+            --border-color: #3f3f46;    /* Muted Dark Gray (for subtle borders) */
+
+            --text-primary: #ffffff;    /* Pure White (main text) */
+            --text-secondary: #d4d4d8;  /* Light Gray (secondary text, labels) */
+            --text-muted: #71717a;      /* Muted Gray (less emphasis) */
+
+            /* Status Colors (Standard) */
+            --success: #10b981;
+            --danger: #dc2626;
+            --warning: #f59e0b;
+            --info: #0284c7;
+
+            /* --- Glass/Blur Effects --- */
+            --glass-backdrop-filter: blur(25px);
+            --glass-overlay-dark: rgba(24, 24, 27, 0.7); /* Semi-transparent dark for glass effect */
+            --glass-border: rgba(63, 63, 70, 0.5);       /* Subtle border for glass elements */
+        }
+
+        body {
+            font-family: 'Inter', 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+            background-color: var(--background-dark); /* Solid black background */
+            color: var(--text-primary);
+            overflow-x: hidden;
+            position: relative;
+            line-height: 1.6;
+        }
+
+        /* Subtle animated background gradient */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background:
+                radial-gradient(circle at 20% 80%, rgba(59, 130, 246, 0.2) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(96, 165, 250, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 40% 40%, rgba(37, 99, 235, 0.1) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: -1;
+            animation: subtleGradients 15s ease infinite alternate;
+        }
+
+        @keyframes subtleGradients {
+            0% { opacity: 0.8; }
+            50% { opacity: 1; }
+            100% { opacity: 0.8; }
+        }
+
+        .container {
+            max-width: 1200px; /* Slightly wider container */
+            margin: 0 auto;
+            padding: 20px 20px 100px;
+            position: relative;
+        }
+
+        /* --- Header Styles --- */
+        .header {
+            background: var(--glass-overlay-dark);
+            backdrop-filter: var(--glass-backdrop-filter);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px; /* More rounded corners */
+            padding: 25px 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4); /* Subtle dark shadow */
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .header:hover {
+            box-shadow: 0 15px 50px rgba(0, 0, 0, 0.5);
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.03), transparent);
+            animation: shimmer 4s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            z-index: 1;
+        }
+
+        .user-avatar {
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            border: 2px solid var(--primary);
+            object-fit: cover;
+            box-shadow: 0 0 25px rgba(59, 130, 246, 0.3); /* Primary blue glow */
+        }
+
+        .user-details h3 {
+            color: var(--text-primary);
+            font-weight: 600;
+            font-size: 1.15rem;
+            margin-bottom: 5px;
+        }
+
+        .user-balance {
+            color: var(--primary);
+            font-weight: 700;
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        /* --- Buttons and Theme Toggle --- */
+        .theme-toggle {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            border: none;
+            border-radius: 50px;
+            padding: 12px 20px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            z-index: 1;
+            box-shadow: 0 5px 15px rgba(59, 130, 246, 0.3);
+        }
+
+        .theme-toggle:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(59, 130, 246, 0.4);
+        }
+
+        /* --- Card Styles --- */
+        .card {
+            background: var(--surface-dark);
+            backdrop-filter: var(--glass-backdrop-filter);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 25px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3); /* Darker shadow */
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, var(--primary), var(--primary-light), var(--primary));
+            opacity: 0.8;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+        }
+
+        .card-title {
+            font-size: 1.4rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: var(--text-primary); /* White title */
+        }
+
+        /* --- Stat Cards --- */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); /* Slightly larger min-width */
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: var(--surface-dark-alt); /* Slightly lighter for contrast */
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 25px;
+            text-align: center;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.2); /* Inner shadow for depth */
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), transparent);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .stat-card:hover::before {
+            opacity: 1;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-4px);
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.2), 0 8px 25px rgba(0, 0, 0, 0.3);
+        }
+
+        .stat-number {
+            font-size: 2.2rem;
+            font-weight: 900; /* Heavier weight for numbers */
+            color: var(--primary);
+            margin-bottom: 10px;
+            letter-spacing: -1px;
+        }
+
+        .stat-label {
+            color: var(--text-secondary);
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+
+        /* --- Balance Card --- */
+        .balance-card {
+            background: var(--surface-dark-alt);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 25px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            margin-bottom: 25px;
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.2);
+        }
+
+        .balance-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(16, 185, 121, 0.1), transparent);
+            opacity: 1;
+        }
+
+        .balance-amount {
+            font-size: 2.8rem;
+            font-weight: 900;
+            color: var(--success);
+            margin-bottom: 10px;
+            letter-spacing: -1.5px;
+        }
+
+        .balance-label {
+            color: var(--text-secondary);
+            font-weight: 500;
+            font-size: 1rem;
+        }
+
+        /* --- Buttons --- */
+        .btn {
+            padding: 14px 28px;
+            border: none;
+            border-radius: 14px; /* More rounded */
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            font-size: 1rem;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            transition: left 0.6s;
+        }
+
+        .btn:hover:not(:disabled)::before {
+            left: 100%;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: var(--text-primary);
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(59, 130, 246, 0.4);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, var(--success), #047857);
+            color: var(--text-primary);
+        }
+
+        .btn-success:hover:not(:disabled) {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(16, 185, 121, 0.4);
+        }
+
+        .btn-warning {
+            background: linear-gradient(135deg, var(--warning), #b45309);
+            color: var(--text-primary);
+        }
+
+        .btn-warning:hover:not(:disabled) {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(245, 158, 11, 0.4);
+        }
+
+        .btn-info {
+            background: linear-gradient(135deg, var(--info), #0369a1);
+            color: var(--text-primary);
+        }
+
+        .btn-info:hover:not(:disabled) {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(2, 132, 199, 0.4);
+        }
+
+        .btn-secondary {
+            background: var(--surface-dark);
+            color: var(--text-secondary);
+            border: 1px solid var(--border-color);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn-secondary:hover:not(:disabled) {
+            transform: translateY(-3px);
+            background: var(--surface-dark-alt);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, var(--danger), #b91c1c);
+            color: var(--text-primary);
+        }
+
+        .btn-danger:hover:not(:disabled) {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(220, 38, 38, 0.4);
+        }
+
+        .btn-accent {
+            background: linear-gradient(135deg, var(--accent-blue), var(--primary-light));
+            color: var(--text-primary);
+        }
+
+        .btn-accent:hover:not(:disabled) {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(14, 165, 229, 0.4);
+        }
+
+        /* --- Swap Container --- */
+        .swap-container {
+            background: var(--surface-dark);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 25px;
+            margin-bottom: 25px;
+            position: relative;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+        }
+
+        .swap-row {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .swap-input-group {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .swap-input {
+            width: 100%;
+            padding: 14px 18px;
+            border: 2px solid var(--border-color);
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            background: var(--surface-dark-alt);
+            color: var(--text-primary);
+            text-align: center;
+            outline: none;
+        }
+
+        .swap-input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.15);
+        }
+
+        .swap-input[disabled] {
+            background: rgba(39, 39, 42, 0.6); /* Slightly darker disabled */
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+
+        .swap-label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            text-align: center;
+        }
+
+        .swap-icon {
+            background: linear-gradient(135deg, var(--accent-blue), var(--primary-light));
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 48px;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            flex-shrink: 0;
+            box-shadow: 0 5px 15px rgba(14, 165, 229, 0.3);
+        }
+
+        .swap-icon:hover {
+            transform: rotate(180deg);
+            box-shadow: 0 8px 25px rgba(14, 165, 229, 0.4);
+        }
+
+        /* --- Form Styles --- */
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: 600;
+            color: var(--text-secondary);
+        }
+
+        .form-input, .form-select {
+            width: 100%;
+            padding: 14px 18px;
+            border: 2px solid var(--border-color);
+            border-radius: 12px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: var(--surface-dark-alt);
+            color: var(--text-primary);
+            outline: none;
+        }
+
+        .form-input:focus, .form-select:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.15);
+        }
+
+        .form-select {
+            cursor: pointer;
+            appearance: none; /* Remove default arrow */
+            background-image: url('data:image/svg+xml;charset=UTF-8,%3Csvg xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22 width%3D%2210%22 height%3D%225%22 viewBox%3D%220 0 10 5%22%3E%3Cpath d%3D%22M0 0l5 5 5-5%22 fill%3D%22%2394a6be%22%2F%3E%3C%2Fsvg%3E'); /* Custom arrow */
+            background-repeat: no-repeat;
+            background-position: calc(100% - 18px) center;
+            background-size: 10px;
+        }
+
+        .form-select option {
+            background: var(--surface-dark);
+            color: var(--text-primary);
+            padding: 10px;
+        }
+
+        /* --- Task Styles --- */
+        .task-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); /* Responsive task cards */
+            gap: 20px;
+        }
+
+        .task-card {
+            background: var(--surface-dark);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 25px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+        }
+
+        .task-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: linear-gradient(180deg, var(--primary), var(--primary-light));
+            border-radius: 0 4px 4px 0; /* Rounded right side */
+        }
+
+        .task-card.telegram-task::before {
+            background: linear-gradient(180deg, var(--info), #0369a1);
+        }
+
+        .task-card:hover {
+            transform: translateX(7px);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.35);
+        }
+
+        .task-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 15px;
+        }
+
+        .task-title {
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 1.1rem;
+        }
+
+        .task-type-badge {
+            padding: 5px 10px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .task-type-normal {
+            background: rgba(59, 130, 246, 0.2);
+            color: var(--primary);
+        }
+
+        .task-type-telegram {
+            background: rgba(2, 132, 199, 0.2);
+            color: var(--info);
+        }
+
+        .task-reward {
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            color: white;
+            padding: 8px 15px;
+            border-radius: 25px; /* More rounded */
+            font-size: 0.85rem;
+            font-weight: 700;
+            box-shadow: 0 3px 10px rgba(59, 130, 246, 0.3);
+        }
+
+        .task-description {
+            color: var(--text-secondary);
+            margin-bottom: 15px;
+            line-height: 1.7;
+            font-size: 0.95rem;
+        }
+
+        .task-channel {
+            color: var(--info);
+            font-weight: 600;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.9rem;
+        }
+
+        .task-actions {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+        }
+
+        /* --- Tabs --- */
+        .tabs {
+            display: flex;
+            background: var(--surface-dark);
+            border-radius: 12px;
+            padding: 5px;
+            margin-bottom: 25px;
+            border: 1px solid var(--border-color);
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.2);
+        }
+
+        .tab {
+            flex: 1;
+            padding: 14px;
+            text-align: center;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            color: var(--text-muted);
+        }
+
+        .tab.active {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            box-shadow: 0 5px 15px rgba(59, 130, 246, 0.3);
+        }
+
+        .tab-content, .section {
+            display: none;
+        }
+
+        .tab-content.active, .section.active {
+            display: block;
+        }
+
+        /* --- Bottom Navigation --- */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: var(--surface-dark);
+            backdrop-filter: blur(20px);
+            border-top: 1px solid var(--border-color);
+            padding: 15px 0;
+            z-index: 1000;
+            box-shadow: 0 -5px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .nav-container {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+            text-decoration: none;
+            color: var(--text-muted);
+            transition: all 0.3s ease;
+            padding: 8px 12px;
+            border-radius: 12px;
+            position: relative;
+        }
+
+        .nav-item.active, .nav-item:hover {
+            color: var(--primary);
+            background: rgba(59, 130, 246, 0.1);
+        }
+
+        .nav-item span {
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        /* --- Spin Wheel --- */
+        .spin-wheel {
+            width: 260px; /* Slightly larger */
+            height: 260px;
+            border-radius: 50%;
+            border: 10px solid var(--primary); /* Thicker primary border */
+            margin: 30px auto;
+            position: relative;
+            background: conic-gradient(
+                from 0deg,
+                var(--primary) 0deg 60deg,
+                var(--primary-light) 60deg 120deg,
+                var(--warning) 120deg 180deg,
+                var(--success) 180deg 240deg,
+                var(--primary-dark) 240deg 300deg,
+                var(--accent-blue) 300deg 360deg
+            );
+            transition: transform 3s cubic-bezier(0.23, 1, 0.32, 1);
+            box-shadow: 0 0 50px rgba(59, 130, 246, 0.3);
+        }
+
+        .spin-wheel::before {
+            content: '';
+            position: absolute;
+            top: -18px; /* Adjusted arrow position */
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 0;
+            border-left: 16px solid transparent;
+            border-right: 16px solid transparent;
+            border-top: 32px solid var(--text-primary); /* White arrow */
+            z-index: 10;
+        }
+
+        .spin-center {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 70px; /* Larger center */
+            height: 70px;
+            background: var(--primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+            font-size: 1.3rem;
+            z-index: 5;
+            box-shadow: 0 0 25px rgba(59, 130, 246, 0.5);
+        }
+
+        /* --- Modal --- */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.85); /* Darker overlay */
+            z-index: 2000;
+            backdrop-filter: blur(15px);
+            justify-content: center;
+            align-items: center;
+            padding: 20px; /* Add padding for smaller screens */
+        }
+
+        .modal-content {
+            background: var(--surface-dark);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 35px;
+            max-width: 450px; /* Wider modal */
+            width: 100%;
+            max-height: 85vh;
+            overflow-y: auto;
+            box-shadow: 0 15px 50px rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        .modal-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 28px;
+            cursor: pointer;
+            color: var(--text-muted);
+            transition: all 0.3s ease;
+        }
+
+        .close-btn:hover {
+            color: var(--text-secondary);
+            transform: scale(1.1);
+        }
+
+        /* --- Loading Indicator --- */
+        .loading {
+            display: inline-block;
+            width: 24px;
+            height: 24px;
+            border: 4px solid rgba(255, 255, 255, .3);
+            border-radius: 50%;
+            border-top-color: var(--text-primary);
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* --- Alerts --- */
+        .alert {
+            padding: 18px 25px;
+            border-radius: 14px;
+            margin-bottom: 25px;
+            border-left: 5px solid; /* Thicker border */
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            animation: slideIn 0.4s ease-out;
+            position: relative;
+            z-index: 1001;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(-100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        .alert-success { background: rgba(16, 185, 121, 0.1); border-left-color: var(--success); color: var(--success); }
+        .alert-danger { background: rgba(220, 38, 38, 0.1); border-left-color: var(--danger); color: var(--danger); }
+        .alert-warning { background: rgba(217, 119, 6, 0.1); border-left-color: var(--warning); color: var(--warning); }
+        .alert-info { background: rgba(2, 132, 199, 0.1); border-left-color: var(--info); color: var(--info); }
+
+        /* --- Progress Bar --- */
+        .progress-bar {
+            width: 100%;
+            height: 10px;
+            background: var(--surface-dark-alt);
+            border-radius: 5px;
+            overflow: hidden;
+            margin: 15px 0;
+            border: 1px solid var(--border-color);
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--accent-blue)); /* Blue to Aqua */
+            border-radius: 5px;
+            transition: width 0.4s ease-out;
+        }
+
+        /* --- Countdown --- */
+        .countdown {
+            font-size: 28px;
+            font-weight: 800;
+            color: var(--primary);
+            text-align: center;
+            margin: 25px 0;
+            letter-spacing: -0.5px;
+        }
+
+        /* --- Refer Link --- */
+        .refer-link {
+            background: var(--surface-dark-alt);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 15px;
+            color: var(--text-primary);
+            font-family: 'Courier New', Courier, monospace; /* Monospace for code */
+            word-break: break-all;
+            margin: 15px 0;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+
+        .refer-link:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        /* --- Withdrawal History --- */
+        .withdrawal-history {
+            max-height: 320px;
+            overflow-y: auto;
+            padding-right: 5px; /* For scrollbar visibility */
+        }
+
+        .history-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 10px;
+            border-bottom: 1px solid var(--border-color);
+            margin-bottom: 10px;
+            font-size: 0.95rem;
+        }
+
+        .history-item:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+        }
+
+        .history-status {
+            padding: 6px 12px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .status-pending { background: rgba(217, 119, 6, 0.2); color: var(--warning); }
+        .status-completed { background: rgba(16, 185, 121, 0.2); color: var(--success); }
+        .status-rejected { background: rgba(220, 38, 38, 0.2); color: var(--danger); }
+
+        /* --- Wallet Status --- */
+        .wallet-status-info {
+            margin-top: 20px;
+            padding: 12px;
+            border-radius: 8px;
+            text-align: center;
+            font-weight: 600;
+            width: 100%;
+            font-size: 0.95rem;
+        }
+
+        .wallet-connected { background: rgba(16, 185, 121, 0.1); color: var(--success); }
+        .wallet-disconnected { background: rgba(220, 38, 38, 0.1); color: var(--danger); }
+
+        .profile-wallet-controls {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-top: 25px;
+        }
+
+        /* --- Ad Loading --- */
+        .ad-loading {
+            text-align: center;
+            padding: 25px;
+            background: var(--surface-dark);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            margin: 20px 0;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .ad-loading .loading {
+            margin: 0 auto 15px;
+        }
+
+        /* --- Task Category Selector --- */
+        .task-category-selector {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .category-option {
+            flex: 1;
+            padding: 20px;
+            border: 2px solid var(--border-color);
+            border-radius: 12px;
+            background: var(--surface-dark-alt);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.1);
+        }
+
+        .category-option.selected {
+            border-color: var(--primary);
+            background: rgba(59, 130, 246, 0.1);
+        }
+
+        .category-option.telegram.selected {
+            border-color: var(--info);
+            background: rgba(2, 132, 199, 0.1);
+        }
+
+        .category-icon {
+            font-size: 28px;
+            margin-bottom: 10px;
+            color: var(--text-secondary);
+        }
+
+        .category-option.selected .category-icon {
+            color: var(--primary);
+        }
+
+        .category-option.telegram.selected .category-icon {
+            color: var(--info);
+        }
+
+        .category-title {
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 5px;
+            font-size: 1.05rem;
+        }
+
+        .category-description {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        .telegram-fields {
+            display: none;
+        }
+
+        .telegram-fields.active {
+            display: block;
+        }
+
+        /* --- Media Queries --- */
+        @media (max-width: 992px) {
+            .container {
+                padding: 15px 15px 100px;
+            }
+            .header {
+                padding: 20px 25px;
+            }
+            .stats-grid {
+                grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            }
+            .spin-wheel {
+                width: 220px;
+                height: 220px;
+            }
+            .spin-center {
+                width: 60px;
+                height: 60px;
+                font-size: 1.1rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px 10px 100px;
+            }
+
+            .header {
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+                border-radius: 16px;
+                padding: 20px;
+            }
+
+            .user-info {
+                flex-direction: column;
+                gap: 8px;
+            }
+
+            .user-avatar {
+                width: 48px;
+                height: 48px;
+            }
+
+            .user-details h3 {
+                font-size: 1rem;
+            }
+
+            .user-balance {
+                font-size: 1.1rem;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+                gap: 15px;
+            }
+
+            .stat-number {
+                font-size: 1.8rem;
+            }
+
+            .balance-amount {
+                font-size: 2.4rem;
+            }
+
+            .modal-content {
+                width: 95%;
+                padding: 25px;
+            }
+
+            .spin-wheel {
+                width: 200px;
+                height: 200px;
+            }
+
+            .spin-wheel::before {
+                border-left-width: 12px;
+                border-right-width: 12px;
+                border-top-width: 24px;
+            }
+
+            .bottom-nav {
+                padding: 12px 0;
+            }
+
+            .nav-item span {
+                font-size: 0.75rem;
+            }
+
+            .nav-item {
+                padding: 7px 10px;
+            }
+
+            .profile-wallet-controls {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .swap-row {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .swap-icon {
+                transform: rotate(90deg);
+            }
+
+            .swap-icon:hover {
+                transform: rotate(270deg);
+            }
+
+            .task-grid {
+                grid-template-columns: 1fr; /* Stack tasks vertically */
+            }
+
+            .task-card {
+                padding: 20px;
+            }
+
+            .task-actions {
+                justify-content: center;
+                margin-top: 10px;
+            }
+
+            .task-category-selector {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .category-option {
+                padding: 15px;
+            }
+        }
+
+        /* --- Animation for Pulse --- */
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% {
+                box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.7); /* Primary blue pulse */
+            }
+            70% {
+                box-shadow: 0 0 0 12px rgba(59, 130, 246, 0);
+            }
+            100% {
+                box-shadow: 0 0 0 0 rgba(59, 130, 246, 0);
+            }
+        }
+
+        /* --- Generic Glow --- */
+        .glow {
+            box-shadow: 0 0 25px rgba(59, 130, 246, 0.5); /* Primary blue glow */
+        }
+
+        /* --- Balance Grid --- */
+        .balance-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 20px;
+            margin-bottom: 25px;
+        }
+
+        /* --- Verification Status --- */
+        .verification-status {
+            padding: 12px;
+            border-radius: 8px;
+            margin: 15px 0;
+            text-align: center;
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+
+        .verification-pending { background: rgba(217, 119, 6, 0.1); color: var(--warning); border: 1px solid var(--warning); }
+        .verification-success { background: rgba(16, 185, 121, 0.1); color: var(--success); border: 1px solid var(--success); }
+        .verification-failed { background: rgba(220, 38, 38, 0.1); color: var(--danger); border: 1px solid var(--danger); }
     </style>
 </head>
 <body>
@@ -1725,7 +1723,6 @@ body::before {
     </div>
 
     <!-- Firebase SDK -->
-    <!-- Ensure you are using compat libraries if needed for older Firebase versions -->
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
 
@@ -1761,35 +1758,38 @@ body::before {
         // Global variables
         let currentUser = null;
         let userBalance = 0;
-        let userTonBalance = 0.00000000;
+        let userTonBalance = 0;
         let userSpins = 0;
         let adsWatchedToday = 0;
         let dailyCheckinDone = false;
-        let lastAdCompletionTime = 0; // Timestamp when the last ad was *successfully completed* (i.e., watch duration met)
+        let lastAdCompletionTime = 0; // Timestamp when the last ad was *successfully completed*
         let lastAdClaimAttemptTime = 0; // Timestamp when the "Watch Ad" button was last clicked to start an ad/claim
         let swapMode = 'pointsToTon'; // 'pointsToTon' or 'tonToPoints'
         let isAdInteractionInProgress = false; // Controls if an ad is currently being processed (watched, cooldown, etc.)
+        let selectedTaskCategory = 'normal';
         let currentReferralBonusRate = 0.20; // 20% referral bonus
-        let adClaimTimer = null; // For countdown during ad claim
-        let postAdCooldownTimer = null; // For delay between ad claims/interactions
+        let adClaimTimer = null; // For countdown during ad claiming
+        let postAdCooldownTimer = null; // For delay between ad claims
 
         // Constants
-        const REFERRAL_BONUS_POINTS_PER_EARNING = 0.20; // 20% of user's earning from tasks (Note: this logic might need Firebase update to track earning per task)
+        const REFERRAL_BONUS_POINTS_PER_EARNING = 0.20; // 20% of user's earning from tasks
         const MIN_WITHDRAW_TON = 0.1;
-        const POINTS_TO_TON_RATE = 0.00000078 / 100; // Adjusted to match example: 100 points = 0.00078 TON => 1 point = 0.0000000078 TON
-        const IMPRESSIONS_TO_TON_RATE = 0.0015; // 1.5 TON per 1000 impressions => 0.0015 TON per impression
+        // Adjusted rate for swap: 100 points = 0.001 TON -> 1 point = 0.00001 TON
+        const POINTS_TO_TON_RATE = 0.00001; 
+        // Adjusted rate for tasks: 1.5 TON per 1000 impressions -> 0.0015 TON per impression
+        const IMPRESSIONS_TO_TON_RATE = 0.0015; 
         const AD_REWARD_POINTS = 10;
         const CHECKIN_REWARD_POINTS = 20;
         const TASK_SPIN_REWARD = 1;
         const TELEGRAM_BOT_TOKEN = '7829924006:AAFIOCnga8v6yOw08dCzvKDC8wS7Fuad_II'; // Replace with your actual bot token
         const AD_WATCH_DURATION = 15000; // 15 seconds for ad watch time
-        const AD_CLAIM_COOLDOWN = 3000;  // 3 seconds cooldown after ad completion before reward is claimable/button active
-        const POST_AD_COOLDOWN = 3000;  // 3 seconds delay between claiming reward and being able to start the *next* ad
+        const AD_CLAIM_COOLDOWN = 3;  // 3 seconds cooldown after ad watch completion before reward is claimable/button active
+        const POST_AD_COOLDOWN = 5;  // 5 seconds delay between claiming reward and being able to start the *next* ad
         const MAX_DAILY_ADS = 50;
 
         // --- User Status Management ---
         async function checkAndApplyUserStatus() {
-            if (!currentUser) return true; // Assume okay if no current user yet
+            if (!currentUser) return true; // Assume active if no current user yet
 
             const userRef = database.ref('users/' + currentUser.id);
             try {
@@ -1804,8 +1804,8 @@ body::before {
                 return true; // User is not banned
             } catch (error) {
                 console.error("Error checking user status:", error);
-                showAlert("Could not verify user status. Please check your connection.", "danger");
-                return false; // Assume an error means they can't proceed safely
+                showAlert("Failed to check user status. Please check your connection or try again.", "danger");
+                return false; // Assume not banned if status check fails (safer default)
             }
         }
 
@@ -1833,7 +1833,8 @@ body::before {
 
                     initializeUser();
                 } else {
-                    const fallbackUserId = Math.floor(Math.random() * 1000000000) + 9000000000; 
+                    // Fallback for testing or when not running in Telegram Web App context
+                    const fallbackUserId = Math.floor(Math.random() * 1000000000) + 9000000000; // Large random ID for testing
                     currentUser = {
                         id: fallbackUserId,
                         username: `testuser_${fallbackUserId}`,
@@ -1863,10 +1864,10 @@ body::before {
             
             if (category === 'telegram') {
                 telegramFields.classList.add('active');
-                if (telegramChannelInput) telegramChannelInput.required = true;
+                telegramChannelInput.required = true;
             } else {
-                if (telegramFields) telegramFields.classList.remove('active');
-                if (telegramChannelInput) telegramChannelInput.required = false;
+                telegramFields.classList.remove('active');
+                telegramChannelInput.required = false;
             }
         }
 
@@ -1877,6 +1878,9 @@ body::before {
                 return false;
             }
             try {
+                // SECURITY NOTE: TELEGRAM_BOT_TOKEN SHOULD NOT BE EXPOSED CLIENT-SIDE.
+                // This function MUST be called from a backend service.
+                // For demonstration purposes, it's kept here, but it's a major vulnerability.
                 const response = await fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/getChatMember?chat_id=@${channelUsername}&user_id=${userId}`);
                 const data = await response.json();
                 
@@ -1897,6 +1901,16 @@ body::before {
         // Initialize user data from Firebase
         async function initializeUser() {
             if (!currentUser) return;
+
+            // Basic IP detection (Client-side IP detection is unreliable, server-side is needed for robust multi-account detection)
+            // This is a placeholder for demonstration. A real implementation would involve sending IP to a server.
+            if (!currentUser.ipAddress) { // Assume IP is fetched or set elsewhere if available
+                // In a real app, you'd use a service or backend to get the IP
+                // For now, we'll simulate a random IP for demonstration purposes
+                // IMPORTANT: This is NOT a secure or reliable way to get IPs for banning
+                currentUser.ipAddress = `192.168.1.${Math.floor(Math.random() * 254) + 1}`; // Example dummy IP
+                console.warn("Simulated IP address:", currentUser.ipAddress);
+            }
 
             const userRef = database.ref('users/' + currentUser.id);
             try {
@@ -1920,6 +1934,7 @@ body::before {
                         lastCheckin: null,
                         createdAt: Date.now(),
                         status: 'active', // 'active', 'banned'
+                        ipAddress: currentUser.ipAddress // Store IP address
                     };
                     await userRef.set(userData);
                 }
@@ -1928,10 +1943,11 @@ body::before {
                 userRef.on('value', (snapshot) => {
                     const userData = snapshot.val();
                     if (userData) {
+                        // Check for ban status on every data update
                         if (userData.status === 'banned') {
                             showAlert('Your account has been banned. Please contact support.', 'danger');
                             document.body.innerHTML = '<div class="container" style="text-align: center; padding-top: 100px;"><h1>Banned</h1><p>Your account has been banned. Please contact support for more information.</p></div>';
-                            return; 
+                            return; // Stop further UI updates if banned
                         }
 
                         userBalance = userData.balance || 0;
@@ -1940,6 +1956,7 @@ body::before {
                         adsWatchedToday = userData.adsWatched || 0;
                         dailyCheckinDone = userData.lastCheckin === new Date().toDateString();
 
+                        // Reset daily ad count if 24 hours have passed
                         if (Date.now() - (userData.lastAdReset || 0) > 24 * 60 * 60 * 1000) {
                             adsWatchedToday = 0;
                             userRef.update({
@@ -1955,8 +1972,9 @@ body::before {
                     }
                 });
 
+                // Initial check for ban status right after loading user data
                 const isUserNotBanned = await checkAndApplyUserStatus();
-                if (!isUserNotBanned) return; 
+                if (!isUserNotBanned) return; // Stop if banned
 
                 loadTasks();
                 loadUserTasks();
@@ -2042,36 +2060,34 @@ body::before {
             if (walletStatusWrapper) walletStatusWrapper.innerHTML = walletStatusHtml;
             if (withdrawModalWalletInfo) withdrawModalWalletInfo.innerHTML = walletStatusHtml;
 
-            if (profileWalletControls) {
-                profileWalletControls.innerHTML = '';
-                if (connectedWallet) {
-                    const disconnectButton = document.createElement('button');
-                    disconnectButton.className = 'btn btn-danger';
-                    disconnectButton.innerHTML = '<span class="material-icons">power_settings_new</span> Disconnect Wallet';
-                    disconnectButton.onclick = async () => {
-                        try {
-                            await tonConnectUI.disconnect();
-                            showAlert('Wallet disconnected successfully!', 'success');
-                        } catch (error) {
-                            console.error("Error during disconnection:", error);
-                            showAlert('Error disconnecting wallet. Please try again.', 'danger');
-                        }
-                    };
-                    profileWalletControls.appendChild(disconnectButton);
-                } else {
-                    const connectButton = document.createElement('button');
-                    connectButton.className = 'btn btn-primary';
-                    connectButton.innerHTML = '<span class="material-icons">account_balance_wallet</span> Connect Wallet';
-                    connectButton.onclick = async () => {
-                        try {
-                            await tonConnectUI.openModal();
-                        } catch (error) {
-                            console.error("Error opening TON Connect modal:", error);
-                            showAlert('Error opening wallet selection. Please ensure you have a compatible wallet installed.', 'danger');
-                        }
-                    };
-                    profileWalletControls.appendChild(connectButton);
-                }
+            profileWalletControls.innerHTML = '';
+            if (connectedWallet) {
+                const disconnectButton = document.createElement('button');
+                disconnectButton.className = 'btn btn-danger';
+                disconnectButton.innerHTML = '<span class="material-icons">power_settings_new</span> Disconnect Wallet';
+                disconnectButton.onclick = async () => {
+                    try {
+                        await tonConnectUI.disconnect();
+                        showAlert('Wallet disconnected successfully!', 'success');
+                    } catch (error) {
+                        console.error("Error during disconnection:", error);
+                        showAlert('Error disconnecting wallet. Please try again.', 'danger');
+                    }
+                };
+                profileWalletControls.appendChild(disconnectButton);
+            } else {
+                const connectButton = document.createElement('button');
+                connectButton.className = 'btn btn-primary';
+                connectButton.innerHTML = '<span class="material-icons">account_balance_wallet</span> Connect Wallet';
+                connectButton.onclick = async () => {
+                    try {
+                        await tonConnectUI.openModal();
+                    } catch (error) {
+                        console.error("Error opening TON Connect modal:", error);
+                        showAlert('Error opening wallet selection. Please ensure you have a compatible wallet installed.', 'danger');
+                    }
+                };
+                profileWalletControls.appendChild(connectButton);
             }
 
             if (connectWalletAddTaskWrapper) {
@@ -2094,15 +2110,15 @@ body::before {
             }
 
             if (connectedWallet) {
-                if (tonAddressInput) tonAddressInput.value = connectedWallet.address;
-                if (requestWithdrawButton) requestWithdrawButton.disabled = false;
-                if (withdrawAmountInput) withdrawAmountInput.disabled = false;
+                tonAddressInput.value = connectedWallet.address;
+                requestWithdrawButton.disabled = false;
+                withdrawAmountInput.disabled = false;
             } else {
-                if (tonAddressInput) tonAddressInput.value = '';
-                if (requestWithdrawButton) requestWithdrawButton.disabled = true;
-                if (withdrawAmountInput) withdrawAmountInput.disabled = true;
+                tonAddressInput.value = '';
+                requestWithdrawButton.disabled = true;
+                withdrawAmountInput.disabled = true;
 
-                if (withdrawModalWalletInfo && !withdrawModalWalletInfo.querySelector('.btn-primary')) {
+                if (!withdrawModalWalletInfo.querySelector('.btn-primary')) {
                     const connectButton = document.createElement('button');
                     connectButton.className = 'btn btn-primary';
                     connectButton.innerHTML = '<span class="material-icons">account_balance_wallet</span> Connect Wallet to Withdraw';
@@ -2130,10 +2146,10 @@ body::before {
             const pointsInput = document.getElementById('swapPointsInput');
             const tonInput = document.getElementById('swapTonInput');
 
-            if (pointsInput && pointsInput.oninput === null) { // Check if already set
+            if (pointsInput && pointsInput.oninput === null) {
                 pointsInput.oninput = function() { handleSwapInput('points'); };
             }
-            if (tonInput && tonInput.oninput === null) { // Check if already set
+            if (tonInput && tonInput.oninput === null) {
                 tonInput.oninput = function() { handleSwapInput('ton'); };
             }
             
@@ -2577,23 +2593,28 @@ body::before {
             wheel.style.transform = ''; 
             wheel.style.transition = 'transform 3s cubic-bezier(0.23, 1, 0.32, 1)';
 
-            const randomRotation = Math.floor(Math.random() * 5) + 7; 
-            const landingAngle = Math.floor(Math.random() * 60); 
-            const totalRotation = (randomRotation * 360) + landingAngle;
+            // Generate a random angle to land on a segment
+            // We want to land on a specific segment, not just a random degree.
+            // The segments are roughly 60 degrees each. Let's pick a target segment.
+            const segments = [100, 4, 8, 16, 18, 20]; // Rewards for each segment
+            const randomSegmentIndex = Math.floor(Math.random() * segments.length);
+            const reward = segments[randomSegmentIndex];
+
+            // Calculate rotation to land on the chosen segment.
+            // Each segment is 60 degrees. We need to determine the starting angle of the segment.
+            // Let's assume segment 0 starts at 0 degrees, segment 1 at 60, etc.
+            // To make it more unpredictable, let's add a random offset within the segment.
+            const segmentStartAngle = randomSegmentIndex * 60;
+            const offsetWithinSegment = Math.random() * 50; // Random offset within the 60-degree segment
+            const landingAngle = segmentStartAngle + offsetWithinSegment;
+
+            // Add multiple full rotations for dramatic effect
+            const fullRotations = 7; // Spin 7 full times
+            const totalRotation = (fullRotations * 360) + landingAngle;
 
             wheel.style.transform = `rotate(${totalRotation}deg)`;
 
             setTimeout(async () => {
-                const finalRotation = totalRotation % 360; 
-
-                let reward;
-                if (finalRotation < 60) reward = 100;       
-                else if (finalRotation < 120) reward = 4; 
-                else if (finalRotation < 180) reward = 8; 
-                else if (finalRotation < 240) reward = 16; 
-                else if (finalRotation < 300) reward = 18; 
-                else reward = 20;                         
-
                 try {
                     const userRef = database.ref('users/' + currentUser.id);
                     await userRef.transaction((userData) => {
@@ -2611,8 +2632,8 @@ body::before {
                     showAlert("Failed to update your balance after spin. Please check your connection.", "danger");
                 } finally {
                     spinButton.disabled = false;
-                    wheel.style.transition = ''; 
-                    wheel.style.transform = ''; 
+                    wheel.style.transition = ''; // Remove transition for next spin
+                    wheel.style.transform = '';  // Reset transform for next spin
                 }
             }, 3000);
         }
@@ -2624,59 +2645,52 @@ body::before {
             const adCountdown = document.getElementById('adCountdown');
             const adCooldownMessage = document.getElementById('adCooldownMessage');
 
-            // Ensure all elements exist before trying to manipulate them
-            if (!watchAdButton || !adLoadingMessage || !adCountdown || !adCooldownMessage) {
-                console.warn("One or more ad UI elements not found.");
-                return;
-            }
+            if (!watchAdButton || !adLoadingMessage || !adCountdown || !adCooldownMessage) return;
 
             const now = Date.now();
-            const timeSinceLastAdCompletion = now - lastAdCompletionTime;
-            const timeSinceLastClaimAttempt = now - lastAdClaimAttemptTime;
+            const timeSinceLastAdCompletion = now - lastAdCompletionTime; // Time since the *watch duration was met*
+            const timeSinceLastClaimAttempt = now - lastAdClaimAttemptTime; // Time since the *button was clicked*
 
-            // Clear existing timers to prevent multiple intervals
+            // Clear any existing timers
             if (window.adClaimTimer) clearInterval(window.adClaimTimer);
             if (window.postAdCooldownTimer) clearInterval(window.postAdCooldownTimer);
 
-            // Reset UI elements to default state
+            // Reset all UI elements to default state
             adLoadingMessage.style.display = 'none';
             adCountdown.style.display = 'none';
             adCooldownMessage.textContent = '';
             adCooldownMessage.style.display = 'none';
-            watchAdButton.style.display = 'flex';
+            watchAdButton.style.display = 'flex'; // Make button visible
             watchAdButton.innerHTML = '<span class="material-icons">play_arrow</span> Watch Ad (+10 Diamond)';
             watchAdButton.disabled = false;
             watchAdButton.classList.add('pulse', 'glow');
 
-            // Condition 1: Daily limit reached
+            // --- State Logic ---
+
             if (adsWatchedToday >= MAX_DAILY_ADS) {
+                // State 1: Daily limit reached
                 watchAdButton.disabled = true;
                 watchAdButton.innerHTML = '<span class="material-icons">block</span> Daily Limit Reached';
                 watchAdButton.classList.remove('pulse', 'glow');
-            } 
-            // Condition 2: Ad interaction in progress (e.g., ad playing, waiting for cooldown)
-            else if (isAdInteractionInProgress) {
+            } else if (isAdInteractionInProgress) {
+                // State 2: Ad is currently being processed (e.g., playing, waiting for watch time)
                 watchAdButton.disabled = true;
                 watchAdButton.classList.remove('pulse', 'glow');
 
-                if (adCountdown.style.display === 'block') {
-                    // Countdown for reward availability is active (handled by adClaimTimer)
-                } else if (adCooldownMessage.style.display === 'block') {
-                    // Cooldown for next ad is active (handled by postAdCooldownTimer)
-                } else { 
+                if (adCountdown.style.display === 'block') { // If countdown is already showing (reward claim timer)
+                    // The timer logic itself updates the text, we just ensure the button is disabled
+                } else { // If waiting for ad to play or watch time
                      watchAdButton.innerHTML = '<div class="loading"></div> Processing Ad...';
                 }
-
-            } 
-            // Condition 3: Reward is available after ad completion (AD_CLAIM_COOLDOWN)
-            else if (timeSinceLastAdCompletion < AD_CLAIM_COOLDOWN && lastAdCompletionTime > 0) {
+            } else if (timeSinceLastAdCompletion < AD_CLAIM_COOLDOWN && lastAdCompletionTime > 0) {
+                // State 3: Reward is in cooldown after ad completion
                 watchAdButton.disabled = true;
                 watchAdButton.classList.remove('pulse', 'glow');
-                watchAdButton.style.display = 'none'; // Hide button while waiting for claim
-                adCountdown.style.display = 'block'; // Show countdown for reward availability
+                watchAdButton.style.display = 'none'; // Hide button, show countdown
+                adCountdown.style.display = 'block';
                 
                 const remainingTime = AD_CLAIM_COOLDOWN - timeSinceLastAdCompletion;
-                adCountdown.textContent = `Reward in: ${Math.ceil(remainingTime / 1000)}s`;
+                adCountdown.textContent = `Reward in ${Math.ceil(remainingTime / 1000)}s`;
                 
                 window.adClaimTimer = setInterval(() => {
                     const now = Date.now();
@@ -2685,22 +2699,21 @@ body::before {
 
                     if (remaining <= 0) {
                         clearInterval(window.adClaimTimer);
-                        isAdInteractionInProgress = false; // Interaction finished
-                        updateAdButtonState(); // Re-evaluate state, should lead to claim reward logic
-                        claimAdReward(); // Attempt to claim reward
+                        isAdInteractionInProgress = false; 
+                        updateAdButtonState(); // Re-evaluate state, should lead to claimAdReward
+                        claimAdReward(); // Automatically claim reward
                     } else {
-                        adCountdown.textContent = `Reward in: ${Math.ceil(remaining / 1000)}s`;
+                        adCountdown.textContent = `Reward in ${Math.ceil(remaining / 1000)}s`;
                     }
                 }, 1000);
-            } 
-            // Condition 4: User needs to wait before starting the next ad (POST_AD_COOLDOWN)
-            else if (timeSinceLastClaimAttempt < POST_AD_COOLDOWN && lastAdClaimAttemptTime > 0) {
+            } else if (timeSinceLastClaimAttempt > 0 && timeSinceLastClaimAttempt < POST_AD_COOLDOWN) {
+                 // State 4: Ad was closed or failed, waiting for post-ad cooldown before next interaction
                  watchAdButton.disabled = true;
                  watchAdButton.classList.remove('pulse', 'glow');
-                 adCooldownMessage.style.display = 'block'; // Show cooldown message for next ad
+                 adCooldownMessage.style.display = 'block';
                  
                  const remainingTime = POST_AD_COOLDOWN - timeSinceLastClaimAttempt;
-                 adCooldownMessage.textContent = `Next ad in: ${Math.ceil(remainingTime / 1000)}s`;
+                 adCooldownMessage.textContent = `Next ad in ${Math.ceil(remainingTime / 1000)}s`;
 
                  window.postAdCooldownTimer = setInterval(() => {
                     const now = Date.now();
@@ -2709,22 +2722,19 @@ body::before {
 
                     if (remaining <= 0) {
                         clearInterval(window.postAdCooldownTimer);
-                        isAdInteractionInProgress = false; // Interaction finished
-                        updateAdButtonState(); // Re-evaluate state, should lead to 'ready' state
+                        isAdInteractionInProgress = false; 
+                        updateAdButtonState(); // Re-evaluate state, button should become active
                     } else {
-                        adCooldownMessage.textContent = `Next ad in: ${Math.ceil(remaining / 1000)}s`;
+                        adCooldownMessage.textContent = `Next ad in ${Math.ceil(remaining / 1000)}s`;
                     }
                  }, 1000);
-            } 
-            // Default state: Ready to watch ad
-            else {
-                watchAdButton.disabled = false;
-                watchAdButton.classList.add('pulse', 'glow');
-                watchAdButton.innerHTML = '<span class="material-icons">play_arrow</span> Watch Ad (+10 Diamond)';
+            } else {
+                // State 5: Ready to watch ad
+                // Defaults already set at the beginning of the function
             }
         }
 
-        // Watch ad - Real ad integration with watch time and timed reward
+        // Watch ad - Real ad integration with watch time
         async function watchAd() {
             if (adsWatchedToday >= MAX_DAILY_ADS) {
                 showAlert('Daily ad limit reached. Come back tomorrow!', 'danger');
@@ -2741,71 +2751,49 @@ body::before {
                 return;
             }
 
-            isAdInteractionInProgress = true; // Mark interaction as started
-            lastAdClaimAttemptTime = Date.now(); // Record the time the button was clicked
-            updateAdButtonState(); // Update UI to reflect interaction state
+            isAdInteractionInProgress = true;
+            lastAdClaimAttemptTime = Date.now(); // Mark the time the button was clicked
+            updateAdButtonState(); // Update UI to show "Processing Ad..." and start cooldown timers if needed
 
             try {
                 console.log("Attempting to show rewarded ad...");
                 
-                // Trigger the ad display. `show_9809601` is expected to return a Promise.
                 await show_9809601(); 
                 
-                console.log("Ad interaction process initiated.");
+                console.log("Ad interaction initiated or completed by SDK.");
                 
-                // Set a timer for the minimum required watch duration.
-                const watchTimer = setTimeout(async () => {
-                    console.log("Ad watch duration met. Marking as completed and initiating claim cooldown.");
-                    lastAdCompletionTime = Date.now(); // Record time when watch duration was met
-                    isAdInteractionInProgress = true; // Stay in interaction state for claim cooldown
-                    updateAdButtonState(); // Update UI to show the claim cooldown timer
-
-                    // Start the cooldown timer for claiming the reward.
-                    if (window.adClaimTimer) clearInterval(window.adClaimTimer);
-                    window.adClaimTimer = setInterval(() => {
-                        const now = Date.now();
-                        const elapsed = now - lastAdCompletionTime;
-                        const remaining = AD_CLAIM_COOLDOWN - elapsed;
-
-                        if (remaining <= 0) {
-                            clearInterval(window.adClaimTimer);
-                            isAdInteractionInProgress = false; // Interaction complete
-                            updateAdButtonState(); // Re-evaluate state; should now trigger claimAdReward
-                            claimAdReward(); // Attempt to claim the reward
-                        } else {
-                            const adCountdown = document.getElementById('adCountdown');
-                            if (adCountdown) {
-                                adCountdown.style.display = 'block';
-                                adCountdown.textContent = `Reward in: ${Math.ceil(remaining / 1000)}s`;
-                            }
-                        }
-                    }, 1000);
-
+                // Start a timer for the required watch duration, to be confirmed *after* SDK returns
+                const watchTimer = setTimeout(() => {
+                    console.log("Ad watch duration met. Marking as completed.");
+                    lastAdCompletionTime = Date.now(); // Mark the time the watch duration was met
+                    isAdInteractionInProgress = true; // Keep in interaction state for claim cooldown
+                    updateAdButtonState(); // Update UI to show claim cooldown timer
                 }, AD_WATCH_DURATION);
 
-                // If `show_9809601` itself rejects (e.g., ad fails to load or user closes it prematurely),
-                // the catch block will handle resetting the state.
-                // If `show_9809601` resolves but the user closed the ad before `AD_WATCH_DURATION`,
-                // the `watchTimer` will eventually expire, and `claimAdReward` will be called.
-                // This could be refined if `show_9809601` provides specific closure events.
+                // If the SDK has a way to signal early closure (e.g., promise rejection),
+                // the catch block will handle it. If not, the watchTimer will eventually
+                // fire, and claimAdReward will run (which might be problematic if the user
+                // closed it very early without the SDK signalling an error).
+                // A more robust solution would involve the SDK providing a callback for closure.
 
             } catch (error) {
                 console.error('Ad interaction failed:', error);
+                
+                // Clear any pending timers if an error occurred
+                if (window.adClaimTimer) clearInterval(window.adClaimTimer);
+                if (window.postAdCooldownTimer) clearInterval(window.postAdCooldownTimer);
+
                 isAdInteractionInProgress = false; // Reset interaction state
-                updateAdButtonState(); // Re-evaluate UI
+                updateAdButtonState(); // Re-evaluate button state, likely showing error or ready again after cooldown
 
                 if (error.message && (error.message.includes('user') || error.message.includes('cancel') || error.message.includes('closed'))) {
                     showAlert('Ad was cancelled or closed. No reward given.', 'warning');
                 } else {
                     showAlert('Error loading or playing advertisement. Please check your internet connection and try again.', 'danger');
                 }
-                // Clear any timers that might have been set if the error happened after starting the watch timer
-                if (window.watchTimer) clearTimeout(window.watchTimer);
-                if (window.adClaimTimer) clearInterval(window.adClaimTimer);
             }
         }
 
-        // Claim the ad reward after cooldown
         async function claimAdReward() {
             try {
                 const userRef = database.ref('users/' + currentUser.id);
@@ -2825,7 +2813,8 @@ body::before {
                 console.error("Error claiming ad reward:", error);
                 showAlert('Failed to grant ad reward. Please try again.', 'danger');
             } finally {
-                updateAdButtonState(); // Update UI to reflect that the process is complete
+                isAdInteractionInProgress = false; // Reset interaction state after claiming
+                updateAdButtonState(); // Update UI to reflect the change (button should be ready again after POST_AD_COOLDOWN)
             }
         }
 
@@ -2848,7 +2837,8 @@ body::before {
                     return;
                 }
 
-                await new Promise(resolve => setTimeout(resolve, 1000)); // Simulate a slight delay
+                // Simulate a slight delay for UX
+                await new Promise(resolve => setTimeout(resolve, 1000)); 
 
                 await userRef.update({
                     balance: (userData.balance || 0) + CHECKIN_REWARD_POINTS,
@@ -2857,8 +2847,10 @@ body::before {
                 });
 
                 showAlert(`Daily check-in completed! You earned ${CHECKIN_REWARD_POINTS} points!`, 'success');
+                // Provide link to Telegram channel as requested
                 showAlert('Click <a href="https://t.me/onlineearnmonnytrickszin" target="_blank">here</a> to visit the Telegram channel for more rewards!', 'info');
 
+                // Update button state immediately
                 const dailyCheckinButton = document.querySelector('.btn-success[onclick="dailyCheckin()"]');
                 if (dailyCheckinButton) {
                     dailyCheckinButton.textContent = 'Checked In!';
@@ -2889,6 +2881,7 @@ body::before {
             const impressions = parseInt(impressionsInput.value);
             const telegramChannel = document.getElementById('telegramChannel').value.trim();
             
+            // Calculate cost based on the new rate
             const cost = impressions * IMPRESSIONS_TO_TON_RATE;
 
             if (!title || !description || !url) {
@@ -2903,8 +2896,8 @@ body::before {
                 showAlert('Please enter the Telegram channel username for Telegram tasks.', 'danger');
                 return;
             }
-            if (cost === 0) {
-                 showAlert('Cost cannot be zero. Please check impressions.', 'danger');
+            if (cost <= 0) { // Use <= 0 to catch any calculation errors
+                 showAlert('Cost cannot be zero or negative. Please check impressions.', 'danger');
                  return;
             }
 
@@ -2914,38 +2907,38 @@ body::before {
 
             try {
                 const transaction = {
-                    validUntil: Math.floor(Date.now() / 1000) + 300, 
+                    validUntil: Math.floor(Date.now() / 1000) + 300, // Transaction valid for 5 minutes
                     messages: [{
                         address: "UQDLsNfQBwWXD9aaNxNS3udGo-9o8ybrlKmmbI5gjjRfs17M", // Replace with your actual TON wallet address for receiving funds
-                        amount: Math.floor(cost * 1e9).toString() 
+                        amount: Math.floor(cost * 1e9).toString() // Amount in nanoTON (TON has 9 decimal places)
                     }]
                 };
 
                 const result = await tonConnectUI.sendTransaction(transaction);
 
-                if (result && result.boc) { 
+                if (result && result.boc) { // `result.boc` is the transaction payload
                     const taskData = {
                         title,
                         description,
                         url,
                         category: selectedTaskCategory,
                         telegramChannel: selectedTaskCategory === 'telegram' ? telegramChannel : null,
-                        reward: 100, 
+                        reward: 100, // Default reward per impression, can be adjusted or made dynamic
                         impressions, 
-                        remainingImpressions: impressions, 
+                        remainingImpressions: impressions, // Initially, remaining is total
                         createdBy: currentUser.id,
                         createdAt: Date.now(),
-                        status: 'active', 
-                        transactionHash: result.boc 
+                        status: 'active', // 'active', 'completed', 'paused'
+                        transactionHash: result.boc // Store the transaction hash for reference
                     };
 
                     await database.ref('tasks').push(taskData);
 
                     document.getElementById('addTaskForm').reset();
-                    document.getElementById('totalCost').textContent = '0.000'; 
-                    selectTaskCategory('normal'); 
+                    document.getElementById('totalCost').textContent = '0.000'; // Reset cost display
+                    selectTaskCategory('normal'); // Reset to default category
                     showAlert(`${selectedTaskCategory === 'telegram' ? 'Telegram' : 'Normal'} task created successfully! Transaction confirmed.`, 'success');
-                    loadUserTasks(); 
+                    loadUserTasks(); // Reload user's task list
                 } else {
                     showAlert('Transaction failed or was cancelled by user. Task not created.', 'danger');
                 }
@@ -3213,7 +3206,8 @@ body::before {
             const tonAddress = tonAddressInput.value.trim();
             const amountTon = parseFloat(withdrawAmountInput.value);
 
-            if (!tonAddress || !(tonAddress.startsWith('UQ') || tonAddress.startsWith('EQ') || tonAddress.startsWith('0:'))) { // Check for common TON address formats
+            // Basic TON address validation (starts with UQ or EQ, or 0: for contract addresses)
+            if (!tonAddress || !(tonAddress.startsWith('UQ') || tonAddress.startsWith('EQ') || tonAddress.startsWith('0:'))) { 
                 showAlert('Please enter a valid TON address.', 'danger');
                 return;
             }
@@ -3244,7 +3238,7 @@ body::before {
                     username: currentUser.username,
                     tonAddress,
                     amountTon,
-                    status: 'pending', 
+                    status: 'pending', // 'pending', 'processing', 'completed', 'failed'
                     createdAt: Date.now()
                 };
 
@@ -3280,7 +3274,7 @@ body::before {
 
             database.ref('withdrawals')
                 .orderByChild('userId').equalTo(currentUser.id)
-                .limitToLast(10) 
+                .limitToLast(10) // Limit to last 10 withdrawals for performance
                 .on('value', (snapshot) => {
                     withdrawalHistoryContent.innerHTML = '';
                     const withdrawals = snapshot.val();
@@ -3290,6 +3284,7 @@ body::before {
                         return;
                     }
 
+                    // Sort by creation date descending
                     const sortedWithdrawals = Object.entries(withdrawals)
                         .sort(([, a], [, b]) => b.createdAt - a.createdAt); 
 
@@ -3326,7 +3321,7 @@ body::before {
 
             database.ref('swapHistory')
                 .orderByChild('userId').equalTo(currentUser.id)
-                .limitToLast(10) 
+                .limitToLast(10) // Limit to last 10 swaps
                 .on('value', (snapshot) => {
                     swapHistoryContent.innerHTML = '';
                     const swaps = snapshot.val();
@@ -3336,6 +3331,7 @@ body::before {
                         return;
                     }
 
+                    // Sort by timestamp descending
                     const sortedSwaps = Object.entries(swaps)
                         .sort(([, a], [, b]) => b.timestamp - a.timestamp); 
 
@@ -3394,6 +3390,7 @@ body::before {
                 activeNavItem.classList.add('active');
             }
 
+            // Ensure UI elements are updated when switching sections
             if (sectionName === 'addTask' || sectionName === 'profile') {
                 updateWalletUI(); 
             }
@@ -3407,9 +3404,9 @@ body::before {
             if (sectionName === 'referral') {
                 loadReferrals(); 
             }
-            // Ensure ad button state is correct when the ads section is shown
+            
             if (sectionName === 'ads') {
-                updateAdButtonState();
+                updateAdButtonState(); // Ensure button state is correct when entering ads section
             }
         }
 
@@ -3455,16 +3452,12 @@ body::before {
             if (modal) {
                 modal.style.display = 'none';
                 
-                // Reset modal specific elements if necessary
+                // Reset form/state within modal if necessary
                 if (modalId === 'withdrawModal') {
                     const withdrawForm = document.getElementById('withdrawForm');
-                    if (withdrawForm) withdrawForm.reset(); 
+                    if (withdrawForm) withdrawForm.reset();
                     const requestWithdrawButton = document.getElementById('requestWithdrawButton');
                     if (requestWithdrawButton) requestWithdrawButton.disabled = true; 
-                }
-                // Clear any ongoing timers when modal is closed, especially for ads
-                if (modalId === 'taskModal') {
-                    if (window.taskVerificationTimer) clearInterval(window.taskVerificationTimer);
                 }
             }
         }
@@ -3474,7 +3467,7 @@ body::before {
             const alertContainer = document.querySelector('.container');
             if (!alertContainer) {
                 console.error("Alert container not found!");
-                alert(message); 
+                alert(message); // Fallback to native alert
                 return;
             }
 
@@ -3484,8 +3477,9 @@ body::before {
                 <span class="material-icons">${type === 'success' ? 'check_circle' : type === 'warning' ? 'warning' : type === 'info' ? 'info' : 'error'}</span>
                 ${message}
             `;
-            alertContainer.prepend(alert); 
+            alertContainer.prepend(alert); // Add to the beginning of the container
 
+            // Remove alert automatically after 5 seconds
             setTimeout(() => {
                 if (alert && alert.parentNode) {
                     alert.remove();
@@ -3493,7 +3487,7 @@ body::before {
             }, 5000); 
         }
 
-        // Format numbers for display (e.g., K, M, B, T)
+        // Format numbers for display (e.g., 1.5K, 2.3M)
         function formatNumber(num) {
             if (num === null || num === undefined) return '0';
             num = Number(num);
@@ -3510,33 +3504,34 @@ body::before {
             return num.toString();
         }
 
+        // Theme toggle function (currently static)
         function toggleTheme() {
             showAlert('Red Moon theme is the current and only theme!', 'info');
         }
 
-        // Initialize application on DOMContentLoaded
+        // --- Initialization ---
         document.addEventListener('DOMContentLoaded', () => {
-            initTelegramWebApp();
-            showSection('home'); 
+            initTelegramWebApp(); // Initialize Telegram Web App and user data
+            showSection('home'); // Set the initial section to Home
 
-            // Ensure TON Connect UI button is initialized if container exists
+            // Setup TON Connect UI button container
             if (document.getElementById('ton-connect-button-container')) {
                 tonConnectUI.buttonRootId = 'ton-connect-button-container';
             } else {
                 console.error("TON Connect button container not found!");
             }
 
-            // Listen for changes in wallet connection status
+            // Listen for wallet connection status changes
             tonConnectUI.onStatusChange(wallet => {
-                updateWalletUI(); 
+                updateWalletUI(); // Update UI when wallet connects/disconnects
             });
             
-            // Initial UI updates
+            // Initial UI updates for wallet status and swap inputs
             updateWalletUI();
             updateSwapInputs();
         });
 
-        // Close modals if user clicks outside of them
+        // Close modals when clicking outside of them
         window.addEventListener('click', (e) => {
             if (e.target.classList.contains('modal')) {
                 closeModal(e.target.id);
