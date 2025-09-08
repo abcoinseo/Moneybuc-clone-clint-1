@@ -1,1258 +1,911 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-     <!-- Removed security.js as its functionality is integrated here -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EarnFlux - Professional Earning Platform</title>
+    <title>EarnFlux Admin Panel</title>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <script src="https://unpkg.com/@tonconnect/ui@latest/dist/tonconnect-ui.min.js"></script>
-    <!-- Ensure this script is loaded and the show_9809601 function is available globally -->
-    <script src='//libtl.com/sdk.js' data-zone='9809601' data-sdk='show_9809601'></script>
     <style>
-      /* --- Base Styles --- */
-      * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        :root {
+            /* Professional Dark & Blue Theme Colors */
+            --primary: #3b82f6;
+            --primary-dark: #2563eb;
+            --primary-light: #60a5fa;
+            --accent-blue: #0ea5e9;
+            
+            --background-dark: #0a0a0a;
+            --surface-dark: #18181b;
+            --surface-dark-alt: #27272a;
+            --border-color: #3f3f46;
+            
+            --text-primary: #ffffff;
+            --text-secondary: #d4d4d8;
+            --text-muted: #71717a;
+            
+            --success: #10b981;
+            --danger: #dc2626;
+            --warning: #f59e0b;
+            --info: #0284c7;
+            
+            --glass-backdrop-filter: blur(25px);
+            --glass-overlay-dark: rgba(24, 24, 27, 0.7);
+            --glass-border: rgba(63, 63, 70, 0.5);
+        }
 
-:root {
-    /* --- Theme Colors --- */
-    --primary: #3b82f6;         
-    --primary-dark: #2563eb;    
-    --primary-light: #60a5fa;   
-    --accent-blue: #0ea5e9;     
+        body {
+            font-family: 'Inter', 'Segoe UI', 'Roboto', sans-serif;
+            background-color: var(--background-dark);
+            color: var(--text-primary);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
 
-    --background-dark: #0a0a0a; 
-    --surface-dark: #18181b;    
-    --surface-dark-alt: #27272a; 
-    --border-color: #3f3f46;    
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background:
+                radial-gradient(circle at 20% 80%, rgba(59, 130, 246, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(96, 165, 250, 0.1) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: -1;
+        }
 
-    --text-primary: #ffffff;    
-    --text-secondary: #d4d4d8;  
-    --text-muted: #71717a;      
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
 
-    --success: #10b981;
-    --danger: #dc2626;
-    --warning: #f59e0b;
-    --info: #0284c7;
+        .header {
+            background: var(--glass-overlay-dark);
+            backdrop-filter: var(--glass-backdrop-filter);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 25px 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
 
-    --glass-backdrop-filter: blur(25px);
-    --glass-overlay-dark: rgba(24, 24, 27, 0.7); 
-    --glass-border: rgba(63, 63, 70, 0.5);       
-}
+        .header h1 {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            color: var(--primary);
+            font-size: 1.8rem;
+            font-weight: 700;
+        }
 
-body {
-    font-family: 'Inter', sans-serif;
-    background-color: var(--background-dark); 
-    color: var(--text-primary);
-    overflow-x: hidden;
-    position: relative;
-    line-height: 1.6;
-}
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
 
-/* Subtle animated background gradient */
-body::before {
-    content: '';
-    position: fixed;
-    top: 0; left: 0; right: 0; bottom: 0;
-    background:
-        radial-gradient(circle at 20% 80%, rgba(59, 130, 246, 0.2) 0%, transparent 50%),
-        radial-gradient(circle at 80% 20%, rgba(96, 165, 250, 0.15) 0%, transparent 50%),
-        radial-gradient(circle at 40% 40%, rgba(37, 99, 235, 0.1) 0%, transparent 50%);
-    pointer-events: none;
-    z-index: -1;
-    animation: subtleGradients 15s ease infinite alternate;
-}
+        .stat-card {
+            background: var(--surface-dark);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 25px;
+            text-align: center;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
 
-@keyframes subtleGradients {
-    0% { opacity: 0.8; }
-    50% { opacity: 1; }
-    100% { opacity: 0.8; }
-}
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--primary), var(--primary-light));
+        }
 
-.container {
-    max-width: 1200px; 
-    margin: 0 auto;
-    padding: 20px 20px 100px;
-    position: relative;
-}
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+        }
 
-/* --- Header Styles --- */
-.header {
-    background: var(--glass-overlay-dark);
-    backdrop-filter: var(--glass-backdrop-filter);
-    border: 1px solid var(--glass-border);
-    border-radius: 24px; 
-    padding: 25px 30px;
-    margin-bottom: 30px;
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4); 
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    position: relative;
-    overflow: hidden;
-    transition: all 0.3s ease;
-}
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 900;
+            color: var(--primary);
+            margin-bottom: 10px;
+        }
 
-.header:hover {
-    box-shadow: 0 15px 50px rgba(0, 0, 0, 0.5);
-}
+        .stat-label {
+            color: var(--text-secondary);
+            font-weight: 600;
+            font-size: 1rem;
+        }
 
-.header::before { /* Shimmer effect */
-    content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.03), transparent);
-    animation: shimmer 4s infinite;
-}
-@keyframes shimmer { 0% { left: -100%; } 100% { left: 100%; } }
+        .card {
+            background: var(--surface-dark);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 25px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s ease;
+        }
 
-.user-info {
-    display: flex;
-    align-items: center;
-    gap: 16px;
-    z-index: 1;
-}
-.user-avatar {
-    width: 56px; height: 56px; border-radius: 50%; border: 2px solid var(--primary);
-    object-fit: cover; box-shadow: 0 0 25px rgba(59, 130, 246, 0.3);
-}
-.user-details h3 { color: var(--text-primary); font-weight: 600; font-size: 1.15rem; margin-bottom: 5px; }
-.user-balance {
-    color: var(--primary); font-weight: 700; font-size: 1.2rem;
-    display: flex; align-items: center; gap: 6px;
-}
+        .card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+        }
 
-/* --- Buttons & Toggles --- */
-.theme-toggle {
-    background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-    color: white; border: none; border-radius: 50px;
-    padding: 12px 20px; cursor: pointer; display: flex; align-items: center; gap: 10px;
-    font-weight: 600; transition: all 0.3s ease; z-index: 1;
-    box-shadow: 0 5px 15px rgba(59, 130, 246, 0.3);
-}
-.theme-toggle:hover { transform: translateY(-3px); box-shadow: 0 8px 25px rgba(59, 130, 246, 0.4); }
+        .card-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: var(--text-primary);
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 15px;
+        }
 
-/* --- Cards --- */
-.card {
-    background: var(--surface-dark);
-    backdrop-filter: var(--glass-backdrop-filter);
-    border: 1px solid var(--glass-border);
-    border-radius: 20px;
-    padding: 30px;
-    margin-bottom: 25px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3); 
-    transition: all 0.3s ease;
-    position: relative;
-    overflow: hidden;
-}
-.card::before { /* Gradient top border */
-    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
-    background: linear-gradient(90deg, var(--primary), var(--primary-light), var(--primary));
-    opacity: 0.8;
-}
-.card:hover { transform: translateY(-5px); box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4); }
-.card-title {
-    font-size: 1.4rem; font-weight: 700; margin-bottom: 20px;
-    display: flex; align-items: center; gap: 12px;
-    color: var(--text-primary);
-}
+        .tabs {
+            display: flex;
+            background: var(--surface-dark-alt);
+            border-radius: 12px;
+            padding: 5px;
+            margin-bottom: 25px;
+            border: 1px solid var(--border-color);
+        }
 
-/* --- Stat Cards --- */
-.stats-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); 
-    gap: 20px;
-    margin-bottom: 30px;
-}
-.stat-card {
-    background: var(--surface-dark-alt); border: 1px solid var(--border-color);
-    border-radius: 16px; padding: 25px; text-align: center;
-    transition: all 0.3s ease; position: relative; overflow: hidden;
-    box-shadow: inset 0 0 10px rgba(0,0,0,0.2); 
-}
-.stat-card::before { /* Subtle gradient overlay */
-    content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0;
-    background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), transparent);
-    opacity: 0; transition: opacity 0.3s ease;
-}
-.stat-card:hover::before { opacity: 1; }
-.stat-card:hover { transform: translateY(-4px); box-shadow: inset 0 0 10px rgba(0,0,0,0.2), 0 8px 25px rgba(0, 0, 0, 0.3); }
-.stat-number {
-    font-size: 2.2rem; font-weight: 900; color: var(--primary);
-    margin-bottom: 10px; letter-spacing: -1px;
-}
-.stat-label { color: var(--text-secondary); font-weight: 500; font-size: 0.9rem; }
+        .tab {
+            flex: 1;
+            padding: 14px;
+            text-align: center;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            color: var(--text-muted);
+        }
 
-/* --- Balance Card --- */
-.balance-card {
-    background: var(--surface-dark-alt); border: 1px solid var(--border-color);
-    border-radius: 16px; padding: 25px; text-align: center;
-    position: relative; overflow: hidden; margin-bottom: 25px;
-    box-shadow: inset 0 0 10px rgba(0,0,0,0.2);
-}
-.balance-card::before { /* Green overlay */
-    content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0;
-    background: linear-gradient(135deg, rgba(16, 185, 121, 0.1), transparent);
-    opacity: 1;
-}
-.balance-amount {
-    font-size: 2.8rem; font-weight: 900; color: var(--success);
-    margin-bottom: 10px; letter-spacing: -1.5px;
-}
-.balance-label { color: var(--text-secondary); font-weight: 500; font-size: 1rem; }
+        .tab.active {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
+        }
 
-/* --- Buttons --- */
-.btn {
-    padding: 14px 28px; border: none; border-radius: 14px; 
-    font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 10px;
-    transition: all 0.3s ease; text-decoration: none; font-size: 1rem;
-    position: relative; overflow: hidden; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-}
-.btn:disabled { opacity: 0.7; cursor: not-allowed; box-shadow: none; }
-.btn::before { /* Hover shimmer */
-    content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
-    transition: left 0.6s;
-}
-.btn:hover:not(:disabled)::before { left: 100%; }
+        .tab-content {
+            display: none;
+        }
 
-.btn-primary { background: linear-gradient(135deg, var(--primary), var(--primary-dark)); color: var(--text-primary); }
-.btn-primary:hover:not(:disabled) { transform: translateY(-3px); box-shadow: 0 10px 25px rgba(59, 130, 246, 0.4); }
+        .tab-content.active {
+            display: block;
+        }
 
-.btn-success { background: linear-gradient(135deg, var(--success), #047857); color: var(--text-primary); }
-.btn-success:hover:not(:disabled) { transform: translateY(-3px); box-shadow: 0 10px 25px rgba(16, 185, 121, 0.4); }
+        .form-group {
+            margin-bottom: 20px;
+        }
 
-.btn-warning { background: linear-gradient(135deg, var(--warning), #b45309); color: var(--text-primary); }
-.btn-warning:hover:not(:disabled) { transform: translateY(-3px); box-shadow: 0 10px 25px rgba(245, 158, 11, 0.4); }
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--text-secondary);
+        }
 
-.btn-info { background: linear-gradient(135deg, var(--info), #0369a1); color: var(--text-primary); }
-.btn-info:hover:not(:disabled) { transform: translateY(-3px); box-shadow: 0 10px 25px rgba(2, 132, 199, 0.4); }
+        .form-input, .form-select, .form-textarea {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid var(--border-color);
+            border-radius: 10px;
+            background: var(--surface-dark-alt);
+            color: var(--text-primary);
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            outline: none;
+        }
 
-.btn-secondary {
-    background: var(--surface-dark); color: var(--text-secondary);
-    border: 1px solid var(--border-color); box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-}
-.btn-secondary:hover:not(:disabled) {
-    transform: translateY(-3px); background: var(--surface-dark-alt); box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
-}
+        .form-input:focus, .form-select:focus, .form-textarea:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
 
-.btn-danger { background: linear-gradient(135deg, var(--danger), #b91c1c); color: var(--text-primary); }
-.btn-danger:hover:not(:disabled) { transform: translateY(-3px); box-shadow: 0 10px 25px rgba(220, 38, 38, 0.4); }
+        .form-textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
 
-.btn-accent { background: linear-gradient(135deg, var(--accent-blue), var(--primary-light)); color: var(--text-primary); }
-.btn-accent:hover:not(:disabled) { transform: translateY(-3px); box-shadow: 0 10px 25px rgba(14, 165, 229, 0.4); }
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            font-size: 0.95rem;
+            position: relative;
+            overflow: hidden;
+        }
 
-/* --- Swap Container --- */
-.swap-container {
-    background: var(--surface-dark); border: 1px solid var(--glass-border);
-    border-radius: 16px; padding: 25px; margin-bottom: 25px;
-    position: relative; box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
-}
-.swap-row {
-    display: flex; align-items: center; gap: 15px; margin-bottom: 15px;
-}
-.swap-input-group {
-    flex: 1; display: flex; flex-direction: column; align-items: center;
-}
-.swap-input {
-    width: 100%; padding: 14px 18px; border: 2px solid var(--border-color);
-    border-radius: 12px; font-size: 1.1rem; font-weight: 600;
-    transition: all 0.3s ease; background: var(--surface-dark-alt);
-    color: var(--text-primary); text-align: center; outline: none;
-}
-.swap-input:focus { border-color: var(--primary); box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.15); }
-.swap-input[disabled] {
-    background: rgba(39, 39, 42, 0.6); cursor: not-allowed; opacity: 0.7;
-}
-.swap-label { display: block; margin-bottom: 10px; font-weight: 600; color: var(--text-secondary); text-align: center; }
-.swap-icon {
-    background: linear-gradient(135deg, var(--accent-blue), var(--primary-light));
-    color: white; border: none; border-radius: 50%;
-    width: 48px; height: 48px; display: flex; align-items: center; justify-content: center;
-    cursor: pointer; transition: all 0.3s ease; flex-shrink: 0;
-    box-shadow: 0 5px 15px rgba(14, 165, 229, 0.3);
-}
-.swap-icon:hover { transform: rotate(180deg); box-shadow: 0 8px 25px rgba(14, 165, 229, 0.4); }
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
 
-/* --- Form Styles --- */
-.form-group { margin-bottom: 25px; }
-.form-label { display: block; margin-bottom: 10px; font-weight: 600; color: var(--text-secondary); }
-.form-input, .form-select {
-    width: 100%; padding: 14px 18px; border: 2px solid var(--border-color);
-    border-radius: 12px; font-size: 1rem; transition: all 0.3s ease;
-    background: var(--surface-dark-alt); color: var(--text-primary); outline: none;
-}
-.form-input:focus, .form-select:focus { border-color: var(--primary); box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.15); }
-.form-select {
-    cursor: pointer; appearance: none; 
-    background-image: url('data:image/svg+xml;charset=UTF-8,%3Csvg xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22 width%3D%2210%22 height%3D%225%22 viewBox%3D%220 0 10 5%22%3E%3Cpath d%3D%22M0 0l5 5 5-5%22 fill%3D%22%2394a6be%22%2F%3E%3C%2Fsvg%3E'); 
-    background-repeat: no-repeat; background-position: calc(100% - 18px) center; background-size: 10px;
-}
-.form-select option { background: var(--surface-dark); color: var(--text-primary); padding: 10px; }
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+        }
 
-/* --- Task Styles --- */
-.task-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); 
-    gap: 20px;
-}
-.task-card {
-    background: var(--surface-dark); border: 1px solid var(--glass-border);
-    border-radius: 16px; padding: 25px;
-    transition: all 0.3s ease; position: relative; overflow: hidden;
-    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
-}
-.task-card::before { /* Left border */
-    content: ''; position: absolute; top: 0; left: 0; width: 4px; height: 100%;
-    background: linear-gradient(180deg, var(--primary), var(--primary-light));
-    border-radius: 0 4px 4px 0; 
-}
-.task-card.telegram-task::before { background: linear-gradient(180deg, var(--info), #0369a1); }
-.task-card:hover { transform: translateX(7px); box-shadow: 0 12px 30px rgba(0, 0, 0, 0.35); }
-.task-header {
-    display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px;
-}
-.task-title {
-    font-weight: 700; color: var(--text-primary); margin-bottom: 8px;
-    display: flex; align-items: center; gap: 8px; font-size: 1.1rem;
-}
-.task-type-badge {
-    padding: 5px 10px; border-radius: 12px; font-size: 0.8rem; font-weight: 700;
-    text-transform: uppercase; letter-spacing: 0.5px;
-}
-.task-type-normal { background: rgba(59, 130, 246, 0.2); color: var(--primary); }
-.task-type-telegram { background: rgba(2, 132, 199, 0.2); color: var(--info); }
-.task-reward {
-    background: linear-gradient(135deg, var(--primary), var(--primary-light));
-    color: white; padding: 8px 15px; border-radius: 25px; 
-    font-size: 0.85rem; font-weight: 700; box-shadow: 0 3px 10px rgba(59, 130, 246, 0.3);
-}
-.task-description {
-    color: var(--text-secondary); margin-bottom: 15px; line-height: 1.7; font-size: 0.95rem;
-}
-.task-channel {
-    color: var(--info); font-weight: 600; margin-bottom: 10px;
-    display: flex; align-items: center; gap: 6px; font-size: 0.9rem;
-}
-.task-actions {
-    display: flex; gap: 10px; justify-content: flex-end;
-}
+        .btn-primary:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(59, 130, 246, 0.4);
+        }
 
-/* --- Tabs --- */
-.tabs {
-    display: flex; background: var(--surface-dark);
-    border-radius: 12px; padding: 5px; margin-bottom: 25px;
-    border: 1px solid var(--border-color); box-shadow: inset 0 0 10px rgba(0,0,0,0.2);
-}
-.tab {
-    flex: 1; padding: 14px; text-align: center; border-radius: 8px;
-    cursor: pointer; transition: all 0.3s ease; font-weight: 600; color: var(--text-muted);
-}
-.tab.active {
-    background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-    color: white; box-shadow: 0 5px 15px rgba(59, 130, 246, 0.3);
-}
-.tab-content, .section { display: none; }
-.tab-content.active, .section.active { display: block; }
+        .btn-success {
+            background: linear-gradient(135deg, var(--success), #047857);
+            color: white;
+        }
 
-/* --- Bottom Navigation --- */
-.bottom-nav {
-    position: fixed; bottom: 0; left: 0; right: 0;
-    background: var(--surface-dark); backdrop-filter: blur(20px);
-    border-top: 1px solid var(--border-color);
-    padding: 15px 0; z-index: 1000; box-shadow: 0 -5px 20px rgba(0, 0, 0, 0.3);
-}
-.nav-container {
-    display: flex; justify-content: space-around; align-items: center;
-    max-width: 500px; margin: 0 auto;
-}
-.nav-item {
-    display: flex; flex-direction: column; align-items: center; gap: 5px;
-    text-decoration: none; color: var(--text-muted); transition: all 0.3s ease;
-    padding: 8px 12px; border-radius: 12px; position: relative;
-}
-.nav-item.active, .nav-item:hover { color: var(--primary); background: rgba(59, 130, 246, 0.1); }
-.nav-item span { font-size: 0.8rem; font-weight: 600; }
+        .btn-success:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(16, 185, 121, 0.4);
+        }
 
-/* --- Spin Wheel --- */
-.spin-wheel {
-    width: 260px; height: 260px; border-radius: 50%; border: 10px solid var(--primary); 
-    margin: 30px auto; position: relative;
-    background: conic-gradient(
-        from 0deg, var(--primary) 0deg 60deg, var(--primary-light) 60deg 120deg, 
-        var(--warning) 120deg 180deg, var(--success) 180deg 240deg, 
-        var(--primary-dark) 240deg 300deg, var(--accent-blue) 300deg 360deg
-    );
-    transition: transform 3s cubic-bezier(0.23, 1, 0.32, 1);
-    box-shadow: 0 0 50px rgba(59, 130, 246, 0.3);
-}
-.spin-wheel::before { /* Arrow */
-    content: ''; position: absolute; top: -18px; left: 50%; transform: translateX(-50%);
-    width: 0; height: 0; border-left: 16px solid transparent; border-right: 16px solid transparent;
-    border-top: 32px solid var(--text-primary); z-index: 10;
-}
-.spin-center {
-    position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-    width: 70px; height: 70px; background: var(--primary); border-radius: 50%;
-    display: flex; align-items: center; justify-content: center; color: white;
-    font-weight: 700; font-size: 1.3rem; z-index: 5; box-shadow: 0 0 25px rgba(59, 130, 246, 0.5);
-}
+        .btn-danger {
+            background: linear-gradient(135deg, var(--danger), #b91c1c);
+            color: white;
+        }
 
-/* --- Modals --- */
-.modal {
-    display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-    background: rgba(0, 0, 0, 0.85); z-index: 2000; backdrop-filter: blur(15px);
-    justify-content: center; align-items: center; padding: 20px;
-}
-.modal-content {
-    background: var(--surface-dark); border: 1px solid var(--glass-border);
-    border-radius: 24px; padding: 35px; max-width: 450px; width: 100%;
-    max-height: 85vh; overflow-y: auto; box-shadow: 0 15px 50px rgba(0, 0, 0, 0.5);
-}
-.modal-header {
-    display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;
-}
-.modal-title {
-    font-size: 1.8rem; font-weight: 700; color: var(--primary);
-}
-.close-btn {
-    background: none; border: none; font-size: 28px; cursor: pointer; color: var(--text-muted);
-    transition: all 0.3s ease;
-}
-.close-btn:hover { color: var(--text-secondary); transform: scale(1.1); }
+        .btn-danger:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(220, 38, 38, 0.4);
+        }
 
-/* --- Loading Indicator --- */
-.loading {
-    display: inline-block; width: 24px; height: 24px; border: 4px solid rgba(255, 255, 255, .3);
-    border-radius: 50%; border-top-color: var(--text-primary);
-    animation: spin 1s ease-in-out infinite;
-}
-@keyframes spin { to { transform: rotate(360deg); } }
+        .btn-warning {
+            background: linear-gradient(135deg, var(--warning), #b45309);
+            color: white;
+        }
 
-/* --- Alerts --- */
-.alert {
-    padding: 18px 25px; border-radius: 14px; margin-bottom: 25px;
-    border-left: 5px solid; display: flex; align-items: center; gap: 15px;
-    animation: slideIn 0.4s ease-out; position: relative; z-index: 1001;
-    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15);
-}
-@keyframes slideIn {
-    from { transform: translateX(-100%); opacity: 0; }
-    to { transform: translateX(0); opacity: 1; }
-}
-.alert-success { background: rgba(16, 185, 121, 0.1); border-left-color: var(--success); color: var(--success); }
-.alert-danger { background: rgba(220, 38, 38, 0.1); border-left-color: var(--danger); color: var(--danger); }
-.alert-warning { background: rgba(217, 119, 6, 0.1); border-left-color: var(--warning); color: var(--warning); }
-.alert-info { background: rgba(2, 132, 199, 0.1); border-left-color: var(--info); color: var(--info); }
+        .btn-warning:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(245, 158, 11, 0.4);
+        }
 
-/* --- Progress Bar --- */
-.progress-bar {
-    width: 100%; height: 10px; background: var(--surface-dark-alt);
-    border-radius: 5px; overflow: hidden; margin: 15px 0; border: 1px solid var(--border-color);
-}
-.progress-fill {
-    height: 100%; background: linear-gradient(90deg, var(--primary), var(--accent-blue)); 
-    border-radius: 5px; transition: width 0.4s ease-out;
-}
+        .btn-secondary {
+            background: var(--surface-dark-alt);
+            color: var(--text-secondary);
+            border: 2px solid var(--border-color);
+        }
 
-/* --- Countdown --- */
-.countdown {
-    font-size: 28px; font-weight: 800; color: var(--primary);
-    text-align: center; margin: 25px 0; letter-spacing: -0.5px;
-}
+        .btn-secondary:hover:not(:disabled) {
+            background: var(--border-color);
+            color: var(--text-primary);
+        }
 
-/* --- Refer Link --- */
-.refer-link {
-    background: var(--surface-dark-alt); border: 1px solid var(--border-color);
-    border-radius: 12px; padding: 15px; color: var(--text-primary);
-    font-family: 'Courier New', Courier, monospace; word-break: break-all;
-    margin: 15px 0; font-size: 0.9rem; transition: all 0.3s ease;
-}
-.refer-link:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2); }
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
 
-/* --- Withdrawal History --- */
-.withdrawal-history {
-    max-height: 320px; overflow-y: auto; padding-right: 5px; 
-}
-.history-item {
-    display: flex; justify-content: space-between; align-items: center;
-    padding: 15px 10px; border-bottom: 1px solid var(--border-color);
-    margin-bottom: 10px; font-size: 0.95rem;
-}
-.history-item:last-child { border-bottom: none; margin-bottom: 0; }
-.history-status {
-    padding: 6px 12px; border-radius: 12px; font-size: 0.8rem; font-weight: 700;
-    text-transform: uppercase; letter-spacing: 0.5px;
-}
-.status-pending { background: rgba(217, 119, 6, 0.2); color: var(--warning); }
-.status-completed { background: rgba(16, 185, 121, 0.2); color: var(--success); }
-.status-rejected { background: rgba(220, 38, 38, 0.2); color: var(--danger); }
+        .data-table th,
+        .data-table td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+        }
 
-/* --- Wallet Status --- */
-.wallet-status-info {
-    margin-top: 20px; padding: 12px; border-radius: 8px;
-    text-align: center; font-weight: 600; width: 100%; font-size: 0.95rem;
-}
-.wallet-connected { background: rgba(16, 185, 121, 0.1); color: var(--success); }
-.wallet-disconnected { background: rgba(220, 38, 38, 0.1); color: var(--danger); }
-.profile-wallet-controls {
-    display: flex; justify-content: center; gap: 15px; flex-wrap: wrap; margin-top: 25px;
-}
+        .data-table th {
+            background: var(--surface-dark-alt);
+            color: var(--primary);
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.85rem;
+            letter-spacing: 0.5px;
+        }
 
-/* --- Ad Loading --- */
-.ad-loading {
-    text-align: center; padding: 25px; background: var(--surface-dark);
-    border: 1px solid var(--glass-border); border-radius: 16px; margin: 20px 0;
-    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
-}
-.ad-loading .loading { margin: 0 auto 15px; }
+        .data-table tr:hover {
+            background: rgba(59, 130, 246, 0.05);
+        }
 
-/* --- Task Category Selector --- */
-.task-category-selector {
-    display: flex; gap: 15px; margin-bottom: 25px;
-}
-.category-option {
-    flex: 1; padding: 20px; border: 2px solid var(--border-color);
-    border-radius: 12px; background: var(--surface-dark-alt);
-    cursor: pointer; transition: all 0.3s ease; text-align: center;
-    box-shadow: inset 0 0 10px rgba(0,0,0,0.1);
-}
-.category-option.selected {
-    border-color: var(--primary); background: rgba(59, 130, 246, 0.1);
-}
-.category-option.telegram.selected {
-    border-color: var(--info); background: rgba(2, 132, 199, 0.1);
-}
-.category-icon { font-size: 28px; margin-bottom: 10px; color: var(--text-secondary); }
-.category-option.selected .category-icon { color: var(--primary); }
-.category-option.telegram.selected .category-icon { color: var(--info); }
-.category-title { font-weight: 600; color: var(--text-primary); margin-bottom: 5px; font-size: 1.05rem; }
-.category-description { font-size: 0.8rem; color: var(--text-muted); }
-.telegram-fields { display: none; }
-.telegram-fields.active { display: block; }
+        .status-badge {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
 
-/* --- Admin Panel Specific Styles --- */
-.admin-card-title { /* For specific admin card titles if needed */
-    font-size: 1.3rem; font-weight: 700; margin-bottom: 18px;
-    display: flex; align-items: center; gap: 10px;
-    color: var(--primary); /* Admin titles can be primary color */
-}
-.admin-user-role {
-    padding: 4px 8px; border-radius: 8px; font-size: 0.75rem; font-weight: 700;
-    text-transform: uppercase; margin-left: 10px;
-}
-.admin-user-role.admin { background-color: rgba(220, 38, 38, 0.2); color: var(--danger); }
-.admin-user-role.user { background-color: rgba(16, 185, 121, 0.2); color: var(--success); }
-.admin-user-role.loading { background-color: rgba(119, 119, 119, 0.2); color: var(--text-muted); }
+        .status-active { background: rgba(16, 185, 121, 0.2); color: var(--success); }
+        .status-inactive { background: rgba(113, 113, 122, 0.2); color: var(--text-muted); }
+        .status-pending { background: rgba(245, 158, 11, 0.2); color: var(--warning); }
+        .status-completed { background: rgba(16, 185, 121, 0.2); color: var(--success); }
+        .status-rejected { background: rgba(220, 38, 38, 0.2); color: var(--danger); }
+        .status-banned { background: rgba(220, 38, 38, 0.2); color: var(--danger); }
 
-/* --- Media Queries --- */
-@media (max-width: 992px) {
-    .container { padding: 15px 15px 100px; }
-    .header { padding: 20px 25px; }
-    .stats-grid { grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); }
-    .spin-wheel { width: 220px; height: 220px; }
-    .spin-center { width: 60px; height: 60px; font-size: 1.1rem; }
-}
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            backdrop-filter: blur(10px);
+        }
 
-@media (max-width: 768px) {
-    .container { padding: 15px 10px 100px; }
-    .header {
-        flex-direction: column; gap: 15px; text-align: center;
-        border-radius: 16px; padding: 20px;
-    }
-    .user-info { flex-direction: column; gap: 8px; }
-    .user-avatar { width: 48px; height: 48px; }
-    .user-details h3 { font-size: 1rem; }
-    .user-balance { font-size: 1.1rem; }
-    .stats-grid { grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 15px; }
-    .stat-number { font-size: 1.8rem; }
-    .balance-amount { font-size: 2.4rem; }
-    .modal-content { width: 95%; padding: 25px; }
-    .spin-wheel { width: 200px; height: 200px; }
-    .spin-wheel::before { border-left-width: 12px; border-right-width: 12px; border-top-width: 24px; }
-    .bottom-nav { padding: 12px 0; }
-    .nav-item span { font-size: 0.75rem; }
-    .nav-item { padding: 7px 10px; }
-    .profile-wallet-controls { flex-direction: column; align-items: center; }
-    .swap-row { flex-direction: column; gap: 10px; }
-    .swap-icon { transform: rotate(90deg); }
-    .swap-icon:hover { transform: rotate(270deg); }
-    .task-grid { grid-template-columns: 1fr; }
-    .task-card { padding: 20px; }
-    .task-actions { justify-content: center; margin-top: 10px; }
-    .task-category-selector { flex-direction: column; gap: 15px; }
-    .category-option { padding: 15px; }
-    /* Admin panel adjustments for smaller screens */
-    .admin-card-title { font-size: 1.1rem; }
-    .tabs { flex-direction: column; align-items: center; }
-    .tab { width: 100%; margin-bottom: 5px; }
-    .tab-content { margin-top: 15px; }
-}
+        .modal.show {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
 
-/* --- Animations --- */
-.pulse { animation: pulse 2s infinite; }
-@keyframes pulse {
-    0% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.7); }
-    70% { box-shadow: 0 0 0 12px rgba(59, 130, 246, 0); }
-    100% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0); }
-}
-.glow { box-shadow: 0 0 25px rgba(59, 130, 246, 0.5); }
+        .modal-content {
+            background: var(--surface-dark);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 30px;
+            max-width: 600px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
 
-/* --- Balance Grid --- */
-.balance-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-    gap: 20px;
-    margin-bottom: 25px;
-}
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid var(--border-color);
+        }
 
-/* --- Verification Status --- */
-.verification-status {
-    padding: 12px; border-radius: 8px; margin: 15px 0;
-    text-align: center; font-weight: 600; font-size: 0.95rem;
-}
-.verification-pending { background: rgba(217, 119, 6, 0.1); color: var(--warning); border: 1px solid var(--warning); }
-.verification-success { background: rgba(16, 185, 121, 0.1); color: var(--success); border: 1px solid var(--success); }
-.verification-failed { background: rgba(220, 38, 38, 0.1); color: var(--danger); border: 1px solid var(--danger); }
+        .modal-title {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 28px;
+            cursor: pointer;
+            color: var(--text-muted);
+            transition: all 0.3s ease;
+        }
+
+        .close-btn:hover {
+            color: var(--danger);
+            transform: scale(1.1);
+        }
+
+        .alert {
+            padding: 15px 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            border-left: 4px solid;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            animation: slideIn 0.3s ease-out;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(-100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        .alert-success { background: rgba(16, 185, 121, 0.1); border-left-color: var(--success); color: var(--success); }
+        .alert-danger { background: rgba(220, 38, 38, 0.1); border-left-color: var(--danger); color: var(--danger); }
+        .alert-warning { background: rgba(245, 158, 11, 0.1); border-left-color: var(--warning); color: var(--warning); }
+        .alert-info { background: rgba(2, 132, 199, 0.1); border-left-color: var(--info); color: var(--info); }
+
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, .3);
+            border-radius: 50%;
+            border-top-color: var(--primary);
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .search-container {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .search-input {
+            flex: 1;
+            min-width: 200px;
+            padding: 12px 16px;
+            border: 2px solid var(--border-color);
+            border-radius: 10px;
+            background: var(--surface-dark-alt);
+            color: var(--text-primary);
+            outline: none;
+        }
+
+        .search-input:focus {
+            border-color: var(--primary);
+        }
+
+        .ip-duplicate {
+            background: rgba(245, 158, 11, 0.1);
+            border-left: 4px solid var(--warning);
+        }
+
+        .message-preview {
+            background: var(--surface-dark-alt);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 15px;
+            margin-top: 15px;
+            color: var(--text-secondary);
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .grid-3 {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+            
+            .header {
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+            
+            .grid-2, .grid-3 {
+                grid-template-columns: 1fr;
+            }
+            
+            .search-container {
+                flex-direction: column;
+            }
+            
+            .action-buttons {
+                justify-content: center;
+            }
+        }
+
+        .refresh-indicator {
+            display: inline-block;
+            animation: rotate 1s linear infinite;
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
-            <div class="user-info">
-                <img src="https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?auto=compress&cs=tinysrgb&w=100&h=100&dpr=1" alt="User Avatar" class="user-avatar" id="userAvatar">
-                <div class="user-details">
-                    <h3 id="userName">Loading...</h3>
-                    <div class="user-balance">
-                        <span class="material-icons">diamond</span>
-                        <span id="userBalance">0</span> Diamond
-                    </div>
-                </div>
-            </div>
-            <button class="theme-toggle" onclick="toggleTheme()">
-                <span class="material-icons">dark_mode</span>
-                Red Moon
+            <h1>
+                <span class="material-icons">admin_panel_settings</span>
+                EarnFlux Admin Panel
+            </h1>
+            <button class="btn btn-primary" onclick="refreshData()">
+                <span class="material-icons" id="refreshIcon">refresh</span>
+                Refresh Data
             </button>
         </div>
 
-        <!-- Home Section Stats -->
-        <div id="homeStatsGrid" class="stats-grid">
+        <!-- Dashboard Stats -->
+        <div class="stats-grid">
             <div class="stat-card">
-                <div class="stat-number" id="totalEarned">0</div>
-                <div class="stat-label">Total Earned</div>
+                <div class="stat-number" id="totalUsers">0</div>
+                <div class="stat-label">Total Users</div>
             </div>
             <div class="stat-card">
-                <div class="stat-number" id="tasksCompleted">0</div>
-                <div class="stat-label">Tasks Done</div>
+                <div class="stat-number" id="totalTasks">0</div>
+                <div class="stat-label">Active Tasks</div>
             </div>
             <div class="stat-card">
-                <div class="stat-number" id="referrals">0</div>
-                <div class="stat-label">Referrals</div>
+                <div class="stat-number" id="totalWithdrawals">0</div>
+                <div class="stat-label">Pending Withdrawals</div>
             </div>
             <div class="stat-card">
-                <div class="stat-number" id="spinsAvailable">0</div>
-                <div class="stat-label">Spins Left</div>
+                <div class="stat-number" id="totalEarnings">0</div>
+                <div class="stat-label">Total Platform Earnings</div>
             </div>
         </div>
 
-        <!-- Home Section -->
-        <div id="homeSection" class="section active">
-            <div class="card">
+        <!-- Main Content Tabs -->
+        <div class="card">
+            <div class="tabs">
+                <div class="tab active" onclick="showTab('dashboard')">Dashboard</div>
+                <div class="tab" onclick="showTab('tasks')">Tasks</div>
+                <div class="tab" onclick="showTab('users')">Users</div>
+                <div class="tab" onclick="showTab('withdrawals')">Withdrawals</div>
+                <div class="tab" onclick="showTab('luckyCodes')">Lucky Codes</div>
+                <div class="tab" onclick="showTab('messaging')">Messaging</div>
+            </div>
+
+            <!-- Dashboard Tab -->
+            <div id="dashboardTab" class="tab-content active">
                 <h2 class="card-title">
-                    <span class="material-icons">home</span>
-                    Welcome Back!
+                    <span class="material-icons">dashboard</span>
+                    System Overview
                 </h2>
-                <div style="display: flex; gap: 10px; flex-wrap: wrap;">
-                    <button class="btn btn-primary" onclick="showSection('tasks')">
-                        <span class="material-icons">assignment</span>
-                        Start Tasks
-                    </button>
-                    <button class="btn btn-warning" onclick="showSection('spin')">
-                        <span class="material-icons">casino</span>
-                        Spin Wheel
-                    </button>
-                    <button class="btn btn-success" onclick="dailyCheckin()">
-                        <span class="material-icons">event_available</span>
-                        Daily Check-in
-                    </button>
+                
+                <div class="grid-2">
+                    <div class="card">
+                        <h3 style="color: var(--primary); margin-bottom: 15px;">Recent Activities</h3>
+                        <div id="recentActivities">Loading...</div>
+                    </div>
+                    
+                    <div class="card">
+                        <h3 style="color: var(--primary); margin-bottom: 15px;">System Health</h3>
+                        <div id="systemHealth">
+                            <div style="margin-bottom: 10px;">Database: <span style="color: var(--success);">Connected</span></div>
+                            <div style="margin-bottom: 10px;">Telegram Bot: <span id="botStatus">Checking...</span></div>
+                            <div>Last Updated: <span id="lastUpdated">-</span></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3 style="color: var(--primary); margin-bottom: 15px;">IP Analysis</h3>
+                    <div id="ipAnalysis">Loading...</div>
                 </div>
             </div>
 
-            <div class="card">
-                <h2 class="card-title">
-                    <span class="material-icons">redeem</span>
-                    Lucky Code
-                </h2>
-                <div class="form-group">
-                    <input type="text" class="form-input" id="luckyCodeInput" placeholder="Enter lucky code">
-                </div>
-                <button class="btn btn-primary" onclick="applyLuckyCode()">
-                    <span class="material-icons">card_giftcard</span>
-                    Apply Code
-                </button>
-            </div>
-
-            <div id="ton-connect-button-container"></div>
-        </div>
-
-        <!-- Tasks Section -->
-        <div id="tasksSection" class="section">
-            <div class="card">
+            <!-- Tasks Tab -->
+            <div id="tasksTab" class="tab-content">
                 <h2 class="card-title">
                     <span class="material-icons">assignment</span>
-                    Tasks
+                    Task Management
                 </h2>
-                <div style="text-align: center; margin-bottom: 20px;">
-                    <button class="btn btn-primary" onclick="showSection('addTask')">
+                
+                <div class="action-buttons" style="margin-bottom: 20px;">
+                    <button class="btn btn-primary" onclick="showModal('addTaskModal')">
                         <span class="material-icons">add</span>
-                        Create New Task
+                        Add New Task
+                    </button>
+                    <button class="btn btn-warning" onclick="loadTasks()">
+                        <span class="material-icons">refresh</span>
+                        Refresh Tasks
                     </button>
                 </div>
-                <div class="tabs">
-                    <div class="tab active" onclick="showTaskTab(event, 'available')">Available</div>
-                    <div class="tab" onclick="showTaskTab(event, 'completed')">Completed</div>
+
+                <div class="search-container">
+                    <input type="text" class="search-input" id="taskSearch" placeholder="Search tasks..." oninput="filterTasks()">
+                    <select class="form-select" id="taskStatusFilter" onchange="filterTasks()">
+                        <option value="">All Status</option>
+                        <option value="active">Active</option>
+                        <option value="inactive">Inactive</option>
+                    </select>
                 </div>
 
-                <div id="availableTasks" class="tab-content active">
-                    <div class="task-grid" id="availableTasksGrid">
-                        <!-- Available tasks will be loaded here -->
-                    </div>
-                </div>
-
-                <div id="completedTasks" class="tab-content">
-                    <div class="task-grid" id="completedTasksGrid">
-                        <!-- Completed tasks will be loaded here -->
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Add Task Section -->
-        <div id="addTaskSection" class="section">
-            <div class="card">
-                <h2 class="card-title">
-                    <span class="material-icons">add_task</span>
-                    Create Task
-                </h2>
-
-                <div style="text-align: center; margin-bottom: 20px; padding: 15px; background-color: rgba(15, 15, 35, 0.8); border: 1px solid var(--glass-border); border-radius: 16px;">
-                    <p style="color: var(--text-light);">Connect your wallet to create and fund tasks.</p>
-                    <div id="connectWalletButtonAddTaskWrapper"></div>
-                </div>
-
-                <form id="addTaskForm">
-                    <!-- Task Category Selection -->
-                    <div class="form-group">
-                        <label class="form-label">Task Category</label>
-                        <div class="task-category-selector">
-                            <div class="category-option selected" data-category="normal" onclick="selectTaskCategory('normal')">
-                                <div class="category-icon material-icons">link</div>
-                                <div class="category-title">Normal Task</div>
-                                <div class="category-description">Link visit with timer</div>
-                            </div>
-                            <div class="category-option telegram" data-category="telegram" onclick="selectTaskCategory('telegram')">
-                                <div class="category-icon material-icons">telegram</div>
-                                <div class="category-title">Telegram Task</div>
-                                <div class="category-description">Channel subscription</div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label class="form-label">Task Title</label>
-                        <input type="text" class="form-input" id="newTaskTitle" required>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label class="form-label">Task Description</label>
-                        <textarea class="form-input" id="newTaskDescription" rows="3" required></textarea>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label class="form-label">Task URL</label>
-                        <input type="url" class="form-input" id="newTaskUrl" required>
-                    </div>
-
-                    <!-- Telegram specific fields -->
-                    <div id="telegramFields" class="telegram-fields">
-                        <div class="form-group">
-                            <label class="form-label">Telegram Channel Username (without @)</label>
-                            <input type="text" class="form-input" id="telegramChannel" placeholder="channelname" required>
-                            <small style="color: var(--text-muted); font-size: 12px;">
-                                Enter the channel username without @ symbol
-                            </small>
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label class="form-label">Impressions (100-5000)</label>
-                        <input type="number" class="form-input" id="taskImpressions" min="100" max="5000" value="1000" required>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label class="form-label">Total Cost: <span id="totalCost">1.500</span> TON</label>
-                        <div class="form-label" style="font-size: 12px; color: var(--text-light);">
-                            Rate: 1.5 TON per 1000 impressions
-                        </div>
-                    </div>
-                    
-                    <button type="submit" class="btn btn-primary" id="createTaskButton">
-                        <span class="material-icons">payment</span>
-                        Create & Pay
-                    </button>
-                </form>
-            </div>
-
-            <div class="card">
-                <h2 class="card-title">
-                    <span class="material-icons">list</span>
-                    My Created Tasks
-                </h2>
-                <div id="myTasksGrid" class="task-grid">
-                    <!-- User's created tasks will be loaded here -->
+                <div id="tasksContainer">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Task ID</th>
+                                <th>Title</th>
+                                <th>Category</th>
+                                <th>Reward</th>
+                                <th>Impressions</th>
+                                <th>Created By</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tasksTableBody">
+                            <tr><td colspan="8" style="text-align: center;">Loading tasks...</td></tr>
+                        </tbody>
+                    </table>
                 </div>
             </div>
-        </div>
 
-        <!-- Spin Section -->
-        <div id="spinSection" class="section">
-            <div class="card">
-                <h2 class="card-title">
-                    <span class="material-icons">casino</span>
-                    Spin Wheel
-                </h2>
-                <div style="text-align: center;">
-                    <div class="spin-wheel" id="spinWheel">
-                        <div class="spin-center">SPIN</div>
-                    </div>
-                    <button class="btn btn-primary" id="spinButton" onclick="spinWheel()">
-                        <span class="material-icons">casino</span>
-                        Spin Now
-                    </button>
-                    <p style="margin-top: 15px; color: var(--text-light);">
-                        Spins Available: <span id="spinsCount">0</span>
-                    </p>
-                </div>
-            </div>
-        </div>
-
-        <!-- Ads Section -->
-        <div id="adsSection" class="section">
-            <div class="card">
-                <h2 class="card-title">
-                    <span class="material-icons">play_circle</span>
-                    Watch Ads
-                </h2>
-                <div style="text-align: center;">
-                    <p style="margin-bottom: 20px; color: var(--text-light);">
-                        Daily Limit: <span id="adsWatched">0</span>/50
-                    </p>
-                    <button class="btn btn-primary pulse glow" id="watchAdButton" onclick="watchAd()">
-                        <span class="material-icons">play_arrow</span>
-                        Watch Ad (+10 Diamond)
-                    </button>
-                    <div id="adLoadingMessage" class="ad-loading" style="display: none;">
-                        <div class="loading"></div>
-                        <p>Loading advertisement...</p>
-                    </div>
-                    <div id="adCountdown" class="countdown" style="display: none;"></div>
-                    <p id="adCooldownMessage" style="margin-top: 15px; color: var(--text-light); font-size: 0.9rem;"></p>
-                </div>
-            </div>
-        </div>
-
-        <!-- Referral Section -->
-        <div id="referralSection" class="section">
-            <div class="card">
+            <!-- Users Tab -->
+            <div id="usersTab" class="tab-content">
                 <h2 class="card-title">
                     <span class="material-icons">people</span>
-                    Referral System
+                    User Management
                 </h2>
-                <div class="form-group">
-                    <label class="form-label">Your Referral Link get (20%)</label>
-                    <div class="refer-link" id="referralLink">
-                        https://t.me/adflareprobot/app?startapp=ref_<span id="userRefId">loading</span>
-                    </div>
-                    <button class="btn btn-secondary" onclick="copyReferralLink()">
-                        <span class="material-icons">content_copy</span>
-                        Copy Link
+
+                <div class="search-container">
+                    <input type="text" class="search-input" id="userSearch" placeholder="Search users..." oninput="filterUsers()">
+                    <select class="form-select" id="userStatusFilter" onchange="filterUsers()">
+                        <option value="">All Status</option>
+                        <option value="active">Active</option>
+                        <option value="banned">Banned</option>
+                    </select>
+                    <button class="btn btn-warning" onclick="loadUsers()">
+                        <span class="material-icons">refresh</span>
+                        Refresh Users
                     </button>
                 </div>
 
-                <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; margin: 20px 0;">
-                    <div class="stat-card">
-                        <div class="stat-number" id="totalReferrals">0</div>
-                        <div class="stat-label">Total Referrals</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-number" id="referralEarnings">0</div>
-                        <div class="stat-label">Referral Earnings</div>
-                    </div>
-                </div>
-
-                <button class="btn btn-success" onclick="claimReferralRewards()">
-                    <span class="material-icons">redeem</span>
-                    Claim Rewards
-                </button>
-
-                <div style="margin-top: 20px;">
-                    <h3 style="color: var(--primary); margin-bottom: 15px;">Referral List</h3>
-                    <div id="referralList">
-                        <!-- Referral list will be loaded here -->
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Profile Section -->
-        <div id="profileSection" class="section">
-            <div class="card">
-                <h2 class="card-title">
-                    <span class="material-icons">person</span>
-                    Wallet
-                </h2>
-                <div style="text-align: center; margin-bottom: 20px;">
-                    <img src="https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?auto=compress&cs=tinysrgb&w=100&h=100&dpr=1" alt="Profile" class="user-avatar" style="width: 100px; height: 100px;" id="profileAvatar">
-                    <h3 style="margin: 15px 0; color: var(--text);" id="profileName">Loading...</h3>
-                </div>
-
-                <!-- Balance Display -->
-                <div class="balance-grid">
-                    <div class="balance-card">
-                        <div class="balance-amount" id="profilePointsBalance">0</div>
-                        <div class="balance-label">Diamond</div>
-                    </div>
-                    <div class="balance-card">
-                        <div class="balance-amount" id="profileTonBalance">0.00000000</div>
-                        <div class="balance-label">TON Balance</div>
-                    </div>
-                </div>
-
-                <!-- Wallet Connection Section -->
-                <div class="card-title">
-                    <span class="material-icons">account_balance_wallet</span>
-                    Wallet Connection
-                </div>
-                <div id="walletStatusWrapper">
-                    <!-- Wallet connection status will be displayed here -->
-                </div>
-                <div class="profile-wallet-controls" id="profileWalletControls">
-                    <!-- Connect/Disconnect buttons will appear here, managed by JS -->
-                </div>
-
-                <!-- Swap Section -->
-                <div class="card-title" style="margin-top: 20px;">
-                    <span class="material-icons">swap_horiz</span>
-                    Swap
-                </div>
-                <div class="swap-container">
-                    <div class="swap-row">
-                        <div class="swap-input-group">
-                            <label class="swap-label" id="swapFromLabel">From Points</label>
-                            <input type="number" class="swap-input" id="swapPointsInput" placeholder="0" min="0" oninput="handleSwapInput('points')">
-                        </div>
-                        <button class="swap-icon" onclick="swapDirection()">
-                            <span class="material-icons">swap_vert</span>
-                        </button>
-                        <div class="swap-input-group">
-                            <label class="swap-label" id="swapToLabel">To TON</label>
-                            <input type="number" class="swap-input" id="swapTonInput" placeholder="0.00000000" min="0" step="0.00000001" oninput="handleSwapInput('ton')" disabled>
-                        </div>
-                    </div>
-                    <div style="text-align: center; margin-bottom: 15px; color: var(--text-light); font-size: 12px;">
-                        Rate: <span id="swapRate">100 points = 0.001 TON</span>
-                    </div>
-                    <button class="btn btn-accent" style="width: 100%;" onclick="executeSwap()">
-                        <span class="material-icons">swap_horiz</span>
-                        Execute Swap
-                    </button>
-                </div>
-
-                <!-- Withdraw Section -->
-                <div style="text-align: center; margin-top: 20px;">
-                    <button class="btn btn-primary" onclick="showWithdrawModal()">
-                        <span class="material-icons">account_balance_wallet</span>
-                        Withdraw TON
-                    </button>
-                </div>
-
-                <div style="display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; margin-top: 20px;">
-                    <button class="btn btn-secondary" onclick="window.open('https://t.me/jhahidul52', '_blank')">
-                        <span class="material-icons">support</span>
-                        Support
-                    </button>
-                    <button class="btn btn-secondary" onclick="window.open('https://t.me/abstudioseo', '_blank')">
-                        <span class="material-icons">code</span>
-                        Developer
-                    </button>
-                </div>
-            </div>
-
-            <div class="card">
-                <h2 class="card-title">
-                    <span class="material-icons">history</span>
-                    Transaction History
-                </h2>
-                <div class="tabs">
-                    <div class="tab active" onclick="showHistoryTab(event, 'withdrawal')">Withdrawals</div>
-                    <div class="tab" onclick="showHistoryTab(event, 'swap')">Swaps</div>
-                </div>
-                
-                <div id="withdrawalHistory" class="tab-content active">
-                    <div class="withdrawal-history" id="withdrawalHistoryContent">
-                        <!-- Withdrawal history will be loaded here -->
-                    </div>
-                </div>
-                
-                <div id="swapHistory" class="tab-content">
-                    <div class="withdrawal-history" id="swapHistoryContent">
-                        <!-- Swap history will be loaded here -->
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Admin Panel Section -->
-        <div id="adminPanelSection" class="section">
-            <div class="card">
-                <h2 class="card-title">
-                    <span class="material-icons">admin_panel_settings</span>
-                    Admin Dashboard
-                </h2>
-                <div class="tabs">
-                    <div class="tab active" onclick="showAdminTab(event, 'manageTasks')">Manage Tasks</div>
-                    <div class="tab" onclick="showAdminTab(event, 'manageWithdrawals')">Withdrawals</div>
-                    <div class="tab" onclick="showAdminTab(event, 'manageLuckyCodes')">Lucky Codes</div>
-                    <div class="tab" onclick="showAdminTab(event, 'manageUsers')">Users</div>
-                    <div class="tab" onclick="showAdminTab(event, 'viewLogs')">Logs</div>
-                </div>
-            </div>
-
-            <!-- Manage Tasks Tab -->
-            <div id="manageTasks" class="tab-content active">
-                <div class="card">
-                    <h3 class="admin-card-title">
-                        <span class="material-icons">add_task</span>
-                        Create New Task (Admin)
-                    </h3>
-                    <form id="adminAddTaskForm">
-                        <div class="form-group">
-                            <label class="form-label">Task Title</label>
-                            <input type="text" class="form-input" id="adminNewTaskTitle" required>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">Task Description</label>
-                            <textarea class="form-input" id="adminNewTaskDescription" rows="3" required></textarea>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">Task URL</label>
-                            <input type="url" class="form-input" id="adminNewTaskUrl" required>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">Task Category</label>
-                            <select class="form-select" id="adminNewTaskCategory">
-                                <option value="normal">Normal Task</option>
-                                <option value="telegram">Telegram Task</option>
-                            </select>
-                        </div>
-                        <div class="form-group telegram-fields" id="adminTelegramFields">
-                            <label class="form-label">Telegram Channel Username (without @)</label>
-                            <input type="text" class="form-input" id="adminTelegramChannel" placeholder="channelname">
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">Reward Points</label>
-                            <input type="number" class="form-input" id="adminNewTaskReward" required min="1" value="100">
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">Impressions Required</label>
-                            <input type="number" class="form-input" id="adminNewTaskImpressions" required min="100" value="1000">
-                        </div>
-                         <div class="form-group">
-                            <label class="form-label">Status</label>
-                            <select class="form-select" id="adminNewTaskStatus">
-                                <option value="active">Active</option>
-                                <option value="inactive">Inactive</option>
-                            </select>
-                        </div>
-                        <button type="submit" class="btn btn-primary" id="adminCreateTaskButton">
-                            <span class="material-icons">add</span>
-                            Create Task
-                        </button>
-                    </form>
-                </div>
-                <div class="card">
-                    <h3 class="admin-card-title">
-                        <span class="material-icons">view_list</span>
-                        All Tasks
-                    </h3>
-                    <div id="adminAllTasksGrid" class="task-grid">
-                        <!-- All tasks will be loaded here -->
-                    </div>
+                <div id="usersContainer">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>User ID</th>
+                                <th>Name</th>
+                                <th>Username</th>
+                                <th>Balance</th>
+                                <th>TON Balance</th>
+                                <th>IP Address</th>
+                                <th>Joined</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="usersTableBody">
+                            <tr><td colspan="9" style="text-align: center;">Loading users...</td></tr>
+                        </tbody>
+                    </table>
                 </div>
             </div>
 
             <!-- Withdrawals Tab -->
-            <div id="manageWithdrawals" class="tab-content">
-                <div class="card">
-                    <h3 class="admin-card-title">
-                        <span class="material-icons">history</span>
-                        Withdrawal Requests
-                    </h3>
-                    <div id="adminWithdrawalHistoryContent" class="withdrawal-history">
-                        <!-- Withdrawal history for admin to manage -->
-                    </div>
+            <div id="withdrawalsTab" class="tab-content">
+                <h2 class="card-title">
+                    <span class="material-icons">account_balance_wallet</span>
+                    Withdrawal Management
+                </h2>
+
+                <div class="search-container">
+                    <input type="text" class="search-input" id="withdrawalSearch" placeholder="Search withdrawals..." oninput="filterWithdrawals()">
+                    <select class="form-select" id="withdrawalStatusFilter" onchange="filterWithdrawals()">
+                        <option value="">All Status</option>
+                        <option value="pending">Pending</option>
+                        <option value="completed">Completed</option>
+                        <option value="rejected">Rejected</option>
+                    </select>
+                    <button class="btn btn-warning" onclick="loadWithdrawals()">
+                        <span class="material-icons">refresh</span>
+                        Refresh
+                    </button>
+                </div>
+
+                <div id="withdrawalsContainer">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>User</th>
+                                <th>Amount (TON)</th>
+                                <th>Address</th>
+                                <th>Requested</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="withdrawalsTableBody">
+                            <tr><td colspan="7" style="text-align: center;">Loading withdrawals...</td></tr>
+                        </tbody>
+                    </table>
                 </div>
             </div>
 
             <!-- Lucky Codes Tab -->
-            <div id="manageLuckyCodes" class="tab-content">
-                <div class="card">
-                    <h3 class="admin-card-title">
-                        <span class="material-icons">card_giftcard</span>
-                        Lucky Codes
-                    </h3>
-                    <form id="adminLuckyCodeForm">
-                        <div class="form-group">
-                            <label class="form-label">Lucky Code</label>
-                            <input type="text" class="form-input" id="adminLuckyCode" required>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">Reward Points</label>
-                            <input type="number" class="form-input" id="adminLuckyCodeReward" required min="1" value="50">
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">Expires In (days)</label>
-                            <input type="number" class="form-input" id="adminLuckyCodeExpires" required min="1" value="7">
-                        </div>
-                        <button type="submit" class="btn btn-primary">
-                            <span class="material-icons">add</span>
-                            Create Lucky Code
-                        </button>
-                    </form>
+            <div id="luckyCodesTab" class="tab-content">
+                <h2 class="card-title">
+                    <span class="material-icons">redeem</span>
+                    Lucky Code Management
+                </h2>
+
+                <div class="action-buttons" style="margin-bottom: 20px;">
+                    <button class="btn btn-primary" onclick="showModal('addLuckyCodeModal')">
+                        <span class="material-icons">add</span>
+                        Create Lucky Code
+                    </button>
+                    <button class="btn btn-warning" onclick="loadLuckyCodes()">
+                        <span class="material-icons">refresh</span>
+                        Refresh
+                    </button>
                 </div>
-                <div class="card">
-                    <h3 class="admin-card-title">
-                        <span class="material-icons">list_alt</span>
-                        All Lucky Codes
-                    </h3>
-                    <div id="adminLuckyCodesList">
-                        <!-- List of all lucky codes -->
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Users Tab -->
-            <div id="manageUsers" class="tab-content">
-                <div class="card">
-                    <h3 class="admin-card-title">
-                        <span class="material-icons">people</span>
-                        User Management
-                    </h3>
-                    <div id="adminUserList">
-                        <!-- List of users -->
-                    </div>
+
+                <div id="luckyCodesContainer">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Code</th>
+                                <th>Reward</th>
+                                <th>Created</th>
+                                <th>Expires</th>
+                                <th>Used</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="luckyCodesTableBody">
+                            <tr><td colspan="6" style="text-align: center;">Loading lucky codes...</td></tr>
+                        </tbody>
+                    </table>
                 </div>
             </div>
 
-            <!-- Logs Tab -->
-            <div id="viewLogs" class="tab-content">
+            <!-- Messaging Tab -->
+            <div id="messagingTab" class="tab-content">
+                <h2 class="card-title">
+                    <span class="material-icons">message</span>
+                    User Messaging
+                </h2>
+
+                <div class="grid-2">
+                    <div class="card">
+                        <h3 style="color: var(--primary); margin-bottom: 15px;">Send Message to User</h3>
+                        <form id="singleMessageForm">
+                            <div class="form-group">
+                                <label class="form-label">User ID</label>
+                                <input type="text" class="form-input" id="messageUserId" placeholder="Enter User ID" required>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Message</label>
+                                <textarea class="form-textarea" id="messageContent" placeholder="Enter your message..." required></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-primary">
+                                <span class="material-icons">send</span>
+                                Send Message
+                            </button>
+                        </form>
+                    </div>
+
+                    <div class="card">
+                        <h3 style="color: var(--primary); margin-bottom: 15px;">Broadcast Message</h3>
+                        <form id="broadcastMessageForm">
+                            <div class="form-group">
+                                <label class="form-label">Target Audience</label>
+                                <select class="form-select" id="broadcastTarget">
+                                    <option value="all">All Users</option>
+                                    <option value="active">Active Users Only</option>
+                                    <option value="banned">Banned Users Only</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Broadcast Message</label>
+                                <textarea class="form-textarea" id="broadcastContent" placeholder="Enter broadcast message..." required></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-warning">
+                                <span class="material-icons">campaign</span>
+                                Send Broadcast
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
                 <div class="card">
-                    <h3 class="admin-card-title">
-                        <span class="material-icons">receipt_long</span>
-                        Activity Logs
-                    </h3>
-                    <p style="color: var(--text-light); margin-bottom: 15px;">Review recent activities like task creation, withdrawals, and swaps.</p>
-                    <div id="adminActivityLog">
-                        <!-- Filterable logs -->
-                        <p style="text-align: center; color: var(--text-light);">Log viewing functionality is under development.</p>
+                    <h3 style="color: var(--primary); margin-bottom: 15px;">Message Templates</h3>
+                    <div class="action-buttons">
+                        <button class="btn btn-secondary" onclick="useTemplate('welcome')">Welcome Message</button>
+                        <button class="btn btn-secondary" onclick="useTemplate('withdrawal_approved')">Withdrawal Approved</button>
+                        <button class="btn btn-secondary" onclick="useTemplate('withdrawal_rejected')">Withdrawal Rejected</button>
+                        <button class="btn btn-secondary" onclick="useTemplate('account_warning')">Account Warning</button>
                     </div>
                 </div>
             </div>
-
-        </div>
-
-
-    </div>
-
-    <!-- Bottom Navigation -->
-    <div class="bottom-nav">
-        <div class="nav-container">
-            <a href="#" class="nav-item active" onclick="showSection('home'); return false;">
-                <span class="material-icons">home</span>
-                <span>Home</span>
-            </a>
-            <a href="#" class="nav-item" onclick="showSection('ads'); return false;">
-                <span class="material-icons">play_circle</span>
-                <span>Ads</span>
-            </a>
-            <a href="#" class="nav-item" onclick="showSection('tasks'); return false;">
-                <span class="material-icons">assignment</span>
-                <span>Tasks</span>
-            </a>
-            <a href="#" class="nav-item" onclick="showSection('referral'); return false;">
-                <span class="material-icons">share</span>
-                <span>Refer</span>
-            </a>
-            <a href="#" class="nav-item" onclick="showSection('profile'); return false;">
-                <span class="material-icons">account_balance_wallet</span>
-                <span>Wallet</span>
-            </a>
-            <!-- Admin Navigation Link -->
-            <a href="#" class="nav-item" id="adminNavLink" style="display: none;" onclick="showSection('adminPanel'); return false;">
-                <span class="material-icons">admin_panel_settings</span>
-                <span>Admin</span>
-            </a>
         </div>
     </div>
 
-    <!-- Task Verification Modal -->
-    <div id="taskModal" class="modal">
+    <!-- Add Task Modal -->
+    <div id="addTaskModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h3 class="modal-title">Task Verification</h3>
-                <button class="close-btn" onclick="closeModal('taskModal')">&times;</button>
+                <h3 class="modal-title">Add New Task</h3>
+                <button class="close-btn" onclick="closeModal('addTaskModal')">&times;</button>
             </div>
-            <div id="taskModalContent">
-                <div class="countdown" id="taskCountdown">5</div>
-                <div class="progress-bar">
-                    <div class="progress-fill" id="taskProgress"></div>
+            <form id="addTaskForm">
+                <div class="form-group">
+                    <label class="form-label">Task Category</label>
+                    <select class="form-select" id="newTaskCategory" required>
+                        <option value="normal">Normal Task</option>
+                        <option value="telegram">Telegram Task</option>
+                    </select>
                 </div>
-                <p style="text-align: center; color: var(--text-light);" id="taskModalMessage">
-                    Please wait while we verify your task completion...
-                </p>
-                <div id="verificationStatus"></div>
-            </div>
+                <div class="form-group">
+                    <label class="form-label">Task Title</label>
+                    <input type="text" class="form-input" id="newTaskTitle" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Description</label>
+                    <textarea class="form-textarea" id="newTaskDescription" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Task URL</label>
+                    <input type="url" class="form-input" id="newTaskUrl" required>
+                </div>
+                <div class="form-group" id="telegramChannelGroup" style="display: none;">
+                    <label class="form-label">Telegram Channel (without @)</label>
+                    <input type="text" class="form-input" id="newTaskTelegramChannel" placeholder="channelname">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Reward (Points)</label>
+                    <input type="number" class="form-input" id="newTaskReward" value="100" min="1" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Total Impressions</label>
+                    <input type="number" class="form-input" id="newTaskImpressions" value="1000" min="100" required>
+                </div>
+                <button type="submit" class="btn btn-primary">
+                    <span class="material-icons">add</span>
+                    Create Task
+                </button>
+            </form>
         </div>
     </div>
 
-    <!-- Withdraw Modal -->
-    <div id="withdrawModal" class="modal">
+    <!-- Add Lucky Code Modal -->
+    <div id="addLuckyCodeModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h3 class="modal-title">Withdraw TON</h3>
-                <button class="close-btn" onclick="closeModal('withdrawModal')">&times;</button>
+                <h3 class="modal-title">Create Lucky Code</h3>
+                <button class="close-btn" onclick="closeModal('addLuckyCodeModal')">&times;</button>
             </div>
-            <div id="withdrawModalWalletInfo">
-                <!-- Wallet connection status and buttons will be displayed here -->
-            </div>
-            <form id="withdrawForm">
+            <form id="addLuckyCodeForm">
                 <div class="form-group">
-                    <label class="form-label">TON Address</label>
-                    <input type="text" class="form-input" id="tonAddress" readonly placeholder="Connect wallet to populate">
+                    <label class="form-label">Code</label>
+                    <input type="text" class="form-input" id="newLuckyCode" placeholder="Enter code (e.g., LUCKY2024)" required>
+                    <button type="button" class="btn btn-secondary" style="margin-top: 5px;" onclick="generateRandomCode()">
+                        <span class="material-icons">casino</span>
+                        Generate Random
+                    </button>
                 </div>
                 <div class="form-group">
-                    <label class="form-label">Amount (TON)</label>
-                    <input type="number" class="form-input" id="withdrawAmount" min="0.1" step="0.00000001" required placeholder="Enter TON amount to withdraw">
-                    <div style="font-size: 12px; color: var(--text-light); margin-top: 5px;">
-                        Minimum: 0.1 TON | Your TON Balance: <span id="withdrawModalTonBalance">0.00000000</span> TON
-                    </div>
+                    <label class="form-label">Reward (Points)</label>
+                    <input type="number" class="form-input" id="newLuckyCodeReward" value="500" min="1" required>
                 </div>
-                <button type="submit" class="btn btn-primary" id="requestWithdrawButton">
-                    <span class="material-icons">send</span>
-                    Request Withdrawal
+                <div class="form-group">
+                    <label class="form-label">Expires In (Hours)</label>
+                    <input type="number" class="form-input" id="newLuckyCodeExpiry" value="24" min="1" required>
+                </div>
+                <button type="submit" class="btn btn-primary">
+                    <span class="material-icons">redeem</span>
+                    Create Code
                 </button>
             </form>
         </div>
@@ -1272,881 +925,1005 @@ body::before {
                     <input type="text" class="form-input" id="editTaskTitle" required>
                 </div>
                 <div class="form-group">
-                    <label class="form-label">Task Description</label>
-                    <textarea class="form-input" id="editTaskDescription" rows="3" required></textarea>
+                    <label class="form-label">Description</label>
+                    <textarea class="form-textarea" id="editTaskDescription" required></textarea>
                 </div>
                 <div class="form-group">
                     <label class="form-label">Task URL</label>
                     <input type="url" class="form-input" id="editTaskUrl" required>
                 </div>
                 <div class="form-group">
-                    <label class="form-label">Task Category</label>
-                    <select class="form-select" id="editTaskCategory">
-                        <option value="normal">Normal Task</option>
-                        <option value="telegram">Telegram Task</option>
-                    </select>
-                </div>
-                <div class="form-group telegram-fields" id="editTelegramFields">
-                    <label class="form-label">Telegram Channel Username (without @)</label>
-                    <input type="text" class="form-input" id="editTelegramChannel" placeholder="channelname">
+                    <label class="form-label">Reward (Points)</label>
+                    <input type="number" class="form-input" id="editTaskReward" min="1" required>
                 </div>
                 <div class="form-group">
-                    <label class="form-label">Reward Points</label>
-                    <input type="number" class="form-input" id="editTaskReward" required min="1">
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Impressions Required</label>
-                    <input type="number" class="form-input" id="editTaskImpressions" required min="100">
-                </div>
-                 <div class="form-group">
                     <label class="form-label">Status</label>
-                    <select class="form-select" id="editTaskStatus">
+                    <select class="form-select" id="editTaskStatus" required>
                         <option value="active">Active</option>
                         <option value="inactive">Inactive</option>
                     </select>
                 </div>
                 <button type="submit" class="btn btn-primary">
                     <span class="material-icons">save</span>
-                    Save Changes
+                    Update Task
                 </button>
             </form>
         </div>
     </div>
 
-
     <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
-    <!-- Firebase Functions SDK -->
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-functions-compat.js"></script>
 
     <script>
-        // --- Firebase Configuration ---
+        // Firebase configuration (same as main app)
         const firebaseConfig = {
-            apiKey: "AIzaSyA3SqCHzN3kLj7DC8Cyu9OzxPFtIlyyii4", // Replace with your actual API key
+            apiKey: "AIzaSyA3SqCHzN3kLj7DC8Cyu9OzxPFtIlyyii4",
             authDomain: "maneybux-clone.firebaseapp.com",
             projectId: "maneybux-clone",
             storageBucket: "maneybux-clone.firebasestorage.app",
             messagingSenderId: "153207109623",
-            appId: "1:153207109623:web:4cd48633c49c2ba3c1a0f2"
+            appId: "1:153207109623:web:4cd48633c49c2ba3c1a0f2c1a0f2"
         };
 
         // Initialize Firebase
-        try {
-            firebase.initializeApp(firebaseConfig);
-        } catch (error) {
-            console.error("Firebase initialization error:", error);
-            alert("Firebase initialization failed. Please check your Firebase configuration and network connection.");
-        }
+        firebase.initializeApp(firebaseConfig);
         const database = firebase.database();
-        const functions = firebase.functions(); // Initialize Firebase Functions
 
-        // --- TON Connect UI Setup ---
-        const tonConnectUI = new TON_CONNECT_UI.TonConnectUI({
-            manifestUrl: 'https://moneybuc-clone-clint-1.vercel.app/tonconnect-manifest.json', // Ensure this manifest is correctly configured
-            actionsConfiguration: {
-                twaReturnUrl: 'https://t.me/adflareprobot' // Your bot's username
-            }
+        // Telegram Bot Configuration
+        const TELEGRAM_BOT_TOKEN = '7829924006:AAFIOCnga8v6yOw08dCzvKDC8wS7Fuad_II';
+        const TELEGRAM_API_URL = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}`;
+
+        // Global variables
+        let allUsers = {};
+        let allTasks = {};
+        let allWithdrawals = {};
+        let allLuckyCodes = {};
+
+        // Message templates
+        const messageTemplates = {
+            welcome: "🎉 Welcome to EarnFlux! Start earning by completing tasks and watching ads. Good luck! 🚀",
+            withdrawal_approved: "✅ Great news! Your withdrawal request has been approved and processed successfully. The TON has been sent to your wallet. Thank you for using EarnFlux! 💰",
+            withdrawal_rejected: "❌ We're sorry, but your withdrawal request has been rejected due to verification issues. Please contact support for more information. 📞",
+            account_warning: "⚠️ This is a warning regarding your EarnFlux account. Please ensure you follow all platform rules to avoid any restrictions. Contact support if you have any questions. 🤝"
+        };
+
+        // Initialize admin panel
+        document.addEventListener('DOMContentLoaded', function() {
+            loadDashboardData();
+            checkBotStatus();
+            
+            // Set up task category change listener
+            document.getElementById('newTaskCategory').addEventListener('change', function() {
+                const telegramGroup = document.getElementById('telegramChannelGroup');
+                if (this.value === 'telegram') {
+                    telegramGroup.style.display = 'block';
+                    document.getElementById('newTaskTelegramChannel').required = true;
+                } else {
+                    telegramGroup.style.display = 'none';
+                    document.getElementById('newTaskTelegramChannel').required = false;
+                }
+            });
+
+            // Set up form submissions
+            setupFormHandlers();
+            
+            // Set last updated time
+            updateLastUpdatedTime();
+            setInterval(updateLastUpdatedTime, 60000); // Update every minute
         });
 
-        // --- Global Variables ---
-        let currentUser = null; 
-        let userBalance = 0;
-        let userTonBalance = 0;
-        let userSpins = 0;
-        let adsWatchedToday = 0;
-        let dailyCheckinDone = false;
-        let lastAdCompletionTime = 0; 
-        let lastAdClaimAttemptTime = 0; 
-        let swapMode = 'pointsToTon'; 
-        let isAdInteractionInProgress = false; 
-        let selectedTaskCategory = 'normal';
-        let currentReferralBonusRate = 0.20; 
-        let adSessionTimer = null; 
-        let postAdCooldownTimer = null;  
-        let taskVerificationTimer = null; // Global for task timer
+        // Setup form handlers
+        function setupFormHandlers() {
+            // Add Task Form
+            document.getElementById('addTaskForm').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                await handleAddTask();
+            });
 
-        // --- Constants ---
-        const REFERRAL_BONUS_POINTS_PER_EARNING = 0.20; 
-        const MIN_WITHDRAW_TON = 0.1;
-        const POINTS_TO_TON_RATE = 0.00001; // Example: 100 points = 0.001 TON
-        const IMPRESSIONS_TO_TON_RATE = 0.0015; // Example: 1.5 TON per 1000 impressions
-        const AD_REWARD_POINTS = 10;
-        const CHECKIN_REWARD_POINTS = 20;
-        const TASK_SPIN_REWARD = 1;
-        const TELEGRAM_BOT_TOKEN = '7829924006:AAFIOCnga8v6yOw08dCzvKDC8wS7Fuad_II'; // Replace with your actual bot token
-        const AD_CLAIM_COOLDOWN = 15000; // 15 seconds cooldown before reward is claimable
-        const POST_AD_COOLDOWN = 3000;  // 3 seconds delay between claiming reward and starting next ad
-        const MAX_DAILY_ADS = 50;
-        const LOCAL_ADMIN_SIMULATION_USER_ID = 'YOUR_LOCAL_ADMIN_SIMULATION_ID_12345'; // Unique ID for local admin simulation
+            // Add Lucky Code Form
+            document.getElementById('addLuckyCodeForm').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                await handleAddLuckyCode();
+            });
 
-        // --- Admin Check Helper ---
-        function isAdmin() {
-            return currentUser && currentUser.role === 'admin';
+            // Edit Task Form
+            document.getElementById('editTaskForm').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                await handleEditTask();
+            });
+
+            // Single Message Form
+            document.getElementById('singleMessageForm').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                await handleSendMessage();
+            });
+
+            // Broadcast Message Form
+            document.getElementById('broadcastMessageForm').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                await handleBroadcastMessage();
+            });
         }
 
-        // --- Initialize Telegram Web App & User Data ---
-        function initWebAppAndUser() {
-            // Check if running in Telegram Web App environment
-            if (window.Telegram && window.Telegram.WebApp) {
-                const tg = window.Telegram.WebApp;
-                tg.ready();
-                tg.expand(); 
-
-                const user = tg.initDataUnsafe?.user;
-                if (user) {
-                    // User is from Telegram, proceed with normal user initialization
-                    currentUser = {
-                        id: user.id.toString(), // Ensure ID is string for Firebase keys
-                        username: user.username || '', 
-                        first_name: user.first_name || 'User',
-                        photo_url: user.photo_url || 'https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?auto=compress&cs=tinysrgb&w=100&h=100&dpr=1',
-                        role: 'loading' // Initial role status, will be updated from Firebase
-                    };
-                    initializeUser(); // Fetch/create user data from Firebase
-                } else {
-                    console.warn("Telegram Web App detected, but no user data found.");
-                    showAlert("Error: Could not retrieve user data from Telegram. Please open this in Telegram.", "danger");
-                    document.body.innerHTML = '<div class="container" style="text-align: center; padding-top: 100px;">Please open this application within Telegram.</div>';
-                }
-            } 
-            // --- If NOT in Telegram Web App, check if it's localhost for admin simulation ---
-            else if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
-                console.log("Detected local environment. Simulating admin access.");
-                
-                // Inject admin privileges directly
-                currentUser = { 
-                    id: LOCAL_ADMIN_SIMULATION_USER_ID, // Use the predefined local admin ID
-                    first_name: 'Local Admin', 
-                    photo_url: 'https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?auto=compress&cs=tinysrgb&w=100&h=100&dpr=1', // Placeholder avatar
-                    role: 'admin' // !!! Directly assign 'admin' role !!!
-                };
-                
-                // Initialize user data for this simulated admin
-                initializeUser(); 
-            } 
-            // --- If NOT in Telegram and NOT localhost, show general error ---
-            else {
-                console.error("Environment not supported.");
-                showAlert("This application must be opened within Telegram or run locally on localhost for admin access.", "danger");
-                document.body.innerHTML = '<div class="container" style="text-align: center; padding-top: 100px;">Please open this application within Telegram or run locally.</div>';
-            }
-        }
-
-        // --- Initialize User Data from Firebase ---
-        async function initializeUser() {
-            if (!currentUser) return; // Safety check
-
-            const isLocalAdminSimulation = currentUser.id === LOCAL_ADMIN_SIMULATION_USER_ID;
-            const userRef = database.ref('users/' + currentUser.id);
-
+        // Load dashboard data
+        async function loadDashboardData() {
             try {
-                const snapshot = await userRef.once('value');
+                showAlert('Loading dashboard data...', 'info');
+                
+                await Promise.all([
+                    loadUsers(),
+                    loadTasks(),
+                    loadWithdrawals(),
+                    loadLuckyCodes()
+                ]);
 
-                if (!snapshot.exists()) {
-                    // Create new user
-                    const userData = {
-                        id: currentUser.id,
-                        username: currentUser.username || '', 
-                        first_name: currentUser.first_name,
-                        photo_url: currentUser.photo_url,
-                        balance: 0, tonBalance: 0.00000000, spins: 0, totalEarned: 0,
-                        tasksCompleted: 0, referrals: 0, referralEarnings: 0, 
-                        adsWatched: 0, lastAdReset: Date.now(), lastCheckin: null,
-                        createdAt: Date.now(),
-                        role: isLocalAdminSimulation ? 'admin' : 'user' // Set role based on context
-                    };
-                    await userRef.set(userData);
-                    if(isLocalAdminSimulation) currentUser.role = 'admin'; // Ensure role is set if created as local admin
-                } else {
-                    // User exists, load their data and role
-                    const existingUserData = snapshot.val();
-                    // Update currentUser's role, prioritizing 'admin' if it's the local simulation
-                    if (isLocalAdminSimulation) {
-                        currentUser.role = 'admin'; 
-                    } else {
-                        currentUser.role = existingUserData.role || 'user'; // Update from Firebase
-                    }
-                }
-
-                // Set up real-time listener for user data
-                userRef.on('value', (snapshot) => {
-                    const userData = snapshot.val();
-                    if (userData) {
-                        // Update global variables and UI
-                        userBalance = userData.balance || 0;
-                        userTonBalance = userData.tonBalance || 0.00000000;
-                        userSpins = userData.spins || 0;
-                        adsWatchedToday = userData.adsWatched || 0;
-                        dailyCheckinDone = userData.lastCheckin === new Date().toDateString();
-                        
-                        if (!isLocalAdminSimulation) {
-                            currentUser.role = userData.role || 'user'; // Update role from Firebase unless it's local admin simulation
-                        }
-
-                        updateUI(userData);
-                        updateWalletUI();
-                        updateSwapInputs();
-                        updateAdButtonState();
-                        
-                        // Show/hide admin nav link and section based on role
-                        const adminNavLink = document.getElementById('adminNavLink');
-                        if (adminNavLink) adminNavLink.style.display = isAdmin() ? 'flex' : 'none';
-                        
-                        const adminPanelSection = document.getElementById('adminPanelSection');
-                        if (adminPanelSection) adminPanelSection.style.display = isAdmin() ? 'block' : 'none';
-                    }
-                });
-
-                // Load data (tasks, referrals, history etc.)
-                loadTasks(); 
-                loadUserTasks(); 
-                loadReferrals();
-                loadWithdrawalHistory(); 
-                loadSwapHistory();
-
-                // Load admin-specific data IF the current user is an admin
-                if (isAdmin()) {
-                    loadAllTasksForAdmin();
-                    loadWithdrawalRequestsAdmin(); 
-                    loadLuckyCodes();
-                    loadUsers();
-                }
-
+                updateDashboardStats();
+                loadRecentActivities();
+                analyzeIpAddresses();
+                
+                showAlert('Dashboard data loaded successfully!', 'success');
             } catch (error) {
-                console.error("Error initializing user:", error);
-                if (!isLocalAdminSimulation) {
-                    showAlert("Failed to load user data. Please check your connection or try again.", "danger");
-                } else {
-                    document.body.innerHTML = '<div class="container" style="text-align: center; padding-top: 100px; color: red;">FATAL ERROR: Failed to initialize local admin. Check console.</div>';
-                }
+                console.error('Error loading dashboard:', error);
+                showAlert('Error loading dashboard data', 'danger');
             }
         }
 
-        // --- DOMContentLoaded Listener ---
-        document.addEventListener('DOMContentLoaded', () => {
-            initWebAppAndUser(); // Combined initialization
+        // Update dashboard statistics
+        function updateDashboardStats() {
+            const totalUsers = Object.keys(allUsers).length;
+            const activeTasks = Object.values(allTasks).filter(task => task.status === 'active').length;
+            const pendingWithdrawals = Object.values(allWithdrawals).filter(w => w.status === 'pending').length;
+            const totalEarnings = Object.values(allUsers).reduce((sum, user) => sum + (user.totalEarned || 0), 0);
 
-            // Initialize TON Connect UI button
-            if (document.getElementById('ton-connect-button-container')) {
-                tonConnectUI.buttonRootId = 'ton-connect-button-container';
-            } else {
-                console.error("TON Connect button container not found!");
-            }
-
-            tonConnectUI.onStatusChange(wallet => {
-                updateWalletUI(); 
-            });
-            
-            updateWalletUI(); // Initial wallet status update
-            updateSwapInputs(); // Initial swap setup
-
-            showSection('home'); // Set initial section
-        });
-
-        // --- Helper function for Admin Check ---
-        function isAdmin() {
-            return currentUser && currentUser.role === 'admin';
+            document.getElementById('totalUsers').textContent = formatNumber(totalUsers);
+            document.getElementById('totalTasks').textContent = formatNumber(activeTasks);
+            document.getElementById('totalWithdrawals').textContent = formatNumber(pendingWithdrawals);
+            document.getElementById('totalEarnings').textContent = formatNumber(totalEarnings);
         }
 
-        // --- UI Update Functions (all previous functions remain here) ---
-        // (updateUI, updateWalletUI, updateAdButtonState, spinWheel, etc.)
-
-        // --- Task Management (User and Admin) ---
-        // (loadTasks, createTaskCard, startTask, completeTask, applyLuckyCode, loadUserTasks, createUserTaskCard, etc.)
-
-        // --- Referral Functions ---
-        // (handleReferral, loadReferrals, copyReferralLink, etc.)
-
-        // --- Withdrawal Functions ---
-        // (showWithdrawModal, loadWithdrawalHistory, etc.)
-
-        // --- Section Navigation ---
-        // (showSection, showTaskTab, showHistoryTab, showAdminTab, closeModal, showAlert, etc.)
-
-        // --- Admin Panel JavaScript Functions ---
-
-        // Show/Hide Telegram fields based on category selection (User task creation)
-        function selectTaskCategory(category) {
-            selectedTaskCategory = category;
-            document.querySelectorAll('.category-option').forEach(option => { option.classList.remove('selected'); });
-            document.querySelector(`[data-category="${category}"]`).classList.add('selected');
-            
-            const telegramFields = document.getElementById('telegramFields');
-            if (category === 'telegram') {
-                if (telegramFields) telegramFields.classList.add('active');
-            } else {
-                if (telegramFields) telegramFields.classList.remove('active');
+        // Load users from Firebase
+        async function loadUsers() {
+            try {
+                const snapshot = await database.ref('users').once('value');
+                allUsers = snapshot.val() || {};
+                displayUsers();
+            } catch (error) {
+                console.error('Error loading users:', error);
+                showAlert('Error loading users', 'danger');
             }
         }
-        
-        // Load all tasks for Admin view
-        function loadAllTasksForAdmin() {
-            const adminAllTasksGrid = document.getElementById('adminAllTasksGrid');
-            if (!adminAllTasksGrid) return;
 
-            database.ref('tasks').on('value', (snapshot) => {
-                adminAllTasksGrid.innerHTML = '';
-                const tasks = snapshot.val();
+        // Display users in table
+        function displayUsers() {
+            const tbody = document.getElementById('usersTableBody');
+            tbody.innerHTML = '';
 
-                if (!tasks) {
-                    adminAllTasksGrid.innerHTML = '<p style="text-align: center; color: var(--text-light);">No tasks found.</p>';
-                    return;
+            if (Object.keys(allUsers).length === 0) {
+                tbody.innerHTML = '<tr><td colspan="9" style="text-align: center;">No users found</td></tr>';
+                return;
+            }
+
+            Object.entries(allUsers).forEach(([userId, user]) => {
+                const row = document.createElement('tr');
+                if (user.status === 'banned') {
+                    row.classList.add('ip-duplicate');
                 }
 
-                let tasksFound = false;
-                Object.keys(tasks).forEach(taskId => {
-                    const task = tasks[taskId];
-                    if (!task) return;
-                    const taskCard = createTaskCardForAdmin(taskId, task);
-                    adminAllTasksGrid.appendChild(taskCard);
-                    tasksFound = true;
-                });
-
-                if (!tasksFound) {
-                    adminAllTasksGrid.innerHTML = '<p style="text-align: center; color: var(--text-light);">No tasks found.</p>';
-                }
-            }, (error) => {
-                console.error("Error fetching all tasks for admin:", error);
-                showAlert("Failed to load tasks for admin. Please check your connection.", "danger");
-            });
-        }
-
-        // Create task card for Admin view
-        function createTaskCardForAdmin(taskId, task) {
-            const card = document.createElement('div');
-            card.className = `task-card ${task.category === 'telegram' ? 'telegram-task' : ''}`;
-
-            const totalImpressions = task.impressions || 0;
-            const remainingImpressions = task.remainingImpressions !== undefined ? task.remainingImpressions : totalImpressions;
-            const progressPercentage = (totalImpressions > 0) ? 
-                ((totalImpressions - remainingImpressions) / totalImpressions) * 100 : 0;
-
-            const categoryBadge = task.category === 'telegram' ? 
-                `<span class="task-type-badge task-type-telegram">Telegram</span>` :
-                `<span class="task-type-badge task-type-normal">Normal</span>`;
-
-            const channelInfo = task.category === 'telegram' && task.telegramChannel ? 
-                `<div class="task-channel">
-                    <span class="material-icons">telegram</span>
-                    @${task.telegramChannel}
-                </div>` : '';
-
-            const statusBadge = task.status === 'active' ? 
-                `<span style="color: var(--success); font-weight: 700;">Active</span>` :
-                `<span style="color: var(--text-muted); font-weight: 700;">Inactive</span>`;
-
-            card.innerHTML = `
-                <div class="task-header">
-                    <div>
-                        <div class="task-title">
-                            ${task.title}
-                            ${categoryBadge}
+                const joinDate = user.createdAt ? new Date(user.createdAt).toLocaleDateString() : 'Unknown';
+                
+                row.innerHTML = `
+                    <td>${userId}</td>
+                    <td>${user.first_name || 'Unknown'}</td>
+                    <td>@${user.username || 'N/A'}</td>
+                    <td>${formatNumber(user.balance || 0)}</td>
+                    <td>${(user.tonBalance || 0).toFixed(8)}</td>
+                    <td>${user.ipAddress || 'N/A'}</td>
+                    <td>${joinDate}</td>
+                    <td><span class="status-badge status-${user.status || 'active'}">${user.status || 'active'}</span></td>
+                    <td>
+                        <div class="action-buttons">
+                            ${user.status === 'banned' ? 
+                                `<button class="btn btn-success" onclick="unbanUser('${userId}')">
+                                    <span class="material-icons">person_add</span>
+                                    Unban
+                                </button>` :
+                                `<button class="btn btn-danger" onclick="banUser('${userId}')">
+                                    <span class="material-icons">person_remove</span>
+                                    Ban
+                                </button>`
+                            }
+                            <button class="btn btn-primary" onclick="sendMessageToUser('${userId}')">
+                                <span class="material-icons">message</span>
+                                Message
+                            </button>
                         </div>
-                        ${channelInfo}
-                    </div>
-                    <div class="task-reward">${task.reward || 0} points</div>
-                </div>
-                <div class="task-description">${task.description}</div>
-                <div class="progress-bar">
-                    <div class="progress-fill" style="width: ${progressPercentage}%"></div>
-                </div>
-                <div class="task-actions">
-                    ${statusBadge}
-                    <button class="btn btn-accent" onclick="editTaskModal('${taskId}')">
-                        <span class="material-icons">edit</span> Edit
-                    </button>
-                    <button class="btn btn-danger" onclick="deleteUserTask('${taskId}')">
-                        <span class="material-icons">delete</span>
-                        Delete
-                    </button>
-                </div>
-            `;
-            return card;
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
         }
-        
-        // Show edit task modal
-        async function editTaskModal(taskId) {
+
+        // Filter users
+        function filterUsers() {
+            const searchTerm = document.getElementById('userSearch').value.toLowerCase();
+            const statusFilter = document.getElementById('userStatusFilter').value;
+
+            const rows = document.querySelectorAll('#usersTableBody tr');
+            rows.forEach(row => {
+                const cells = row.querySelectorAll('td');
+                if (cells.length > 1) {
+                    const userId = cells[0].textContent.toLowerCase();
+                    const name = cells[1].textContent.toLowerCase();
+                    const username = cells[2].textContent.toLowerCase();
+                    const status = cells[7].textContent.trim().toLowerCase();
+
+                    const matchesSearch = userId.includes(searchTerm) || 
+                                        name.includes(searchTerm) || 
+                                        username.includes(searchTerm);
+                    const matchesStatus = !statusFilter || status === statusFilter;
+
+                    row.style.display = (matchesSearch && matchesStatus) ? '' : 'none';
+                }
+            });
+        }
+
+        // Ban user
+        async function banUser(userId) {
+            if (!confirm(`Are you sure you want to ban user ${userId}?`)) return;
+
             try {
-                const taskRef = database.ref('tasks/' + taskId);
-                const snapshot = await taskRef.once('value');
-                const task = snapshot.val();
-
-                if (!task) {
-                    showAlert('Task not found.', 'danger');
-                    return;
-                }
-
-                // Populate modal fields
-                document.getElementById('editTaskId').value = taskId;
-                document.getElementById('editTaskTitle').value = task.title;
-                document.getElementById('editTaskDescription').value = task.description;
-                document.getElementById('editTaskUrl').value = task.url;
-                document.getElementById('editTaskCategory').value = task.category;
-                document.getElementById('editTaskReward').value = task.reward || 100;
-                document.getElementById('editTaskImpressions').value = task.impressions || 1000;
-                document.getElementById('editTaskStatus').value = task.status || 'active';
-
-                // Handle Telegram fields visibility
-                const editTelegramFields = document.getElementById('editTelegramFields');
-                const editTelegramChannel = document.getElementById('editTelegramChannel');
-                if (task.category === 'telegram') {
-                    if (editTelegramFields) editTelegramFields.classList.add('active');
-                    if (editTelegramChannel) editTelegramChannel.value = task.telegramChannel || '';
-                } else {
-                    if (editTelegramFields) editTelegramFields.classList.remove('active');
-                    if (editTelegramChannel) editTelegramChannel.value = '';
-                }
-                // Update visibility on category change
-                document.getElementById('editTaskCategory').onchange = function() {
-                    const category = this.value;
-                    if (category === 'telegram') {
-                        if (editTelegramFields) editTelegramFields.classList.add('active');
-                    } else {
-                        if (editTelegramFields) editTelegramFields.classList.remove('active');
-                    }
-                };
-
-                document.getElementById('editTaskModal').style.display = 'block';
-
+                await database.ref(`users/${userId}/status`).set('banned');
+                await sendTelegramMessage(userId, "⚠️ Your EarnFlux account has been suspended. Please contact support for more information.");
+                showAlert(`User ${userId} has been banned successfully`, 'success');
+                loadUsers();
             } catch (error) {
-                console.error("Error loading task for editing:", error);
-                showAlert("Failed to load task for editing. Please try again.", "danger");
+                console.error('Error banning user:', error);
+                showAlert('Error banning user', 'danger');
             }
         }
 
-        // Handle admin add task form submission
-        document.getElementById('adminAddTaskForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            if (!isAdmin()) { showAlert('Access Denied.', 'danger'); return; }
+        // Unban user
+        async function unbanUser(userId) {
+            if (!confirm(`Are you sure you want to unban user ${userId}?`)) return;
 
-            const title = document.getElementById('adminNewTaskTitle').value.trim();
-            const description = document.getElementById('adminNewTaskDescription').value.trim();
-            const url = document.getElementById('adminNewTaskUrl').value.trim();
-            const category = document.getElementById('adminNewTaskCategory').value;
-            const telegramChannel = document.getElementById('adminTelegramChannel').value.trim();
-            const reward = parseInt(document.getElementById('adminNewTaskReward').value);
-            const impressions = parseInt(document.getElementById('adminNewTaskImpressions').value);
-            const status = document.getElementById('adminNewTaskStatus').value;
-            
-            if (!title || !description || !url) {
-                showAlert('Please fill in all task details.', 'danger'); return;
+            try {
+                await database.ref(`users/${userId}/status`).set('active');
+                await sendTelegramMessage(userId, "🎉 Good news! Your EarnFlux account has been restored. Welcome back and happy earning!");
+                showAlert(`User ${userId} has been unbanned successfully`, 'success');
+                loadUsers();
+            } catch (error) {
+                console.error('Error unbanning user:', error);
+                showAlert('Error unbanning user', 'danger');
             }
-            if (isNaN(reward) || reward < 1) {
-                showAlert('Please enter a valid reward amount.', 'danger'); return;
+        }
+
+        // Load tasks
+        async function loadTasks() {
+            try {
+                const snapshot = await database.ref('tasks').once('value');
+                allTasks = snapshot.val() || {};
+                displayTasks();
+            } catch (error) {
+                console.error('Error loading tasks:', error);
+                showAlert('Error loading tasks', 'danger');
             }
-            if (isNaN(impressions) || impressions < 100 || impressions > 5000) {
-                showAlert('Please enter valid impressions (100-5000).', 'danger'); return;
-            }
-            if (category === 'telegram' && !telegramChannel) {
-                showAlert('Please enter the Telegram channel username for Telegram tasks.', 'danger'); return;
+        }
+
+        // Display tasks
+        function displayTasks() {
+            const tbody = document.getElementById('tasksTableBody');
+            tbody.innerHTML = '';
+
+            if (Object.keys(allTasks).length === 0) {
+                tbody.innerHTML = '<tr><td colspan="8" style="text-align: center;">No tasks found</td></tr>';
+                return;
             }
 
-            const createTaskButton = document.getElementById('adminCreateTaskButton');
-            createTaskButton.disabled = true;
-            createTaskButton.innerHTML = '<div class="loading"></div> Processing...';
+            Object.entries(allTasks).forEach(([taskId, task]) => {
+                const row = document.createElement('tr');
+                
+                const createdBy = task.createdBy ? `User ${task.createdBy}` : 'Admin';
+                const remainingImpressions = task.remainingImpressions || task.impressions || 0;
+                const totalImpressions = task.impressions || 0;
+                
+                row.innerHTML = `
+                    <td>${taskId.substring(0, 8)}...</td>
+                    <td>${task.title || 'Untitled'}</td>
+                    <td><span class="status-badge status-${task.category || 'normal'}">${task.category || 'normal'}</span></td>
+                    <td>${task.reward || 0} points</td>
+                    <td>${remainingImpressions}/${totalImpressions}</td>
+                    <td>${createdBy}</td>
+                    <td><span class="status-badge status-${task.status || 'active'}">${task.status || 'active'}</span></td>
+                    <td>
+                        <div class="action-buttons">
+                            <button class="btn btn-primary" onclick="editTask('${taskId}')">
+                                <span class="material-icons">edit</span>
+                                Edit
+                            </button>
+                            <button class="btn btn-danger" onclick="deleteTask('${taskId}')">
+                                <span class="material-icons">delete</span>
+                                Delete
+                            </button>
+                        </div>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
 
+        // Filter tasks
+        function filterTasks() {
+            const searchTerm = document.getElementById('taskSearch').value.toLowerCase();
+            const statusFilter = document.getElementById('taskStatusFilter').value;
+
+            const rows = document.querySelectorAll('#tasksTableBody tr');
+            rows.forEach(row => {
+                const cells = row.querySelectorAll('td');
+                if (cells.length > 1) {
+                    const title = cells[1].textContent.toLowerCase();
+                    const status = cells[6].textContent.trim().toLowerCase();
+
+                    const matchesSearch = title.includes(searchTerm);
+                    const matchesStatus = !statusFilter || status === statusFilter;
+
+                    row.style.display = (matchesSearch && matchesStatus) ? '' : 'none';
+                }
+            });
+        }
+
+        // Add new task
+        async function handleAddTask() {
             try {
                 const taskData = {
-                    title, description, url, category,
-                    telegramChannel: category === 'telegram' ? telegramChannel : null,
-                    reward, impressions,
-                    remainingImpressions: impressions,
-                    createdBy: currentUser.id, 
+                    title: document.getElementById('newTaskTitle').value.trim(),
+                    description: document.getElementById('newTaskDescription').value.trim(),
+                    url: document.getElementById('newTaskUrl').value.trim(),
+                    category: document.getElementById('newTaskCategory').value,
+                    reward: parseInt(document.getElementById('newTaskReward').value),
+                    impressions: parseInt(document.getElementById('newTaskImpressions').value),
+                    remainingImpressions: parseInt(document.getElementById('newTaskImpressions').value),
+                    createdBy: 'admin',
                     createdAt: Date.now(),
-                    status: status, 
+                    status: 'active'
                 };
+
+                if (taskData.category === 'telegram') {
+                    taskData.telegramChannel = document.getElementById('newTaskTelegramChannel').value.trim();
+                }
 
                 await database.ref('tasks').push(taskData);
                 
-                document.getElementById('adminAddTaskForm').reset();
-                selectTaskCategory('normal'); 
-                const telegramFields = document.getElementById('adminTelegramFields');
-                if (telegramFields) telegramFields.classList.remove('active');
-
+                document.getElementById('addTaskForm').reset();
+                closeModal('addTaskModal');
                 showAlert('Task created successfully!', 'success');
-                loadAllTasksForAdmin(); 
+                loadTasks();
             } catch (error) {
-                console.error('Error creating task:', error);
-                showAlert('Error creating task. Please try again.', 'danger');
-            } finally {
-                createTaskButton.disabled = false;
-                createTaskButton.innerHTML = '<span class="material-icons">add</span> Create Task';
+                console.error('Error adding task:', error);
+                showAlert('Error creating task', 'danger');
             }
-        });
+        }
 
-        // Handle edit task form submission
-        document.getElementById('editTaskForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            if (!isAdmin()) { showAlert('Access Denied.', 'danger'); return; }
+        // Edit task
+        function editTask(taskId) {
+            const task = allTasks[taskId];
+            if (!task) return;
 
-            const taskId = document.getElementById('editTaskId').value;
-            const title = document.getElementById('editTaskTitle').value.trim();
-            const description = document.getElementById('editTaskDescription').value.trim();
-            const url = document.getElementById('editTaskUrl').value.trim();
-            const category = document.getElementById('editTaskCategory').value;
-            const telegramChannel = document.getElementById('editTelegramChannel').value.trim();
-            const reward = parseInt(document.getElementById('editTaskReward').value);
-            const impressions = parseInt(document.getElementById('editTaskImpressions').value);
-            const status = document.getElementById('editTaskStatus').value;
+            document.getElementById('editTaskId').value = taskId;
+            document.getElementById('editTaskTitle').value = task.title || '';
+            document.getElementById('editTaskDescription').value = task.description || '';
+            document.getElementById('editTaskUrl').value = task.url || '';
+            document.getElementById('editTaskReward').value = task.reward || 0;
+            document.getElementById('editTaskStatus').value = task.status || 'active';
 
-            if (!title || !description || !url) { showAlert('Please fill in all task details.', 'danger'); return; }
-            if (isNaN(reward) || reward < 1) { showAlert('Please enter a valid reward amount.', 'danger'); return; }
-            if (isNaN(impressions) || impressions < 100 || impressions > 5000) { showAlert('Please enter valid impressions (100-5000).', 'danger'); return; }
-            if (category === 'telegram' && !telegramChannel) { showAlert('Please enter the Telegram channel username for Telegram tasks.', 'danger'); return; }
-            
+            showModal('editTaskModal');
+        }
+
+        // Handle edit task
+        async function handleEditTask() {
             try {
-                const taskData = {
-                    title, description, url, category,
-                    telegramChannel: category === 'telegram' ? telegramChannel : null,
-                    reward, impressions,
-                    status, 
+                const taskId = document.getElementById('editTaskId').value;
+                const updates = {
+                    title: document.getElementById('editTaskTitle').value.trim(),
+                    description: document.getElementById('editTaskDescription').value.trim(),
+                    url: document.getElementById('editTaskUrl').value.trim(),
+                    reward: parseInt(document.getElementById('editTaskReward').value),
+                    status: document.getElementById('editTaskStatus').value
                 };
 
-                await database.ref('tasks/' + taskId).update(taskData);
+                await database.ref(`tasks/${taskId}`).update(updates);
                 
                 closeModal('editTaskModal');
                 showAlert('Task updated successfully!', 'success');
-                loadAllTasksForAdmin(); 
+                loadTasks();
             } catch (error) {
-                console.error("Error updating task:", error);
-                showAlert("Failed to update task. Please try again.", "danger");
+                console.error('Error updating task:', error);
+                showAlert('Error updating task', 'danger');
             }
-        });
+        }
 
-        // --- Withdrawal Management (Admin) ---
-        function loadWithdrawalRequestsAdmin() {
-            const adminWithdrawalHistoryContent = document.getElementById('adminWithdrawalHistoryContent');
-            if (!adminWithdrawalHistoryContent) return;
+        // Delete task
+        async function deleteTask(taskId) {
+            if (!confirm('Are you sure you want to delete this task?')) return;
 
-            database.ref('withdrawals').orderByChild('createdAt').on('value', (snapshot) => {
-                adminWithdrawalHistoryContent.innerHTML = '';
-                const withdrawals = snapshot.val();
+            try {
+                await database.ref(`tasks/${taskId}`).remove();
+                showAlert('Task deleted successfully!', 'success');
+                loadTasks();
+            } catch (error) {
+                console.error('Error deleting task:', error);
+                showAlert('Error deleting task', 'danger');
+            }
+        }
 
-                if (!withdrawals) {
-                    adminWithdrawalHistoryContent.innerHTML = '<p style="text-align: center; color: var(--text-light);">No withdrawal requests yet.</p>';
-                    return;
-                }
+        // Load withdrawals
+        async function loadWithdrawals() {
+            try {
+                const snapshot = await database.ref('withdrawals').once('value');
+                allWithdrawals = snapshot.val() || {};
+                displayWithdrawals();
+            } catch (error) {
+                console.error('Error loading withdrawals:', error);
+                showAlert('Error loading withdrawals', 'danger');
+            }
+        }
 
-                const sortedWithdrawals = Object.entries(withdrawals)
-                    .sort(([, a], [, b]) => b.createdAt - a.createdAt); 
+        // Display withdrawals
+        function displayWithdrawals() {
+            const tbody = document.getElementById('withdrawalsTableBody');
+            tbody.innerHTML = '';
 
-                sortedWithdrawals.forEach(([key, withdrawal]) => {
-                    const historyItem = document.createElement('div');
-                    historyItem.className = 'history-item';
+            if (Object.keys(allWithdrawals).length === 0) {
+                tbody.innerHTML = '<tr><td colspan="7" style="text-align: center;">No withdrawals found</td></tr>';
+                return;
+            }
 
-                    const statusClass = `status-${withdrawal.status}`;
-                    const statusText = withdrawal.status.charAt(0).toUpperCase() + withdrawal.status.slice(1);
-
-                    const isPending = withdrawal.status === 'pending';
-
-                    historyItem.innerHTML = `
-                        <div>
-                            <strong>${withdrawal.amountTon.toFixed(8)} TON</strong>
-                            <div style="font-size: 12px; color: var(--text-light);">
-                                User: ${withdrawal.username || withdrawal.userId}
-                            </div>
-                             <div style="font-size: 12px; color: var(--text-light);">
-                                Address: ${withdrawal.tonAddress.slice(0,6)}...${withdrawal.tonAddress.slice(-6)}
-                            </div>
-                            <div style="font-size: 12px; color: var(--text-light);">
-                                ${new Date(withdrawal.createdAt).toLocaleString()}
-                            </div>
+            Object.entries(allWithdrawals).forEach(([withdrawalId, withdrawal]) => {
+                const row = document.createElement('tr');
+                
+                const requestDate = new Date(withdrawal.createdAt).toLocaleDateString();
+                const shortAddress = `${withdrawal.tonAddress.substring(0, 8)}...${withdrawal.tonAddress.substring(withdrawal.tonAddress.length - 8)}`;
+                
+                row.innerHTML = `
+                    <td>${withdrawalId.substring(0, 8)}...</td>
+                    <td>
+                        ${withdrawal.username || 'Unknown'}<br>
+                        <small>ID: ${withdrawal.userId}</small>
+                    </td>
+                    <td>${withdrawal.amountTon.toFixed(8)}</td>
+                    <td title="${withdrawal.tonAddress}">${shortAddress}</td>
+                    <td>${requestDate}</td>
+                    <td><span class="status-badge status-${withdrawal.status}">${withdrawal.status}</span></td>
+                    <td>
+                        <div class="action-buttons">
+                            ${withdrawal.status === 'pending' ? `
+                                <button class="btn btn-success" onclick="approveWithdrawal('${withdrawalId}')">
+                                    <span class="material-icons">check_circle</span>
+                                    Approve
+                                </button>
+                                <button class="btn btn-danger" onclick="rejectWithdrawal('${withdrawalId}')">
+                                    <span class="material-icons">cancel</span>
+                                    Reject
+                                </button>
+                            ` : `
+                                <span style="color: var(--text-muted);">No actions available</span>
+                            `}
                         </div>
-                        <div>
-                            <div class="history-status ${statusClass}">${statusText}</div>
-                            ${isPending ? `
-                                <div style="display: flex; gap: 5px; margin-top: 8px;">
-                                    <button class="btn btn-success btn-sm" onclick="processWithdrawal('${key}', '${withdrawal.userId}', '${withdrawal.tonAddress}', ${withdrawal.amountTon}, 'completed')">Approve</button>
-                                    <button class="btn btn-danger btn-sm" onclick="processWithdrawal('${key}', '${withdrawal.userId}', '${withdrawal.tonAddress}', ${withdrawal.amountTon}, 'rejected')">Reject</button>
-                                </div>
-                            ` : ''}
-                        </div>
-                    `;
-                    adminWithdrawalHistoryContent.appendChild(historyItem);
-                });
-            }, (error) => {
-                console.error("Error fetching withdrawals for admin:", error);
-                showAlert("Failed to load withdrawal requests. Please check your connection.", "danger");
+                    </td>
+                `;
+                tbody.appendChild(row);
             });
         }
 
-        // Process withdrawal (Approve/Reject)
-        async function processWithdrawal(withdrawalId, userId, tonAddress, amountTon, status) {
-            if (!isAdmin()) { showAlert('Access Denied.', 'danger'); return; }
+        // Filter withdrawals
+        function filterWithdrawals() {
+            const searchTerm = document.getElementById('withdrawalSearch').value.toLowerCase();
+            const statusFilter = document.getElementById('withdrawalStatusFilter').value;
 
-            const confirmMessage = status === 'completed' 
-                ? `Approve withdrawal of ${amountTon.toFixed(8)} TON to ${tonAddress.slice(0,6)}...?`
-                : `Reject withdrawal of ${amountTon.toFixed(8)} TON to ${tonAddress.slice(0,6)}...?`;
-            
-            if (!confirm(confirmMessage)) return;
+            const rows = document.querySelectorAll('#withdrawalsTableBody tr');
+            rows.forEach(row => {
+                const cells = row.querySelectorAll('td');
+                if (cells.length > 1) {
+                    const user = cells[1].textContent.toLowerCase();
+                    const status = cells[5].textContent.trim().toLowerCase();
 
-            const withdrawalRef = database.ref('withdrawals/' + withdrawalId);
-            const userRef = database.ref('users/' + userId);
+                    const matchesSearch = user.includes(searchTerm);
+                    const matchesStatus = !statusFilter || status === statusFilter;
+
+                    row.style.display = (matchesSearch && matchesStatus) ? '' : 'none';
+                }
+            });
+        }
+
+        // Approve withdrawal
+        async function approveWithdrawal(withdrawalId) {
+            if (!confirm('Are you sure you want to approve this withdrawal?')) return;
 
             try {
-                // --- Backend Interaction for TON Transaction (if approving) ---
-                if (status === 'completed') {
-                    showAlert('Attempting to send TON transaction...', 'info');
-                    // Call a Firebase Cloud Function to handle the actual TON transaction
-                    const sendTonTransaction = functions.httpsCallable('sendTonTransaction');
-                    const result = await sendTonTransaction({
-                        withdrawalId: withdrawalId,
-                        toAddress: tonAddress,
-                        amountTon: amountTon,
-                        userId: userId 
-                    });
-
-                    if (!result.data.success) {
-                        throw new Error(result.data.message || 'TON transaction failed.');
-                    }
-                    showAlert('TON transaction successful. Updating status...', 'success');
-                } else { // status === 'rejected'
-                    // Credit back the TON balance if rejected
-                    await userRef.transaction((userData) => {
-                        if (userData) {
-                            userData.tonBalance = (userData.tonBalance || 0) + amountTon; 
-                        }
-                        return userData;
-                    });
-                    showAlert('Withdrawal rejected. TON balance has been restored.', 'success');
-                }
-
-                // Update withdrawal status in Firebase
-                await withdrawalRef.update({ status: status, processedAt: Date.database.ServerValue.TIMESTAMP, processedBy: currentUser.id });
+                const withdrawal = allWithdrawals[withdrawalId];
                 
-                // Log action
-                await database.ref('activityLog/withdrawals').push({
-                    withdrawalId: withdrawalId, userId: userId, adminUserId: currentUser.id,
-                    status: status, amountTon: amountTon, address: tonAddress,
-                    transactionHash: result?.data?.transactionHash, // From function call result
-                    errorMessage: status === 'failed' ? result?.data?.message : null,
-                    timestamp: admin.database.ServerValue.TIMESTAMP
-                });
-
-                showAlert(`Withdrawal ${status} successfully!`, 'success');
-
+                await database.ref(`withdrawals/${withdrawalId}/status`).set('completed');
+                
+                // Send notification to user
+                await sendTelegramMessage(
+                    withdrawal.userId, 
+                    `✅ Great news! Your withdrawal of ${withdrawal.amountTon.toFixed(8)} TON has been approved and processed successfully! 🎉💰`
+                );
+                
+                showAlert('Withdrawal approved and user notified!', 'success');
+                loadWithdrawals();
             } catch (error) {
-                console.error("Error processing withdrawal:", error);
-                showAlert(`Error processing withdrawal: ${error.message}`, 'danger');
+                console.error('Error approving withdrawal:', error);
+                showAlert('Error approving withdrawal', 'danger');
             }
         }
 
-        // --- Lucky Code Management (Admin) ---
-        document.getElementById('adminLuckyCodeForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            if (!isAdmin()) { showAlert('Access Denied.', 'danger'); return; }
-
-            const code = document.getElementById('adminLuckyCode').value.trim().toUpperCase();
-            const reward = parseInt(document.getElementById('adminLuckyCodeReward').value);
-            const expiresDays = parseInt(document.getElementById('adminLuckyCodeExpires').value);
-
-            if (!code) { showAlert('Lucky code cannot be empty.', 'danger'); return; }
-            if (isNaN(reward) || reward < 1) { showAlert('Invalid reward amount.', 'danger'); return; }
-            if (isNaN(expiresDays) || expiresDays < 1) { showAlert('Expires in days must be at least 1.', 'danger'); return; }
-
-            const expiresAt = Date.now() + (expiresDays * 24 * 60 * 60 * 1000);
+        // Reject withdrawal
+        async function rejectWithdrawal(withdrawalId) {
+            const reason = prompt('Enter rejection reason (optional):') || 'Verification failed';
+            if (!confirm('Are you sure you want to reject this withdrawal?')) return;
 
             try {
-                const luckyCodeData = {
-                    code: code, reward: reward,
-                    createdAt: Date.now(), expiresAt: expiresAt,
-                    used: false, usedBy: null
+                const withdrawal = allWithdrawals[withdrawalId];
+                
+                await database.ref(`withdrawals/${withdrawalId}`).update({
+                    status: 'rejected',
+                    rejectionReason: reason
+                });
+                
+                // Refund the TON balance to user
+                const userRef = database.ref(`users/${withdrawal.userId}`);
+                await userRef.transaction((userData) => {
+                    if (userData) {
+                        userData.tonBalance = (userData.tonBalance || 0) + withdrawal.amountTon;
+                    }
+                    return userData;
+                });
+                
+                // Send notification to user
+                await sendTelegramMessage(
+                    withdrawal.userId,
+                    `❌ Your withdrawal request has been rejected. Reason: ${reason}. The TON has been refunded to your account. Please contact support if you have any questions. 📞`
+                );
+                
+                showAlert('Withdrawal rejected, user notified, and amount refunded!', 'success');
+                loadWithdrawals();
+            } catch (error) {
+                console.error('Error rejecting withdrawal:', error);
+                showAlert('Error rejecting withdrawal', 'danger');
+            }
+        }
+
+        // Load lucky codes
+        async function loadLuckyCodes() {
+            try {
+                const snapshot = await database.ref('luckyCodes').once('value');
+                allLuckyCodes = snapshot.val() || {};
+                displayLuckyCodes();
+            } catch (error) {
+                console.error('Error loading lucky codes:', error);
+                showAlert('Error loading lucky codes', 'danger');
+            }
+        }
+
+        // Display lucky codes
+        function displayLuckyCodes() {
+            const tbody = document.getElementById('luckyCodesTableBody');
+            tbody.innerHTML = '';
+
+            if (Object.keys(allLuckyCodes).length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" style="text-align: center;">No lucky codes found</td></tr>';
+                return;
+            }
+
+            Object.entries(allLuckyCodes).forEach(([codeId, code]) => {
+                const row = document.createElement('tr');
+                
+                const createdDate = new Date(code.createdAt || Date.now()).toLocaleDateString();
+                const expiryDate = new Date(code.expiresAt).toLocaleDateString();
+                const isExpired = code.expiresAt < Date.now();
+                
+                row.innerHTML = `
+                    <td><strong>${code.code}</strong></td>
+                    <td>${code.reward} points</td>
+                    <td>${createdDate}</td>
+                    <td style="color: ${isExpired ? 'var(--danger)' : 'var(--success)'}">
+                        ${expiryDate} ${isExpired ? '(Expired)' : ''}
+                    </td>
+                    <td><span class="status-badge ${code.used ? 'status-completed' : 'status-active'}">
+                        ${code.used ? 'Yes' : 'No'}
+                    </span></td>
+                    <td>
+                        <button class="btn btn-danger" onclick="deleteLuckyCode('${codeId}')">
+                            <span class="material-icons">delete</span>
+                            Delete
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        // Add lucky code
+        async function handleAddLuckyCode() {
+            try {
+                const code = document.getElementById('newLuckyCode').value.trim().toUpperCase();
+                const reward = parseInt(document.getElementById('newLuckyCodeReward').value);
+                const expiryHours = parseInt(document.getElementById('newLuckyCodeExpiry').value);
+                
+                // Check if code already exists
+                const existingCode = Object.values(allLuckyCodes).find(c => c.code === code);
+                if (existingCode) {
+                    showAlert('A lucky code with this name already exists!', 'danger');
+                    return;
+                }
+
+                const codeData = {
+                    code: code,
+                    reward: reward,
+                    createdAt: Date.now(),
+                    expiresAt: Date.now() + (expiryHours * 60 * 60 * 1000),
+                    used: false
                 };
 
-                await database.ref('luckyCodes').push(luckyCodeData);
+                await database.ref('luckyCodes').push(codeData);
                 
-                document.getElementById('adminLuckyCodeForm').reset();
+                document.getElementById('addLuckyCodeForm').reset();
+                closeModal('addLuckyCodeModal');
                 showAlert('Lucky code created successfully!', 'success');
-                loadLuckyCodes(); 
+                loadLuckyCodes();
             } catch (error) {
-                console.error("Error creating lucky code:", error);
-                showAlert('Error creating lucky code. Please try again.', 'danger');
+                console.error('Error adding lucky code:', error);
+                showAlert('Error creating lucky code', 'danger');
             }
-        });
-
-        function loadLuckyCodes() {
-            const adminLuckyCodesList = document.getElementById('adminLuckyCodesList');
-            if (!adminLuckyCodesList) return;
-
-            database.ref('luckyCodes').orderByChild('createdAt').on('value', (snapshot) => {
-                adminLuckyCodesList.innerHTML = '';
-                const codes = snapshot.val();
-
-                if (!codes) {
-                    adminLuckyCodesList.innerHTML = '<p style="text-align: center; color: var(--text-light);">No lucky codes yet.</p>';
-                    return;
-                }
-
-                const sortedCodes = Object.entries(codes)
-                    .sort(([, a], [, b]) => b.createdAt - a.createdAt); 
-
-                sortedCodes.forEach(([key, codeData]) => {
-                    const codeItem = document.createElement('div');
-                    codeItem.className = 'history-item'; 
-
-                    const isExpired = codeData.expiresAt < Date.now();
-                    const isUsed = codeData.used;
-                    const statusClass = isExpired ? 'status-rejected' : isUsed ? 'status-completed' : 'status-pending';
-                    const statusText = isExpired ? 'Expired' : isUsed ? 'Used' : 'Active';
-                    
-                    const expiryDate = new Date(codeData.expiresAt).toLocaleDateString();
-
-                    codeItem.innerHTML = `
-                        <div>
-                            <strong>${codeData.code}</strong>
-                            <div style="font-size: 12px; color: var(--text-light);">
-                                Reward: ${formatNumber(codeData.reward)} points
-                            </div>
-                            <div style="font-size: 12px; color: var(--text-light);">
-                                Expires: ${expiryDate}
-                            </div>
-                            ${codeData.usedBy ? `<div style="font-size: 12px; color: var(--text-light);">Used by: ${codeData.usedBy}</div>` : ''}
-                        </div>
-                        <div class="history-status ${statusClass}">${statusText}</div>
-                        <div>
-                            <button class="btn btn-danger btn-sm" onclick="deleteLuckyCode('${key}')">
-                                <span class="material-icons">delete</span> Delete
-                            </button>
-                        </div>
-                    `;
-                    adminLuckyCodesList.appendChild(codeItem);
-                });
-            }, (error) => {
-                console.error("Error fetching lucky codes:", error);
-                showAlert("Failed to load lucky codes. Please check your connection.", "danger");
-            });
         }
 
+        // Generate random code
+        function generateRandomCode() {
+            const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+            let result = 'LUCKY';
+            for (let i = 0; i < 4; i++) {
+                result += characters.charAt(Math.floor(Math.random() * characters.length));
+            }
+            document.getElementById('newLuckyCode').value = result;
+        }
+
+        // Delete lucky code
         async function deleteLuckyCode(codeId) {
-            if (!isAdmin()) { showAlert('Access Denied.', 'danger'); return; }
-            if (confirm('Are you sure you want to delete this lucky code?')) {
-                try {
-                    await database.ref('luckyCodes/' + codeId).remove();
-                    showAlert('Lucky code deleted successfully!', 'success');
-                } catch (error) {
-                    console.error("Error deleting lucky code:", error);
-                    showAlert('Error deleting lucky code. Please try again.', 'danger');
-                }
-            }
-        }
-
-        // --- User Management (Admin) ---
-        function loadUsers() {
-            const adminUserList = document.getElementById('adminUserList');
-            if (!adminUserList) return;
-
-            database.ref('users').on('value', (snapshot) => {
-                adminUserList.innerHTML = '';
-                const users = snapshot.val();
-
-                if (!users) {
-                    adminUserList.innerHTML = '<p style="text-align: center; color: var(--text-light);">No users found.</p>';
-                    return;
-                }
-
-                const sortedUsers = Object.entries(users)
-                    .sort(([, a], [, b]) => (b.createdAt || 0) - (a.createdAt || 0)); 
-
-                sortedUsers.forEach(([userId, userData]) => {
-                    // Skip showing the simulated admin user to non-admins
-                    if (userId === LOCAL_ADMIN_SIMULATION_USER_ID && !isAdmin()) return; 
-
-                    const userItem = document.createElement('div');
-                    userItem.className = 'history-item'; 
-
-                    const userRole = userData.role || 'user';
-                    const roleClass = userRole === 'admin' ? 'admin' : userRole === 'user' ? 'user' : 'loading';
-                    
-                    userItem.innerHTML = `
-                        <div>
-                            <img src="${userData.photo_url || 'placeholder_avatar.png'}" alt="User Avatar" style="width: 30px; height: 30px; border-radius: 50%; vertical-align: middle; margin-right: 8px;">
-                            <strong>${userData.first_name || 'N/A'}</strong> 
-                            <span class="admin-user-role ${roleClass}">${userRole.toUpperCase()}</span>
-                            <div style="font-size: 12px; color: var(--text-light);">
-                                ID: ${userId}
-                            </div>
-                        </div>
-                        <div>
-                            <div style="font-size: 12px; color: var(--text-light); margin-bottom: 4px;">
-                                Points: ${formatNumber(userData.balance || 0)}
-                            </div>
-                            <div style="font-size: 12px; color: var(--text-light);">
-                                TON: ${userData.tonBalance ? userData.tonBalance.toFixed(8) : '0.00000000'}
-                            </div>
-                        </div>
-                        ${isAdmin() ? `
-                            <div style="display: flex; gap: 5px;">
-                                <button class="btn btn-info btn-sm ${userRole === 'admin' ? 'btn-secondary' : ''}" ${userRole === 'admin' ? 'disabled' : `onclick="setUserRole('${userId}', 'admin')"`}>
-                                    <span class="material-icons">shield</span> Admin
-                                </button>
-                                <button class="btn btn-success btn-sm ${userRole === 'user' ? 'btn-secondary' : ''}" ${userRole === 'user' ? 'disabled' : `onclick="setUserRole('${userId}', 'user')"`}>
-                                    <span class="material-icons">person</span> User
-                                </button>
-                            </div>
-                        ` : ''}
-                    `;
-                    adminUserList.appendChild(userItem);
-                });
-            }, (error) => {
-                console.error("Error fetching users:", error);
-                showAlert("Failed to load users. Please check your connection.", "danger");
-            });
-        }
-        
-        async function setUserRole(userId, newRole) {
-            if (!isAdmin()) { showAlert('Access Denied.', 'danger'); return; }
-            if (!confirm(`Are you sure you want to set user ${userId} role to ${newRole}?`)) return;
+            if (!confirm('Are you sure you want to delete this lucky code?')) return;
 
             try {
-                await database.ref('users/' + userId + '/role').set(newRole);
-                await database.ref('activityLog/users').push({
-                    action: 'role_change',
-                    targetUserId: userId,
-                    // Fetching old role here is tricky due to async, log might show it as null or pending
-                    newRole: newRole,
-                    adminUserId: currentUser.id,
-                    timestamp: admin.database.ServerValue.TIMESTAMP
-                });
-                showAlert(`User ${userId} role updated to ${newRole}.`, 'success');
+                await database.ref(`luckyCodes/${codeId}`).remove();
+                showAlert('Lucky code deleted successfully!', 'success');
+                loadLuckyCodes();
             } catch (error) {
-                console.error("Error setting user role:", error);
-                showAlert('Error updating user role. Please try again.', 'danger');
+                console.error('Error deleting lucky code:', error);
+                showAlert('Error deleting lucky code', 'danger');
             }
         }
 
-        // --- Activity Logs (Admin) ---
-        // Placeholder function; actual implementation requires writing logs for each admin action.
-        function loadActivityLogs() {
-             const adminActivityLog = document.getElementById('adminActivityLog');
-             if (!adminActivityLog) return;
-             adminActivityLog.innerHTML = '<p style="text-align: center; color: var(--text-light);">Log viewing functionality is under development.</p>';
+        // Send message to specific user
+        async function handleSendMessage() {
+            try {
+                const userId = document.getElementById('messageUserId').value.trim();
+                const message = document.getElementById('messageContent').value.trim();
+
+                if (!userId || !message) {
+                    showAlert('Please enter both User ID and message', 'warning');
+                    return;
+                }
+
+                await sendTelegramMessage(userId, message);
+                
+                document.getElementById('singleMessageForm').reset();
+                showAlert('Message sent successfully!', 'success');
+            } catch (error) {
+                console.error('Error sending message:', error);
+                showAlert('Error sending message', 'danger');
+            }
         }
 
-        // --- Helper function to close modals ---
+        // Send broadcast message
+        async function handleBroadcastMessage() {
+            try {
+                const target = document.getElementById('broadcastTarget').value;
+                const message = document.getElementById('broadcastContent').value.trim();
+
+                if (!message) {
+                    showAlert('Please enter a message', 'warning');
+                    return;
+                }
+
+                let targetUsers = [];
+                
+                if (target === 'all') {
+                    targetUsers = Object.keys(allUsers);
+                } else if (target === 'active') {
+                    targetUsers = Object.keys(allUsers).filter(userId => 
+                        (allUsers[userId].status || 'active') === 'active'
+                    );
+                } else if (target === 'banned') {
+                    targetUsers = Object.keys(allUsers).filter(userId => 
+                        allUsers[userId].status === 'banned'
+                    );
+                }
+
+                if (targetUsers.length === 0) {
+                    showAlert('No users found for the selected target', 'warning');
+                    return;
+                }
+
+                if (!confirm(`Send message to ${targetUsers.length} users?`)) return;
+
+                let sentCount = 0;
+                for (const userId of targetUsers) {
+                    try {
+                        await sendTelegramMessage(userId, message);
+                        sentCount++;
+                        
+                        // Add small delay to avoid hitting rate limits
+                        await new Promise(resolve => setTimeout(resolve, 50));
+                    } catch (error) {
+                        console.error(`Error sending to user ${userId}:`, error);
+                    }
+                }
+                
+                document.getElementById('broadcastMessageForm').reset();
+                showAlert(`Broadcast sent to ${sentCount}/${targetUsers.length} users!`, 'success');
+            } catch (error) {
+                console.error('Error sending broadcast:', error);
+                showAlert('Error sending broadcast message', 'danger');
+            }
+        }
+
+        // Send Telegram message
+        async function sendTelegramMessage(userId, message) {
+            try {
+                const response = await fetch(`${TELEGRAM_API_URL}/sendMessage`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        chat_id: userId,
+                        text: message,
+                        parse_mode: 'HTML'
+                    })
+                });
+
+                const result = await response.json();
+                
+                if (!result.ok) {
+                    throw new Error(result.description || 'Failed to send message');
+                }
+                
+                return result;
+            } catch (error) {
+                console.error(`Error sending Telegram message to ${userId}:`, error);
+                throw error;
+            }
+        }
+
+        // Use message template
+        function useTemplate(templateName) {
+            const template = messageTemplates[templateName];
+            if (template) {
+                document.getElementById('messageContent').value = template;
+                document.getElementById('broadcastContent').value = template;
+            }
+        }
+
+        // Send message to user (from user management)
+        function sendMessageToUser(userId) {
+            document.getElementById('messageUserId').value = userId;
+            showTab('messaging');
+        }
+
+        // Check bot status
+        async function checkBotStatus() {
+            try {
+                const response = await fetch(`${TELEGRAM_API_URL}/getMe`);
+                const result = await response.json();
+                
+                const statusElement = document.getElementById('botStatus');
+                if (result.ok) {
+                    statusElement.innerHTML = '<span style="color: var(--success);">Connected</span>';
+                } else {
+                    statusElement.innerHTML = '<span style="color: var(--danger);">Error</span>';
+                }
+            } catch (error) {
+                console.error('Error checking bot status:', error);
+                document.getElementById('botStatus').innerHTML = '<span style="color: var(--danger);">Offline</span>';
+            }
+        }
+
+        // Load recent activities
+        function loadRecentActivities() {
+            const container = document.getElementById('recentActivities');
+            const activities = [];
+
+            // Recent user registrations
+            Object.values(allUsers)
+                .sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0))
+                .slice(0, 3)
+                .forEach(user => {
+                    activities.push({
+                        type: 'user_joined',
+                        message: `${user.first_name} joined the platform`,
+                        time: user.createdAt || Date.now()
+                    });
+                });
+
+            // Recent withdrawals
+            Object.values(allWithdrawals)
+                .sort((a, b) => b.createdAt - a.createdAt)
+                .slice(0, 3)
+                .forEach(withdrawal => {
+                    activities.push({
+                        type: 'withdrawal',
+                        message: `Withdrawal request: ${withdrawal.amountTon.toFixed(4)} TON`,
+                        time: withdrawal.createdAt
+                    });
+                });
+
+            // Recent tasks
+            Object.values(allTasks)
+                .sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0))
+                .slice(0, 2)
+                .forEach(task => {
+                    activities.push({
+                        type: 'task_created',
+                        message: `New task created: ${task.title}`,
+                        time: task.createdAt || Date.now()
+                    });
+                });
+
+            activities.sort((a, b) => b.time - a.time);
+
+            if (activities.length === 0) {
+                container.innerHTML = '<p style="color: var(--text-muted);">No recent activities</p>';
+                return;
+            }
+
+            container.innerHTML = activities.slice(0, 5).map(activity => `
+                <div style="margin-bottom: 10px; padding: 10px; background: var(--surface-dark-alt); border-radius: 8px;">
+                    <div style="font-weight: 600; color: var(--text-primary);">${activity.message}</div>
+                    <div style="font-size: 0.8rem; color: var(--text-muted);">${new Date(activity.time).toLocaleString()}</div>
+                </div>
+            `).join('');
+        }
+
+        // Analyze IP addresses
+        function analyzeIpAddresses() {
+            const container = document.getElementById('ipAnalysis');
+            const ipGroups = {};
+
+            // Group users by IP address
+            Object.values(allUsers).forEach(user => {
+                const ip = user.ipAddress || 'Unknown';
+                if (!ipGroups[ip]) {
+                    ipGroups[ip] = [];
+                }
+                ipGroups[ip].push(user);
+            });
+
+            // Find IPs with multiple users
+            const duplicateIPs = Object.entries(ipGroups)
+                .filter(([ip, users]) => users.length > 1 && ip !== 'Unknown')
+                .sort(([, a], [, b]) => b.length - a.length);
+
+            if (duplicateIPs.length === 0) {
+                container.innerHTML = '<p style="color: var(--success);">✅ No duplicate IP addresses detected</p>';
+                return;
+            }
+
+            container.innerHTML = `
+                <div style="color: var(--warning); margin-bottom: 15px;">
+                    ⚠️ Found ${duplicateIPs.length} IP addresses with multiple users
+                </div>
+                ${duplicateIPs.map(([ip, users]) => `
+                    <div style="margin-bottom: 15px; padding: 15px; background: rgba(245, 158, 11, 0.1); border: 1px solid var(--warning); border-radius: 10px;">
+                        <strong>IP: ${ip}</strong> (${users.length} users)
+                        <div style="margin-top: 10px;">
+                            ${users.map(user => `
+                                <div style="display: inline-block; margin: 5px 10px 0 0; padding: 5px 10px; background: var(--surface-dark); border-radius: 5px;">
+                                    ${user.first_name} (${user.id}) 
+                                    <span class="status-badge status-${user.status || 'active'}">${user.status || 'active'}</span>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                `).join('')}
+            `;
+        }
+
+        // Refresh all data
+        async function refreshData() {
+            const refreshIcon = document.getElementById('refreshIcon');
+            refreshIcon.classList.add('refresh-indicator');
+            
+            try {
+                await loadDashboardData();
+            } finally {
+                refreshIcon.classList.remove('refresh-indicator');
+            }
+        }
+
+        // Update last updated time
+        function updateLastUpdatedTime() {
+            document.getElementById('lastUpdated').textContent = new Date().toLocaleTimeString();
+        }
+
+        // Tab management
+        function showTab(tabName) {
+            // Hide all tab contents
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Remove active class from all tabs
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Show selected tab content
+            const targetTab = document.getElementById(tabName + 'Tab');
+            if (targetTab) {
+                targetTab.classList.add('active');
+            }
+            
+            // Add active class to clicked tab
+            event.target.classList.add('active');
+        }
+
+        // Modal management
+        function showModal(modalId) {
+            const modal = document.getElementById(modalId);
+            if (modal) {
+                modal.classList.add('show');
+            }
+        }
+
         function closeModal(modalId) {
             const modal = document.getElementById(modalId);
             if (modal) {
-                modal.style.display = 'none';
-                // Reset form and button states
-                if (modalId === 'withdrawModal') {
-                    const withdrawForm = document.getElementById('withdrawForm');
-                    if (withdrawForm) withdrawForm.reset();
-                    const requestWithdrawButton = document.getElementById('requestWithdrawButton');
-                    if (requestWithdrawButton) requestWithdrawButton.disabled = true; 
-                } else if (modalId === 'editTaskModal') {
-                    // Reset edit task form fields
-                    document.getElementById('editTaskForm').reset();
-                    const editTelegramFields = document.getElementById('editTelegramFields');
-                    if (editTelegramFields) editTelegramFields.classList.remove('active');
-                }
+                modal.classList.remove('show');
+                
+                // Reset forms
+                const forms = modal.querySelectorAll('form');
+                forms.forEach(form => form.reset());
             }
         }
 
-        // --- Window Click Listener for Modals ---
-        window.addEventListener('click', (e) => {
-            if (e.target.classList.contains('modal')) {
-                closeModal(e.target.id);
+        // Show alert
+        function showAlert(message, type = 'info') {
+            const alertContainer = document.querySelector('.container');
+            const alert = document.createElement('div');
+            alert.className = `alert alert-${type}`;
+            alert.innerHTML = `
+                <span class="material-icons">${type === 'success' ? 'check_circle' : type === 'warning' ? 'warning' : type === 'info' ? 'info' : 'error'}</span>
+                ${message}
+            `;
+            
+            alertContainer.insertBefore(alert, alertContainer.firstChild);
+            
+            setTimeout(() => {
+                alert.remove();
+            }, 5000);
+        }
+
+        // Format numbers
+        function formatNumber(num) {
+            if (num >= 1e9) return (num / 1e9).toFixed(1) + 'B';
+            if (num >= 1e6) return (num / 1e6).toFixed(1) + 'M';
+            if (num >= 1e3) return (num / 1e3).toFixed(1) + 'K';
+            return num.toString();
+        }
+
+        // Close modals when clicking outside
+        window.addEventListener('click', function(event) {
+            if (event.target.classList.contains('modal')) {
+                event.target.classList.remove('show');
             }
         });
     </script>
