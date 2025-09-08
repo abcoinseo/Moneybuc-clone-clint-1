@@ -29,7 +29,7 @@
 
             /* Neutrals */
             --background-dark: #0a0a0a; /* True Black for main backgrounds */
-            --surface-dark: #18181b;    /* Very Dark Gray (for cards, panels) */
+            --surface-dark: #181818;    /* Very Dark Gray (for cards, panels) */
             --surface-dark-alt: #27272a; /* Slightly Lighter Dark Gray (for borders, secondary elements) */
             --border-color: #3f3f46;    /* Muted Dark Gray (for subtle borders) */
 
@@ -1928,14 +1928,14 @@
 
         // Global variables
         let currentUser = null;
-        let userBalance = 0;
+        let userBalance = 0; // Points/Diamonds
         let userTonBalance = 0;
         let userSpins = 0;
         let adsWatchedToday = 0;
         let dailyCheckinDone = false;
         let swapMode = 'pointsToTon';
         let selectedTaskCategory = 'normal';
-        // Rate at which the referrer earns points when a referred user completes a task
+        // Rate at which the referrer earns points when a referred user completes a task or earns points
         const currentReferralBonusRate = 0.20; // 20%
 
         // Enhanced Ad System Variables
@@ -1957,7 +1957,7 @@
         const TASK_SPIN_REWARD = 1; // Spins awarded per task completed
         const TELEGRAM_BOT_TOKEN = '7829924006:AAFIOCnga8v6yOw08dCzvKDC8wS7Fuad_II'; // Your Telegram Bot Token
         const AD_WATCH_DURATION = 15; // 15 seconds minimum watch time for ads
-        const AD_COOLDOWN_DURATION = 2; // 10 seconds cooldown between ads
+        const AD_COOLDOWN_DURATION = 10; // 10 seconds cooldown between ads
         const MAX_DAILY_ADS = 50; // Maximum ads a user can watch per day
 
         // Enhanced Ad System Functions
@@ -2370,11 +2370,13 @@
                     // Handle referral link if present in start_param
                     if (startParam && startParam.startsWith('ref_')) {
                         const referrerId = startParam.replace('ref_', '');
-                        handleReferral(referrerId); // This will now also store the referrerId on the new user's profile
+                        // Delaying handleReferral call until currentUser is fully initialized and in Firebase
+                        // This ensures we can properly update the referrer's count and store referrerId.
+                        // The initializeUser function will call handleReferral AFTER checking/creating the user.
                     }
 
                     // Proceed to initialize user data in Firebase
-                    initializeUser();
+                    initializeUser(startParam); // Pass startParam for referral handling
                 } else {
                     // Fallback for testing outside Telegram or if user data is missing
                     // Generates a random ID and logs a warning. Not for production.
@@ -2386,7 +2388,7 @@
                         photo_url: 'https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?auto=compress&cs=tinysrgb&w=100&h=100&dpr=1'
                     };
                     console.warn("Telegram Web App user data not detected. Using a fallback ID for testing:", currentUser.id);
-                    initializeUser();
+                    initializeUser(startParam); // Pass startParam for referral handling
                 }
             } else {
                 console.error("Telegram Web App is not available.");
@@ -2446,7 +2448,7 @@
         }
 
         // Initialize user data from Firebase (fetch or create)
-        async function initializeUser() {
+        async function initializeUser(startParam) {
             if (!currentUser) {
                 console.error("Cannot initialize user: currentUser is not set.");
                 return;
@@ -2459,11 +2461,14 @@
             }
 
             const userRef = database.ref('users/' + currentUser.id);
+            let userWasNewlyCreated = false; // Flag to track if user was just created
+
             try {
                 const snapshot = await userRef.once('value');
 
                 // If user doesn't exist, create a new record
                 if (!snapshot.exists()) {
+                    userWasNewlyCreated = true;
                     const userData = {
                         id: currentUser.id,
                         username: currentUser.username || '',
@@ -2482,27 +2487,64 @@
                         createdAt: Date.now(), // Timestamp of account creation
                         status: 'active', // User status ('active', 'banned', etc.)
                         ipAddress: currentUser.ipAddress,
-                        // referrerId will be set when the user is referred via start_param
-                        // If they register directly, it will be null initially.
-                        referrerId: null 
+                        referrerId: null // Initialized as null, will be updated if referred
                     };
                     await userRef.set(userData);
                     console.log(`New user created in Firebase: ${currentUser.id}`);
                 }
 
+                // Fetch user data again after ensuring it exists, to get the latest referrerId if it was just set.
+                const userDataSnapshot = await userRef.once('value');
+                const userData = userDataSnapshot.val();
+
+                // Handle referral logic if user was newly created AND startParam exists
+                if (userWasNewlyCreated && startParam && startParam.startsWith('ref_')) {
+                    const referrerId = startParam.replace('ref_', '');
+                    // Only process if referrerId is valid and not the user's own ID
+                    if (referrerId && referrerId !== currentUser.id.toString()) {
+                        await handleReferral(referrerId, currentUser.id, userRef); // Pass userRef for direct update
+                        // Update user's profile with the correct referrerId if handleReferral was successful
+                        const updatedUserDataSnapshot = await userRef.once('value');
+                        const updatedUserData = updatedUserDataSnapshot.val();
+                        if (updatedUserData && updatedUserData.referrerId !== referrerId) {
+                            // This scenario implies handleReferral might have failed to update, so we update here directly.
+                            // This is a safety net. Ideally, handleReferral should manage all updates.
+                            await userRef.update({ referrerId: referrerId });
+                            console.log(`Directly set referrerId ${referrerId} for new user ${currentUser.id} as backup.`);
+                        }
+                    }
+                }
+                
+                // If the user already exists, check if they have a referrerId (from a previous referral link click).
+                // If startParam provides a referrer and they don't have one, apply it.
+                if (!userWasNewlyCreated && startParam && startParam.startsWith('ref_')) {
+                    const referrerId = startParam.replace('ref_', '');
+                    if (referrerId && referrerId !== currentUser.id.toString() && (!userData.referrerId || userData.referrerId === null)) {
+                        await handleReferral(referrerId, currentUser.id, userRef);
+                        // Update user's profile with the correct referrerId if handleReferral was successful
+                        const updatedUserDataSnapshot = await userRef.once('value');
+                        const updatedUserData = updatedUserDataSnapshot.val();
+                        if (updatedUserData && updatedUserData.referrerId !== referrerId) {
+                             await userRef.update({ referrerId: referrerId });
+                             console.log(`Directly set referrerId ${referrerId} for existing user ${currentUser.id} as backup.`);
+                        }
+                    }
+                }
+
+
                 // Set up a real-time listener to update UI when data changes
                 userRef.on('value', (snapshot) => {
-                    const userData = snapshot.val();
-                    if (userData) {
+                    const updatedUserData = snapshot.val();
+                    if (updatedUserData) {
                         // Update global variables and UI
-                        userBalance = userData.balance || 0;
-                        userTonBalance = userData.tonBalance || 0.00000000;
-                        userSpins = userData.spins || 0;
-                        adsWatchedToday = userData.adsWatched || 0;
-                        dailyCheckinDone = userData.lastCheckin === new Date().toDateString();
+                        userBalance = updatedUserData.balance || 0;
+                        userTonBalance = updatedUserData.tonBalance || 0.00000000;
+                        userSpins = updatedUserData.spins || 0;
+                        adsWatchedToday = updatedUserData.adsWatched || 0;
+                        dailyCheckinDone = updatedUserData.lastCheckin === new Date().toDateString();
 
                         // Reset daily ad count if 24 hours have passed since last reset
-                        if (Date.now() - (userData.lastAdReset || 0) > 24 * 60 * 60 * 1000) {
+                        if (Date.now() - (updatedUserData.lastAdReset || 0) > 24 * 60 * 60 * 1000) {
                             adsWatchedToday = 0;
                             userRef.update({
                                 adsWatched: 0,
@@ -2510,10 +2552,14 @@
                             });
                         }
 
-                        updateUI(userData); // Update main user info
+                        updateUI(updatedUserData); // Update main user info
                         updateWalletUI(); // Update wallet connection status and buttons
                         updateSwapInputs(); // Update swap rates and fields
                         updateAdUI('ready'); // Ensure ad button is in ready state
+                        
+                        // Update referral earnings display if the user's balance changed due to referral bonuses
+                        // This assumes referral earnings are logged and aggregated separately or reflected in balance.
+                        // The loadReferrals() function will handle updating the referral earnings display.
                     }
                 });
 
@@ -2546,9 +2592,7 @@
             document.getElementById('adsWatched').textContent = adsWatchedToday; // Display current day's ads watched
             
             // Update user reference ID in the referral link section
-            if (document.getElementById('userRefId')) {
-                 document.getElementById('userRefId').textContent = userData.id;
-            }
+            // The link itself is generated dynamically in copyReferralLink based on currentUser.id
             
             // Update profile section balances
             document.getElementById('profilePointsBalance').textContent = formatNumber(userData.balance || 0);
@@ -2699,29 +2743,6 @@
             }
         }
 
-        // Handle swap input changes and update UI
-        function updateSwapInputs() {
-            const swapRateDisplay = document.getElementById('swapRate');
-            if (swapRateDisplay) {
-                // Display current swap rate (e.g., 100 points = X TON)
-                swapRateDisplay.textContent = `100 points = ${(100 * POINTS_TO_TON_RATE).toFixed(8)} TON`;
-            }
-            
-            const pointsInput = document.getElementById('swapPointsInput');
-            const tonInput = document.getElementById('swapTonInput');
-
-            // Ensure input handlers are attached (or re-attached if DOM changes)
-            if (pointsInput && pointsInput.oninput === null) {
-                pointsInput.oninput = function() { handleSwapInput('points'); };
-            }
-            if (tonInput && tonInput.oninput === null) {
-                tonInput.oninput = function() { handleSwapInput('ton'); };
-            }
-            
-            // Initial call to set up inputs based on current swap mode
-            handleSwapInput(''); 
-        }
-        
         // Function to handle user input in swap fields and calculate conversions
         function handleSwapInput(inputType) {
             const pointsInput = document.getElementById('swapPointsInput');
@@ -3095,87 +3116,55 @@
                     return;
                 }
 
-                let referralBonusAmount = 0;
                 let rewardToUser = reward; // The reward the current user gets
 
-                // --- START MODIFICATION FOR REFERRAL BONUS ---
-                let referredById = null; // To store the ID of the user who referred the current user
+                // --- Automatic Referral Bonus Logic ---
+                // This section handles awarding a bonus to the referrer when the current user earns points.
+                
+                // Fetch the current user's data to see if they have a referrer
+                const currentUserDataSnapshot = await userRef.once('value');
+                const currentUserData = currentUserDataSnapshot.val();
+                const referrerId = currentUserData?.referrerId; // Get the ID of the user who referred the current user
 
-                // Check if the current user has a referrer by looking up their user profile
-                try {
-                    const userProfileSnapshot = await database.ref('users/' + currentUser.id).once('value');
-                    const userData = userProfileSnapshot.val();
-                    if (userData && userData.referrerId) {
-                        referredById = userData.referrerId;
-                    }
-                } catch (profileError) {
-                    console.error("Error fetching user profile for referrer ID:", profileError);
-                    // Continue without referral bonus if profile fetching fails
-                }
+                // Check if there's a valid referrer ID AND the referrer is not the same as the current user
+                if (referrerId && referrerId !== currentUser.id.toString()) {
+                    const referrerRef = database.ref('users/' + referrerId); // Target the actual referrer
+                    
+                    try {
+                        // Use transaction to ensure atomic update of referrer's balance and total earnings
+                        await referrerRef.transaction((referrerData) => {
+                            if (referrerData) {
+                                // Calculate the bonus (20% of the reward the current user earned)
+                                const referralBonusAmount = Math.floor(reward * currentReferralBonusRate); 
 
-                // Check if there's a valid referrer ID and they are different from the user completing the task
-                if (referredById && referredById !== currentUser.id) {
-                    // Calculate the bonus amount (20% of the reward the current user earned)
-                    referralBonusAmount = Math.floor(reward * currentReferralBonusRate); 
-
-                    if (referralBonusAmount > 0) { // Only proceed if there's an actual bonus to give
-                        const referrerRef = database.ref('users/' + referredById); // Target the actual referrer
-                        
-                        try {
-                            // Use transaction to ensure atomic update of referrer's balance
-                            await referrerRef.transaction((referrerData) => {
-                                if (referrerData) {
+                                if (referralBonusAmount > 0) {
                                     // Add bonus to the referrer's balance and total earned
                                     referrerData.balance = (referrerData.balance || 0) + referralBonusAmount;
                                     referrerData.totalEarned = (referrerData.totalEarned || 0) + referralBonusAmount;
-                                    // Uncomment the line below if you have a specific 'referralEarnings' field to track total referral income on user profile
+                                    // If you have a specific 'referralEarnings' field on user profile to track total referral income, uncomment below:
                                     // referrerData.referralEarnings = (referrerData.referralEarnings || 0) + referralBonusAmount;
+                                    console.log(`Awarded ${referralBonusAmount} points to referrer ${referrerId} for task ${taskId} completed by ${currentUser.id}`);
                                 }
-                                return referrerData;
-                            });
-                            
-                            // Log the referral earning for the actual referrer
+                            }
+                            return referrerData;
+                        });
+                        
+                        // Log the referral earning for history tracking
+                        if (Math.floor(reward * currentReferralBonusRate) > 0) { // Only log if a bonus was actually awarded
                             await database.ref('referralEarningsLog').push({
                                 fromUserId: currentUser.id, // The user who earned points (completed task)
-                                toUserId: referredById,      // The actual referrer who gets the bonus
+                                toUserId: referrerId,      // The actual referrer who gets the bonus
                                 taskId: taskId,              // Which task triggered this
-                                amount: referralBonusAmount, // The bonus amount
+                                amount: Math.floor(reward * currentReferralBonusRate), // The bonus amount
                                 timestamp: Date.now()
                             });
-                            console.log(`Awarded ${referralBonusAmount} points to referrer ${referredById} for task ${taskId} completed by ${currentUser.id}`);
-
-                        } catch (referrerError) {
-                            console.error("Error awarding referral bonus to referrer:", referrerError);
-                            // Log this error, but the main task completion should still proceed for the current user.
                         }
+                    } catch (referrerError) {
+                        console.error("Error awarding referral bonus to referrer:", referrerError);
+                        // Log this error, but the main task completion should still proceed for the current user.
                     }
                 }
-                // --- END MODIFICATION FOR REFERRAL BONUS ---
-
-                // --- Commented out OLD referral logic (awarded to task creator) ---
-                /*
-                if (taskDetails && taskDetails.createdBy && taskDetails.createdBy !== currentUser.id) {
-                    referralBonusAmount = Math.floor(reward * currentReferralBonusRate); // This logic was flawed, it awarded based on task reward, not user earnings.
-                    
-                    const creatorRef = database.ref('users/' + taskDetails.createdBy);
-                    await creatorRef.transaction((creatorData) => {
-                        if (creatorData) {
-                            creatorData.balance = (creatorData.balance || 0) + referralBonusAmount;
-                            creatorData.totalEarned = (creatorData.totalEarned || 0) + referralBonusAmount;
-                        }
-                        return creatorData;
-                    }).catch(err => console.error("Error awarding referral bonus to creator:", err));
-
-                    await database.ref('referralEarningsLog').push({
-                        fromUserId: currentUser.id,
-                        toUserId: taskDetails.createdBy,
-                        taskId: taskId,
-                        amount: referralBonusAmount,
-                        timestamp: Date.now()
-                    }).catch(err => console.error("Error logging referral earning:", err));
-                }
-                */
-                // --- END OLD REFERRAL LOGIC ---
+                // --- End Referral Bonus Logic ---
 
 
                 // Update current user's balance, total earned, tasks completed, and spins
@@ -3554,52 +3543,53 @@
         }
 
         // Handles the logic when a user clicks a referral link
-        async function handleReferral(referrerId) {
-            // Prevent self-referral and issues if currentUser is not yet set
-            if (!currentUser || currentUser.id.toString() === referrerId) {
-                // If user is not yet set, initializeUser will handle this later.
-                // If it's self-referral, do nothing.
+        // Added new parameters: currentUserId, currentUserRef for direct updates
+        async function handleReferral(referrerId, currentUserId, currentUserRef) {
+            // Prevent self-referral and issues if currentUserId is not set
+            if (!currentUserId || referrerId.toString() === currentUserId.toString()) {
+                console.log("Self-referral or invalid ID detected. No referral processed.");
                 return; 
             }
 
             try {
-                const newUserRef = database.ref('users/' + currentUser.id);
-                const newUserSnapshot = await newUserRef.once('value');
+                const referrerUserRef = database.ref('users/' + referrerId);
+                const referrerUserSnapshot = await referrerUserRef.once('value');
 
-                // Only proceed if the user is new (doesn't exist in Firebase yet)
-                if (!newUserSnapshot.exists()) {
-                    const referrerUserRef = database.ref('users/' + referrerId);
-                    const referrerUserSnapshot = await referrerUserRef.once('value');
-
-                    if (referrerUserSnapshot.exists()) {
-                        // Update the referrer's referral count
-                        await referrerUserRef.transaction((referrerData) => {
-                            if (referrerData) {
-                                referrerData.referrals = (referrerData.referrals || 0) + 1;
-                            }
-                            return referrerData;
-                        }).catch(err => console.error("Error updating referrer's referral count:", err));
-
-                        // Record the referral relationship (who referred whom)
-                        // Store the referrerId directly on the new user's profile
-                        await newUserRef.update({
-                            referrerId: referrerId // Store the ID of the user who referred them
-                        }).catch(err => console.error("Error storing referrer ID on new user profile:", err));
-
-                        // Log the referral for history tracking if needed, or rely on referrerId on user profile
-                        // await database.ref('referrals/' + referrerId + '/' + currentUser.id).set({
-                        //     userId: currentUser.id,
-                        //     username: currentUser.username,
-                        //     joinedAt: Date.now(),
-                        // }).catch(err => console.error("Error recording referral relationship:", err));
-
-                        console.log(`User ${currentUser.id} referred by ${referrerId}. Stored referrerId on user profile.`);
-                        showAlert(`Welcome! You've been referred by user ID: ${referrerId}.`, 'info');
-                    } else {
-                        console.warn(`Referrer with ID ${referrerId} not found. Cannot record referral.`);
+                if (!referrerUserSnapshot.exists()) {
+                    console.warn(`Referrer with ID ${referrerId} not found. Cannot process referral.`);
+                    // Attempt to update the current user's referrerId to null if referrer doesn't exist
+                    if (currentUserRef) {
+                        await currentUserRef.update({ referrerId: null });
                     }
+                    return;
+                }
+
+                // Fetch current user data to check if they already have a referrer
+                const currentUserDataSnapshot = await currentUserRef.once('value');
+                const currentUserData = currentUserDataSnapshot.val();
+
+                // Only update if the user doesn't already have a referrer assigned
+                if (!currentUserData || currentUserData.referrerId === null || currentUserData.referrerId === undefined) {
+                    
+                    // Update the referrer's referral count
+                    await referrerUserRef.transaction((referrerData) => {
+                        if (referrerData) {
+                            referrerData.referrals = (referrerData.referrals || 0) + 1;
+                        }
+                        return referrerData;
+                    }).catch(err => {
+                        console.error("Error updating referrer's referral count:", err);
+                        // If updating referrer count fails, still proceed to set referrerId on user
+                    });
+
+                    // Store the referrerId directly on the new user's profile
+                    await currentUserRef.update({
+                        referrerId: referrerId 
+                    });
+                    console.log(`User ${currentUserId} referred by ${referrerId}. Stored referrerId on user profile.`);
+                    showAlert(`Welcome! You've been referred by user ID: ${referrerId}.`, 'info');
                 } else {
-                    console.log("User already exists, referral link re-clicked. No new referral recorded.");
+                    console.log(`User ${currentUserId} already has a referrer (${currentUserData.referrerId}). New referral link ignored.`);
                 }
             } catch (error) {
                 console.error('Error handling referral:', error);
@@ -3661,11 +3651,7 @@
                 });
 
             // Fetch total referral count for the current user
-            // We count direct referrals by checking who has the current user's ID as their referrerId
-            // This requires a separate query or storing referrer counts directly.
-            // For simplicity, let's query the user's own referral count if it's directly stored or count from referralEarningsLog to get referrals who earned.
-            // A more accurate way is to maintain a counter for the referrer.
-            // Let's assume for now that the 'referrals' field on the referrer's profile is updated in `handleReferral`.
+            // This relies on the 'referrals' field on the referrer's profile being updated in `handleReferral`.
             database.ref('users/' + currentUser.id + '/referrals').once('value', (snapshot) => {
                  const referralCount = snapshot.val() || 0;
                  document.getElementById('totalReferrals').textContent = formatNumber(referralCount);
@@ -3677,15 +3663,19 @@
 
         // Explanation for how referral rewards are earned
         async function claimReferralRewards() {
-            showAlert('Referral rewards are automatically credited to your balance when your referred users earn points from completing tasks!', 'info');
+            showAlert('Referral rewards are automatically credited to your balance when your referred users earn points from completing tasks or other activities!', 'info');
             // This function is informational; direct claiming is not implemented here as rewards are automatic.
-            // If you wanted a manual "claim all" button, you'd need to add logic to aggregate pending rewards.
         }
 
         // Copies the user's referral link to the clipboard
         function copyReferralLink() {
             const botUsername = 'adflareprobot'; // The username of your Telegram bot
             // Construct the referral link using the current user's ID
+            // Ensure currentUser is available before generating the link
+            if (!currentUser) {
+                showAlert('Please log in to get your referral link.', 'danger');
+                return;
+            }
             const link = `https://t.me/${botUsername}/app?startapp=ref_${currentUser.id}`;
             
             // Use navigator.clipboard API for modern browsers
@@ -3729,7 +3719,7 @@
             const amountTon = parseFloat(withdrawAmountInput.value);
 
             // Basic validation for TON address and amount
-            if (!tonAddress || !tonAddress.startsWith('UQ') && !tonAddress.startsWith('EQ') && !tonAddress.startsWith('0:')) {
+            if (!tonAddress || !tonAddress.startsWith('UQ') && !tonAddress.startsWith('EQ') && !tonAddress.startsWith('0:')) { // Basic TON address check (can be more robust)
                 showAlert('Please enter a valid TON address.', 'danger');
                 return;
             }
@@ -4094,5 +4084,4 @@
         });
 
     </script>
-</body>
 </html>
