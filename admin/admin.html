@@ -1,0 +1,711 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pro Mobile App Design</title>
+    <meta name="description" content="A professional and user-friendly mobile app design example in a single HTML file.">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%22100%22>🚀</text></svg>" type="image/svg+xml">
+
+    <style>
+        /* --- Global Styles & Variables --- */
+        :root {
+            --primary-color: #007bff; /* A vibrant blue */
+            --secondary-color: #6c757d; /* A neutral gray */
+            --accent-color: #ffc107; /* A warm yellow/orange */
+            --background-color: #f8f9fa; /* Light gray background */
+            --text-color: #343a40; /* Dark text */
+            --light-text-color: #6c757d; /* Lighter gray for secondary text */
+            --card-background: #ffffff;
+            --border-color: #e9ecef;
+            --shadow-color: rgba(0, 0, 0, 0.1);
+            --nav-background: #0056b3; /* Darker blue for nav */
+            --nav-text-color: #ffffff;
+            --transition-speed: 0.3s;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            overflow-x: hidden; /* Prevent horizontal scrollbars */
+            scroll-behavior: smooth; /* Smooth scrolling for anchor links */
+        }
+
+        h1, h2, h3 {
+            color: var(--primary-color);
+            margin-bottom: 15px;
+            line-height: 1.3;
+        }
+
+        p {
+            margin-bottom: 15px;
+        }
+
+        a {
+            color: var(--primary-color);
+            text-decoration: none;
+            transition: color var(--transition-speed) ease;
+        }
+
+        a:hover {
+            color: #0056b3; /* Darker blue on hover */
+        }
+
+        .container {
+            width: 90%;
+            max-width: 1100px; /* Max width for large screens */
+            margin: 0 auto;
+            padding: 20px 0;
+        }
+
+        .section {
+            padding: 50px 0;
+        }
+
+        /* --- Header & Navigation --- */
+        .navbar {
+            background-color: var(--nav-background);
+            color: var(--nav-text-color);
+            padding: 15px 0;
+            box-shadow: 0 4px 15px var(--shadow-color);
+            position: sticky; /* Make it sticky */
+            top: 0;
+            z-index: 1000; /* Ensure it stays on top */
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap; /* Allow wrapping on smaller screens */
+        }
+
+        .navbar .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: var(--nav-text-color);
+            margin-right: 30px;
+            display: flex;
+            align-items: center;
+        }
+
+        .logo img {
+            height: 30px;
+            margin-right: 10px;
+            filter: brightness(0) invert(1); /* Make white for dark nav */
+        }
+
+        .nav-links {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap; /* Allow links to wrap */
+        }
+
+        .nav-links li {
+            margin-left: 25px;
+            flex-shrink: 0; /* Prevent links from shrinking too much */
+        }
+
+        .nav-links a {
+            color: var(--nav-text-color);
+            font-weight: 500;
+            font-size: 17px;
+            transition: color var(--transition-speed) ease;
+        }
+
+        .nav-links a:hover {
+            color: var(--accent-color);
+        }
+
+        .cta-button {
+            background-color: var(--accent-color);
+            color: var(--text-color);
+            padding: 10px 20px;
+            border-radius: 25px; /* Pill shape */
+            font-weight: bold;
+            font-size: 16px;
+            transition: background-color var(--transition-speed) ease, transform var(--transition-speed) ease;
+            box-shadow: 0 2px 10px rgba(255, 193, 7, 0.3);
+        }
+
+        .cta-button:hover {
+            background-color: #e0a800; /* Darker yellow */
+            transform: translateY(-2px); /* Slight lift effect */
+        }
+
+        /* Hamburger Menu for Mobile */
+        .menu-toggle {
+            display: none; /* Hidden by default on larger screens */
+            cursor: pointer;
+            font-size: 28px;
+            margin-left: 20px;
+        }
+
+        /* --- Hero Section --- */
+        #hero {
+            background: linear-gradient(135deg, var(--primary-color) 0%, #0056b3 100%),
+                        url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="0 0 100 100" preserveAspectRatio="none"><path d="M0 0 L100 0 L100 100 Q50 50 0 100 Z" fill="%23007bff" opacity="0.2"/></svg>'); /* Subtle pattern */
+            background-size: cover;
+            background-position: center;
+            color: #ffffff;
+            text-align: center;
+            padding: 80px 0;
+            min-height: 60vh; /* Make it take up significant screen height */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative; /* For pseudo-elements */
+        }
+
+        #hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 75, 150, 0.5); /* Overlay for better text readability */
+            z-index: 1;
+        }
+
+        #hero .container {
+            position: relative; /* Ensure content is above the overlay */
+            z-index: 2;
+        }
+
+        #hero h1 {
+            font-size: 48px;
+            margin-bottom: 20px;
+            color: #ffffff;
+            text-shadow: 2px 2px 8px rgba(0,0,0,0.3);
+        }
+
+        #hero p {
+            font-size: 20px;
+            max-width: 700px;
+            margin: 0 auto 30px auto;
+            color: rgba(255, 255, 255, 0.9);
+            text-shadow: 1px 1px 4px rgba(0,0,0,0.2);
+        }
+
+        .hero-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 20px; /* Space between buttons */
+            flex-wrap: wrap; /* Allow wrapping */
+        }
+
+        .hero-buttons .btn-primary {
+            background-color: var(--accent-color);
+            color: var(--text-color);
+            padding: 15px 30px;
+            border-radius: 30px;
+            font-size: 18px;
+            font-weight: bold;
+            transition: background-color var(--transition-speed) ease, transform var(--transition-speed) ease;
+            box-shadow: 0 4px 15px rgba(255, 193, 7, 0.4);
+        }
+
+        .hero-buttons .btn-primary:hover {
+            background-color: #e0a800;
+            transform: translateY(-3px);
+        }
+
+        .hero-buttons .btn-secondary {
+            background-color: transparent;
+            color: #ffffff;
+            padding: 15px 30px;
+            border-radius: 30px;
+            font-size: 18px;
+            font-weight: bold;
+            border: 2px solid #ffffff;
+            transition: background-color var(--transition-speed) ease, color var(--transition-speed) ease, transform var(--transition-speed) ease;
+        }
+
+        .hero-buttons .btn-secondary:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+            color: #ffffff;
+            transform: translateY(-3px);
+        }
+
+        /* --- Features Section --- */
+        #features .section-title {
+            text-align: center;
+            margin-bottom: 40px;
+            font-size: 36px;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); /* Responsive columns */
+            gap: 30px;
+        }
+
+        .feature-item {
+            background-color: var(--card-background);
+            padding: 30px;
+            border-radius: 12px;
+            text-align: center;
+            box-shadow: 0 6px 20px var(--shadow-color);
+            transition: transform var(--transition-speed) ease, box-shadow var(--transition-speed) ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .feature-item:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 10px 25px rgba(0, 110, 180, 0.15); /* Blueish shadow on hover */
+        }
+
+        .feature-item .icon {
+            font-size: 45px;
+            margin-bottom: 20px;
+            color: var(--primary-color);
+        }
+
+        .feature-item h3 {
+            font-size: 22px;
+            margin-bottom: 10px;
+            color: var(--primary-color);
+        }
+
+        .feature-item p {
+            font-size: 16px;
+            color: var(--light-text-color);
+        }
+
+        /* --- About Section --- */
+        #about .container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 40px;
+            align-items: center;
+        }
+
+        #about .text-content {
+            flex: 1; /* Takes up available space */
+            min-width: 300px; /* Minimum width before wrapping */
+        }
+
+        #about .image-content {
+            flex: 1;
+            min-width: 300px;
+            text-align: center;
+        }
+
+        #about .image-content img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 15px;
+            box-shadow: 0 10px 25px var(--shadow-color);
+        }
+
+        /* --- Contact Section --- */
+        #contact {
+            background-color: var(--primary-color);
+            color: #ffffff;
+            text-align: center;
+        }
+
+        #contact .section-title {
+            color: #ffffff;
+        }
+
+        #contact p {
+            font-size: 18px;
+            margin-bottom: 30px;
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .contact-form {
+            background-color: rgba(255, 255, 255, 0.15);
+            padding: 30px;
+            border-radius: 15px;
+            max-width: 600px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .contact-form input,
+        .contact-form textarea {
+            padding: 15px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            background-color: rgba(255, 255, 255, 0.9);
+            color: var(--text-color);
+            width: 100%; /* Make inputs take full width */
+            box-sizing: border-box; /* Include padding in width */
+        }
+
+        .contact-form textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        .contact-form button {
+            background-color: var(--accent-color);
+            color: var(--text-color);
+            padding: 15px 30px;
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: bold;
+            border: none;
+            cursor: pointer;
+            transition: background-color var(--transition-speed) ease, transform var(--transition-speed) ease;
+        }
+
+        .contact-form button:hover {
+            background-color: #e0a800;
+            transform: translateY(-2px);
+        }
+
+        /* --- Footer --- */
+        footer {
+            background-color: var(--nav-background);
+            color: rgba(255, 255, 255, 0.7);
+            text-align: center;
+            padding: 30px 0;
+            font-size: 14px;
+        }
+
+        footer a {
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        footer a:hover {
+            color: var(--accent-color);
+        }
+
+        /* --- Responsiveness --- */
+        @media (max-width: 768px) {
+            .container {
+                width: 95%;
+            }
+
+            .navbar {
+                flex-direction: column;
+                padding: 15px 15px; /* Add horizontal padding for mobile */
+                align-items: flex-start; /* Align items to the left */
+            }
+
+            .navbar .container {
+                width: 100%; /* Container takes full width */
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .logo {
+                margin-bottom: 15px;
+                width: 100%;
+                justify-content: space-between; /* Logo on left, hamburger on right */
+            }
+
+            .logo img {
+                height: 28px;
+            }
+
+            .menu-toggle {
+                display: block; /* Show hamburger */
+                color: var(--nav-text-color);
+                position: absolute; /* Position it over the logo */
+                right: 20px;
+                top: 50%;
+                transform: translateY(-50%);
+            }
+
+            .nav-links {
+                width: 100%;
+                flex-direction: column;
+                align-items: flex-start;
+                display: none; /* Hidden by default, shown by JS */
+                padding-top: 15px;
+                background-color: var(--nav-background); /* Ensure it has background when open */
+            }
+
+            .nav-links.active {
+                display: flex; /* Show when active */
+            }
+
+            .nav-links li {
+                margin: 10px 0; /* Stacked vertically */
+                width: 100%;
+                padding: 10px 0;
+                border-bottom: 1px solid rgba(255, 255, 255, 0.1); /* Separator */
+            }
+
+            .nav-links li:last-child {
+                border-bottom: none;
+            }
+
+            .nav-links a {
+                display: block; /* Make links take full width */
+                padding: 5px 0;
+            }
+
+            .cta-button {
+                display: block; /* Make it a block element */
+                width: fit-content; /* Shrink to content */
+                margin: 10px auto 0 auto; /* Center it */
+            }
+
+            #hero {
+                padding: 60px 0;
+                min-height: 40vh;
+            }
+
+            #hero h1 {
+                font-size: 36px;
+            }
+
+            #hero p {
+                font-size: 18px;
+            }
+
+            .hero-buttons {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .section-title {
+                font-size: 30px;
+            }
+
+            #about .container {
+                flex-direction: column;
+            }
+
+            #about .text-content,
+            #about .image-content {
+                width: 100%;
+                text-align: center;
+            }
+
+            .contact-form {
+                padding: 20px;
+            }
+        }
+
+        /* --- Utility Classes --- */
+        .text-center { text-align: center; }
+        .text-left { text-align: left; }
+        .text-right { text-align: right; }
+        .mb-10 { margin-bottom: 10px; }
+        .mb-20 { margin-bottom: 20px; }
+        .mb-30 { margin-bottom: 30px; }
+        .pb-50 { padding-bottom: 50px; }
+        .pt-50 { padding-top: 50px; }
+
+        /* --- Specific Icons (using Font Awesome or similar is recommended for production) --- */
+        /* For this example, we'll use simple text characters or minimal inline SVGs */
+        .icon-chat::before { content: "💬"; margin-right: 5px; }
+        .icon-settings::before { content: "⚙️"; margin-right: 5px; }
+        .icon-support::before { content: "❤️"; margin-right: 5px; }
+        .icon-code::before { content: "💻"; margin-right: 5px; }
+        .icon-cloud::before { content: "☁️"; margin-right: 5px; }
+        .icon-dashboard::before { content: "📊"; margin-right: 5px; }
+        .icon-mobile::before { content: "📱"; margin-right: 5px; }
+        .icon-security::before { content: "🔒"; margin-right: 5px; }
+
+        /* Basic SVG for Logo */
+        .logo-svg {
+            width: 30px;
+            height: 30px;
+            margin-right: 10px;
+        }
+        .logo-svg path {
+            fill: var(--nav-text-color);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <div class="container">
+            <a href="#hero" class="logo">
+                <!-- Simple SVG Logo -->
+                <svg class="logo-svg" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zM12 4c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 12.5c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zm0-4.5c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/>
+                </svg>
+                AppX
+            </a>
+            <div class="menu-toggle" id="mobile-menu">&#9776;</div> <!-- Hamburger Icon -->
+            <ul class="nav-links" id="nav-links">
+                <li><a href="#features">Features</a></li>
+                <li><a href="#about">About</a></li>
+                <li><a href="#contact">Contact</a></li>
+                <li><a href="#download" class="cta-button">Download</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="hero">
+        <div class="container">
+            <h1>Revolutionize Your Workflow</h1>
+            <p>Discover the power of our innovative mobile app, designed to boost productivity and simplify your daily tasks. Seamlessly integrated for your convenience.</p>
+            <div class="hero-buttons">
+                <a href="#features" class="btn-primary">Explore Features</a>
+                <a href="#contact" class="btn-secondary">Get In Touch</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="section">
+        <div class="container">
+            <h2 class="section-title">Key Features</h2>
+            <div class="features-grid">
+                <div class="feature-item">
+                    <div class="icon icon-mobile"></div>
+                    <h3>Intuitive Design</h3>
+                    <p>A clean and user-friendly interface that makes navigating our app a breeze, even for beginners.</p>
+                </div>
+                <div class="feature-item">
+                    <div class="icon icon-code"></div>
+                    <h3>Powerful Performance</h3>
+                    <p>Built with cutting-edge technology for lightning-fast speed and seamless operation.</p>
+                </div>
+                <div class="feature-item">
+                    <div class="icon icon-cloud"></div>
+                    <h3>Seamless Syncing</h3>
+                    <p>Your data is always up-to-date across all your devices with our secure cloud synchronization.</p>
+                </div>
+                <div class="feature-item">
+                    <div class="icon icon-security"></div>
+                    <h3>Robust Security</h3>
+                    <p>Your information is protected with state-of-the-art encryption and security protocols.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="section" style="background-color: #e9ecef;">
+        <div class="container">
+            <div class="text-content">
+                <h2 class="section-title">About Our App</h2>
+                <p>We believe in creating tools that empower users. Our app is meticulously crafted to solve real-world problems, offering a robust yet simple solution for managing your digital life. From effortless task tracking to secure data management, every aspect is designed with you in mind.</p>
+                <p>Our mission is to make technology accessible and powerful, helping you achieve more with less effort. Join thousands of satisfied users who have transformed their productivity with AppX.</p>
+                <a href="#download" class="btn-primary" style="margin-top: 20px;">Learn More & Download</a>
+            </div>
+            <div class="image-content">
+                <img src="https://via.placeholder.com/500x400/007bff/ffffff?text=App+Screenshot" alt="App Screenshot Example">
+            </div>
+        </div>
+    </section>
+
+    <!-- Download Section (Placeholder) -->
+    <section id="download" class="section">
+        <div class="container text-center">
+            <h2 class="section-title">Ready to Transform Your Experience?</h2>
+            <p>Download AppX today and start simplifying your life.</p>
+            <div class="hero-buttons"> <!-- Reusing button styles -->
+                <a href="#" class="btn-primary" aria-label="Download on the App Store">
+                    <i class="fab fa-apple"></i> Download on App Store
+                </a>
+                <a href="#" class="btn-secondary" aria-label="Get it on Google Play">
+                    <i class="fab fa-google-play"></i> Get it on Google Play
+                </a>
+            </div>
+            <p style="font-size: 14px; margin-top: 20px; color: var(--light-text-color);">Available for iOS and Android.</p>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="section">
+        <div class="container">
+            <h2 class="section-title">Get In Touch</h2>
+            <p>Have questions, feedback, or a partnership idea? We'd love to hear from you!</p>
+            <form id="contact-form" class="contact-form">
+                <input type="text" name="name" placeholder="Your Name" required>
+                <input type="email" name="email" placeholder="Your Email" required>
+                <textarea name="message" placeholder="Your Message" required></textarea>
+                <button type="submit">Send Message</button>
+            </form>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <p>&copy; 2023 AppX. All rights reserved.</p>
+            <p>
+                <a href="#">Privacy Policy</a> |
+                <a href="#">Terms of Service</a> |
+                <a href="#">Sitemap</a>
+            </p>
+            <p>Built with <span style="color: red;">&hearts;</span> and passion.</p>
+        </div>
+    </footer>
+
+    <script>
+        // --- JavaScript for Mobile Menu Toggle ---
+        const mobileMenuButton = document.getElementById('mobile-menu');
+        const navLinks = document.getElementById('nav-links');
+
+        mobileMenuButton.addEventListener('click', () => {
+            navLinks.classList.toggle('active');
+        });
+
+        // Close menu when a link is clicked
+        const navLinkItems = document.querySelectorAll('.nav-links a');
+        navLinkItems.forEach(link => {
+            link.addEventListener('click', () => {
+                navLinks.classList.remove('active');
+            });
+        });
+
+        // --- JavaScript for Smooth Scrolling to Section ---
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+
+        // --- JavaScript for Contact Form Submission (Basic) ---
+        const contactForm = document.getElementById('contact-form');
+        contactForm.addEventListener('submit', function(e) {
+            e.preventDefault(); // Prevent actual form submission for this demo
+
+            const formData = new FormData(contactForm);
+            const data = Object.fromEntries(formData.entries());
+
+            console.log('Form Submitted:', data);
+
+            // In a real application, you would send this data to a server
+            // using fetch() or XMLHttpRequest for email processing.
+            alert('Message sent! (In a real app, this would be sent to the server.)');
+
+            // Reset form after submission
+            contactForm.reset();
+        });
+
+        // --- Placeholder for Icon Libraries (e.g., Font Awesome) ---
+        // If you were using Font Awesome, you'd include this in the <head>:
+        // <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+        // And then use <i class="fab fa-apple"></i> in your HTML.
+        // For this single-file example, we're using simple text characters as icons.
+
+    </script>
+</body>
+</html>
