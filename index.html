@@ -3529,6 +3529,55 @@
             }
         });
 
+
+                // Update ad button state
+        function updateAdButtonState() {
+            const watchAdButton = document.getElementById('watchAdButton');
+            const adLoadingMessage = document.getElementById('adLoadingMessage');
+            const adCountdown = document.getElementById('adCountdown');
+
+            if (adsWatchedToday >= 50) {
+                watchAdButton.disabled = true;
+                watchAdButton.innerHTML = '<span class="material-icons">block</span> Daily Limit Reached';
+                watchAdButton.classList.remove('pulse', 'glow');
+                adLoadingMessage.style.display = 'none';
+                adCountdown.style.display = 'none';
+            } else if (isWatchingAd) {
+                watchAdButton.disabled = true;
+                watchAdButton.innerHTML = '<div class="loading"></div> Watching Ad...';
+                watchAdButton.classList.remove('pulse', 'glow');
+                adLoadingMessage.style.display = 'block';
+                adCountdown.style.display = 'none';
+            } else if (Date.now() < adCooldownEnd) {
+                // Cooldown is active
+                watchAdButton.disabled = true;
+                const timeLeft = Math.ceil((adCooldownEnd - Date.now()) / 1000);
+                watchAdButton.innerHTML = `<span class="material-icons">timer</span> Wait ${timeLeft}s`;
+                watchAdButton.classList.remove('pulse', 'glow');
+                adLoadingMessage.style.display = 'none';
+                adCountdown.style.display = 'block';
+                adCountdown.textContent = `Wait ${timeLeft}s`;
+
+                const countdownInterval = setInterval(() => {
+                    const remaining = Math.ceil((adCooldownEnd - Date.now()) / 1000);
+                    if (remaining <= 0) {
+                        clearInterval(countdownInterval);
+                        updateAdButtonState(); // Re-evaluate button state
+                    } else {
+                        watchAdButton.innerHTML = `<span class="material-icons">timer</span> Wait ${remaining}s`;
+                        adCountdown.textContent = `Wait ${remaining}s`;
+                    }
+                }, 1000);
+            } else {
+                // Ready to watch ad
+                watchAdButton.disabled = false;
+                watchAdButton.innerHTML = '<span class="material-icons">play_arrow</span> Watch Ad (+10 Diamond)';
+                watchAdButton.classList.add('pulse', 'glow');
+                adLoadingMessage.style.display = 'none';
+                adCountdown.style.display = 'none';
+            }
+        }
+
     </script>
 </body>
 </html>
